@@ -1,4 +1,4 @@
-# PANNI MARGOT — La Vidriera · 8 caminos
+# PANNI MARGOT — Home · 8 caminos
 
 Ocho hipótesis de diseño para pannimargot.com, en dos actos:
 **LA MANO** (Gravedad 重力 · Oficio 手仕事 · Archivo 記憶) y
@@ -7,6 +7,6 @@ Ocho hipótesis de diseño para pannimargot.com, en dos actos:
 Todas cumplen las mismas reglas: blanco y negro estricto, el nombre siempre en vector,
 nada se explica, `prefers-reduced-motion` respetado.
 
-**Entrada:** [`index.html`](./index.html) — la vidriera argumenta cada camino; el veredicto es de la marca.
+**Entrada:** [`index.html`](./index.html) — la home argumenta cada camino; el veredicto es de la marca.
 
 Mockups de exploración — no es el sitio de producción.
