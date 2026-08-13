@@ -90,13 +90,15 @@ header.hid{transform:translateY(-160%)}
 .lockup .wm{font-family:var(--mono);letter-spacing:.12em;white-space:nowrap;line-height:1}
 #sysline{display:flex;gap:12px;align-items:baseline;font-variant-numeric:tabular-nums;color:var(--g-300)}
 #sysline b{color:var(--white);font-weight:400}
+.nn5{display:none;color:inherit}
+.nn5 svg{width:16px;height:16px;fill:currentColor}
 
 .vert-kana{position:fixed;left:22px;top:50%;transform:translateY(-50%);z-index:850;
   font-family:var(--jp);font-size:13px;letter-spacing:.5em;
   writing-mode:vertical-rl;color:var(--white);mix-blend-mode:difference;opacity:.85}
 
 /* ═══ HERO: #17 ASCII (uso 1 de 2) ═══ */
-#hero{min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr;gap:5vw;align-items:center;padding:16vh 28px 10vh 66px;position:relative}
+#hero{min-height:100vh;min-height:100svh;display:grid;grid-template-columns:1.05fr .95fr;gap:5vw;align-items:center;padding:16vh 28px 10vh 66px;position:relative}
 .h-sys{font-size:10px;color:var(--g-500);text-transform:uppercase;margin-bottom:3vh}
 #hero h1{font-family:var(--display);font-size:clamp(3.4rem,11vw,9.5rem);line-height:.9;text-transform:uppercase;letter-spacing:.01em}
 #hero h1 .hk{display:block;font-family:var(--jp);font-weight:700;font-size:.42em;color:var(--g-300);margin-top:12px}
@@ -127,7 +129,8 @@ header.hid{transform:translateY(-160%)}
 .row .c-p{text-align:right}
 .row .c-s{text-align:right;color:var(--g-500)}
 #prev{position:sticky;top:130px}
-.pv-head{display:flex;justify-content:space-between;gap:10px;font-size:9px;color:var(--g-500);text-transform:uppercase;margin-bottom:10px}
+#pv-x{display:none}
+.pv-head{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:9px;color:var(--g-500);text-transform:uppercase;margin-bottom:10px}
 .pv-box{position:relative;aspect-ratio:3/4;border:1px solid var(--g-700);background:var(--g-900);overflow:hidden}
 .pv-box canvas{position:absolute;inset:0;width:100%;height:100%}
 .pv-idle{position:absolute;inset:0;display:grid;place-items:center;color:var(--g-700);font-size:10px;letter-spacing:.3em;text-transform:uppercase}
@@ -167,10 +170,21 @@ footer{border-top:1px solid var(--g-700);padding:60px 28px 34px;font-size:10px;t
   .mq-track{animation:none}
 }
 
-/* ═══ MOBILE ═══ */
-@media(max-width:820px){
+/* ═══ F1 — CAPACIDAD: sin puntero fino, sin gramática de cursor + F4 targets 44px ═══ */
+@media (hover:none),(pointer:coarse){
   body,a,button{cursor:auto}
   #cur,#cur-ring,.gh{display:none}
+  #vbar a{padding:16px 10px;display:inline-flex;align-items:center;min-height:44px}
+  header .lockup{padding:12px 0}
+  .row{padding-top:15px;padding-bottom:15px;min-height:44px}
+  .f-grid a{padding:15px 0;display:flex;align-items:center;min-height:44px}
+  .egg-head button{padding:15px;margin:-15px;display:inline-flex;align-items:center;min-height:44px;min-width:44px;justify-content:center}
+  #pv-x{min-height:44px;min-width:44px}
+  .nn5{display:inline-grid;place-items:center;min-width:44px;min-height:44px;margin:-17px -12px -17px 0;padding:0}
+}
+
+/* ═══ F1 — TELÉFONO (≤640): layout colapsado + PASO 5 preview modal ═══ */
+@media (max-width:640px){
   .vert-kana{display:none}
   header{padding:14px 16px}
   #sysline{font-size:9px}
@@ -178,10 +192,22 @@ footer{border-top:1px solid var(--g-700);padding:60px 28px 34px;font-size:10px;t
   .a-box{justify-self:stretch;max-height:64vh}
   .grid-wrap{grid-template-columns:1fr;padding:0 16px}
   #prev{display:none}
-  .rowh,.row{grid-template-columns:1.3fr .9fr .8fr;padding:13px 10px}
+  .rowh,.row{grid-template-columns:1.3fr .9fr .8fr;padding-left:10px;padding-right:10px}
+  .rowh{padding-top:13px;padding-bottom:13px}
   .rowh .c-s,.row .c-s{display:none}
   .sec-head{padding:0 16px}
   #morph-sec{padding:14vh 16px}
+  /* PASO 5: la fila abre la pieza ASCII a pantalla completa — mismo canvas #pvc, dosis 2/2 intacta */
+  #prev.open{display:flex;flex-direction:column;position:fixed;inset:0;z-index:10003;background:var(--black);
+    padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px))}
+  #prev.open .pv-box{flex:1;aspect-ratio:auto;min-height:0}
+  #prev.open #pv-x{display:block;font-size:11px;color:var(--white);padding:15px;margin:-15px -15px -15px 0}
+}
+
+/* ═══ F1 — TABLET (641–1024): preview lateral como desktop, medidas ajustadas ═══ */
+@media (min-width:641px) and (max-width:1024px){
+  #hero{padding:14vh 24px 9vh 56px;gap:4vw}
+  .grid-wrap{grid-template-columns:1fr 280px;gap:3vw}
 }
 </style>
 </head>
@@ -234,6 +260,7 @@ footer{border-top:1px solid var(--g-700);padding:60px 28px 34px;font-size:10px;t
     <span>MANUK.WORLD//<b>SYS OK</b></span>
     <span aria-hidden="true">::</span>
     <span>192 PIEZAS</span>
+    <button id="nn5" class="nn5" type="button" tabindex="-1" aria-hidden="true"><svg aria-hidden="true" focusable="false"><use href="#pm-mono"/></svg></button>
   </div>
 </header>
 
@@ -299,7 +326,7 @@ footer{border-top:1px solid var(--g-700);padding:60px 28px 34px;font-size:10px;t
       </button>
     </div>
     <aside id="prev" aria-hidden="true">
-      <div class="pv-head"><span id="pv-sku">STANDBY</span><span>PREVIEW :: ASCII</span></div>
+      <div class="pv-head"><span id="pv-sku">STANDBY</span><span>PREVIEW :: ASCII</span><button id="pv-x" type="button" aria-label="Cerrar">[ &times; ]</button></div>
       <div class="pv-box">
         <span class="pv-idle" id="pv-idle">SIN SEÑAL</span>
         <canvas id="pvc"></canvas>
@@ -362,7 +389,10 @@ footer{border-top:1px solid var(--g-700);padding:60px 28px 34px;font-size:10px;t
 
 <script>
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const MOB = matchMedia('(max-width: 820px)').matches;
+/* F1: la capacidad decide los efectos de cursor; el ancho decide el layout — jamás al revés */
+const FINE  = matchMedia('(hover:hover) and (pointer:fine)').matches;
+const PHONE = matchMedia('(max-width:640px)').matches;
+const TAB   = matchMedia('(min-width:641px) and (max-width:1024px)').matches;
 const LOWHW = (navigator.deviceMemory && navigator.deviceMemory < 4) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4);
 
 const CDN='https://acdn-us.mitiendanube.com/stores/004/814/798/products/';
@@ -462,7 +492,7 @@ function ascii(img,canvas,cell,sweep){
   const idle=document.getElementById('pv-idle');
   let cur=-1;
   function show(r){
-    if(matchMedia('(max-width: 820px)').matches)return;
+    if(matchMedia('(max-width:640px)').matches)return;
     const i=+r.dataset.i;
     if(i===cur)return;
     cur=i;
@@ -476,9 +506,69 @@ function ascii(img,canvas,cell,sweep){
   rows.forEach(r=>{
     r.addEventListener('mouseenter',()=>show(r));
     r.addEventListener('focus',()=>show(r));
+    r.addEventListener('click',()=>show(r)); /* tablet táctil: el tap alimenta el preview lateral */
   });
   /* precarga diferida del resto */
-  if(!MOB&&!LOWHW)setTimeout(()=>{IMGS.forEach(s=>loadImg(s).catch(()=>{}))},4000);
+  if(!PHONE&&!LOWHW)setTimeout(()=>{IMGS.forEach(s=>loadImg(s).catch(()=>{}))},4000);
+})();
+
+/* ── PASO 5: en teléfono la fila abre la pieza en ASCII a pantalla completa.
+   Mismo canvas #pvc del preview lateral — la dosis ASCII sigue siendo 2/2 ── */
+(function(){
+  const prev=document.getElementById('prev');
+  const pvc=document.getElementById('pvc');
+  const sk=document.getElementById('pv-sku');
+  const idle=document.getElementById('pv-idle');
+  const x=document.getElementById('pv-x');
+  const rows=[...document.querySelectorAll('.row')];
+  const mqPhone=matchMedia('(max-width:640px)');
+  let lastFocus=null,openI=-1;
+  function open(r){
+    if(!prev.classList.contains('open')){lastFocus=document.activeElement}
+    const label=r.querySelector('.c-sku').textContent+' '+r.querySelector('.c-cw').textContent;
+    sk.textContent=label;
+    prev.classList.add('open');
+    prev.removeAttribute('aria-hidden');
+    prev.setAttribute('role','dialog');
+    prev.setAttribute('aria-modal','true');
+    prev.setAttribute('aria-label','Preview ASCII :: '+label);
+    document.body.style.overflow='hidden';
+    x.focus();
+    const i=+r.dataset.i;openI=i;
+    loadImg(IMGS[i]).then(im=>{
+      if(!prev.classList.contains('open'))return;
+      idle.hidden=true;
+      ascii(im,pvc,LOWHW?10:7,false);
+    }).catch(()=>{sk.textContent='SIN SEÑAL'});
+  }
+  function close(){
+    if(!prev.classList.contains('open'))return;
+    prev.classList.remove('open');
+    prev.setAttribute('aria-hidden','true');
+    prev.removeAttribute('role');prev.removeAttribute('aria-modal');prev.removeAttribute('aria-label');
+    document.body.style.overflow='';
+    if(lastFocus&&lastFocus.focus)lastFocus.focus();
+  }
+  rows.forEach(r=>r.addEventListener('click',()=>{if(mqPhone.matches)open(r)}));
+  x.addEventListener('click',e=>{e.stopPropagation();close()});
+  prev.addEventListener('click',()=>{if(prev.classList.contains('open'))close()});
+  addEventListener('keydown',e=>{
+    if(!prev.classList.contains('open'))return;
+    if(e.key==='Escape')close();
+    else if(e.key==='Tab'){e.preventDefault();x.focus()}
+  });
+  /* si el viewport sale del rango teléfono con el modal abierto, se cierra limpio */
+  if(mqPhone.addEventListener)mqPhone.addEventListener('change',ev=>{if(!ev.matches)close()});
+  /* rotación con el modal abierto: re-render del canvas a las nuevas medidas */
+  let rt;
+  addEventListener('resize',()=>{
+    if(!prev.classList.contains('open')||openI<0)return;
+    clearTimeout(rt);
+    rt=setTimeout(()=>{
+      if(!prev.classList.contains('open'))return;
+      loadImg(IMGS[openI]).then(im=>{if(prev.classList.contains('open'))ascii(im,pvc,LOWHW?10:7,false)}).catch(()=>{});
+    },220);
+  });
 })();
 
 /* ── #28 GLITCH: al cargar y al cruzar secciones, una vez cada una, jamás en loop ── */
@@ -559,9 +649,9 @@ function ascii(img,canvas,cell,sweep){
   document.querySelectorAll('[data-scramble]').forEach(el=>io.observe(el));
 })();
 
-/* ── #44 RIPPLE: acuse de recibo del sistema, 500 ms, 1px de borde ── */
+/* ── #44 RIPPLE: acuse de recibo del sistema, 500 ms, 1px de borde. Gramática de cursor: FINE ── */
 (function(){
-  if(RM)return;
+  if(RM||!FINE)return;
   const N=4,pool=[];let i=0;
   for(let j=0;j<N;j++){
     const d=document.createElement('div');
@@ -619,11 +709,22 @@ function ascii(img,canvas,cell,sweep){
   x.addEventListener('pointerup',close);
   x.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();close()}});
   egg.addEventListener('pointerup',e=>{if(e.target===egg)close()});
+  /* gesto táctil: 5 taps en el monograma del header — mismo secreto, sin pista */
+  const nn=document.getElementById('nn5');
+  if(nn){
+    let taps=0,tlast=0;
+    nn.addEventListener('pointerup',()=>{
+      const now=Date.now();
+      if(now-tlast>900)taps=0;
+      taps++;tlast=now;
+      if(taps>=5){taps=0;open()}
+    });
+  }
 })();
 
-/* ── BUCLE MAESTRO: cursor doble masa + #42 rastro de fósforo ── */
+/* ── BUCLE MAESTRO: cursor doble masa + #42 rastro de fósforo. Depende de FINE, jamás del ancho ── */
 (function(){
-  if(RM||MOB)return;
+  if(RM||!FINE)return;
   const dot=document.getElementById('cur');
   const ring=document.getElementById('cur-ring');
   const NG=5,ghosts=[],gp=[];

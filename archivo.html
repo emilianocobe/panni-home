@@ -63,7 +63,7 @@ header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-c
   writing-mode:vertical-rl;color:var(--white);mix-blend-mode:difference;opacity:.85}
 
 /* ═══ HERO ═══ */
-#hero{min-height:100vh;display:grid;align-content:center;justify-items:start;padding:16vh 28px 10vh 66px;position:relative;overflow:hidden}
+#hero{min-height:100vh;min-height:100svh;display:grid;align-content:center;justify-items:start;padding:16vh 28px 10vh 66px;position:relative;overflow:hidden}
 .hero-kanji{font-family:var(--jp);font-weight:700;font-size:clamp(7rem,26vw,20rem);line-height:.95;perspective:900px}
 .hero-word{font-family:var(--geo);font-weight:600;font-size:clamp(2.4rem,9vw,7.5rem);letter-spacing:.06em;line-height:1;margin-top:2vh;perspective:900px;text-transform:uppercase}
 .char{display:inline-block;transform-origin:50% 100%;backface-visibility:hidden}
@@ -75,7 +75,7 @@ header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-c
 
 /* ═══ TARDÍGRADAS: TARJETAS APILADAS ═══ */
 #stack{position:relative;border-top:1px solid var(--g-700)}
-.piece{position:sticky;top:0;min-height:100vh;overflow:hidden;background:var(--g-900);border-top:1px solid var(--g-700);
+.piece{position:sticky;top:0;min-height:100vh;min-height:100dvh;overflow:hidden;background:var(--g-900);border-top:1px solid var(--g-700);
   display:grid;grid-template-columns:46% 1fr;will-change:transform}
 .piece .ph{position:relative;overflow:hidden}
 .piece .ph img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.12)}
@@ -90,7 +90,7 @@ header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-c
 .piece .shade{position:absolute;inset:0;background:var(--black);opacity:0;pointer-events:none}
 
 /* ═══ ESTELA DE IMÁGENES ═══ */
-#trail{position:relative;min-height:120vh;border-top:1px solid var(--g-700);display:grid;place-items:center;overflow:hidden;background:var(--black)}
+#trail{position:relative;min-height:120vh;min-height:120dvh;border-top:1px solid var(--g-700);display:grid;place-items:center;overflow:hidden;background:var(--black)}
 #trail h2{font-family:var(--display);font-size:clamp(2.6rem,9vw,8rem);line-height:.9;text-transform:uppercase;text-align:center;position:relative;z-index:3;mix-blend-mode:difference;will-change:transform}
 #trail .sub{position:absolute;bottom:6vh;left:0;right:0;text-align:center;font-size:10px;color:var(--g-500);text-transform:uppercase;z-index:3}
 #trail .jp-big{position:absolute;top:7vh;left:28px;font-family:var(--jp);font-size:12px;letter-spacing:.4em;color:var(--g-500);z-index:3}
@@ -153,10 +153,23 @@ footer{border-top:1px solid var(--g-700);padding:60px 28px 34px;font-size:10px;t
   #strip::-webkit-scrollbar{display:none}
 }
 
-/* ═══ MOBILE ═══ */
-@media(max-width:820px){
+/* ═══ F1 · CAPACIDAD — touch, independiente del ancho ═══ */
+@media (hover:none),(pointer:coarse){
   body,a,button{cursor:auto}
   #cur,#cur-ring{display:none}
+  /* F4: targets táctiles ≥44px (padding, no font-size) */
+  #vbar a{min-height:44px;display:inline-flex;align-items:center;padding:0 8px;margin:0 -8px}
+  header .lockup{min-height:44px}
+  .f-grid a{min-height:44px;display:flex;align-items:center;padding:0}
+  /* F6: tira con scroll nativo + snap; el arrastre custom queda solo en FINE */
+  #strip{overflow-x:auto;scroll-snap-type:x proximity;scroll-padding:0 28px;touch-action:pan-x pan-y;scrollbar-width:none}
+  #strip::-webkit-scrollbar{display:none}
+  #striptrack{transform:none!important}
+  .tile{scroll-snap-align:start}
+}
+
+/* ═══ F1 · ANCHO — teléfono ═══ */
+@media (max-width:640px){
   .vert-kana{display:none}
   header{padding:14px 16px}
   #clockline{font-size:9px}
@@ -164,11 +177,13 @@ footer{border-top:1px solid var(--g-700);padding:60px 28px 34px;font-size:10px;t
   .piece{grid-template-columns:1fr}
   .piece .ph{max-height:52vh}
   .piece .meta{padding:6vh 20px 10vh}
-  #spot .dup{display:none}
   .spot-inner{padding:14vh 20px}
-  #strip{overflow-x:auto;scrollbar-width:none;touch-action:auto}
-  #strip::-webkit-scrollbar{display:none}
   .trailimg{width:34vw}
+}
+
+/* ═══ F1 · ANCHO — tablet 641–1024: layout desktop (hay lienzo); efectos según capacidad ═══ */
+@media (min-width:641px) and (max-width:1024px){
+  .piece .meta{padding:14vh 3vw 8vh}
 }
 </style>
 </head>
@@ -352,7 +367,10 @@ footer{border-top:1px solid var(--g-700);padding:60px 28px 34px;font-size:10px;t
 
 <script>
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const MOB = matchMedia('(max-width: 820px)').matches;
+/* F1: la capacidad decide los efectos de cursor; el ancho decide el layout */
+const FINE  = matchMedia('(hover:hover) and (pointer:fine)').matches;
+const PHONE = matchMedia('(max-width:640px)').matches;
+const TAB   = matchMedia('(min-width:641px) and (max-width:1024px)').matches;
 
 /* ── RELOJ DE BUENOS AIRES (dato, no ornamento) ── */
 (function(){
@@ -442,7 +460,7 @@ if(RM)document.body.classList.remove('pre');
 
 /* ── ESTELA DE IMÁGENES (6 nodos reciclados) ── */
 (function(){
-  if(RM||MOB)return;
+  if(RM)return;
   const SRC=[
     'https://acdn-us.mitiendanube.com/stores/004/814/798/products/tapado-kimono-brushed-takai-7-ad2c2f23976c6c883217194294041586-640-0.webp',
     'https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0087-b7a922169f6f8b83a117830243699603-640-0.jpg',
@@ -460,22 +478,44 @@ if(RM)document.body.classList.remove('pre');
     im.className='trailimg';im.alt='';im.loading='lazy';
     pool.appendChild(im);nodes.push(im);
   }
-  let idx=0,src=0,lx=-999,ly=-999;
-  sec.addEventListener('pointermove',e=>{
-    const r=sec.getBoundingClientRect();
-    const x=e.clientX-r.left, y=e.clientY-r.top;
-    if(Math.hypot(x-lx,y-ly)<85)return;
-    lx=x;ly=y;
+  let idx=0,src=0;
+  const fire=(x,y)=>{
     const n=nodes[idx];idx=(idx+1)%N;
     n.src=SRC[src];src=(src+1)%SRC.length;
-    n.style.left=x+'px';n.style.top=y+'px';
+    n.style.left=x;n.style.top=y;
     n.classList.remove('live');void n.offsetWidth;n.classList.add('live');
-  });
+  };
+  if(FINE){
+    let lx=-999,ly=-999;
+    sec.addEventListener('pointermove',e=>{
+      const r=sec.getBoundingClientRect();
+      const x=e.clientX-r.left, y=e.clientY-r.top;
+      if(Math.hypot(x-lx,y-ly)<85)return;
+      lx=x;ly=y;
+      fire(x+'px',y+'px');
+    });
+  }else{
+    /* F2(b)+PASO4: re-mapeo a scroll — seeds deterministas a lo largo del recorrido */
+    let s=20260813;
+    const rnd=()=>{s=(Math.imul(s,1664525)+1013904223)>>>0;return s/4294967296};
+    const seeds=[];
+    for(let i=0;i<12;i++)seeds.push({t:(i+0.5)/12,x:14+rnd()*72,y:18+rnd()*64});
+    let lastP=-1;
+    addEventListener('scroll',()=>{
+      const r=sec.getBoundingClientRect();
+      const p=Math.min(Math.max((innerHeight-r.top)/(r.height+innerHeight),0),1);
+      if(lastP<0){lastP=p;return}
+      if(p!==lastP)seeds.forEach(sd=>{
+        if((lastP-sd.t)*(p-sd.t)<0||p===sd.t)fire(sd.x+'%',sd.y+'%');
+      });
+      lastP=p;
+    },{passive:true});
+  }
 })();
 
-/* ── TIRA INERCIAL (pointer + lerp) ── */
+/* ── TIRA INERCIAL (pointer + lerp) — solo FINE; touch usa scroll nativo (F6) ── */
 (function(){
-  if(RM||MOB)return;
+  if(RM||!FINE)return;
   const strip=document.getElementById('strip'), track=document.getElementById('striptrack');
   let target=0,down=false,startX=0,base=0,vel=0,lastX=0;
   const bounds=()=>Math.min(0,strip.clientWidth-track.scrollWidth-28);
@@ -513,8 +553,9 @@ if(RM)document.body.classList.remove('pre');
   const spot=document.getElementById('spot'), dup=spot.querySelector('.dup');
   let mx=innerWidth/2,my=innerHeight/2,dx=mx,dy=my,rx=mx,ry=my;
   let sx=mx,sy=my,sr=0,inSpot=false;
+  let tapX=0,tapY=0,tapAt=-1e9;
   let lastY=scrollY,velN=0,es=1,esv=0;
-  if(!MOB){
+  if(FINE){
     addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
     document.querySelectorAll('a,button,.piece,.tile').forEach(el=>{
       el.addEventListener('mouseenter',()=>ring.classList.add('big'));
@@ -522,6 +563,12 @@ if(RM)document.body.classList.remove('pre');
     });
     spot.addEventListener('mouseenter',()=>{inSpot=true});
     spot.addEventListener('mouseleave',()=>{inSpot=false});
+  }else{
+    /* F2(a)+PASO4: reflector — salto al tap */
+    spot.addEventListener('pointerdown',e=>{
+      const r=spot.getBoundingClientRect();
+      tapX=e.clientX-r.left;tapY=e.clientY-r.top;tapAt=performance.now();
+    });
   }
   function frame(t){
     requestAnimationFrame(frame);
@@ -530,7 +577,7 @@ if(RM)document.body.classList.remove('pre');
     const y=scrollY;
     velN+=(Math.min(Math.abs(y-lastY)/40,1)-velN)*0.2;
     lastY=y;
-    if(!MOB){
+    if(FINE){
       /* cursor doble masa */
       dx+=(mx-dx)*0.55;dy+=(my-dy)*0.55;
       rx+=(mx-rx)*0.13;ry+=(my-ry)*0.13;
@@ -544,16 +591,31 @@ if(RM)document.body.classList.remove('pre');
       dup.style.setProperty('--sx',sx+'px');
       dup.style.setProperty('--sy',sy+'px');
       dup.style.setProperty('--sr',sr+'px');
-      /* apilado: la anterior se encoge y se apaga */
-      for(let i=0;i<pieces.length-1;i++){
-        const nt=pieces[i+1].getBoundingClientRect().top;
-        const p=Math.min(Math.max(1-nt/innerHeight,0),1);
-        pieces[i].style.transform='scale('+(1-p*0.06)+')';
-        shades[i].style.opacity=(p*0.55).toFixed(3);
+    }else{
+      /* reflector en autopiloto circular lento; el tap lo re-ancla 2.6s */
+      const rSpot=spot.getBoundingClientRect();
+      if(rSpot.bottom>-160&&rSpot.top<innerHeight+160){
+        let txp,typ;
+        if(t-tapAt<2600){txp=tapX;typ=tapY}
+        else{
+          txp=rSpot.width*0.5+rSpot.width*0.3*Math.cos(t/4200);
+          typ=rSpot.height*0.5+rSpot.height*0.28*Math.sin(t/3400);
+        }
+        sx+=(txp-sx)*0.06;sy+=(typ-sy)*0.06;sr+=(95-sr)*0.05;
+        dup.style.setProperty('--sx',sx+'px');
+        dup.style.setProperty('--sy',sy+'px');
+        dup.style.setProperty('--sr',sr+'px');
       }
-      /* tira inercial */
-      if(window.__strip)window.__strip();
     }
+    /* apilado: la anterior se encoge y se apaga (por scroll: portable a touch) */
+    for(let i=0;i<pieces.length-1;i++){
+      const nt=pieces[i+1].getBoundingClientRect().top;
+      const p=Math.min(Math.max(1-nt/innerHeight,0),1);
+      pieces[i].style.transform='scale('+(1-p*0.06)+')';
+      shades[i].style.opacity=(p*0.55).toFixed(3);
+    }
+    /* tira inercial (definida solo en FINE) */
+    if(window.__strip)window.__strip();
     /* texto elástico con rebote */
     const tgt=1+velN*0.16;
     esv+=(tgt-es)*0.14;esv*=0.8;es+=esv;

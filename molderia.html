@@ -77,7 +77,7 @@ header{display:flex;justify-content:space-between;align-items:center;padding:cal
   color:var(--white);mix-blend-mode:difference;opacity:.85;pointer-events:none}
 
 /* ═══ HERO + TEXTO SOBRE TRAZADO (#32) ═══ */
-#hero{position:relative;display:grid;grid-template-columns:5fr 7fr;min-height:calc(100vh - var(--barra));border-bottom:1px solid var(--black)}
+#hero{position:relative;display:grid;grid-template-columns:5fr 7fr;min-height:calc(100vh - var(--barra));min-height:calc(100svh - var(--barra));border-bottom:1px solid var(--black)}
 .hero-txt{padding:8vh 2vw 6vh 66px;display:flex;flex-direction:column;justify-content:space-between;background:var(--white);border-right:1px solid var(--black)}
 .hero-txt h1{font-family:var(--display);font-size:clamp(3.4rem,9vw,8.6rem);line-height:.84;text-transform:uppercase;letter-spacing:.01em}
 .stroke-t{-webkit-text-stroke:1px var(--black);color:transparent;font-family:var(--display);font-size:clamp(3.4rem,9vw,8.6rem);line-height:.84;text-transform:uppercase}
@@ -86,6 +86,8 @@ header{display:flex;justify-content:space-between;align-items:center;padding:cal
 .hero-data{font-size:10px;text-transform:uppercase;color:var(--g-500);line-height:2.1}
 .hero-plano{position:relative;overflow:hidden;min-height:60vh}
 .hero-plano svg{position:absolute;inset:0;width:100%;height:100%}
+/* variantes solo-teléfono (PASO 6): ocultas por defecto — el desktop no cambia */
+.hero-plano svg.plano-ph,.lbl2-ph,.cap-ph{display:none}
 .seam-line{fill:none;stroke:var(--black);stroke-width:1.5;stroke-dasharray:7 5}
 .seam-txt{font-family:var(--mono);font-size:15px;letter-spacing:.28em;fill:var(--black);text-transform:uppercase}
 .mk{stroke:var(--black);stroke-width:1;fill:none}
@@ -105,7 +107,7 @@ header{display:flex;justify-content:space-between;align-items:center;padding:cal
 
 /* ═══ PINEADO MULTI-ETAPA (#6): EL ARMADO ═══ */
 .pin-wrap{position:relative;height:440vh;border-bottom:1px solid var(--black)}
-.pin-vp{position:sticky;top:var(--barra);height:calc(100vh - var(--barra));overflow:hidden;
+.pin-vp{position:sticky;top:var(--barra);height:calc(100vh - var(--barra));height:calc(100dvh - var(--barra));overflow:hidden;
   display:grid;grid-template-columns:4fr 8fr;gap:0}
 .pin-meta{padding:7vh 2vw 6vh 66px;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--black);background:var(--white)}
 .pin-meta h2{font-family:var(--display);font-size:clamp(2.2rem,4.6vw,4.4rem);line-height:.88;text-transform:uppercase}
@@ -172,7 +174,7 @@ header{display:flex;justify-content:space-between;align-items:center;padding:cal
 
 /* ═══ PANTALLA DIVIDIDA (#53): PLANO / PRENDA ═══ */
 .split{display:grid;grid-template-columns:5fr 7fr;border-bottom:1px solid var(--black)}
-.split .plano{position:sticky;top:var(--barra);align-self:start;height:calc(100vh - var(--barra));
+.split .plano{position:sticky;top:var(--barra);align-self:start;height:calc(100vh - var(--barra));height:calc(100dvh - var(--barra));
   border-right:1px solid var(--black);padding:5vh 2vw;display:flex;flex-direction:column}
 .split .plano h2{font-family:var(--display);font-size:clamp(1.8rem,3.4vw,3rem);line-height:.9;text-transform:uppercase;margin-bottom:2vh}
 .split .plano svg{flex:1;width:100%;min-height:0}
@@ -227,30 +229,67 @@ footer{border-top:1px solid var(--black);padding:60px 28px 34px;font-size:10px;t
   .strip{transform:none}
   .tajos-fig .strip{transition:none}
 }
-/* ═══ MOBILE ═══ */
-@media(max-width:820px){
+/* ═══ F1 · CAPACIDAD: TOUCH (independiente del ancho) ═══ */
+@media (hover:none),(pointer:coarse){
+  :root{--barra:48px}
   body,a,button,.btn,.hd-r button{cursor:auto}
   #cur,#cur-ring{display:none}
+  /* F4: área táctil ≥44px por padding, no por font-size */
+  #barra a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;margin-left:-12px}
+  header .lockup{min-height:44px}
+  .hd-r button{min-height:44px;padding:10px 8px}
+  .btn{display:inline-flex;align-items:center;min-height:44px}
+  .f-grid a{display:flex;align-items:center;min-height:44px;padding:0}
+  /* calco sin FINE: visible y anclado al progreso de scroll (JS); se apaga en la etapa PRENDA */
+  .calco{opacity:1}
+  .pin-vp.st4 .calco{opacity:0}
+}
+/* ═══ F1 · ANCHO: TELÉFONO (≤640) ═══ */
+@media(max-width:640px){
   .vert-kana{display:none}
-  .calco{display:none}
   header{padding:calc(var(--barra) + 14px) 22px 14px}
   .hd-r{gap:14px}
   .hd-r>span{display:none}
   #hero{grid-template-columns:1fr;min-height:auto}
   .hero-txt{padding:6vh 22px 5vh;border-right:none;border-bottom:1px solid var(--black)}
   .hero-plano{min-height:52vh}
+  /* PASO 6: la costura se redibuja en 2 tramos apilados — todo el texto de medidas */
+  .hero-plano svg:not(.plano-ph){display:none}
+  .hero-plano svg.plano-ph{display:block}
+  .plano-ph .seam-txt{font-size:17px}
   .manif{padding:10vh 22px}
   .pin-wrap{height:380vh}
   .pin-vp{grid-template-columns:1fr;grid-template-rows:auto 1fr}
   .pin-meta{padding:3vh 22px;border-right:none;border-bottom:1px solid var(--black);gap:8px}
   .pin-meta .desc{min-height:0;display:none}
   .pin-meta .renuncia{display:none}
+  /* F5: rótulos del molde ≥9px computados en 375 */
+  .pz .lbl{font-size:30px}
+  .pz .lbl2,svg.molde>text.lbl2{font-size:30px}
+  svg.molde>text.lbl2-d{display:none}
+  svg.molde>text.lbl2-ph{display:inline}
+  .calco{width:min(300px,72vw);height:190px}
   .tajos{padding:9vh 22px}
   .tajos-fig{height:56vh;gap:5px}
   .split{grid-template-columns:1fr}
   .split .plano{position:static;height:52vh;border-right:none;border-bottom:1px solid var(--black)}
+  .split .plano svg text{font-size:19px!important}
+  .split .plano svg text.cap-d{display:none}
+  .split .plano svg text.cap-ph{display:inline}
   .split .der{padding:7vh 22px}
   .split .der article:nth-child(even){margin-left:0}
+}
+/* ═══ F1 · ANCHO: TABLET (641–1024): layout de desktop con gutter propio ═══ */
+@media(min-width:641px) and (max-width:1024px){
+  .hero-txt{padding-left:44px}
+  .manif{padding:12vh 28px 12vh 44px}
+  .pin-meta{padding-left:44px}
+  .tajos{padding-left:44px}
+  /* F5: el molde renderiza a escala ~0.40–0.64 del viewBox en este rango — sin esto los rótulos computan 5–8px */
+  .pz .lbl,.pz .lbl2,svg.molde>text.lbl2{font-size:24px}
+  .split .plano svg text{font-size:16px!important}
+  .split .plano svg text.cap-d{display:none}
+  .split .plano svg text.cap-ph{display:inline}
 }
 </style>
 </head>
@@ -323,6 +362,23 @@ footer{border-top:1px solid var(--black);padding:60px 28px 34px;font-size:10px;t
       <!-- piquetes sueltos sobre la costura -->
       <path class="mk" d="M244,262 l8,14 l8,-14"/>
       <path class="mk" d="M470,138 l8,14 l8,-14"/>
+    </svg>
+    <!-- PASO 6 · teléfono: viewBox propio, costura en 2 tramos apilados, texto de medidas completo -->
+    <svg class="plano-ph" viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+      <defs>
+        <marker id="arr-ph" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#000"/></marker>
+      </defs>
+      <path id="seam-a" class="seam-line" d="M14,180 C120,60 280,60 386,150"/>
+      <text class="seam-txt"><textPath id="seamtp-a" href="#seam-a" startOffset="0">68 CM :: TALLE 2 :: HILO DE LA TELA -&gt; 24 CM :: PIQUETE :: 68 CM :: TALLE 2 :: HILO DE LA TELA -&gt; 24 CM :: PIQUETE :: 68 CM :: TALLE 2 :: HILO DE LA TELA -&gt; 24 CM :: PIQUETE ::</textPath></text>
+      <path id="seam-b" class="seam-line" d="M14,420 C120,300 280,300 386,390"/>
+      <text class="seam-txt"><textPath id="seamtp-b" href="#seam-b" startOffset="0">型紙 :: 42 CM :: MANGA ×2 :: AL HILO -&gt; 型紙 :: 42 CM :: MANGA ×2 :: AL HILO -&gt; 型紙 :: 42 CM :: MANGA ×2 :: AL HILO -&gt;</textPath></text>
+      <path class="mk" d="M30,244 h26 M43,231 v26"/>
+      <circle class="mk" cx="344" cy="470" r="10"/>
+      <path class="mk" d="M334,470 h20 M344,460 v20"/>
+      <path class="mk" d="M188,88 l8,14 l8,-14"/>
+      <path class="mk" d="M188,328 l8,14 l8,-14"/>
+      <line x1="330" y1="210" x2="330" y2="330" stroke="#000" stroke-width="1.2" marker-start="url(#arr-ph)" marker-end="url(#arr-ph)"/>
+      <text class="seam-txt" x="272" y="356">AL HILO</text>
     </svg>
     <div class="hero-tag"><span lang="ja" aria-hidden="true">型紙</span> :: PLIEGO 1:5 :: TINTA 1.5PX</div>
   </div>
@@ -421,7 +477,8 @@ footer{border-top:1px solid var(--black);padding:60px 28px 34px;font-size:10px;t
           </g>
         </g>
         <!-- rótulo del pliego -->
-        <text class="lbl2" x="30" y="600">KIMONO.TAKAI/001 :: PLIEGO 1:5 :: 6 PIEZAS :: PIQUETES MARCADOS</text>
+        <text class="lbl2 lbl2-d" x="30" y="600">KIMONO.TAKAI/001 :: PLIEGO 1:5 :: 6 PIEZAS :: PIQUETES MARCADOS</text>
+        <text class="lbl2 lbl2-ph" x="30" y="600">TAKAI/001 :: 1:5 :: 6 PIEZAS</text>
       </svg>
       <div class="foto">
         <img id="foto-takai" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/tapado-kimono-brushed-takai-7-ad2c2f23976c6c883217194294041586-1024-1024.webp" alt="Kimono Takai pintado a mano, la prenda armada" loading="lazy">
@@ -480,7 +537,8 @@ footer{border-top:1px solid var(--black);padding:60px 28px 34px;font-size:10px;t
         <line x1="308" y1="100" x2="308" y2="460" stroke="#000" stroke-width="1.2" marker-start="url(#arr3)" marker-end="url(#arr3)"/>
         <text class="lbl" transform="rotate(90 322 150)" x="322" y="150" style="font:12.5px 'JetBrains Mono',monospace;letter-spacing:.14em">TRASERO ×2 · AL HILO</text>
       </g>
-      <text x="30" y="548" style="font:10.5px 'JetBrains Mono',monospace;letter-spacing:.1em" fill="#5c5c5c">PM/PANTALONES/WAKUSEI :: PLIEGO 1:5 :: PIQUETES EN RODILLA</text>
+      <text class="cap-d" x="30" y="548" style="font:10.5px 'JetBrains Mono',monospace;letter-spacing:.1em" fill="#5c5c5c">PM/PANTALONES/WAKUSEI :: PLIEGO 1:5 :: PIQUETES EN RODILLA</text>
+      <text class="cap-ph" x="30" y="548" style="font:10.5px 'JetBrains Mono',monospace;letter-spacing:.1em" fill="#5c5c5c">WAKUSEI :: PLIEGO 1:5</text>
     </svg>
     <div class="pie"><span>PLANO FIJO</span><span data-scr>PRENDA 01—03</span></div>
   </div>
@@ -528,7 +586,10 @@ footer{border-top:1px solid var(--black);padding:60px 28px 34px;font-size:10px;t
 
 <script>
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const MOB = matchMedia('(max-width: 820px)').matches;
+/* F1: la capacidad decide los efectos de cursor; el ancho decide el layout */
+const FINE  = matchMedia('(hover:hover) and (pointer:fine)').matches;
+const PHONE = matchMedia('(max-width:640px)').matches;
+const TAB   = matchMedia('(min-width:641px) and (max-width:1024px)').matches;
 
 /* ── LQIP: fondo gris, la imagen entra al cargar ── */
 (function(){
@@ -541,9 +602,9 @@ const MOB = matchMedia('(max-width: 820px)').matches;
   });
 })();
 
-/* ── CURSOR DOBLE MASA ── */
+/* ── CURSOR DOBLE MASA (solo FINE) ── */
 (function(){
-  if(RM||MOB)return;
+  if(RM||!FINE)return;
   const dot=document.getElementById('cur'), ring=document.getElementById('cur-ring');
   let mx=innerWidth/2,my=innerHeight/2,dx=mx,dy=my,rx=mx,ry=my;
   addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
@@ -600,17 +661,19 @@ const MOB = matchMedia('(max-width: 820px)').matches;
   document.querySelectorAll('[data-cortina]').forEach(s=>io.observe(s));
 })();
 
-/* ── TEXTO SOBRE TRAZADO (#32): las medidas corren por la costura ── */
+/* ── TEXTO SOBRE TRAZADO (#32): las medidas corren por la costura
+   (desktop: 1 trazo · teléfono: 2 tramos apilados, mismo motor) ── */
 (function(){
-  const tp=document.getElementById('seamtp');
-  if(!tp||RM)return;
+  const tps=['seamtp','seamtp-a','seamtp-b'].map(id=>document.getElementById(id)).filter(Boolean);
+  if(!tps.length||RM)return;
   let t=0,off=0;
   addEventListener('scroll',()=>{t=scrollY*.14},{passive:true});
   (function lp(){
     requestAnimationFrame(lp);
     if(document.hidden||Math.abs(t-off)<.05)return;
     off+=(t-off)*.08;
-    tp.setAttribute('startOffset',(-(off%700)).toFixed(1));
+    const v=(-(off%700)).toFixed(1);
+    for(const tp of tps)tp.setAttribute('startOffset',v);
   })();
 })();
 
@@ -647,25 +710,43 @@ const MOB = matchMedia('(max-width: 820px)').matches;
   upd();
 })();
 
-/* ── PAPEL DE CALCO (#22): sigue al cursor con lerp sobre el molde ── */
+/* ── PAPEL DE CALCO (#22): con FINE sigue al cursor con lerp;
+   sin FINE se ancla al progreso de scroll del pin (F2-b) ── */
 (function(){
-  if(RM||MOB)return;
   const frame=document.querySelector('.pin-frame'), cal=document.getElementById('calco');
-  if(!frame||!cal)return;
-  let mx=40,my=40,cx=40,cy=40,on=false;
-  frame.addEventListener('mousemove',e=>{
-    const r=frame.getBoundingClientRect();
-    mx=Math.min(r.width-350,Math.max(6,e.clientX-r.left-170));
-    my=Math.min(r.height-260,Math.max(6,e.clientY-r.top-125));
-    on=true;
-  });
-  frame.addEventListener('mouseleave',()=>{on=false});
-  (function lp(){
-    requestAnimationFrame(lp);
-    if(document.hidden||!on)return;
-    cx+=(mx-cx)*.1; cy+=(my-cy)*.1;
-    cal.style.transform=`translate3d(${cx.toFixed(1)}px,${cy.toFixed(1)}px,0)`;
-  })();
+  if(RM||!frame||!cal)return;
+  if(FINE){
+    let mx=40,my=40,cx=40,cy=40,on=false;
+    frame.addEventListener('mousemove',e=>{
+      const r=frame.getBoundingClientRect();
+      mx=Math.min(r.width-350,Math.max(6,e.clientX-r.left-170));
+      my=Math.min(r.height-260,Math.max(6,e.clientY-r.top-125));
+      on=true;
+    });
+    frame.addEventListener('mouseleave',()=>{on=false});
+    (function lp(){
+      requestAnimationFrame(lp);
+      if(document.hidden||!on)return;
+      cx+=(mx-cx)*.1; cy+=(my-cy)*.1;
+      cal.style.transform=`translate3d(${cx.toFixed(1)}px,${cy.toFixed(1)}px,0)`;
+    })();
+  }else{
+    const wrap=document.querySelector('.pin-wrap');
+    if(!wrap)return;
+    let tick=false;
+    function upd(){
+      tick=false;
+      const total=wrap.offsetHeight-innerHeight;
+      if(total<=0)return;
+      const p=Math.min(1,Math.max(0,-wrap.getBoundingClientRect().top/total));
+      const r=frame.getBoundingClientRect();
+      const x=6+Math.max(0,r.width-cal.offsetWidth-12)*p;
+      const y=6+Math.max(0,r.height-cal.offsetHeight-12)*(.5-.5*Math.cos(p*Math.PI*2));
+      cal.style.transform='translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,0)';
+    }
+    addEventListener('scroll',()=>{if(!tick){tick=true;requestAnimationFrame(upd)}},{passive:true});
+    upd();
+  }
 })();
 
 /* ── PERSIANAS / TAJOS (#50): cinco franjas entran desfasadas ── */

@@ -17,6 +17,9 @@
   --mono:"JetBrains Mono",ui-monospace,monospace;
   --jp:"Noto Sans JP",sans-serif;
   --bg:var(--black); --fg:var(--white);
+  /* F5: pisos tipográficos — tokens del takeover desacoplados del display (colapsaban a 8.4px/4.2px) */
+  --text-kana-menu:clamp(11px,2.6vw,15px);
+  --text-n-menu:clamp(9px,2vw,12px);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{-webkit-font-smoothing:antialiased}
@@ -88,7 +91,7 @@ header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-c
   writing-mode:vertical-rl;color:var(--white);mix-blend-mode:difference;opacity:.85}
 
 /* ═══ HERO WEBGL ═══ */
-#hero{position:relative;height:100vh;overflow:hidden}
+#hero{position:relative;height:100vh;height:100svh;overflow:hidden}
 #gl{position:absolute;inset:0;width:100%;height:100%;display:block}
 /* Fallback sin WebGL (kill-switch / contexto perdido): misma imagen, en grises, vía CSS */
 #hero.gl-off::before{content:"";position:absolute;inset:0;
@@ -105,7 +108,7 @@ header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-c
 .hero-mark{width:calc(100vw - 56px);height:auto;fill:var(--white)}
 .hero-sub{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:22px;
   font-size:10px;text-transform:uppercase;color:var(--g-300)}
-@media(max-width:820px){
+@media(max-width:640px){
   .hero-mark{width:calc(100vw - 44px)}
 }
 .hero-jp{position:absolute;top:16vh;right:28px;z-index:5;text-align:right;font-family:var(--jp);font-size:12px;letter-spacing:.3em;color:var(--g-300);line-height:2.2}
@@ -121,7 +124,7 @@ header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-c
 
 /* ═══ MANIFIESTO BUSHIDO ═══ */
 .bushido{padding:16vh 28px 16vh 66px;border-bottom:1px solid var(--g-700)}
-@media(max-width:820px){.bushido{padding:12vh 22px}}
+@media(max-width:640px){.bushido{padding:12vh 22px}}
 .bushido .lead{font-family:var(--geo);font-weight:400;font-size:clamp(1.6rem,3.4vw,3rem);line-height:1.22;max-width:22ch;letter-spacing:-.01em}
 .bushido .lead b{font-weight:800}
 .virtues{display:flex;flex-wrap:wrap;gap:0;margin-top:8vh;border-top:1px solid var(--g-700)}
@@ -134,7 +137,7 @@ header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-c
 
 /* ═══ SCROLL HORIZONTAL PINEADO ═══ */
 #pin{position:relative;height:400vh}
-#pin .sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center}
+#pin .sticky{position:sticky;top:0;height:100vh;height:100dvh;overflow:hidden;display:flex;align-items:center}
 #pin .track{display:flex;gap:4vw;padding:0 28px;will-change:transform}
 .panel{flex:0 0 auto;width:min(34vw,420px);position:relative}
 .panel img{width:100%;aspect-ratio:3/4;object-fit:cover;filter:grayscale(1) contrast(1.12)}
@@ -146,7 +149,7 @@ header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-c
 .pin-head .big{font-family:var(--jp);font-size:clamp(3rem,8vw,6rem);font-weight:700;line-height:1;color:var(--g-800)}
 
 /* ═══ REVELADO POR CURSOR (linterna) ═══ */
-#reveal{position:relative;height:100vh;overflow:hidden;border-top:1px solid var(--g-700)}
+#reveal{position:relative;height:100vh;height:100dvh;overflow:hidden;border-top:1px solid var(--g-700)}
 #reveal .under,#reveal .over{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
 #reveal .under{background:var(--g-900);padding:0}
 #reveal .under img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.15) brightness(1.05)}
@@ -157,7 +160,7 @@ header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-c
 
 /* ═══ GRILLA ASIMÉTRICA + PARALLAX ═══ */
 .shop{padding:14vh 28px 14vh 66px;background:var(--white);color:var(--black)}
-@media(max-width:820px){.shop{padding:12vh 22px}}
+@media(max-width:640px){.shop{padding:12vh 22px}}
 .shop-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px;
   border-bottom:1px solid var(--black);padding-bottom:14px;margin-bottom:7vh}
 .shop-head h2{font-family:var(--display);font-size:clamp(2.4rem,7vw,6rem);line-height:.85;text-transform:uppercase}
@@ -175,7 +178,7 @@ header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-c
 .p--b{grid-column:7/span 4;margin-top:10vh}
 .p--c{grid-column:2/span 3}
 .p--d{grid-column:6/span 6;margin-top:-6vh}
-@media(max-width:820px){.p--a,.p--b,.p--c,.p--d{grid-column:1/span 12;margin-top:0}}
+@media(max-width:640px){.p--a,.p--b,.p--c,.p--d{grid-column:1/span 12;margin-top:0}}
 
 /* ═══ TIPO HIPERTROFIADA AMPUTADA ═══ */
 .oversize{padding:12vh 0;overflow:hidden;border-top:1px solid var(--g-700);border-bottom:1px solid var(--g-700)}
@@ -221,14 +224,41 @@ footer{border-top:1px solid var(--g-700);padding:60px 28px 34px;font-size:10px;t
   #pin .sticky{position:static;height:auto;padding:12vh 0}
   #pin .track{overflow-x:auto;transform:none!important}
 }
-@media(max-width:820px){
+/* ═══ F1 CAPACIDAD: el cursor, los hovers y el magnetismo dependen del input, jamás del ancho ═══ */
+@media (hover:none),(pointer:coarse){
   body,a,.hd-r button,#take .tk-top button{cursor:auto}
-  #cur,#cur-ring{display:none}.vert-kana{display:none}
+  #cur,#cur-ring{display:none}
+  /* hovers neutralizados: sin puntero que los sostenga, no deben quedar pegados al tap */
+  .v:hover{background:transparent;color:var(--fg)}
+  .panel:hover img{filter:grayscale(1) contrast(1.12)}
+  .p:hover img{filter:grayscale(1) contrast(1.08)}
+  #take nav a:hover{padding-left:0}
+  #viabar a:hover{color:var(--white)}
+  /* F4: targets táctiles ≥44px vía padding/altura, nunca font-size */
+  #viabar{height:44px}
+  #viabar a{display:inline-flex;align-items:center;height:100%;padding:0 10px;margin-left:-10px}
+  #prog{top:44px}
+  header{top:44px}
+  .hd-l{min-height:44px}
+  .hd-r button{min-height:44px;padding:10px 0}
+  #take{padding:62px 28px 34px}
+  #take .tk-top button{min-height:44px;padding:10px 0 10px 14px}
+  #take nav a{padding:7px 0}
+  .f-grid a{display:flex;align-items:center;min-height:44px;padding:0}
+}
+/* ═══ F1 TELÉFONO ≤640: solo layout ═══ */
+@media(max-width:640px){
+  .vert-kana{display:none}
   .hide-s{display:none}
-  .hero-type h1{font-size:22vw;white-space:normal}
   #pin{height:auto}#pin .sticky{position:static;height:auto;padding:12vh 0}
-  #pin .track{flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x mandatory}
+  /* F6: arrastre horizontal nativo con snap; el pan vertical sigue libre */
+  #pin .track{flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x mandatory;touch-action:pan-x pan-y;transform:none!important}
   .panel{width:78vw;scroll-snap-align:center}
+}
+/* ═══ F5: bajo 1025 el takeover abandona los em del display (colapsaban a 8.4px/4.2px) ═══ */
+@media(max-width:1024px){
+  #take nav a .jp{font-size:var(--text-kana-menu)}
+  #take nav a .n{font-size:var(--text-n-menu)}
 }
 </style>
 </head>
@@ -461,7 +491,10 @@ footer{border-top:1px solid var(--g-700);padding:60px 28px 34px;font-size:10px;t
 
 <script>
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const MOB = matchMedia('(max-width: 820px)').matches;
+/* F1: capacidad por input, layout por ancho — jamás cruzados */
+const FINE  = matchMedia('(hover:hover) and (pointer:fine)').matches; // efectos de cursor
+const PHONE = matchMedia('(max-width:640px)').matches;                 // layout teléfono
+const TAB   = matchMedia('(min-width:641px) and (max-width:1024px)').matches; // layout tablet
 
 /* ── LOADER HONESTO: el % refleja la precarga real de las imágenes ── */
 (function(){
@@ -490,9 +523,9 @@ const MOB = matchMedia('(max-width: 820px)').matches;
   setTimeout(fin,9000);
 })();
 
-/* ── CURSOR: resorte + magnetismo + estados ── */
+/* ── CURSOR: resorte + magnetismo + estados — solo con puntero fino ── */
 (function(){
-  if(RM||MOB)return;
+  if(RM||!FINE)return;
   const dot=document.getElementById('cur'), ring=document.getElementById('cur-ring'), lbl=ring.querySelector('span');
   let mx=innerWidth/2,my=innerHeight/2,dx=mx,dy=my,rx=mx,ry=my;
   addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
@@ -520,9 +553,9 @@ const MOB = matchMedia('(max-width: 820px)').matches;
 
 /* ── MAGNETISMO REAL (#40): botones de header y takeover.
      Desplazamiento ≤8px hacia el cursor en radio ~70px, resorte de retorno.
-     NUNCA en elementos de compra (CARRITO queda afuera). ── */
+     NUNCA en elementos de compra (CARRITO queda afuera). Confinado a FINE. ── */
 (function(){
-  if(RM||MOB)return;
+  if(RM||!FINE)return;
   const R=70,MAX=8;
   const els=[...document.querySelectorAll('[data-mag]')].map(el=>({el,x:0,y:0,vx:0,vy:0,tx:0,ty:0}));
   if(!els.length)return;
@@ -634,11 +667,20 @@ addEventListener('scroll',()=>{
   })(t0);
 })();
 
-/* ── SCROLL HORIZONTAL PINEADO ───────────── */
+/* ── SCROLL HORIZONTAL PINEADO — layout por ancho: en teléfono colapsa a snap nativo ── */
 (function(){
-  if(MOB||RM)return;
+  if(RM)return;
   const sec=document.getElementById('pin'),track=document.getElementById('track'),
         prog=document.getElementById('pinprog');
+  if(PHONE){
+    /* teléfono: el track scrollea nativo — el contador lee scrollLeft y no queda pegado en 01 */
+    track.addEventListener('scroll',()=>{
+      const max=track.scrollWidth-track.clientWidth;
+      const n=max>0?Math.min(5,Math.round(track.scrollLeft/max*4)+1):1;
+      prog.textContent=String(n).padStart(2,'0')+' / 05';
+    },{passive:true});
+    return;
+  }
   let cur=0;
   function upd(){
     const r=sec.getBoundingClientRect();
@@ -654,26 +696,44 @@ addEventListener('scroll',()=>{
   upd();
 })();
 
-/* ── REVELADO POR CURSOR (linterna) ──────── */
+/* ── REVELADO (linterna): con FINE sigue al cursor; sin FINE, AUTOPILOTO —
+     barrido elíptico lento por la imagen + re-centrado al tap (F2a) ── */
 (function(){
   const sec=document.getElementById('reveal'),ov=document.getElementById('overlay');
+  const paint=(x,y,r)=>{ov.style.webkitMaskImage=ov.style.maskImage=
+    `radial-gradient(circle ${r}px at ${x}% ${y}%, transparent 0 96%, #000 100%)`};
   if(RM){
     /* sin animación: agujero estático centrado — la imagen y el texto conviven */
-    ov.style.webkitMaskImage=ov.style.maskImage=
-      'radial-gradient(circle 170px at 50% 28%, transparent 0 96%, #000 100%)';
+    paint(50,28,170);
     return;
   }
-  let x=50,y=50,tx=50,ty=50,hov=false;
-  sec.addEventListener('mousemove',e=>{hov=true;const r=sec.getBoundingClientRect();
-    tx=(e.clientX-r.left)/r.width*100; ty=(e.clientY-r.top)/r.height*100});
-  sec.addEventListener('mouseleave',()=>{hov=false;tx=50;ty=50});
-  (function loop(){
-    x+=(tx-x)*.12;y+=(ty-y)*.12;
-    // máscara: agujero circular que sigue al cursor
-    ov.style.webkitMaskImage=ov.style.maskImage=
-      `radial-gradient(circle ${hov?170:0}px at ${x}% ${y}%, transparent 0 96%, #000 100%)`;
+  if(FINE){
+    let x=50,y=50,tx=50,ty=50,hov=false;
+    sec.addEventListener('mousemove',e=>{hov=true;const r=sec.getBoundingClientRect();
+      tx=(e.clientX-r.left)/r.width*100; ty=(e.clientY-r.top)/r.height*100});
+    sec.addEventListener('mouseleave',()=>{hov=false;tx=50;ty=50});
+    (function loop(){
+      x+=(tx-x)*.12;y+=(ty-y)*.12;
+      // máscara: agujero circular que sigue al cursor
+      paint(x,y,hov?170:0);
+      requestAnimationFrame(loop);
+    })();
+    return;
+  }
+  /* AUTOPILOTO táctil: la linterna barre sola; el tap la re-centra donde tocás */
+  let cx=50,cy=42,x=50,y=42;
+  sec.addEventListener('click',e=>{
+    const r=sec.getBoundingClientRect();
+    cx=Math.min(78,Math.max(22,(e.clientX-r.left)/r.width*100));
+    cy=Math.min(74,Math.max(26,(e.clientY-r.top)/r.height*100));
+  });
+  (function loop(t){
+    const s=t/1000;
+    const tx=cx+24*Math.cos(s*.33), ty=cy+16*Math.sin(s*.21);
+    x+=(tx-x)*.06; y+=(ty-y)*.06;
+    paint(x,y,150);
     requestAnimationFrame(loop);
-  })();
+  })(0);
 })();
 
 /* ── PARALLAX ASIMÉTRICO ─────────────────── */

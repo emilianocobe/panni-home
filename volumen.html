@@ -61,7 +61,7 @@ header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-c
   writing-mode:vertical-rl;color:var(--white);mix-blend-mode:difference;opacity:.85}
 
 /* ═══ HERO: PARALAJE 3 CAPAS (#21, simulado y declarado) ═══ */
-#hero{position:relative;min-height:100vh;overflow:hidden;display:grid;align-content:end;padding:0 28px 8vh 66px}
+#hero{position:relative;min-height:100vh;min-height:100svh;overflow:hidden;display:grid;align-content:end;padding:0 28px 8vh 66px}
 .plx{position:absolute;inset:0;z-index:1}
 .plx img{position:absolute;inset:-7%;width:114%;height:114%;object-fit:cover;object-position:50% 30%;filter:grayscale(1) contrast(1.15) brightness(.72);will-change:transform}
 .plx .l2{-webkit-mask-image:radial-gradient(ellipse 42% 55% at 50% 46%,#000 0 62%,transparent 100%);mask-image:radial-gradient(ellipse 42% 55% at 50% 46%,#000 0 62%,transparent 100%)}
@@ -80,7 +80,7 @@ header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-c
 
 /* ═══ VISOR: ROTACIÓN SIMULADA (#4) ═══ */
 #visor-sec{height:340vh;position:relative}
-.visor-pin{position:sticky;top:36px;height:calc(100vh - 36px);display:grid;grid-template-columns:1fr minmax(0,52vh) 1fr;align-items:center;overflow:hidden}
+.visor-pin{position:sticky;top:36px;height:calc(100vh - 36px);height:calc(100dvh - 36px);display:grid;grid-template-columns:1fr minmax(0,52vh) 1fr;align-items:center;overflow:hidden}
 #visor{grid-column:2;position:relative;aspect-ratio:3/4;max-height:78vh;width:100%;touch-action:pan-y;background:var(--g-900);border:1px solid var(--g-700)}
 #visor .view{position:absolute;inset:0;opacity:0;transition:opacity .45s ease}
 #visor .view.on{opacity:1}
@@ -103,7 +103,7 @@ header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-c
 #cmp img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.1)}
 #cmp .over{position:absolute;inset:0;clip-path:inset(0 calc(100% - var(--cut)) 0 0)}
 #cmp .over img{position:absolute;inset:0}
-#cmprange{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;cursor:none}
+#cmprange{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;cursor:none;touch-action:pan-y}
 #cmp .hand{position:absolute;top:0;bottom:0;left:var(--cut);width:0;pointer-events:none}
 #cmp .hand::before{content:"";position:absolute;top:0;bottom:0;left:-.5px;width:1px;background:var(--white)}
 #cmp .pill{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);background:var(--black);border:1px solid var(--white);padding:8px 10px;font-size:10px;letter-spacing:.1em;white-space:nowrap}
@@ -133,7 +133,7 @@ header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-c
 .drum{display:flex;justify-content:center;gap:1.1vw;perspective:1000px}
 .ct{flex:0 0 auto;width:min(140px,17vw);transform:rotateY(var(--ry,0deg));opacity:var(--op,1)}
 .ct img{width:100%;aspect-ratio:3/4;object-fit:cover;filter:grayscale(1) contrast(1.1)}
-.ct .cap{margin-top:8px;font-size:8px;text-transform:uppercase;color:var(--g-500);text-align:center;letter-spacing:.1em}
+.ct .cap{margin-top:8px;font-size:9px;text-transform:uppercase;color:var(--g-500);text-align:center;letter-spacing:.1em}
 
 /* ═══ FOOTER ═══ */
 footer{border-top:1px solid var(--g-700);padding:60px 28px 34px;font-size:10px;text-transform:uppercase}
@@ -163,10 +163,22 @@ footer{border-top:1px solid var(--g-700);padding:60px 28px 34px;font-size:10px;t
   .ct{transform:none}
 }
 
-/* ═══ MOBILE ═══ */
-@media(max-width:820px){
+/* ═══ F1 · CAPACIDAD: sin puntero fino (cursor y efectos de mouse, jamás por ancho) ═══ */
+@media (hover:none),(pointer:coarse){
   body,a,button,#cmprange{cursor:auto}
   #cur,#cur-ring{display:none}
+  .pcard::after{display:none}
+}
+/* ═══ F4 · TARGETS TÁCTILES ≥44PX (padding, no font-size) ═══ */
+@media (pointer:coarse){
+  #vbar a{display:flex;align-items:center;min-height:44px;padding:0 10px;margin-left:-10px}
+  header .lockup{min-height:44px}
+  #vnext{min-height:44px;padding:14px 20px}
+  .f-grid a{display:flex;align-items:center;min-height:44px;padding:0}
+  .skip:focus-visible{top:48px}
+}
+/* ═══ F1 · TELÉFONO ≤640 (solo layout) ═══ */
+@media(max-width:640px){
   .vert-kana{display:none}
   header{padding:14px 16px}
   #hmeta{font-size:9px;gap:10px}
@@ -187,6 +199,18 @@ footer{border-top:1px solid var(--g-700);padding:60px 28px 34px;font-size:10px;t
   .drum-wrap::-webkit-scrollbar{display:none}
   .drum{justify-content:flex-start;perspective:none;padding:0 20px;width:max-content}
   .ct{transform:none;width:34vw}
+}
+/* ═══ F1 · TABLET 641–1024 (PASO 7: visor a ancho completo, metadatos al costado) ═══ */
+@media(min-width:641px) and (max-width:1024px){
+  #cmp-sec,#persp{padding-right:28px}
+  .stage{gap:2.6vw}
+}
+/* el layout del visor tablet no debe pisar la degradación RM (lista estática) */
+@media(min-width:641px) and (max-width:1024px) and (prefers-reduced-motion:no-preference){
+  .visor-pin{grid-template-columns:minmax(0,1.35fr) minmax(200px,1fr);grid-template-rows:1fr 1fr;column-gap:3.5vw;padding:0 28px 0 66px}
+  #visor{grid-column:1;grid-row:1/3;align-self:center;max-height:calc(84vh - 36px);max-height:calc(84dvh - 36px)}
+  .visor-meta-l{grid-column:2;grid-row:1;padding:0 0 3vh;align-content:end}
+  .visor-meta-r{grid-column:2;grid-row:2;padding:3vh 0 0;align-content:start}
 }
 </style>
 </head>
@@ -384,7 +408,10 @@ footer{border-top:1px solid var(--g-700);padding:60px 28px 34px;font-size:10px;t
 
 <script>
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const MOB = matchMedia('(max-width: 820px)').matches;
+/* F1: la capacidad decide los efectos de cursor; el ancho decide el layout */
+const FINE  = matchMedia('(hover:hover) and (pointer:fine)').matches;
+const PHONE = matchMedia('(max-width:640px)').matches;
+const TAB   = matchMedia('(min-width:641px) and (max-width:1024px)').matches;
 /* kill-switch por hardware: sin WebGL en esta página, pero el visor degrada a 2 vistas */
 const DEG = (navigator.deviceMemory && navigator.deviceMemory < 4) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4);
 
@@ -414,7 +441,7 @@ const VISOR=(function(){
   }
   function calc(){
     let sIdx=0;
-    if(!MOB&&!RM){
+    if(!PHONE&&!RM){
       const r=sec.getBoundingClientRect();
       const total=sec.offsetHeight-innerHeight;
       if(total>60){
@@ -459,9 +486,9 @@ const VISOR=(function(){
   set();
 })();
 
-/* ── TILT ±6° con brillo especular (#58) — nunca en touch ni con RM ── */
+/* ── TILT ±6° con brillo especular (#58) — confinado a FINE, nunca por ancho ── */
 (function(){
-  if(RM||MOB)return;
+  if(RM||!FINE)return;
   document.querySelectorAll('.pcard').forEach(card=>{
     card.addEventListener('pointermove',e=>{
       if(e.pointerType==='touch')return;
@@ -509,7 +536,7 @@ const VISOR=(function(){
   const l1=hero.querySelector('.l1'), l2=hero.querySelector('.l2'), l3=hero.querySelector('.l3');
   let mx=innerWidth/2,my=innerHeight/2,dx=mx,dy=my,rx=mx,ry=my;
   let p1=0,p2=0,p3=0,q1=0,q2=0,q3=0;
-  if(!MOB){
+  if(FINE){
     addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
     document.querySelectorAll('a,button,#visor,#cmp,.pcard,.ct').forEach(el=>{
       el.addEventListener('mouseenter',()=>ring.classList.add('big'));
@@ -519,7 +546,7 @@ const VISOR=(function(){
   function frame(){
     requestAnimationFrame(frame);
     if(document.hidden)return;
-    if(!MOB){
+    if(FINE){
       /* cursor doble masa */
       dx+=(mx-dx)*0.55;dy+=(my-dy)*0.55;
       rx+=(mx-rx)*0.13;ry+=(my-ry)*0.13;

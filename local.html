@@ -16,6 +16,8 @@
   --geo:"Archivo",system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,monospace;
   --jp:"Noto Sans JP",sans-serif;
+  /* F5: piso tipográfico — el reloj deja de heredar tamaños colapsados; token propio ≥11px */
+  --text-reloj:clamp(11px,2.8vw,13px);
   /* ═══ #71 TEMA PROGRESIVO: estas cuatro variables se interpolan con el recorrido.
      El estado inicial lo fija la hora real de Buenos Aires (JS pone .t-dia o .t-noche). ═══ */
   --bg:#000; --fg:#fff; --line:#242424; --dim:#a8a8a8; --grain:.055;
@@ -83,7 +85,7 @@ header.hid{transform:translateY(calc(-100% - 38px))}
 #horario .st-closed{opacity:.6}
 
 /* ═══ #70 HERO — EL MONOGRAMA COMO MÁSCARA (#pm-mono con la fachada adentro) ═══ */
-#hero{position:relative;min-height:100vh;display:grid;place-items:center;padding:14vh 28px 10vh;overflow:hidden}
+#hero{position:relative;min-height:100vh;min-height:100svh;display:grid;place-items:center;padding:14vh 28px 10vh;overflow:hidden}
 #mono-hero{display:block;width:min(86vw,72vh);height:auto;margin:0 auto}
 /* pan lento 30s alternate: fotografía animada, no video — la vidriera declara la renuncia */
 #fachada-img{animation:pan 30s ease-in-out infinite alternate;will-change:transform}
@@ -140,8 +142,8 @@ header.hid{transform:translateY(calc(-100% - 38px))}
 /* ═══ #13 + #65 TRANSICIÓN DÍA/NOCHE — canvas 2D: la fachada tratada (grano + parpadeo)
    y el cruce entre día y noche guiado por una máscara de ruido (turbulence SVG). ═══ */
 #trans{position:relative;height:240vh;background:var(--black);color:var(--white)}
-#trans.flat{height:100vh}
-#trans .stick{position:sticky;top:0;height:100vh;overflow:hidden}
+#trans.flat{height:100vh;height:100dvh}
+#trans .stick{position:sticky;top:0;height:100vh;height:100dvh;overflow:hidden}
 #trans img.fb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.08)}
 #film{position:absolute;inset:0;width:100%;height:100%;display:block}
 .trans-cap{position:absolute;left:28px;bottom:24px;z-index:5;font-size:9px;letter-spacing:.14em;text-transform:uppercase;
@@ -166,21 +168,39 @@ footer{background:var(--black);color:var(--white);border-top:1px solid var(--g-8
   header{transform:none!important}
   .foco::before{opacity:1}
   .foco img{filter:grayscale(1) brightness(.92)}
-  #trans{height:100vh}
+  #trans{height:100vh;height:100dvh}
   #film{display:none}
 }
 
-/* ═══ MOBILE ═══ */
-@media(max-width:820px){
+/* ═══ F1 — CAPACIDAD (touch): el cursor custom no existe sin puntero fino;
+   F4: targets ≥44px por padding — la barra crece a 44 y empuja la persiana ═══ */
+@media (hover:none),(pointer:coarse){
   body,a,button{cursor:auto}
   #cur,#cur-ring{display:none}
+  #viabar{height:44px}
+  header{top:44px}
+  header.hid{transform:translateY(calc(-100% - 46px))}
+  #viabar a,header .lockup,header button{min-height:44px;display:inline-flex;align-items:center}
+  #horario{min-height:44px;align-items:center}
+}
+
+/* ═══ F1 — TABLET 641–1024: layout desktop (recupera el 40% del lienzo);
+   solo el reloj toma su token propio ═══ */
+@media (min-width:641px) and (max-width:1024px){
+  #horario{font-size:var(--text-reloj)}
+}
+
+/* ═══ F1 — TELÉFONO ≤640 (layout por ancho, jamás por input) ═══ */
+@media (max-width:640px){
   .vert-kana{display:none}
   .hide-s{display:none}
   #viabar{padding:0 16px}
   header{padding:12px 16px}
-  #horario{right:14px;bottom:12px;font-size:8px}
+  #horario{right:14px;bottom:12px;font-size:var(--text-reloj)}
   #hero{padding:12vh 16px 9vh}
-  #mono-hero,.hero-foot{width:92vw}
+  /* PASO 9: encuadre vertical del monograma-máscara (viewBox lo recorta el JS) */
+  #mono-hero{width:min(88vw,46vh);width:min(88vw,46svh)}
+  .hero-foot{width:92vw}
   .hero-title{left:16px}
   .hero-data{right:16px;top:13vh}
   #dia{padding:0 16px}
@@ -224,13 +244,13 @@ footer{background:var(--black);color:var(--white);border-top:1px solid var(--g-8
   </div>
 </header>
 
-<!-- ═══ #74 RELOJ REAL DE BUENOS AIRES (rótulo fijo) ═══ -->
-<div id="horario">
+<!-- ═══ #74 RELOJ REAL DE BUENOS AIRES (reloj-link: lleva a los datos del local) ═══ -->
+<a id="horario" href="#pie" aria-label="Honduras 4940 — horario y datos del local">
   <span>HONDURAS 4940 ::</span>
   <span id="clock">--:--:--</span>
   <span id="state" class="st-closed">::</span>
   <span id="stateja" lang="ja" aria-hidden="true"></span>
-</div>
+</a>
 
 <main id="contenido">
 
@@ -378,7 +398,7 @@ footer{background:var(--black);color:var(--white);border-top:1px solid var(--g-8
 
 </main>
 
-<footer>
+<footer id="pie">
   <div class="ft-top">
     <div>
       <div class="dir">HONDURAS 4940<br>PALERMO SOHO<br>BUENOS AIRES</div>
@@ -403,7 +423,10 @@ footer{background:var(--black);color:var(--white);border-top:1px solid var(--g-8
 
 <script>
 const RM  = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const MOB = matchMedia('(max-width: 820px)').matches;
+/* F1: la capacidad decide los efectos de cursor; el ancho decide el layout. Nunca cruzados. */
+const FINE  = matchMedia('(hover:hover) and (pointer:fine)').matches;
+const PHONE = matchMedia('(max-width:640px)').matches;
+const TAB   = matchMedia('(min-width:641px) and (max-width:1024px)').matches;
 /* Kill-switch por hardware (regla 1.11). Esta página no abre contexto WebGL:
    el tratamiento de la fachada es canvas 2D, y en equipos chicos ni eso. */
 const KILL = (navigator.deviceMemory && navigator.deviceMemory < 4) ||
@@ -428,6 +451,15 @@ document.getElementById('hero-estado').textContent =
 document.getElementById('dia-now').textContent =
   'AHORA :: '+NOW.hh+':'+NOW.mm+' BA :: TEMA INICIAL '+(DAY?'PAPEL':'TINTA');
 
+/* PASO 9: en teléfono la máscara toma encuadre vertical — la fachada es vertical y el
+   recorte 18..86 conserva la NN completa del monograma (la letra vive en x 19.5–84.2);
+   la caja de la imagen crece en alto para que el slice muestre más calle. */
+if(PHONE){
+  document.getElementById('mono-hero').setAttribute('viewBox','18 0 68 103');
+  const fi=document.getElementById('fachada-img');
+  fi.setAttribute('y','-30'); fi.setAttribute('height','163');
+}
+
 /* Si es de noche, el recorrido amanece: el día se lee al revés (NOCHE → TARDE → MAÑANA) */
 if(!DAY){
   const list=document.getElementById('momlist');
@@ -449,9 +481,9 @@ if(!DAY){
   setInterval(tick,1000);
 })();
 
-/* ── CURSOR DOBLE MASA (sistema) ── */
+/* ── CURSOR DOBLE MASA (sistema) — existe solo con puntero fino (F1) ── */
 (function(){
-  if(RM||MOB)return;
+  if(RM||!FINE)return;
   const dot=document.getElementById('cur'), ring=document.getElementById('cur-ring'), lbl=ring.querySelector('span');
   let mx=innerWidth/2,my=innerHeight/2,dx=mx,dy=my,rx=mx,ry=my;
   addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY},{passive:true});

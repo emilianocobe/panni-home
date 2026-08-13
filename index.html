@@ -35,7 +35,6 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--white);outline-offs
   border-bottom:1px solid var(--g-700);display:flex;justify-content:space-between;align-items:center;
   padding:0 28px;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase}
 #viabar a{color:var(--white)}
-#viabar a:hover{color:var(--g-300)}
 #viabar .via-tag{color:var(--g-300)}
 
 /* ═══ GRANO FÍLMICO ═══ */
@@ -66,7 +65,7 @@ header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-c
   writing-mode:vertical-rl;color:var(--white);mix-blend-mode:difference;opacity:.85}
 
 /* ═══ HERO ═══ */
-.hero{min-height:88vh;display:grid;align-content:end;padding:22vh 28px 8vh 66px;position:relative;border-bottom:1px solid var(--g-700)}
+.hero{min-height:88vh;min-height:88dvh;min-height:88svh;display:grid;align-content:end;padding:22vh 28px 8vh 66px;position:relative;border-bottom:1px solid var(--g-700)}
 .hero .kn{position:absolute;top:18vh;right:28px;text-align:right;font-family:var(--jp);font-size:12px;letter-spacing:.3em;color:var(--g-300);line-height:2.2}
 .hero h1{font-family:var(--display);font-size:clamp(3rem,11vw,10rem);line-height:.86;text-transform:uppercase;letter-spacing:.01em}
 .hero h1 .thin{color:transparent;-webkit-text-stroke:1px var(--white)}
@@ -76,7 +75,6 @@ header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-c
 /* ═══ MARQUESINA FINA ═══ */
 .mq{overflow:hidden;white-space:nowrap;border-bottom:1px solid var(--g-700);padding:12px 0}
 .mq__t{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.25em;color:var(--g-300);animation:mqa 44s linear infinite}
-.mq:hover .mq__t{animation-play-state:paused}
 @keyframes mqa{to{transform:translateX(-50%)}}
 
 /* ═══ ACTOS E INTERLUDIO ═══ */
@@ -91,16 +89,14 @@ header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-c
 
 /* ═══ SECCIÓN CAMINO ═══ */
 .camino{border-bottom:1px solid var(--g-700);padding:0 0 12vh}
-.card{display:block;position:relative;min-height:72vh;overflow:hidden;border-bottom:1px solid var(--g-700)}
+.card{display:block;position:relative;min-height:72vh;min-height:72dvh;overflow:hidden;border-bottom:1px solid var(--g-700)}
 .card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.15) brightness(.62);transition:filter .6s,transform .8s}
-.card:hover img{filter:grayscale(0) contrast(1.02) brightness(.72);transform:scale(1.025)}
 .card .veil{position:absolute;inset:0;background:linear-gradient(to top,#000 4%,rgba(0,0,0,.55) 45%,rgba(0,0,0,.25) 100%)}
-.card .in{position:relative;z-index:2;height:100%;min-height:72vh;display:flex;flex-direction:column;justify-content:space-between;padding:12vh 28px 5vh 66px}
+.card .in{position:relative;z-index:2;height:100%;min-height:72vh;min-height:72dvh;display:flex;flex-direction:column;justify-content:space-between;padding:12vh 28px 5vh 66px}
 .card .top{display:flex;justify-content:space-between;gap:14px;font-size:10px;text-transform:uppercase;color:var(--g-300)}
 .card h2{font-family:var(--display);font-size:clamp(3.2rem,12vw,11rem);line-height:.84;text-transform:uppercase}
 .card .kj{font-family:var(--jp);font-weight:700;font-size:clamp(2rem,6vw,5rem);line-height:1;color:var(--g-300);margin-top:14px}
 .card .go{margin-top:22px;font-size:11px;letter-spacing:.2em;color:var(--white)}
-.card:hover .go{text-decoration:underline;text-underline-offset:4px}
 
 /* argumentación */
 .arg{display:grid;grid-template-columns:220px 1fr;gap:5vh 4vw;padding:8vh 28px 0 66px;max-width:1250px}
@@ -126,7 +122,6 @@ th{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:upp
 td .cam{font-family:var(--display);font-size:1.15rem;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap}
 td .cam .ja-in{font-family:var(--jp);font-size:.85em;color:var(--g-300)}
 td{color:var(--g-100)}
-tr:hover td{background:var(--g-900)}
 tr.organos td{background:var(--g-900);color:var(--g-300)}
 tr.organos td b{color:var(--white);font-weight:800}
 
@@ -142,7 +137,6 @@ footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
 .f-term b{color:var(--white);font-weight:400}
 .f-links{display:flex;flex-wrap:wrap;gap:10px 34px;margin-bottom:44px}
 .f-links a{padding:2px 0;color:var(--g-300)}
-.f-links a:hover{color:var(--white);text-decoration:underline;text-underline-offset:4px}
 .f-sign{padding-top:16px;border-top:1px solid var(--g-700);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;color:var(--g-500);font-size:9px}
 
 @media(prefers-reduced-motion:reduce){
@@ -151,11 +145,28 @@ footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
   #cur,#cur-ring,#grain{display:none}
   .mq__t{animation:none!important}
 }
-@media(max-width:820px){
+/* ═══ F1 · CAPACIDAD: puntero fino — cursor custom y hovers viven acá ═══ */
+@media (hover:hover) and (pointer:fine){
+  #viabar a:hover{color:var(--g-300)}
+  .mq:hover .mq__t{animation-play-state:paused}
+  .card:hover img{filter:grayscale(0) contrast(1.02) brightness(.72);transform:scale(1.025)}
+  .card:hover .go{text-decoration:underline;text-underline-offset:4px}
+  tr:hover td{background:var(--g-900)}
+  .f-links a:hover{color:var(--white);text-decoration:underline;text-underline-offset:4px}
+}
+/* ═══ F1 · CAPACIDAD: táctil — F4 targets ≥44px ═══ */
+@media (hover:none),(pointer:coarse){
   body{cursor:auto}
   #cur,#cur-ring{display:none}
+  #viabar a{min-height:44px;display:inline-flex;align-items:center;align-self:flex-start}
+  .f-links{gap:0 34px}
+  .f-links a{min-height:44px;display:inline-flex;align-items:center}
+}
+/* ═══ F1 · TELÉFONO ═══ */
+@media (max-width:640px){
   .vert-kana{display:none}
-  #viabar{padding:0 22px}
+  #viabar{padding:0 22px;gap:12px}
+  #viabar .via-tag{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .hero{padding:20vh 22px 8vh}
   .card .in{padding:10vh 22px 5vh}
   .acto{padding:10vh 22px 5vh}
@@ -164,6 +175,62 @@ footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
   .arg .lbl{padding-top:0}
   .compare,.cierre{padding-left:22px;padding-right:22px}
   footer{padding-left:22px}
+  /* PASO 1 — la tabla se rediseña como tarjetas apiladas por camino */
+  .tbl-wrap{overflow:visible}
+  table,tbody,tr,td,caption{display:block}
+  thead{display:none}
+  table{min-width:0}
+  tr{border:1px solid var(--g-700);margin-bottom:16px}
+  td{border:0;border-top:1px solid var(--g-800);padding:12px 16px 14px}
+  td:first-child{border-top:0;padding-top:16px}
+  td .cam{white-space:normal}
+  td:nth-child(n+2)::before{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--g-500);margin-bottom:6px}
+  td:nth-child(2)::before{content:"DOMINANTE"}
+  td:nth-child(3)::before{content:"EFECTO CENTRAL"}
+  td:nth-child(4)::before{content:"RIESGO"}
+  td:nth-child(5)::before{content:"COSTO EN EL SITIO REAL"}
+}
+/* ═══ F1 · TABLET — tarjetas de camino a 2 columnas ═══ */
+@media (min-width:641px) and (max-width:1024px){
+  main{display:grid;grid-template-columns:1fr 1fr}
+  main>*{grid-column:1/-1;min-width:0}
+  main>.camino{grid-column:auto}
+  main>.camino.wide{grid-column:1/-1}
+  .camino:not(.wide){border-left:1px solid var(--g-700);margin-left:-1px}
+  .camino:not(.wide) .card{min-height:52vh;min-height:52dvh}
+  .camino:not(.wide) .card .in{min-height:52vh;min-height:52dvh;padding:8vh 24px 4vh}
+  .camino:not(.wide) .card h2{font-size:clamp(2.4rem,6.5vw,5.5rem)}
+  .camino:not(.wide) .arg{grid-template-columns:1fr;gap:2vh 0;padding:6vh 24px 0}
+  .camino:not(.wide) .arg .lbl{padding-top:0}
+  .camino.wide .arg{grid-template-columns:180px 1fr}
+}
+/* ═══ PASO 1 — ÍNDICE FLOTANTE [ ≡ ] 8 CAMINOS (drawer de la casa) ═══ */
+#idxbtn{display:none}
+#idxdrw{position:fixed;inset:0;z-index:1000;background:rgba(10,10,10,.6)}
+#idxdrw[hidden]{display:none}
+.idx-sheet{position:absolute;left:0;right:0;bottom:0;background:var(--black);border-top:1px solid var(--g-500);
+  max-height:82vh;max-height:82dvh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,0px)}
+.idx-head{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:2px 6px 2px 22px;background:var(--black);border-bottom:1px solid var(--g-700);
+  font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--g-500);text-transform:uppercase}
+#idxcls{background:none;border:0;color:var(--white);font-family:var(--mono);font-size:12px;letter-spacing:.1em;
+  min-height:44px;min-width:44px;padding:10px 16px;cursor:pointer}
+.idx-nav{display:grid}
+.idx-nav a{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:2px 22px;
+  border-top:1px solid var(--g-800);font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--white)}
+.idx-nav a:first-child{border-top:0}
+.idx-nav a .ja{font-family:var(--jp);color:var(--g-500)}
+.idx-nav .idx-acto{color:var(--g-300);font-size:9px;letter-spacing:.24em;background:var(--g-900)}
+#acto-i,#acto-ii,#c-a,#c-b,#c-c,#c-d,#c-e,#c-f,#c-g,#c-h,#comparativa{scroll-margin-top:60px}
+@media (max-width:1024px){
+  #idxbtn{display:inline-flex;align-items:center;position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:996;
+    background:var(--black);color:var(--white);border:1px solid var(--g-500);font-family:var(--mono);font-size:10px;letter-spacing:.16em;
+    text-transform:uppercase;padding:14px 16px;min-height:44px;cursor:pointer}
+}
+@media (min-width:641px) and (max-width:1024px){
+  .idx-sheet{left:auto;width:min(440px,100%);border-left:1px solid var(--g-500)}
+  .idx-nav{grid-template-columns:1fr 1fr}
+  .idx-nav .idx-acto{grid-column:1/-1}
 }
 </style>
 </head>
@@ -228,13 +295,13 @@ footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
 </div></div>
 
 <!-- ═══ ACTO I ═══ -->
-<section class="acto">
+<section class="acto" id="acto-i">
   <span class="k" data-scr>ACTO I :: A — B — C</span>
   <h2>La mano<span class="kj-a" lang="ja" aria-hidden="true">手</span></h2>
 </section>
 
 <!-- ═══════════════ CAMINO A ═══════════════ -->
-<section class="camino">
+<section class="camino" id="c-a">
   <a class="card" href="./gravedad.html">
     <img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0126-fe7dcde43e1705c60c17830260611791-640-0.webp" alt="Tapado Suko — imagen del camino Gravedad" loading="lazy">
     <div class="veil"></div>
@@ -292,7 +359,7 @@ footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
 </section>
 
 <!-- ═══════════════ CAMINO B ═══════════════ -->
-<section class="camino">
+<section class="camino" id="c-b">
   <a class="card" href="./oficio.html">
     <img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/tapado-kimono-brushed-takai-7-ad2c2f23976c6c883217194294041586-640-0.webp" alt="Kimono Takai pintado a mano — imagen del camino Oficio" loading="lazy">
     <div class="veil"></div>
@@ -356,7 +423,7 @@ footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
 </section>
 
 <!-- ═══════════════ CAMINO C ═══════════════ -->
-<section class="camino">
+<section class="camino wide" id="c-c">
   <a class="card" href="./archivo.html">
     <img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0087-b7a922169f6f8b83a117830243699603-640-0.jpg" alt="Tapado Aka — imagen del camino Archivo" loading="lazy">
     <div class="veil"></div>
@@ -428,13 +495,13 @@ footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
 </section>
 
 <!-- ═══ ACTO II ═══ -->
-<section class="acto">
+<section class="acto" id="acto-ii">
   <span class="k" data-scr>ACTO II :: D — E — F — G — H</span>
   <h2>La máquina y el mundo<span class="kj-a" lang="ja" aria-hidden="true">機械と世界</span></h2>
 </section>
 
 <!-- ═══════════════ CAMINO D ═══════════════ -->
-<section class="camino">
+<section class="camino" id="c-d">
   <a class="card" href="./terminal.html">
     <img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/manuk-hoodie_001-__green-b59b8392542aef38dd17187443458756-640-0.webp" alt="MANUK Hoodie 001 — imagen del camino Terminal" loading="lazy">
     <div class="veil"></div>
@@ -500,7 +567,7 @@ footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
 </section>
 
 <!-- ═══════════════ CAMINO E ═══════════════ -->
-<section class="camino">
+<section class="camino" id="c-e">
   <a class="card" href="./molderia.html">
     <img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/tapado-kimono-brushed-takai-7-ad2c2f23976c6c883217194294041586-640-0.webp" alt="Kimono Takai — imagen del camino Moldería" loading="lazy">
     <div class="veil"></div>
@@ -563,7 +630,7 @@ footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
 </section>
 
 <!-- ═══════════════ CAMINO F ═══════════════ -->
-<section class="camino">
+<section class="camino" id="c-f">
   <a class="card" href="./volumen.html">
     <img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0628-16ec2f55db5cbe96a017835415963188-640-0.webp" alt="Prenda en vista de estudio — imagen del camino Volumen" loading="lazy">
     <div class="veil"></div>
@@ -625,7 +692,7 @@ footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
 </section>
 
 <!-- ═══════════════ CAMINO G ═══════════════ -->
-<section class="camino">
+<section class="camino" id="c-g">
   <a class="card" href="./deriva.html">
     <img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/pantalon-wakusei-2-b5a85660a588c09c0c17187383919344-640-0.webp" alt="Pantalón Wakusei — imagen del camino Deriva" loading="lazy">
     <div class="veil"></div>
@@ -690,7 +757,7 @@ footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
 </section>
 
 <!-- ═══════════════ CAMINO H ═══════════════ -->
-<section class="camino">
+<section class="camino wide" id="c-h">
   <a class="card" href="./local.html">
     <img src="./fachada-noche.webp" alt="Fachada de Honduras 4940 de noche, katakana retroiluminado — imagen del camino Vidriera" loading="lazy">
     <div class="veil"></div>
@@ -752,7 +819,7 @@ footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
 </section>
 
 <!-- ═══ TABLA COMPARATIVA ═══ -->
-<section class="compare">
+<section class="compare" id="comparativa">
   <h2>Comparativa</h2>
   <div class="tbl-wrap">
     <table>
@@ -871,13 +938,37 @@ footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
   </div>
 </footer>
 
+<!-- ═══ ÍNDICE FLOTANTE — teléfono/tablet ═══ -->
+<button id="idxbtn" type="button" aria-controls="idxdrw" aria-expanded="false">[ ≡ ] 8 CAMINOS</button>
+<div id="idxdrw" role="dialog" aria-modal="true" aria-label="Índice de la vidriera" hidden>
+  <div class="idx-sheet">
+    <div class="idx-head"><span>ÍNDICE :: 2 ACTOS · 8 CAMINOS</span><button id="idxcls" type="button" aria-label="Cerrar índice">[ × ]</button></div>
+    <nav class="idx-nav" aria-label="Saltos internos">
+      <a class="idx-acto" href="#acto-i">ACTO I :: LA MANO</a>
+      <a href="#c-a">A :: GRAVEDAD<span class="ja" lang="ja" aria-hidden="true">重力</span></a>
+      <a href="#c-b">B :: OFICIO<span class="ja" lang="ja" aria-hidden="true">手仕事</span></a>
+      <a href="#c-c">C :: ARCHIVO<span class="ja" lang="ja" aria-hidden="true">記憶</span></a>
+      <a class="idx-acto" href="#acto-ii">ACTO II :: LA MÁQUINA Y EL MUNDO</a>
+      <a href="#c-d">D :: TERMINAL<span class="ja" lang="ja" aria-hidden="true">端末</span></a>
+      <a href="#c-e">E :: MOLDERÍA<span class="ja" lang="ja" aria-hidden="true">型紙</span></a>
+      <a href="#c-f">F :: VOLUMEN<span class="ja" lang="ja" aria-hidden="true">立体</span></a>
+      <a href="#c-g">G :: DERIVA<span class="ja" lang="ja" aria-hidden="true">漂流</span></a>
+      <a href="#c-h">H :: VIDRIERA<span class="ja" lang="ja" aria-hidden="true">硝子</span></a>
+      <a class="idx-acto" href="#comparativa">COMPARATIVA :: LADO A LADO</a>
+    </nav>
+  </div>
+</div>
+
 <script>
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const MOB = matchMedia('(max-width: 820px)').matches;
+/* F1 — capacidad decide efectos; ancho decide layout */
+const FINE  = matchMedia('(hover:hover) and (pointer:fine)').matches;
+const PHONE = matchMedia('(max-width: 640px)').matches;
+const TAB   = matchMedia('(min-width: 641px) and (max-width: 1024px)').matches;
 
-/* ── CURSOR DOBLE MASA ───────────────────── */
+/* ── CURSOR DOBLE MASA (solo puntero fino) ─ */
 (function(){
-  if(RM||MOB)return;
+  if(RM||!FINE)return;
   const dot=document.getElementById('cur'), ring=document.getElementById('cur-ring');
   let mx=innerWidth/2,my=innerHeight/2,dx=mx,dy=my,rx=mx,ry=my;
   addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
@@ -916,6 +1007,26 @@ const MOB = matchMedia('(max-width: 820px)').matches;
     if(e.isIntersecting&&!e.target.dataset.done){e.target.dataset.done='1';io.unobserve(e.target);if(!RM)run(e.target)}
   }),{threshold:.6});
   document.querySelectorAll('[data-scr]').forEach(el=>io.observe(el));
+})();
+
+/* ── ÍNDICE FLOTANTE (drawer) ────────────── */
+(function(){
+  const btn=document.getElementById('idxbtn'),drw=document.getElementById('idxdrw'),cls=document.getElementById('idxcls');
+  if(!btn||!drw||!cls)return;
+  let prev=null;
+  const open=()=>{drw.hidden=false;btn.setAttribute('aria-expanded','true');prev=document.activeElement;cls.focus()};
+  const close=()=>{drw.hidden=true;btn.setAttribute('aria-expanded','false');if(prev&&prev.focus)prev.focus()};
+  btn.addEventListener('click',()=>{drw.hidden?open():close()});
+  cls.addEventListener('click',close);
+  drw.addEventListener('click',e=>{if(e.target===drw)close()});
+  addEventListener('keydown',e=>{if(e.key==='Escape'&&!drw.hidden)close()});
+  drw.querySelectorAll('.idx-nav a').forEach(a=>a.addEventListener('click',e=>{
+    const t=document.querySelector(a.getAttribute('href'));
+    if(!t)return;
+    e.preventDefault();
+    close();
+    t.scrollIntoView({behavior:RM?'auto':'smooth'});
+  }));
 })();
 </script>
 </body>

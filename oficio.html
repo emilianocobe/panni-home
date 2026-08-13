@@ -67,7 +67,7 @@ header{display:flex;justify-content:space-between;align-items:center;padding:cal
   color:var(--white);mix-blend-mode:difference;opacity:.85;pointer-events:none}
 
 /* ═══ HERO HALFTONE (#15) ═══ */
-#hero{position:relative;display:grid;grid-template-columns:5fr 7fr;gap:0;min-height:calc(100vh - var(--barra));border-bottom:1px solid var(--black)}
+#hero{position:relative;display:grid;grid-template-columns:5fr 7fr;gap:0;min-height:calc(100vh - var(--barra));min-height:calc(100svh - var(--barra));border-bottom:1px solid var(--black)}
 .hero-txt{padding:8vh 2vw 6vh 66px;display:flex;flex-direction:column;justify-content:space-between}
 .hero-txt h1{font-family:var(--display);font-size:clamp(3.4rem,9vw,8.6rem);line-height:.84;text-transform:uppercase;letter-spacing:.01em}
 /* #37 contorno vs relleno */
@@ -153,7 +153,7 @@ header{display:flex;justify-content:space-between;align-items:center;padding:cal
 @supports not (-webkit-text-stroke:1px #fff){.fit .ln--out{color:var(--g-500);-webkit-text-stroke:0}}
 .fit .ln--jp{font-family:var(--jp);font-weight:700;line-height:1.02}
 .cartel .pie{margin-top:6vh;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:9px;text-transform:uppercase;color:var(--g-300)}
-@media(max-width:820px){.cartel{padding:9vh 22px 7vh}}
+@media(max-width:640px){.cartel{padding:9vh 22px 7vh}}
 
 /* ═══ GRILLA + POSTERIZACIÓN (#16) + SKEW (#2) ═══ */
 .shop{padding:12vh 28px 14vh 66px}
@@ -212,10 +212,20 @@ footer{border-top:1px solid var(--black);padding:60px 28px 34px;font-size:10px;t
   #trazo path{stroke-dashoffset:0!important;stroke-dasharray:none!important}
   #pgrid{transform:none!important}
 }
-/* ═══ MOBILE ═══ */
-@media(max-width:820px){
+/* ═══ CAPACIDAD: TOUCH (F1 + F4) — el cursor y sus efectos dependen del input, no del ancho ═══ */
+@media (hover:none),(pointer:coarse){
   body,a,button,.btn,.hd-r button{cursor:auto}
   #cur,#cur-ring{display:none}
+  /* F4: área táctil mínima 44px — con padding, no con cuerpo */
+  #barra a{display:inline-flex;align-items:center;min-height:44px;padding:0 10px;margin:0 -10px}
+  header .lockup{min-height:44px}
+  .hd-r button{display:inline-flex;align-items:center;min-height:44px;padding:0 8px;margin:0 -4px}
+  .btn{display:inline-flex;align-items:center;min-height:44px}
+  .f-grid a{display:flex;align-items:center;min-height:44px;padding:2px 0}
+  .mq:hover .mq__t{animation-play-state:running}
+}
+/* ═══ TELÉFONO (≤640) — F1: solo layout ═══ */
+@media(max-width:640px){
   .vert-kana{display:none}
   header{padding:calc(var(--barra) + 14px) 22px 14px}
   .hd-r{gap:14px}
@@ -228,10 +238,28 @@ footer{border-top:1px solid var(--black);padding:60px 28px 34px;font-size:10px;t
   .cf-a{width:62vw;top:auto;bottom:26%;left:6%}
   .cf-b{width:52vw;top:auto;bottom:10%;left:36%}
   .cf-c{width:46vw;top:auto;bottom:38%;right:4%}
-  .duo{grid-template-columns:1fr;padding:10vh 22px}
-  .duo .izq{position:static}
+  /* PASO 3: columnas sticky → secuencia vertical alternada manifiesto/pieza.
+     El contrapunto de la columna pineada se vuelve ritmo vertical: texto, prenda,
+     virtud, prenda, virtud, prenda, virtud. */
+  .duo{display:flex;flex-direction:column;padding:10vh 22px}
+  .duo .izq,.duo .der,.duo .izq .virtues{display:contents}
+  .duo .izq h2{order:1}
+  .duo .izq .txt{order:2;margin-top:3vh;max-width:none}
+  .duo .der article{margin:7vh 0 0}
+  .duo .der article:nth-child(even){margin-left:0}
+  .duo .der article:nth-child(1){order:3}
+  .virtues .v:nth-child(1){order:4}
+  .duo .der article:nth-child(2){order:5}
+  .virtues .v:nth-child(2){order:6}
+  .duo .der article:nth-child(3){order:7}
+  .virtues .v:nth-child(3){order:8}
+  .virtues .v{border-top:1px solid var(--black);margin-top:5vh}
   .shop{padding:10vh 22px}
   .p--a,.p--b,.p--c,.p--d{grid-column:1/span 12;margin-top:0}
+}
+/* ═══ TABLET (641–1024) — PASO 3: el split de 2 columnas SE MANTIENE ═══ */
+@media(min-width:641px) and (max-width:1024px){
+  .hd-r{gap:16px}
 }
 </style>
 </head>
@@ -435,7 +463,10 @@ footer{border-top:1px solid var(--black);padding:60px 28px 34px;font-size:10px;t
 
 <script>
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const MOB = matchMedia('(max-width: 820px)').matches;
+/* F1: capacidad ≠ ancho. Los efectos de cursor dependen de FINE; el layout, del ancho. */
+const FINE  = matchMedia('(hover:hover) and (pointer:fine)').matches;
+const PHONE = matchMedia('(max-width:640px)').matches;
+const TAB   = matchMedia('(min-width:641px) and (max-width:1024px)').matches;
 
 /* ── LQIP (#66): fondo gris, la imagen entra al cargar ── */
 (function(){
@@ -449,9 +480,9 @@ const MOB = matchMedia('(max-width: 820px)').matches;
   });
 })();
 
-/* ── CURSOR DOBLE MASA ── */
+/* ── CURSOR DOBLE MASA — solo con puntero fino (F1) ── */
 (function(){
-  if(RM||MOB)return;
+  if(RM||!FINE)return;
   const dot=document.getElementById('cur'), ring=document.getElementById('cur-ring');
   let mx=innerWidth/2,my=innerHeight/2,dx=mx,dy=my,rx=mx,ry=my;
   addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
@@ -470,7 +501,9 @@ const MOB = matchMedia('(max-width: 820px)').matches;
 })();
 
 /* ── HALFTONE INTERACTIVO (#15): trama de punto en grilla 45° ──
-   La densidad del punto responde a la cercanía del cursor.
+   Con FINE la densidad del punto responde a la cercanía del cursor.
+   Sin FINE: autopiloto (el foco respira recorriendo la prenda) y el
+   progreso de scroll de la sección afina la trama global (uBase).
    Kill-switch por hardware + webglcontextlost + fallback DOM (la foto queda debajo). */
 (function(){
   const cv=document.getElementById('ht'), src=document.getElementById('ht-src'), wrap=cv.parentElement;
@@ -482,7 +515,7 @@ const MOB = matchMedia('(max-width: 820px)').matches;
   cv.addEventListener('webglcontextlost',e=>{e.preventDefault();lost=true;cv.style.display='none'});
   const VS=`attribute vec2 p;varying vec2 uv;void main(){uv=p*.5+.5;gl_Position=vec4(p,0.,1.);}`;
   const FS=`precision mediump float;varying vec2 uv;
-    uniform sampler2D tex;uniform vec2 uFit;uniform float uAsp;uniform vec2 uM;uniform float uOK;
+    uniform sampler2D tex;uniform vec2 uFit;uniform float uAsp;uniform vec2 uM;uniform float uOK;uniform float uBase;
     float lum(vec2 p){vec2 t=(p-.5)*uFit+.5;vec3 c=texture2D(tex,t).rgb;
       float l=dot(c,vec3(.299,.587,.114));return clamp((l-.5)*1.25+.5,0.,1.);}
     float ht(vec2 q,float cells){
@@ -498,7 +531,7 @@ const MOB = matchMedia('(max-width: 820px)').matches;
     void main(){
       vec2 q=vec2(uv.x*uAsp,uv.y);
       float m=uOK*exp(-distance(q,uM)*2.4);
-      float ink=mix(ht(q,46.),ht(q,150.),m);
+      float ink=mix(ht(q,uBase),ht(q,150.),m);
       gl_FragColor=vec4(vec3(1.-ink),1.);
     }`;
   const sh=(t,s)=>{const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);return o};
@@ -511,7 +544,8 @@ const MOB = matchMedia('(max-width: 820px)').matches;
   gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
   const loc=gl.getAttribLocation(pr,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
   const uFit=gl.getUniformLocation(pr,'uFit'),uAsp=gl.getUniformLocation(pr,'uAsp'),
-        uM=gl.getUniformLocation(pr,'uM'),uOK=gl.getUniformLocation(pr,'uOK');
+        uM=gl.getUniformLocation(pr,'uM'),uOK=gl.getUniformLocation(pr,'uOK'),
+        uBase=gl.getUniformLocation(pr,'uBase');
   const tx=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tx);
   gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([255,255,255,255]));
   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
@@ -533,8 +567,8 @@ const MOB = matchMedia('(max-width: 820px)').matches;
     asp=r.width/Math.max(1,r.height);
   };
   size();addEventListener('resize',size);
-  let mx=.5,my=.5,cx=.5,cy=.5,inside=0,cin=0;
-  addEventListener('mousemove',e=>{
+  let mx=.5,my=.5,cx=.5,cy=.5,inside=0,cin=0,base=46;
+  if(FINE)addEventListener('mousemove',e=>{
     const r=wrap.getBoundingClientRect();
     mx=(e.clientX-r.left)/r.width; my=1-(e.clientY-r.top)/r.height;
     inside=(mx>=-.2&&mx<=1.2&&my>=-.2&&my<=1.2)?1:0;
@@ -545,14 +579,27 @@ const MOB = matchMedia('(max-width: 820px)').matches;
     if(lost)return;
     requestAnimationFrame(draw);
     if(document.hidden||!vis)return;
-    cx+=(mx-cx)*.1;cy+=(my-cy)*.1;cin+=(inside-cin)*.08;
+    if(FINE){
+      cx+=(mx-cx)*.1;cy+=(my-cy)*.1;cin+=(inside-cin)*.08;
+    }else{
+      /* AUTOPILOTO (F2a): el foco recorre lento la prenda, tipo respiración */
+      const t=performance.now();
+      const ax=.5+.32*Math.sin(t*.00011), ay=.5+.26*Math.cos(t*.000071);
+      cx+=(ax-cx)*.05; cy+=(ay-cy)*.05;
+      cin=.42+.3*(.5+.5*Math.sin(t*.00042));
+      /* F2b: el progreso de scroll de la sección afina la trama global */
+      const rb=wrap.getBoundingClientRect();
+      const sp=Math.min(Math.max(-rb.top/(rb.height*.85),0),1);
+      base+=((46+66*sp)-base)*.08;
+    }
     const ca=asp, ia=iw/ih;
     let fx=1,fy=1;
     if(ca>ia){fy=ia/ca}else{fx=ca/ia}
     gl.uniform2f(uFit,fx,fy);
     gl.uniform1f(uAsp,ca);
     gl.uniform2f(uM,cx*ca,cy);
-    gl.uniform1f(uOK,MOB?.55:cin);
+    gl.uniform1f(uOK,cin);
+    gl.uniform1f(uBase,base);
     gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
   })();
 })();
@@ -624,9 +671,9 @@ const MOB = matchMedia('(max-width: 820px)').matches;
   fit();
 })();
 
-/* ── SKEW POR VELOCIDAD DE SCROLL (#2) ── */
+/* ── SKEW POR VELOCIDAD DE SCROLL (#2) — efecto de scroll: se apaga por ancho, no por input ── */
 (function(){
-  if(RM||MOB)return;
+  if(RM||PHONE)return;
   const grid=document.getElementById('pgrid');
   let last=scrollY,sk=0,target=0;
   addEventListener('scroll',()=>{
