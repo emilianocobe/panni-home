@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LA VIDRIERA :: 8 CAMINOS :: PANNI MARGOT</title>
+<meta name="description" content="Ocho hipótesis de diseño para el sitio de Panni Margot en dos actos: la mano (Gravedad, Oficio, Archivo) y la máquina y el mundo (Terminal, Moldería, Volumen, Deriva, Vidriera). Argumentación completa.">
+<link rel="icon" href="./favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#000; --white:#fff;
+  --g-900:#0a0a0a; --g-800:#141414; --g-700:#242424; --g-500:#5c5c5c; --g-300:#a8a8a8; --g-100:#e6e6e6;
+  --display:"Anton",Impact,sans-serif;
+  --geo:"Archivo",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  --jp:"Noto Sans JP",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased}
+body{background:var(--black);color:var(--white);font-family:var(--mono);font-size:11px;letter-spacing:.08em;overflow-x:hidden;cursor:none}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+a:focus-visible,button:focus-visible{outline:2px solid var(--white);outline-offset:3px}
+::selection{background:var(--white);color:var(--black)}
+
+/* ═══ SKIP ═══ */
+.skip{position:fixed;top:-60px;left:20px;z-index:10001;background:var(--white);color:var(--black);padding:10px 16px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;transition:top .2s}
+.skip:focus{top:12px}
+
+/* ═══ BARRA VIDRIERA ═══ */
+#viabar{position:fixed;top:0;left:0;right:0;height:36px;z-index:990;background:var(--black);
+  border-bottom:1px solid var(--g-700);display:flex;justify-content:space-between;align-items:center;
+  padding:0 28px;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase}
+#viabar a{color:var(--white)}
+#viabar a:hover{color:var(--g-300)}
+#viabar .via-tag{color:var(--g-300)}
+
+/* ═══ GRANO FÍLMICO ═══ */
+#grain{position:fixed;inset:-150%;z-index:9998;pointer-events:none;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 1s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,-4%)}40%{transform:translate(-6%,2%)}60%{transform:translate(3%,-5%)}80%{transform:translate(-2%,4%)}100%{transform:translate(2%,-2%)}}
+
+/* ═══ CURSOR DOBLE MASA ═══ */
+#cur,#cur-ring{position:fixed;top:0;left:0;z-index:9999;pointer-events:none;mix-blend-mode:difference;will-change:transform}
+#cur{width:6px;height:6px;background:var(--white);border-radius:50%;margin:-3px 0 0 -3px}
+#cur-ring{width:38px;height:38px;border:1px solid var(--white);border-radius:50%;margin:-19px 0 0 -19px;transition:width .3s,height .3s,margin .3s}
+#cur-ring.big{width:96px;height:96px;margin:-48px 0 0 -48px}
+
+/* ═══ MARCA: siempre vector ═══ */
+.pm-lockup{display:block;height:1em;width:calc(1em * 640 / 103);fill:currentColor}
+.lockup{display:inline-flex;align-items:center;gap:.7em}
+.lockup .pm-lockup{font-size:2.1em}
+
+/* ═══ HEADER (empujado 36px por la barra) ═══ */
+header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-content:space-between;align-items:center;
+  padding:18px 28px;mix-blend-mode:difference;font-size:10px;text-transform:uppercase}
+.hd-r{display:flex;gap:22px;align-items:center;color:var(--g-300)}
+
+/* katakana vertical de la fachada */
+.vert-kana{position:fixed;left:22px;top:50%;transform:translateY(-50%);z-index:850;
+  font-family:var(--jp);font-size:13px;letter-spacing:.5em;
+  writing-mode:vertical-rl;color:var(--white);mix-blend-mode:difference;opacity:.85}
+
+/* ═══ HERO ═══ */
+.hero{min-height:88vh;display:grid;align-content:end;padding:22vh 28px 8vh 66px;position:relative;border-bottom:1px solid var(--g-700)}
+.hero .kn{position:absolute;top:18vh;right:28px;text-align:right;font-family:var(--jp);font-size:12px;letter-spacing:.3em;color:var(--g-300);line-height:2.2}
+.hero h1{font-family:var(--display);font-size:clamp(3rem,11vw,10rem);line-height:.86;text-transform:uppercase;letter-spacing:.01em}
+.hero h1 .thin{color:transparent;-webkit-text-stroke:1px var(--white)}
+.hero .sub{margin-top:26px;max-width:64ch;font-family:var(--geo);font-size:clamp(.95rem,1.5vw,1.15rem);font-weight:400;line-height:1.55;letter-spacing:.01em;color:var(--g-100)}
+.hero .meta{margin-top:30px;display:flex;flex-wrap:wrap;gap:10px 28px;font-size:10px;color:var(--g-500);text-transform:uppercase}
+
+/* ═══ MARQUESINA FINA ═══ */
+.mq{overflow:hidden;white-space:nowrap;border-bottom:1px solid var(--g-700);padding:12px 0}
+.mq__t{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.25em;color:var(--g-300);animation:mqa 44s linear infinite}
+.mq:hover .mq__t{animation-play-state:paused}
+@keyframes mqa{to{transform:translateX(-50%)}}
+
+/* ═══ ACTOS E INTERLUDIO ═══ */
+.acto{padding:12vh 28px 6vh 66px;border-bottom:1px solid var(--g-700)}
+.acto .k{font-family:var(--mono);font-size:10px;letter-spacing:.25em;color:var(--g-500);text-transform:uppercase;display:block;margin-bottom:2vh}
+.acto h2{font-family:var(--display);font-size:clamp(2.4rem,8vw,6.5rem);line-height:.88;text-transform:uppercase}
+.acto .kj-a{font-family:var(--jp);font-weight:700;color:var(--g-300);font-size:.5em;vertical-align:middle;margin-left:.4em}
+.inter{padding:16vh 28px 16vh 66px;border-bottom:1px solid var(--g-700)}
+.inter p{font-family:var(--geo);font-size:clamp(1.25rem,2.6vw,2rem);line-height:1.4;max-width:46ch;color:var(--white)}
+.inter p b{font-weight:800}
+.inter .thin-l{color:transparent;-webkit-text-stroke:1px var(--white);font-family:var(--display);text-transform:uppercase;font-size:clamp(2rem,7vw,5.5rem);display:block;line-height:.9;margin-bottom:5vh}
+
+/* ═══ SECCIÓN CAMINO ═══ */
+.camino{border-bottom:1px solid var(--g-700);padding:0 0 12vh}
+.card{display:block;position:relative;min-height:72vh;overflow:hidden;border-bottom:1px solid var(--g-700)}
+.card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.15) brightness(.62);transition:filter .6s,transform .8s}
+.card:hover img{filter:grayscale(0) contrast(1.02) brightness(.72);transform:scale(1.025)}
+.card .veil{position:absolute;inset:0;background:linear-gradient(to top,#000 4%,rgba(0,0,0,.55) 45%,rgba(0,0,0,.25) 100%)}
+.card .in{position:relative;z-index:2;height:100%;min-height:72vh;display:flex;flex-direction:column;justify-content:space-between;padding:12vh 28px 5vh 66px}
+.card .top{display:flex;justify-content:space-between;gap:14px;font-size:10px;text-transform:uppercase;color:var(--g-300)}
+.card h2{font-family:var(--display);font-size:clamp(3.2rem,12vw,11rem);line-height:.84;text-transform:uppercase}
+.card .kj{font-family:var(--jp);font-weight:700;font-size:clamp(2rem,6vw,5rem);line-height:1;color:var(--g-300);margin-top:14px}
+.card .go{margin-top:22px;font-size:11px;letter-spacing:.2em;color:var(--white)}
+.card:hover .go{text-decoration:underline;text-underline-offset:4px}
+
+/* argumentación */
+.arg{display:grid;grid-template-columns:220px 1fr;gap:5vh 4vw;padding:8vh 28px 0 66px;max-width:1250px}
+.arg .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--g-500);text-transform:uppercase;padding-top:4px}
+.arg .bd{font-family:var(--geo);font-size:clamp(.95rem,1.35vw,1.1rem);font-weight:400;line-height:1.6;letter-spacing:.005em;color:var(--g-100);max-width:66ch}
+.arg .bd b{font-weight:800;color:var(--white)}
+.arg .bd .ja-in{font-family:var(--jp)}
+.bd.tesis-bd{font-size:clamp(1.15rem,2vw,1.55rem);line-height:1.4;color:var(--white)}
+.fx{list-style:none;display:grid;gap:14px}
+.fx li{display:grid;grid-template-columns:64px 1fr;gap:14px;border-top:1px solid var(--g-800);padding-top:12px}
+.fx .n{font-family:var(--display);font-size:20px;line-height:1;color:var(--g-500)}
+.fx .t b{display:block;font-family:var(--geo);font-weight:800;font-size:.95rem;text-transform:uppercase;letter-spacing:.02em;color:var(--white);margin-bottom:3px}
+.fx .t span{font-family:var(--geo);font-size:.92rem;line-height:1.5;color:var(--g-300)}
+.bd.renuncia-bd{border-left:2px solid var(--white);padding-left:20px;color:var(--g-100)}
+
+/* ═══ TABLA COMPARATIVA ═══ */
+.compare{padding:12vh 28px 12vh 66px;border-bottom:1px solid var(--g-700)}
+.compare h2{font-family:var(--display);font-size:clamp(2rem,6vw,4.5rem);line-height:.9;text-transform:uppercase;margin-bottom:6vh}
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:820px;font-family:var(--geo);font-size:.92rem;line-height:1.45}
+th,td{border:1px solid var(--g-700);padding:16px 18px;text-align:left;vertical-align:top}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--g-500);font-weight:400}
+td .cam{font-family:var(--display);font-size:1.15rem;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap}
+td .cam .ja-in{font-family:var(--jp);font-size:.85em;color:var(--g-300)}
+td{color:var(--g-100)}
+tr:hover td{background:var(--g-900)}
+tr.organos td{background:var(--g-900);color:var(--g-300)}
+tr.organos td b{color:var(--white);font-weight:800}
+
+/* ═══ CIERRE ═══ */
+.cierre{padding:14vh 28px 14vh 66px;border-bottom:1px solid var(--g-700)}
+.cierre .bd{font-family:var(--geo);font-size:clamp(1.15rem,2.2vw,1.7rem);line-height:1.45;max-width:52ch;color:var(--white)}
+.cierre .bd b{font-weight:800}
+.cierre .note{margin-top:5vh;font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--g-500);text-transform:uppercase;line-height:2.1}
+
+/* ═══ FOOTER ═══ */
+footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
+.f-term{font-family:var(--mono);font-size:11px;color:var(--g-300);line-height:2;word-break:break-word;margin-bottom:44px}
+.f-term b{color:var(--white);font-weight:400}
+.f-links{display:flex;flex-wrap:wrap;gap:10px 34px;margin-bottom:44px}
+.f-links a{padding:2px 0;color:var(--g-300)}
+.f-links a:hover{color:var(--white);text-decoration:underline;text-underline-offset:4px}
+.f-sign{padding-top:16px;border-top:1px solid var(--g-700);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;color:var(--g-500);font-size:9px}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  body{cursor:auto}
+  #cur,#cur-ring,#grain{display:none}
+  .mq__t{animation:none!important}
+}
+@media(max-width:820px){
+  body{cursor:auto}
+  #cur,#cur-ring{display:none}
+  .vert-kana{display:none}
+  #viabar{padding:0 22px}
+  .hero{padding:20vh 22px 8vh}
+  .card .in{padding:10vh 22px 5vh}
+  .acto{padding:10vh 22px 5vh}
+  .inter{padding:12vh 22px}
+  .arg{grid-template-columns:1fr;gap:2vh 0;padding:7vh 22px 0}
+  .arg .lbl{padding-top:0}
+  .compare,.cierre{padding-left:22px;padding-right:22px}
+  footer{padding-left:22px}
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">SALTAR AL CONTENIDO</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="pm-lockup" viewBox="0 0 640 103"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM519.167 33.833L526.333 34L530.5 35L535 37.167L536.333 39.333L531.167 45.667L524.667 43.333L519.833 43.167L515.833 44.5L513.167 46.667L511 50.5L510.5 56.333L511.833 60.5L514.333 63.5L517.667 65.333L522.5 66L526.833 64.667L529.333 62.167L530.167 60L529.833 58.667L521.667 58.333L520.833 57.667L520.667 51.833L521.333 50.833L539.5 50.667L540.833 51.833L540.5 60.333L537.833 67.5L532.833 72.5L526.333 75L517.333 75L509.833 72.333L504.167 67.167L500.833 59.667L500.333 56.167L500.667 50.167L503.833 42.333L507.5 38.333L510.5 36.333L515.167 34.5L519.167 34ZM571.167 33.833L579 34.167L583.667 35.667L587.333 37.833L592.167 43L594.833 49.667L595 58.167L592.5 65.5L587 71.5L584.167 73.167L578.333 75L569.333 75L561.667 72.167L556.167 67L554.5 64.333L552.833 59.333L552.667 50.667L553.667 46.833L555.833 42.5L558.833 39L562.333 36.5L566.667 34.667L571.167 34ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667ZM132.167 34.667L152.667 34.667L156.5 35.333L160.5 37L164 40L166.5 45.667L166.667 50.333L165.667 54.333L164 57.167L161.333 59.667L154.5 62.5L142 62.833L141.167 63.333L140.833 73.667L139.333 74.5L132.167 74.333L131.167 72.667L131.167 36.167L132.167 34.833ZM222.5 34.667L225 35.333L248.333 54.5L249.167 54.5L249.667 53.167L249.667 35.5L250.167 34.833L251.5 34.667L253.167 35.5L276.5 54.5L277.5 53.5L277.667 35.333L279.167 34.667L286.5 35L287.167 36.333L287 73.667L286.167 74.333L284.333 74L261.167 54.167L259.667 53.833L259.167 55.5L259.167 73.5L258.333 74.333L256.667 74.167L234 54.833L231.667 53.833L231.167 55L231.167 73.5L229.5 74.5L222 74.167L221.5 73.333L221.5 35.667L222.5 34.833ZM303.667 34.667L311.667 34.667L312.5 35.667L312.5 73.167L311 74.5L304.5 74.5L303.333 74.167L302.667 73L302.667 35.833L303.667 34.833ZM344.667 34.667L347.333 35.167L364.333 51L366 50.5L382.167 35.333L383.333 34.667L385.5 35L385.5 74L377.667 74.5L376.167 73.833L376 55.833L375.5 55L374.333 55.333L366.667 63L365.167 63.667L363.333 63.167L357.833 57.5L355.167 55.167L354 55L353.5 73.833L352 74.5L344.333 74.167L343.833 73L343.833 36L344.667 34.833ZM452.667 34.667L474.667 34.833L479.5 36.167L484.167 39.5L486.833 44.5L487.167 51L485.5 55.833L481.167 60.167L481 61.667L489 72.667L488.833 74.167L478.5 74.167L471.667 64.167L469.833 62.833L462.833 62.833L461.833 63.333L461.5 73.5L461 74.167L453.5 74.5L452 73.833L451.833 35.5L452.667 34.833ZM606.333 34.667L639.667 34.833L639.667 42.833L629.833 43L628.333 43.333L627.833 44.167L627.833 73.167L627 74.333L619.833 74.5L618.333 74L618 44.333L617.333 43.333L615.833 43L606 42.833L605.5 42.167L605.5 35.5L606.333 34.833ZM189.5 34.833L191.5 35.5L193.333 38.833L210.667 71.667L211 74.167L201.5 74.333L198 69.833L182.333 69.833L181.167 70.5L178.833 74.333L170.333 74.5L169 73.833L184.5 43.333L189.5 35ZM418.333 34.833L420.167 35.333L422.5 39.5L440 72.667L439.667 74.333L430.167 74.333L427.833 70.5L426.667 69.833L411 69.833L407.5 74.333L399 74.5L398 74L398.333 71.833L417.5 35.5L418.333 35ZM143.167 43L141.667 43.167L141 44L141 54L141.5 54.667L150.333 54.833L153.333 54.167L155.167 53L156.333 50.667L156.5 47.833L154.667 44.5L151.833 43.167L143.333 43ZM463.667 43L462.167 43.333L461.5 44.5L461.5 53.333L462.167 54.667L472.333 54.667L476.167 52.5L477.167 48.333L475.333 44.5L472.333 43.167L463.833 43ZM572.667 43.167L568.167 44.5L564.833 47.333L562.833 51.667L562.667 56.5L564.333 61L567 63.833L571.167 65.667L575.5 65.833L579.833 64.333L583.333 61L584.833 57.5L585 52.5L583.5 48.333L581.167 45.667L576.833 43.5L572.833 43.167ZM189.833 52.5L188.167 54.833L185.167 62.167L186 62.833L194.333 62.833L194.833 61.167L191.167 53.333L190 52.5ZM418.667 52.5L416.833 55.167L414 62.167L414.667 62.833L423 62.833L423.667 61.167L419.667 52.833L418.833 52.5Z"/></symbol><symbol id="pm-mono" viewBox="0 0 104 103"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667Z"/></symbol></defs></svg>
+
+<div id="grain"></div>
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<div class="vert-kana" lang="ja" aria-hidden="true">バーニ　マーゴット</div>
+
+<!-- ═══ BARRA VIDRIERA ═══ -->
+<div id="viabar">
+  <a href="./index.html">[ &lt;&lt; ] VIDRIERA</a>
+  <span class="via-tag">LA VIDRIERA :: 8 CAMINOS · 1 SISTEMA</span>
+</div>
+
+<header>
+  <span class="lockup" role="img" aria-label="Panni Margot">
+    <svg class="pm-lockup" aria-hidden="true" focusable="false"><use href="#pm-lockup"/></svg>
+  </span>
+  <div class="hd-r">
+    <span>LA VIDRIERA :: 8 CAMINOS</span>
+    <span>DOC.INTERNO/2026</span>
+  </div>
+</header>
+
+<main id="main" tabindex="-1" style="outline:none">
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="kn" lang="ja" aria-hidden="true">八つの道<br>一つの体系</div>
+  <h1>Ocho caminos<br><span class="thin">un sistema</span></h1>
+  <p class="sub">
+    Ocho hipótesis de diseño para el mismo sitio, en dos actos: primero la mano
+    — el cuerpo, la tinta, la memoria — y después la máquina y el mundo
+    — la consola, el plano, el objeto, el territorio, la calle.
+    Las ocho cumplen las mismas reglas: blanco y negro estricto, el nombre siempre en vector,
+    nada se explica. Esta página argumenta cada camino. El veredicto es de la marca.
+  </p>
+  <div class="meta">
+    <span>GRAVEDAD <span lang="ja" aria-hidden="true">重力</span></span>
+    <span>OFICIO <span lang="ja" aria-hidden="true">手仕事</span></span>
+    <span>ARCHIVO <span lang="ja" aria-hidden="true">記憶</span></span>
+    <span>TERMINAL <span lang="ja" aria-hidden="true">端末</span></span>
+    <span>MOLDERÍA <span lang="ja" aria-hidden="true">型紙</span></span>
+    <span>VOLUMEN <span lang="ja" aria-hidden="true">立体</span></span>
+    <span>DERIVA <span lang="ja" aria-hidden="true">漂流</span></span>
+    <span>VIDRIERA <span lang="ja" aria-hidden="true">硝子</span></span>
+    <span>08 MOCKUPS AAA</span>
+  </div>
+</section>
+
+<!-- ═══ MARQUESINA ═══ -->
+<div class="mq" aria-hidden="true"><div class="mq__t">
+  <span lang="ja">重力</span> · <span lang="ja">手仕事</span> · <span lang="ja">記憶</span> · <span lang="ja">端末</span> · <span lang="ja">型紙</span> · <span lang="ja">立体</span> · <span lang="ja">漂流</span> · <span lang="ja">硝子</span> :: &lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()&gt;&gt; &gt;&gt;HONDURAS4940## <span lang="ja">バーニ　マーゴット</span> ::&nbsp;
+  <span lang="ja">重力</span> · <span lang="ja">手仕事</span> · <span lang="ja">記憶</span> · <span lang="ja">端末</span> · <span lang="ja">型紙</span> · <span lang="ja">立体</span> · <span lang="ja">漂流</span> · <span lang="ja">硝子</span> :: &lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()&gt;&gt; &gt;&gt;HONDURAS4940## <span lang="ja">バーニ　マーゴット</span> ::&nbsp;
+</div></div>
+
+<!-- ═══ ACTO I ═══ -->
+<section class="acto">
+  <span class="k" data-scr>ACTO I :: A — B — C</span>
+  <h2>La mano<span class="kj-a" lang="ja" aria-hidden="true">手</span></h2>
+</section>
+
+<!-- ═══════════════ CAMINO A ═══════════════ -->
+<section class="camino">
+  <a class="card" href="./gravedad.html">
+    <img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0126-fe7dcde43e1705c60c17830260611791-640-0.webp" alt="Tapado Suko — imagen del camino Gravedad" loading="lazy">
+    <div class="veil"></div>
+    <div class="in">
+      <div class="top"><span data-scr>CAMINO A :: ./gravedad.html</span><span>NEGRO / NOCHE / FÍSICA</span></div>
+      <div>
+        <h2>Gravedad</h2>
+        <div class="kj" lang="ja" aria-hidden="true">重力</div>
+        <div class="go">[ ENTRAR &gt;&gt; ]</div>
+      </div>
+    </div>
+  </a>
+  <div class="arg">
+    <div class="lbl" data-scr>TESIS</div>
+    <div class="bd tesis-bd">
+      El sitio es un cuerpo con masa. Responde a la energía cinética que el usuario le transfiere:
+      quieto se aquieta, empujado se deforma. <b>La física del deseo</b> — la tela cede donde la mirás.
+    </div>
+
+    <div class="lbl" data-scr>PREGUNTA DE DISEÑO</div>
+    <div class="bd">
+      ¿Puede una tienda sentirse materia y no interfaz? Y su contracara:
+      ¿cuánto peso tolera la venta antes de volverse demo técnica?
+      Gravedad apuesta a que el aura se construye con física, y a que esa física
+      se apaga sola donde empieza la transacción.
+    </div>
+
+    <div class="lbl" data-scr>REFERENCIAS</div>
+    <div class="bd">
+      <b>obys.agency</b> — el motor y la física: un solo material continuo (el shader) por el que pasa
+      toda la imagen del sitio; la deformación como identidad, no como adorno.
+      <b>La fachada de Honduras 4940</b> — el katakana vertical del margen viene del cartel real del local.
+      Es el camino que ya validó el cliente: refina el mockup existente en lugar de reemplazarlo.
+    </div>
+
+    <div class="lbl" data-scr>EFECTOS</div>
+    <div class="bd">
+      <ul class="fx">
+        <li><span class="n">A</span><div class="t"><b>Base validada — Parte A del catálogo</b><span>Grano fílmico, distorsión líquida amplificada por velocidad de scroll, atracción de la tela hacia el cursor, aberración cromática, scroll horizontal pineado, linterna, takeover. Ya funciona: no se toca, se endurece.</span></div></li>
+        <li><span class="n">40</span><div class="t"><b>Magnetismo real de elementos</b><span>Los botones del header ceden hacia el puntero (≤8px, retorno elástico): el peso deja de ser metáfora. Nunca en elementos de compra — la física no puede costar una venta.</span></div></li>
+        <li><span class="n">51</span><div class="t"><b>Carga real ligada al loader</b><span>El contador deja de mentir: avanza por imagen efectivamente descargada. Corrección honesta señalada como deuda en el catálogo.</span></div></li>
+        <li><span class="n">76</span><div class="t"><b>Niveles de degradación por hardware</b><span>La física es privilegio del hardware que la aguanta: con menos de 4 núcleos o poca memoria, fallback CSS. Obligatorio según el propio catálogo.</span></div></li>
+        <li><span class="n">77</span><div class="t"><b>Manejo de webglcontextlost</b><span>Si el contexto cae, el canvas se retira y queda el DOM legible — nunca un rectángulo negro muerto.</span></div></li>
+      </ul>
+    </div>
+
+    <div class="lbl" data-scr>QUÉ RENUNCIA</div>
+    <div class="bd renuncia-bd">
+      Renuncia al papel: el blanco solo aparece como corte comercial.
+      Renuncia a la calma: acá nada está del todo quieto, y eso cansa si se administra mal.
+      Y renuncia a la densidad de mercadería: arriba del fold hay una sola imagen, no una grilla.
+      Es el camino que más GPU pide y el que más depende de la degradación por niveles (#76).
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CAMINO B ═══════════════ -->
+<section class="camino">
+  <a class="card" href="./oficio.html">
+    <img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/tapado-kimono-brushed-takai-7-ad2c2f23976c6c883217194294041586-640-0.webp" alt="Kimono Takai pintado a mano — imagen del camino Oficio" loading="lazy">
+    <div class="veil"></div>
+    <div class="in">
+      <div class="top"><span data-scr>CAMINO B :: ./oficio.html</span><span>PAPEL / TINTA / IMPRENTA</span></div>
+      <div>
+        <h2>Oficio</h2>
+        <div class="kj" lang="ja" aria-hidden="true">手仕事</div>
+        <div class="go">[ ENTRAR &gt;&gt; ]</div>
+      </div>
+    </div>
+  </a>
+  <div class="arg">
+    <div class="lbl" data-scr>TESIS</div>
+    <div class="bd tesis-bd">
+      Si Gravedad es el cuerpo, Oficio es la huella. La imprenta industrial y el pincel de la diseñadora:
+      <b>tinta negra sobre papel blanco</b>. Invierte el sistema — el blanco domina, el negro trabaja.
+    </div>
+
+    <div class="lbl" data-scr>PREGUNTA DE DISEÑO</div>
+    <div class="bd">
+      ¿Cómo se dice «pintado a mano» en un navegador sin falsearlo?
+      ¿Puede una pantalla OLED comportarse como papel?
+      Oficio responde con trama, trazo y silueta: los tres gestos de la gráfica impresa,
+      ninguno simulado — todos calculados.
+    </div>
+
+    <div class="lbl" data-scr>REFERENCIAS</div>
+    <div class="bd">
+      <b>La gráfica propia de la marca</b> — el collage con marcos rotados está en el manifiesto
+      impreso real: acá el efecto #52 tiene respaldo documental, no es préstamo.
+      <b>heliotemil.com</b> — pragmatismo comercial: fondo claro, grilla que se lee,
+      precios que no pelean contra el drama. El catálogo señala al halftone (#15) como
+      «el más recomendable de toda la lista»: monocromo por definición y baratísimo.
+    </div>
+
+    <div class="lbl" data-scr>EFECTOS</div>
+    <div class="bd">
+      <ul class="fx">
+        <li><span class="n">15</span><div class="t"><b>Tramado halftone — la pieza central</b><span>La foto colapsa a puntos de tinta en grilla rotada 45°; la densidad de la trama responde a la distancia del puntero: cerca, detalle; lejos, mancha. Blanco y negro puro por definición.</span></div></li>
+        <li><span class="n">11</span><div class="t"><b>Trazo SVG dibujado por scroll</b><span>Una pincelada caligráfica se traza con stroke-dashoffset atado al progreso: la única traducción honesta de «hecho a mano» al lenguaje web.</span></div></li>
+        <li><span class="n">16</span><div class="t"><b>Umbral / posterización</b><span>En hover la prenda queda en dos niveles, silueta pura: brutal y coherente con la tinta.</span></div></li>
+        <li><span class="n">52</span><div class="t"><b>Collage con marcos rotados</b><span>Sombras duras sin blur, rotaciones de imprenta apurada. Está en la gráfica real de la marca: es cita, no invento.</span></div></li>
+        <li><span class="n">57</span><div class="t"><b>Columnas sticky desfasadas</b><span>Manifiesto pineado a la izquierda, producto corriendo a la derecha: la coreografía editorial de moda clásica.</span></div></li>
+        <li><span class="n">38</span><div class="t"><b>Ajuste exacto por línea</b><span>Cada línea del cartel toca ambos márgenes, medida con JS: el recurso brutalista-editorial por excelencia.</span></div></li>
+        <li><span class="n">37</span><div class="t"><b>Contorno vs relleno</b><span>Titulares alternando trazo hueco y letra sólida: dos tintas con una sola.</span></div></li>
+        <li><span class="n">34</span><div class="t"><b>Texto relleno de imagen</b><span>La palabra grande con el kimono pintado adentro (background-clip): monumental y artesanal a la vez.</span></div></li>
+        <li><span class="n">2</span><div class="t"><b>Skew por velocidad de scroll</b><span>La grilla se inclina ±3° con la velocidad y vuelve con lerp: física mínima para que el papel no sea inerte.</span></div></li>
+        <li><span class="n">60+66</span><div class="t"><b>Borde que se dibuja + LQIP</b><span>El contorno del botón se traza en hover; las fotos entran desde un gris neutro. Micro-oficio barato que suma percepción de calidad.</span></div></li>
+      </ul>
+    </div>
+
+    <div class="lbl" data-scr>QUÉ RENUNCIA</div>
+    <div class="bd renuncia-bd">
+      Renuncia al espectáculo GPU: un solo shader simple, el resto es CSS y SVG.
+      Renuncia a la noche: sin viñeta, sin negro dominante — el aura se juega en la tinta, no en la sombra.
+      Es el camino más barato y el más legible; su riesgo es la monotonía de la trama si no se dosifica,
+      y que su gesto central (la trama que responde al puntero) no existe en táctil.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CAMINO C ═══════════════ -->
+<section class="camino">
+  <a class="card" href="./archivo.html">
+    <img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0087-b7a922169f6f8b83a117830243699603-640-0.jpg" alt="Tapado Aka — imagen del camino Archivo" loading="lazy">
+    <div class="veil"></div>
+    <div class="in">
+      <div class="top"><span data-scr>CAMINO C :: ./archivo.html</span><span>NOCTURNO / MUSEO / TIEMPO REAL</span></div>
+      <div>
+        <h2>Archivo</h2>
+        <div class="kj" lang="ja" aria-hidden="true">記憶</div>
+        <div class="go">[ ENTRAR &gt;&gt; ]</div>
+      </div>
+    </div>
+  </a>
+  <div class="arg">
+    <div class="lbl" data-scr>TESIS</div>
+    <div class="bd tesis-bd">
+      Las 59 piezas vendidas no mueren: se archivan. El objeto único deja memoria,
+      y el sitio es <b>el museo que abre de noche</b>. El tiempo real es material de diseño.
+    </div>
+
+    <div class="lbl" data-scr>PREGUNTA DE DISEÑO</div>
+    <div class="bd">
+      ¿Qué hace una marca de piezas 1/1 con lo que ya no puede vender?
+      ¿Puede un e-commerce recordar en lugar de solo ofrecer?
+      Archivo apuesta a que el registro de lo vendido es el mejor argumento de venta
+      de lo que queda: la escasez demostrada, no declamada.
+    </div>
+
+    <div class="lbl" data-scr>REFERENCIAS</div>
+    <div class="bd">
+      <b>locomotive.ca</b> — la coreografía de scroll como narración, y su reloj CET en vivo:
+      acá se traduce al horario real de Honduras 4940 (#74) — dato útil y gesto de marca a la vez.
+      <b>La gráfica propia</b> — los sellos <span class="ja-in" lang="ja" aria-hidden="true">完売</span> (vendida) y
+      <span class="ja-in" lang="ja" aria-hidden="true">一点物</span> (pieza única) funcionan como cartelas de museo:
+      el vocabulario ya existía, el camino lo cura.
+    </div>
+
+    <div class="lbl" data-scr>EFECTOS</div>
+    <div class="bd">
+      <ul class="fx">
+        <li><span class="n">5</span><div class="t"><b>Tarjetas apiladas (sticky stacking) — la pieza central</b><span>Cada prenda es una lápida a pantalla completa; la siguiente se monta mientras la anterior se encoge y oscurece. La cadencia del recorrido de sala.</span></div></li>
+        <li><span class="n">41</span><div class="t"><b>Estela de imágenes</b><span>El puntero deja fotos del catálogo a su paso, que aparecen y se desvanecen: la memoria como fenómeno del gesto, no como listado.</span></div></li>
+        <li><span class="n">72</span><div class="t"><b>Reflector que invierte el tema</b><span>Un círculo de luz vuelve legible el manifiesto solo por partes (capa duplicada con mask-image radial): el archivo no se entrega entero.</span></div></li>
+        <li><span class="n">74</span><div class="t"><b>Reloj del local en vivo</b><span>Hora real de Buenos Aires, segundo a segundo: HONDURAS 4940 :: ABIERTO o CERRADO · <span lang="ja" aria-hidden="true">閉店</span>. El museo tiene horario.</span></div></li>
+        <li><span class="n">31</span><div class="t"><b>Fuente variable animada</b><span>El peso del título oscila 300→800 en loop lento: el archivo respira. El eje ya viene gratis con Archivo variable.</span></div></li>
+        <li><span class="n">30</span><div class="t"><b>Entrada por carácter con rotación 3D</b><span><span lang="ja" aria-hidden="true">記憶</span> entra letra por letra, rotando en X, una sola vez: la solemnidad justa, sin loop.</span></div></li>
+        <li><span class="n">7</span><div class="t"><b>Franja horizontal con inercia de puntero</b><span>La tira de miniaturas corre libre con pointer events + lerp, sin scrollbar visible: el depósito del museo.</span></div></li>
+        <li><span class="n">61+36</span><div class="t"><b>Marquesina en el botón + texto elástico</b><span>El CTA corre en loop y los titulares se estiran con la velocidad de scroll: la física del sistema, en dosis mínima.</span></div></li>
+      </ul>
+    </div>
+
+    <div class="lbl" data-scr>QUÉ RENUNCIA</div>
+    <div class="bd renuncia-bd">
+      Renuncia a vender primero: es museo antes que tienda, y esa solemnidad tiene costo
+      comercial directo. Renuncia a la densidad: una pieza por pantalla, el fold no muestra surtido.
+      Y renuncia al papel: es el más nocturno de los tres.
+      Su riesgo es la liturgia — si el ritmo del apilado falla, aburre.
+    </div>
+  </div>
+</section>
+
+<!-- ═══ INTERLUDIO ═══ -->
+<section class="inter">
+  <span class="thin-l" aria-hidden="true">Mano / Máquina</span>
+  <p>
+    Los tres primeros caminos son <b>la mano</b>: el cuerpo que pesa, la tinta que marca, la memoria que guarda.
+    Los cinco que siguen salen del taller hacia afuera — <b>la máquina y el mundo</b>: la consola que decodifica,
+    el plano que antecede a la prenda, el objeto que se rodea, el territorio que desorienta y la calle que entra por la vidriera.
+  </p>
+</section>
+
+<!-- ═══ ACTO II ═══ -->
+<section class="acto">
+  <span class="k" data-scr>ACTO II :: D — E — F — G — H</span>
+  <h2>La máquina y el mundo<span class="kj-a" lang="ja" aria-hidden="true">機械と世界</span></h2>
+</section>
+
+<!-- ═══════════════ CAMINO D ═══════════════ -->
+<section class="camino">
+  <a class="card" href="./terminal.html">
+    <img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/manuk-hoodie_001-__green-b59b8392542aef38dd17187443458756-640-0.webp" alt="MANUK Hoodie 001 — imagen del camino Terminal" loading="lazy">
+    <div class="veil"></div>
+    <div class="in">
+      <div class="top"><span data-scr>CAMINO D :: ./terminal.html</span><span>NEGRO / MÁQUINA / MANUK</span></div>
+      <div>
+        <h2>Terminal</h2>
+        <div class="kj" lang="ja" aria-hidden="true">端末</div>
+        <div class="go">[ ENTRAR &gt;&gt; ]</div>
+      </div>
+    </div>
+  </a>
+  <div class="arg">
+    <div class="lbl" data-scr>TESIS</div>
+    <div class="bd tesis-bd">
+      La marca se declara mano <b>y</b> máquina — y los tres primeros caminos son tres caras de la mano.
+      Este es la máquina: el sitio como sistema operativo, <b>la prenda degradada a caracteres</b>,
+      la interfaz como consola. No es una estética prestada: es el idioma que MANUK WORLD ya habla.
+    </div>
+
+    <div class="lbl" data-scr>PREGUNTA DE DISEÑO</div>
+    <div class="bd">
+      ¿Qué pasa cuando la tienda deja de imitar una revista y se asume máquina?
+      ¿Puede lo críptico vender un hoodie de $113.900?
+      Terminal apuesta a que sí — porque el destinatario existe: la sub-línea
+      ya nombra sus productos MANUK.HOODIE/001.&gt;&gt;BLACK.
+    </div>
+
+    <div class="lbl" data-scr>REFERENCIAS</div>
+    <div class="bd">
+      <b>La gráfica propia de la marca</b> — el dialecto terminal
+      &lt;&lt;GENDERLESS(<span class="ja-in" lang="ja" aria-hidden="true">ジェンダーレス</span>)//FASHION#()&gt;&gt; y
+      &gt;&gt;HONDURAS4940## no son invento del mockup: son su gráfica documentada. El monograma NN
+      encuadrado se lee como ícono de sistema. De las sub-marcas es la única con lenguaje visual
+      propio y sin camino: este lo completa, y la vidriera pasa de tres variantes de lo mismo
+      a un sistema con dos polos.
+    </div>
+
+    <div class="lbl" data-scr>EFECTOS</div>
+    <div class="bd">
+      <ul class="fx">
+        <li><span class="n">17</span><div class="t"><b>Shader ASCII — el núcleo</b><span>La fotografía se degrada a datos: caracteres en grilla por luminancia. Regla de dosis del catálogo: solo en el hero y en un hover de la grilla — usado de más, el sitio se vuelve demo.</span></div></li>
+        <li><span class="n">18</span><div class="t"><b>Estética CRT en blanco y negro</b><span>Scanlines, viñeta de tubo, flicker leve. Sin verde: es un monitor de seguridad, no una consola ochentosa.</span></div></li>
+        <li><span class="n">28</span><div class="t"><b>Glitch de interferencia</b><span>Dos o tres frames de slices al cargar y al cruzar secciones, como una señal que se reengancha. Nunca en loop continuo.</span></div></li>
+        <li><span class="n">35</span><div class="t"><b>Morfosis de idioma</b><span>GENDERLESS ⇄ <span lang="ja" aria-hidden="true">ジェンダーレス</span> ⇄ SIN GÉNERO con scramble entre estados: la máquina no elige idioma, los recorre.</span></div></li>
+        <li><span class="n">42</span><div class="t"><b>Rastro de cursor (fósforo)</b><span>Copias del punto con retardo y opacidad decreciente: el tubo tarda en apagarse. Solo desktop.</span></div></li>
+        <li><span class="n">44</span><div class="t"><b>Ripple al clic</b><span>Un anillo desde el punto de contacto: el único acuse de recibo del sistema.</span></div></li>
+        <li><span class="n">75</span><div class="t"><b>Huevo de pascua</b><span>Una secuencia de teclas abre un modo oculto con la gráfica de colaboración real. La marca ya cultiva lo críptico; no hay pista visible.</span></div></li>
+        <li><span class="n">10</span><div class="t"><b>Header direccional</b><span>La barra de estado se retrae al bajar y reaparece al subir: la interfaz se guarda sola.</span></div></li>
+        <li><span class="n">63</span><div class="t"><b>Sonido — previsto, omitido</b><span>Pulsos de teclado y confirmaciones, silenciados por defecto con interruptor. En el mockup se omite deliberadamente: se declara, no se simula.</span></div></li>
+      </ul>
+    </div>
+
+    <div class="lbl" data-scr>QUÉ RENUNCIA</div>
+    <div class="bd renuncia-bd">
+      Renuncia a la fotografía como documento: acá la prenda no se ve, se decodifica.
+      Renuncia a la contemplación: es velocidad, no lujo pausado — un tapado de $970.000
+      no debería vivir acá; MANUK vende hoodies de $113.900 y eso está bien.
+      Su riesgo es la sobredosis: el ASCII es un truco muy identificable, y la regla
+      es dos momentos por página. El sonido queda previsto y silencioso.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CAMINO E ═══════════════ -->
+<section class="camino">
+  <a class="card" href="./molderia.html">
+    <img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/tapado-kimono-brushed-takai-7-ad2c2f23976c6c883217194294041586-640-0.webp" alt="Kimono Takai — imagen del camino Moldería" loading="lazy">
+    <div class="veil"></div>
+    <div class="in">
+      <div class="top"><span data-scr>CAMINO E :: ./molderia.html</span><span>PAPEL TÉCNICO / LÍNEA / PLIEGO</span></div>
+      <div>
+        <h2>Moldería</h2>
+        <div class="kj" lang="ja" aria-hidden="true">型紙</div>
+        <div class="go">[ ENTRAR &gt;&gt; ]</div>
+      </div>
+    </div>
+  </a>
+  <div class="arg">
+    <div class="lbl" data-scr>TESIS</div>
+    <div class="bd tesis-bd">
+      Antes de la ropa está el papel: el molde, las líneas de corte, los piquetes, el hilo de la tela.
+      El sitio se organiza como <b>un pliego de moldería</b>: cada pieza es primero plano y después cuerpo.
+      La navegación no es scroll — es armado.
+    </div>
+
+    <div class="lbl" data-scr>PREGUNTA DE DISEÑO</div>
+    <div class="bd">
+      ¿Puede un e-commerce mostrar la construcción antes que el resultado?
+      ¿Se sostiene el deseo cuando la primera imagen es un plano y no una foto?
+      Moldería apuesta a que en una marca que se define por el corte,
+      enseñar el corte es el argumento de venta más literal posible.
+    </div>
+
+    <div class="lbl" data-scr>REFERENCIAS</div>
+    <div class="bd">
+      <b>El manifiesto propio de la marca</b> — habla de «construcción», del «corte que desarma
+      la silueta», de prendas construidas con textiles deportivos y sastreros: no hay que inventarle
+      una metáfora, es lo que la marca dice de sí misma. Y la originalidad como argumento:
+      no se conoce un e-commerce de moda construido sobre su propia moldería.
+      El kimono, además, es históricamente rectangular: su molde es dibujable con dignidad.
+    </div>
+
+    <div class="lbl" data-scr>EFECTOS</div>
+    <div class="bd">
+      <ul class="fx">
+        <li><span class="n">48</span><div class="t"><b>Cortina con morfosis SVG — el núcleo</b><span>Las transiciones no son rectángulos: son líneas de corte que se pliegan, un path que muta de recto a curvo como una costura que cede.</span></div></li>
+        <li><span class="n">6</span><div class="t"><b>Pineado multi-etapa — el corazón</b><span>El molde del kimono se arma en cuatro etapas al recorrer la sección pineada: piezas planas, unión, pliegue, y crossfade a la prenda real. Contador 01/04 :: CORTE.</span></div></li>
+        <li><span class="n">32</span><div class="t"><b>Texto sobre trazado</b><span>Las medidas corren a lo largo de la costura curva (textPath): 68 CM :: TALLE 2 :: HILO DE LA TELA. Es como se rotula un molde real.</span></div></li>
+        <li><span class="n">50</span><div class="t"><b>Persianas / tajos</b><span>La tijera: la imagen cortada en franjas verticales que entran desfasadas.</span></div></li>
+        <li><span class="n">22</span><div class="t"><b>Papel de calco</b><span>Una capa translúcida (backdrop-filter) superpuesta al molde, que sigue al puntero: se ve el plano de abajo, velado.</span></div></li>
+        <li><span class="n">53</span><div class="t"><b>Pantalla dividida</b><span>Plano SVG pineado a la izquierda, prenda real corriendo a la derecha: el antes y el después conviven.</span></div></li>
+        <li><span class="n">46+47</span><div class="t"><b>FLIP + View Transitions — en el sitio real</b><span>La pieza plana se levanta y se convierte en la prenda vestida. En el mockup se declara como infraestructura del sitio final, no se finge.</span></div></li>
+      </ul>
+    </div>
+
+    <div class="lbl" data-scr>QUÉ RENUNCIA</div>
+    <div class="bd renuncia-bd">
+      Renuncia a la fotografía como puerta de entrada: el plano toma el protagonismo
+      y la prenda llega después. Es el más frío y el más cerebral de los ocho.
+      Y la renuncia honesta del mockup: la moldería es esquemática — la real requiere
+      los planos digitalizados de la marca, y una moldería falsa se nota
+      igual que una pincelada falsa. Eso hay que preguntarlo antes de prometerlo.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CAMINO F ═══════════════ -->
+<section class="camino">
+  <a class="card" href="./volumen.html">
+    <img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0628-16ec2f55db5cbe96a017835415963188-640-0.webp" alt="Prenda en vista de estudio — imagen del camino Volumen" loading="lazy">
+    <div class="veil"></div>
+    <div class="in">
+      <div class="top"><span data-scr>CAMINO F :: ./volumen.html</span><span>NEGRO CÁMARA / OBJETO / EJE Z</span></div>
+      <div>
+        <h2>Volumen</h2>
+        <div class="kj" lang="ja" aria-hidden="true">立体</div>
+        <div class="go">[ ENTRAR &gt;&gt; ]</div>
+      </div>
+    </div>
+  </a>
+  <div class="arg">
+    <div class="lbl" data-scr>TESIS</div>
+    <div class="bd tesis-bd">
+      Una prenda no es una foto: es un volumen. El sitio funciona como probador —
+      <b>la pieza gira, se ve de espaldas, el derecho se compara contra el revés</b>.
+      No resuelve un capricho estético: nadie compra un tapado de $970.000 sin ver la espalda.
+    </div>
+
+    <div class="lbl" data-scr>PREGUNTA DE DISEÑO</div>
+    <div class="bd">
+      ¿Cuánta profundidad se puede dar sin 3D real ni re-fotografiar el catálogo?
+      Las fotos actuales son casi todas frontales, y en estas prendas
+      la silueta es el producto. Volumen trabaja el eje Z con lo que hay:
+      vistas pareadas de la misma sesión, capas, perspectiva.
+    </div>
+
+    <div class="lbl" data-scr>REFERENCIAS</div>
+    <div class="bd">
+      <b>El manifiesto propio</b> — habla del volumen que «devora la silueta»: kimonos, capas,
+      tapados oversize donde la forma es el argumento. <b>heliotemil.com</b> — pragmatismo:
+      es el único de los ocho que se justifica ante un director comercial sin hablar de estética.
+      En una marca que forra sus prendas, el revés es argumento de venta (#68).
+    </div>
+
+    <div class="lbl" data-scr>EFECTOS</div>
+    <div class="bd">
+      <ul class="fx">
+        <li><span class="n">4</span><div class="t"><b>Rotación simulada — el núcleo</b><span>Visor de 4–6 vistas recorridas con el puntero o con la sección pineada, crossfade entre tomas, contador VISTA 02/04. Declarado como simulación: data-sim="4-vistas".</span></div></li>
+        <li><span class="n">68</span><div class="t"><b>Comparador derecho / revés</b><span>Barra entre dos tomas de la misma sesión (clip-path dinámico), operable también por teclado. El forro a la vista.</span></div></li>
+        <li><span class="n">21</span><div class="t"><b>Paralaje por profundidad simulado</b><span>El hero en tres capas del mismo archivo a escalas distintas, corriendo a velocidades distintas con el puntero: relieve sin mapa real, declarado como simulación.</span></div></li>
+        <li><span class="n">8</span><div class="t"><b>Perspectiva 3D real</b><span>Tarjetas en translateZ escalonado bajo perspective: profundidad geométrica, no fingida por velocidad.</span></div></li>
+        <li><span class="n">58</span><div class="t"><b>Inclinación 3D en hover</b><span>Tilt ±6° con brillo especular: la tarjeta responde como un objeto con peso. Apagado en táctil y con reduced-motion.</span></div></li>
+        <li><span class="n">26</span><div class="t"><b>Cinta cilíndrica</b><span>Miniaturas con rotateY decreciente hacia los bordes: el perchero como tambor, CSS puro.</span></div></li>
+        <li><span class="n">27</span><div class="t"><b>Instanced meshes — deuda declarada</b><span>Sin WebGL en el mockup: se lista como requisito del sitio real para que una grilla con volumen aguante.</span></div></li>
+      </ul>
+    </div>
+
+    <div class="lbl" data-scr>QUÉ RENUNCIA</div>
+    <div class="bd renuncia-bd">
+      Renuncia a la ligereza: es el más caro en datos, producción fotográfica y cómputo.
+      Renuncia a la abstracción: acá el producto se muestra, no se insinúa.
+      La renuncia honesta: no existe secuencia 360 real — la rotación se simula
+      con 4 vistas y crossfade; la producción real exige mesa giratoria y 24–36 tomas por pieza.
+      Es el que peor escala a un Android de gama media: con poca memoria, el visor cae a 2 vistas.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CAMINO G ═══════════════ -->
+<section class="camino">
+  <a class="card" href="./deriva.html">
+    <img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/pantalon-wakusei-2-b5a85660a588c09c0c17187383919344-640-0.webp" alt="Pantalón Wakusei — imagen del camino Deriva" loading="lazy">
+    <div class="veil"></div>
+    <div class="in">
+      <div class="top"><span data-scr>CAMINO G :: ./deriva.html</span><span>NEGRO PROFUNDO / TERRITORIO / MAPA</span></div>
+      <div>
+        <h2>Deriva</h2>
+        <div class="kj" lang="ja" aria-hidden="true">漂流</div>
+        <div class="go">[ ENTRAR &gt;&gt; ]</div>
+      </div>
+    </div>
+  </a>
+  <div class="arg">
+    <div class="lbl" data-scr>TESIS</div>
+    <div class="bd tesis-bd">
+      Ciento noventa y dos piezas no son una lista: son <b>un territorio</b>.
+      Sin arriba ni abajo, sin orden, sin fin visible. La desorientación como forma del lujo —
+      la tesis que abrió este proyecto, llevada a su consecuencia.
+    </div>
+
+    <div class="lbl" data-scr>PREGUNTA DE DISEÑO</div>
+    <div class="bd">
+      ¿Cuánta fricción tolera una tienda antes de dejar de serlo?
+      Deriva es el experimento de control de esa pregunta: el catálogo como plano
+      que se recorre a pulso, en penumbra, con una linterna. Y su corolario obligado:
+      si el mapa excluye, la lista repara.
+    </div>
+
+    <div class="lbl" data-scr>REFERENCIAS</div>
+    <div class="bd">
+      <b>El informe fundante del proyecto</b> — la «hostilidad táctica»: la fricción y la
+      desorientación como custodios del misticismo. Este camino es su lectura más literal,
+      y por eso el más peligroso: sus efectos comparten una misma negación —
+      ninguno tiene arriba ni abajo. El propio documento lo tasa:
+      <b>baja como sitio completo, alta como órgano</b> — una sección EL MAPA,
+      o la pantalla de un drop de dos horas.
+    </div>
+
+    <div class="lbl" data-scr>EFECTOS</div>
+    <div class="bd">
+      <ul class="fx">
+        <li><span class="n">45</span><div class="t"><b>Lienzo infinito de arrastre — el núcleo</b><span>El catálogo es un plano de ~3000×2000 que se lleva con el puntero, con inercia y límites elásticos: no una página que se baja.</span></div></li>
+        <li><span class="n">56</span><div class="t"><b>Disposición radial / orgánica</b><span>Posiciones pseudoaleatorias con seed fija — determinista, no caprichosa —, tamaños variados, rotaciones de ±3°.</span></div></li>
+        <li><span class="n">23</span><div class="t"><b>Celdas Voronoi de fondo</b><span>La cartografía: ~14 celdas SVG precalculadas, trazo fino gris. Cada pieza ocupa una parcela del territorio.</span></div></li>
+        <li><span class="n">59</span><div class="t"><b>Foco de linterna</b><span>Todo el plano en penumbra; un círculo de luz sigue al puntero y revela. Solo se ve lo que se ilumina.</span></div></li>
+        <li><span class="n">49</span><div class="t"><b>Revelado circular desde el clic</b><span>Entrar a una pieza es abrir un pozo en el territorio: el círculo se expande desde el punto y muestra la ficha con precio.</span></div></li>
+        <li><span class="n">73</span><div class="t"><b>Estado de reposo</b><span>Sin input durante seis segundos, el plano deriva solo. Cualquier gesto lo frena: el mapa tiene corriente propia.</span></div></li>
+        <li><span class="n">44</span><div class="t"><b>Ripple</b><span>Cada suelta del plano deja una onda: el territorio acusa el paso.</span></div></li>
+        <li><span class="n">≡</span><div class="t"><b>Vista lista — la renuncia hecha sistema</b><span>Un botón fijo abre las mismas piezas en lista mono navegable por teclado, con precios visibles. No es un parche de accesibilidad: es condición de existencia del camino.</span></div></li>
+      </ul>
+    </div>
+
+    <div class="lbl" data-scr>QUÉ RENUNCIA</div>
+    <div class="bd renuncia-bd">
+      Renuncia a todo el aparato comercial: sin grilla, sin orden, sin precio a la vista
+      sin buscarlo. Comercialmente suicida como home — y se dice así, sin eufemismo.
+      La accesibilidad se recupera por la vista lista paralela y las flechas en el mapa,
+      que acá son obligatorias. Vale como sección o como pantalla de drop: memorable ahí,
+      irresponsable como puerta principal.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CAMINO H ═══════════════ -->
+<section class="camino">
+  <a class="card" href="./local.html">
+    <img src="./fachada-noche.webp" alt="Fachada de Honduras 4940 de noche, katakana retroiluminado — imagen del camino Vidriera" loading="lazy">
+    <div class="veil"></div>
+    <div class="in">
+      <div class="top"><span data-scr>CAMINO H :: ./local.html</span><span>LA CALLE / LUZ / TIEMPO REAL</span></div>
+      <div>
+        <h2>Vidriera</h2>
+        <div class="kj" lang="ja" aria-hidden="true">硝子</div>
+        <div class="go">[ ENTRAR &gt;&gt; ]</div>
+      </div>
+    </div>
+  </a>
+  <div class="arg">
+    <div class="lbl" data-scr>TESIS</div>
+    <div class="bd tesis-bd">
+      El sitio es la vidriera del local. Entra la calle: Honduras 4940, la luz que cambia
+      con la hora real de Buenos Aires. De día el sitio es papel; de noche, tinta.
+      <b>No es una metáfora del local: es el local.</b>
+    </div>
+
+    <div class="lbl" data-scr>PREGUNTA DE DISEÑO</div>
+    <div class="bd">
+      ¿Por qué el activo visual más fuerte de la marca — la fachada con el katakana vertical
+      retroiluminado — no aparece nunca en su sitio actual?
+      Vidriera responde poniéndolo en el centro, y hace del tiempo real
+      la variable de diseño: la página no tiene un tema, tiene una hora.
+    </div>
+
+    <div class="lbl" data-scr>REFERENCIAS</div>
+    <div class="bd">
+      <b>Las fachadas reales</b> — /fachada-noche.webp y /fachada-dia.webp, fotografía propia
+      del local. <b>El reloj de Archivo (#74)</b> — ya probado: acá deja de ser dato
+      y pasa a decidir el estado inicial de toda la página.
+      <b>locomotive.ca</b> — el tiempo del estudio como material; traducido a Palermo.
+    </div>
+
+    <div class="lbl" data-scr>EFECTOS</div>
+    <div class="bd">
+      <ul class="fx">
+        <li><span class="n">70</span><div class="t"><b>Máscara con el monograma — el núcleo</b><span>El símbolo NN a pantalla casi completa con la fachada adentro (clipPath SVG), pan lento. La firma memorable con un activo que ya existe.</span></div></li>
+        <li><span class="n">65</span><div class="t"><b>Tratamiento unificado</b><span>La fachada pasa por un canvas con grano y parpadeo leve de luz: la textura de video sin video — una sola gramática visual para foto y calle.</span></div></li>
+        <li><span class="n">71</span><div class="t"><b>Tema progresivo por scroll</b><span>El día que cae: el estado inicial lo decide la hora real de Buenos Aires, y el recorrido interpola papel ⇄ tinta. Si es de noche, el recorrido amanece.</span></div></li>
+        <li><span class="n">13</span><div class="t"><b>Transición guiada por ruido</b><span>Fachada de día y de noche fundidas por una máscara de turbulencia animada: el reflejo que cambia sobre el vidrio.</span></div></li>
+        <li><span class="n">59</span><div class="t"><b>Foco de vidriera</b><span>Tres piezas sobre negro, cada una bajo un cono de luz que se enciende al entrar en viewport: el escaparate literal.</span></div></li>
+        <li><span class="n">10</span><div class="t"><b>Persiana</b><span>El header se retrae al bajar con sombra de lamas: el local que cierra y abre con el gesto.</span></div></li>
+      </ul>
+    </div>
+
+    <div class="lbl" data-scr>QUÉ RENUNCIA</div>
+    <div class="bd renuncia-bd">
+      Renuncia a la abstracción: es el más documental de los ocho, y el que menos depende
+      del diseño — si la imagen de la calle es buena, el sitio es bueno; si no,
+      no hay CSS que lo salve. Externaliza la calidad a la producción audiovisual.
+      La renuncia honesta del mockup: no hay video — es fotografía animada
+      (pan lento y parpadeo por canvas); la producción real es filmación.
+      Puede vivir también como capa sobre cualquier otro camino.
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TABLA COMPARATIVA ═══ -->
+<section class="compare">
+  <h2>Comparativa</h2>
+  <div class="tbl-wrap">
+    <table>
+      <caption style="text-align:left;font-family:var(--mono);font-size:10px;color:var(--g-500);letter-spacing:.2em;text-transform:uppercase;padding-bottom:14px">LOS OCHO CAMINOS, LADO A LADO</caption>
+      <thead>
+        <tr><th scope="col">Camino</th><th scope="col">Dominante</th><th scope="col">Efecto central</th><th scope="col">Riesgo</th><th scope="col">Costo estimado en el sitio real</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="cam">A · Gravedad <span class="ja-in" lang="ja" aria-hidden="true">重力</span></span></td>
+          <td>Negro. Noche física.</td>
+          <td>Shader líquido de la Parte A + magnetismo real (#40)</td>
+          <td>GPU en gama media; el motor puede opacar la prenda</td>
+          <td>Alto — WebGL con 3 niveles de degradación (#76) y contexto protegido (#77)</td>
+        </tr>
+        <tr>
+          <td><span class="cam">B · Oficio <span class="ja-in" lang="ja" aria-hidden="true">手仕事</span></span></td>
+          <td>Papel blanco. Tinta.</td>
+          <td>Halftone interactivo (#15)</td>
+          <td>Monotonía de trama; el gesto central no existe en táctil</td>
+          <td>Medio — un shader simple; el resto CSS y SVG</td>
+        </tr>
+        <tr>
+          <td><span class="cam">C · Archivo <span class="ja-in" lang="ja" aria-hidden="true">記憶</span></span></td>
+          <td>Nocturno. Museo.</td>
+          <td>Sticky stacking (#5) + tiempo real (#74)</td>
+          <td>Solemnidad; conversión diferida</td>
+          <td>Medio-alto — coreografía de scroll fina, sin GPU pesada</td>
+        </tr>
+        <tr>
+          <td><span class="cam">D · Terminal <span class="ja-in" lang="ja" aria-hidden="true">端末</span></span></td>
+          <td>Negro. Monitor.</td>
+          <td>Shader ASCII (#17) + CRT (#18)</td>
+          <td>Sobredosis: el ASCII usado de más vuelve el sitio demo</td>
+          <td>Medio — canvas 2D y CSS; el sonido (#63) queda previsto, omitido</td>
+        </tr>
+        <tr>
+          <td><span class="cam">E · Moldería <span class="ja-in" lang="ja" aria-hidden="true">型紙</span></span></td>
+          <td>Papel técnico. Línea.</td>
+          <td>Pineado multi-etapa del molde (#6) + cortina con morfosis (#48)</td>
+          <td>Una moldería falsa se nota; frialdad cerebral</td>
+          <td>Medio-alto — SVG fino a mano; la real exige los planos de la marca</td>
+        </tr>
+        <tr>
+          <td><span class="cam">F · Volumen <span class="ja-in" lang="ja" aria-hidden="true">立体</span></span></td>
+          <td>Negro cámara. Objeto.</td>
+          <td>Rotación simulada (#4) + comparador derecho/revés (#68)</td>
+          <td>El que peor escala en gama media; producción fotográfica cara</td>
+          <td>Alto — mesa giratoria y 24–36 tomas por pieza; el mockup simula con 4 vistas</td>
+        </tr>
+        <tr>
+          <td><span class="cam">G · Deriva <span class="ja-in" lang="ja" aria-hidden="true">漂流</span></span></td>
+          <td>Negro profundo. Territorio.</td>
+          <td>Lienzo infinito de arrastre (#45) + linterna (#59)</td>
+          <td>Comercialmente suicida como home; solo vale con vista lista</td>
+          <td>Medio — sin WebGL; el costo real es el doble mantenimiento mapa + lista</td>
+        </tr>
+        <tr>
+          <td><span class="cam">H · Vidriera <span class="ja-in" lang="ja" aria-hidden="true">硝子</span></span></td>
+          <td>La hora decide: papel ⇄ tinta.</td>
+          <td>Máscara con el monograma (#70) + tema progresivo (#71)</td>
+          <td>Externaliza la calidad a la producción audiovisual</td>
+          <td>Medio en código, alto en producción — el mockup anima fotos; lo real es filmación</td>
+        </tr>
+        <tr class="organos">
+          <td><span class="cam">Órganos transversales</span></td>
+          <td>Pertenecen a cualquier esqueleto</td>
+          <td><b>#46+#47</b> FLIP + View Transitions · <b>#63</b> diseño sonoro · <b>#71</b> tema progresivo · <b>#27</b> instanced meshes</td>
+          <td>Ninguno propio: son infraestructura de cohesión, no efectos visibles</td>
+          <td>Se presupuestan una sola vez y sirven al camino que gane</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══ CIERRE ═══ -->
+<section class="cierre">
+  <p class="bd">
+    Los ocho comparten el sistema: <b>logo siempre vector, blanco y negro estricto, grano fílmico,
+    dialecto terminal, katakana de fachada, degradación completa con reduced-motion.</b>
+    No son excluyentes: son combinables. El sitio final puede tomar el esqueleto de uno
+    y órganos de otros — el halftone de Oficio en las fichas de Gravedad,
+    el reloj del Archivo en cualquier footer, el mapa de Deriva como pantalla de un drop,
+    la fachada de Vidriera como hero de quien la pida.
+  </p>
+  <p class="note" data-scr>ESTA VIDRIERA NO DECIDE :: ARGUMENTA</p>
+</section>
+
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="f-term" aria-hidden="true">
+    &lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()<span lang="ja">ファッション</span>-))<br>
+    ".&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SHOP((<span lang="ja">ショップ</span>$<span lang="ja">ディスカウント</span><b>NN</b>@!!!))""<br>
+    BUENOS AIRES//<span lang="ja">デザイナー</span> ..DESIGNER &gt;&gt;<b>HONDURAS4940</b>##
+  </div>
+  <nav class="f-links" aria-label="Los ocho mockups">
+    <a href="./gravedad.html">CAMINO A :: GRAVEDAD <span lang="ja" aria-hidden="true">重力</span></a>
+    <a href="./oficio.html">CAMINO B :: OFICIO <span lang="ja" aria-hidden="true">手仕事</span></a>
+    <a href="./archivo.html">CAMINO C :: ARCHIVO <span lang="ja" aria-hidden="true">記憶</span></a>
+    <a href="./terminal.html">CAMINO D :: TERMINAL <span lang="ja" aria-hidden="true">端末</span></a>
+    <a href="./molderia.html">CAMINO E :: MOLDERÍA <span lang="ja" aria-hidden="true">型紙</span></a>
+    <a href="./volumen.html">CAMINO F :: VOLUMEN <span lang="ja" aria-hidden="true">立体</span></a>
+    <a href="./deriva.html">CAMINO G :: DERIVA <span lang="ja" aria-hidden="true">漂流</span></a>
+    <a href="./local.html">CAMINO H :: VIDRIERA <span lang="ja" aria-hidden="true">硝子</span></a>
+  </nav>
+  <div class="f-sign">
+    <span class="lockup" style="font-size:10px">
+      <svg class="pm-lockup" role="img" aria-label="Panni Margot" focusable="false"><use href="#pm-lockup"/></svg>
+      <span>© 2026</span>
+    </span>
+    <span lang="ja" aria-hidden="true">ブエノスアイレスで作られた</span>
+    <span>MADE IN BUENOS AIRES</span>
+  </div>
+</footer>
+
+<script>
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const MOB = matchMedia('(max-width: 820px)').matches;
+
+/* ── CURSOR DOBLE MASA ───────────────────── */
+(function(){
+  if(RM||MOB)return;
+  const dot=document.getElementById('cur'), ring=document.getElementById('cur-ring');
+  let mx=innerWidth/2,my=innerHeight/2,dx=mx,dy=my,rx=mx,ry=my;
+  addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+  function loop(){
+    if(!document.hidden){
+      dx+=(mx-dx)*.55; dy+=(my-dy)*.55;
+      rx+=(mx-rx)*.13; ry+=(my-ry)*.13;
+      dot.style.transform=`translate3d(${dx}px,${dy}px,0)`;
+      ring.style.transform=`translate3d(${rx}px,${ry}px,0)`;
+    }
+    requestAnimationFrame(loop);
+  }
+  loop();
+  document.querySelectorAll('a').forEach(el=>{
+    el.addEventListener('mouseenter',()=>ring.classList.add('big'));
+    el.addEventListener('mouseleave',()=>ring.classList.remove('big'));
+  });
+})();
+
+/* ── SCRAMBLE en rótulos mono ────────────── */
+(function(){
+  const CH='>#/:*.-01ノハマ';
+  const run=(el)=>{
+    const final=el.dataset.final||el.textContent;el.dataset.final=final;
+    let f=0;const total=14;
+    const t=setInterval(()=>{
+      f++;
+      el.textContent=final.split('').map((c,i)=>{
+        if(c===' ')return ' ';
+        return i<f*(final.length/total)?c:CH[Math.floor(Math.random()*CH.length)];
+      }).join('');
+      if(f>=total){el.textContent=final;clearInterval(t)}
+    },34);
+  };
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting&&!e.target.dataset.done){e.target.dataset.done='1';io.unobserve(e.target);if(!RM)run(e.target)}
+  }),{threshold:.6});
+  document.querySelectorAll('[data-scr]').forEach(el=>io.observe(el));
+})();
+</script>
+</body>
+</html>

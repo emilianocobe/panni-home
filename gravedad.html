@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GRAVEDAD · 重力 :: PANNI MARGOT</title>
+<link rel="icon" href="./favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#000; --white:#fff;
+  --g-900:#0a0a0a; --g-800:#141414; --g-700:#242424; --g-500:#5c5c5c; --g-300:#a8a8a8; --g-100:#e6e6e6;
+  --display:"Anton",Impact,sans-serif;
+  --geo:"Archivo",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  --jp:"Noto Sans JP",sans-serif;
+  --bg:var(--black); --fg:var(--white);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--fg);font-family:var(--mono);font-size:11px;letter-spacing:.08em;overflow-x:hidden;cursor:none}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none;cursor:none}
+/* skip-link: nav fija ⇒ salto directo al contenido (visible solo con foco) */
+.skip{position:fixed;top:-48px;left:28px;z-index:10001;background:var(--white);color:var(--black);
+  padding:10px 16px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  transition:top .2s}
+.skip:focus-visible{top:0;outline:1px solid var(--black);outline-offset:-4px}
+::selection{background:var(--white);color:var(--black)}
+a:focus-visible,button:focus-visible{outline:1px solid var(--white);outline-offset:3px}
+
+/* ═══ BARRA VIDRIERA (retorno a ./index.html) ═══ */
+#viabar{position:fixed;top:0;left:0;right:0;height:36px;z-index:990;background:var(--black);
+  border-bottom:1px solid var(--g-700);display:flex;justify-content:space-between;align-items:center;
+  padding:0 28px;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase}
+#viabar a{color:var(--white)}
+#viabar a:hover{color:var(--g-300)}
+#viabar .via-tag{color:var(--g-300)}
+
+/* ═══ GRANO FÍLMICO PERENNE ═══ */
+#grain{position:fixed;inset:-150%;z-index:9998;pointer-events:none;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 1s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,-4%)}40%{transform:translate(-6%,2%)}60%{transform:translate(3%,-5%)}80%{transform:translate(-2%,4%)}100%{transform:translate(2%,-2%)}}
+
+/* ═══ CURSOR MUTANTE (resorte + magnetismo + difference) ═══ */
+#cur,#cur-ring{position:fixed;top:0;left:0;z-index:9999;pointer-events:none;mix-blend-mode:difference;will-change:transform}
+#cur{width:6px;height:6px;background:var(--white);border-radius:50%;margin:-3px 0 0 -3px}
+#cur-ring{width:38px;height:38px;border:1px solid var(--white);border-radius:50%;margin:-19px 0 0 -19px;
+  display:grid;place-items:center;font-family:var(--mono);font-size:8px;letter-spacing:.1em;transition:width .3s,height .3s,margin .3s,border-radius .3s}
+#cur-ring.big{width:96px;height:96px;margin:-48px 0 0 -48px}
+#cur-ring.lens{width:150px;height:150px;margin:-75px 0 0 -75px}
+#cur-ring span{opacity:0;transition:opacity .25s;white-space:nowrap;color:var(--white)}
+#cur-ring.big span,#cur-ring.lens span{opacity:1}
+
+/* ═══ SCROLL PROGRESS ═══ */
+#prog{position:fixed;top:36px;left:0;height:2px;background:var(--white);width:0;z-index:9997;mix-blend-mode:difference}
+
+/* ═══ LOADER ═══ */
+#loader{position:fixed;inset:0;z-index:10000;background:var(--black);display:grid;place-items:center;transition:transform 1s cubic-bezier(.76,0,.24,1)}
+#loader.out{transform:translateY(-100%)}
+#loader .lz{text-align:center;display:grid;gap:18px}
+#loader .kn{font-family:var(--jp);font-size:clamp(3rem,9vw,7rem);font-weight:700;line-height:1}
+#loader .num{font-family:var(--display);font-size:clamp(4rem,14vw,11rem);line-height:.8}
+#loader .st{font-size:9px;color:var(--g-500)}
+
+/* ═══ HEADER (empujado 36px por la barra vidriera) ═══ */
+header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-content:space-between;align-items:center;
+  padding:18px 28px;mix-blend-mode:difference;font-size:10px;text-transform:uppercase}
+/* ═══ MARCA: siempre el logo oficial vectorizado (monograma + nombre juntos).
+   Nunca se compone con tipografía: el wordmark tiene letras propias. ═══ */
+.pm-lockup{display:block;height:1em;width:calc(1em * 640 / 103);fill:currentColor}
+.lockup{display:inline-flex;align-items:center;gap:.7em}
+.lockup .pm-lockup{font-size:2.1em}
+.lockup .wm{font-family:var(--mono);letter-spacing:.12em;white-space:nowrap;line-height:1}
+.lockup--stack{flex-direction:column;gap:.9em}
+.lockup--stack .pm-lockup{font-size:3.6em}
+.hd-l{display:flex;gap:14px;align-items:center;font-size:10px}
+.hd-r{display:flex;gap:22px;align-items:center}
+.hd-r button{background:none;border:none;color:inherit;font:inherit;letter-spacing:.1em;text-transform:uppercase;cursor:none}
+[data-mag]{will-change:transform}
+
+/* katakana vertical de la fachada */
+.vert-kana{position:fixed;left:22px;top:50%;transform:translateY(-50%);z-index:850;
+  font-family:var(--jp);font-size:13px;letter-spacing:.5em;
+  writing-mode:vertical-rl;color:var(--white);mix-blend-mode:difference;opacity:.85}
+
+/* ═══ HERO WEBGL ═══ */
+#hero{position:relative;height:100vh;overflow:hidden}
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block}
+/* Fallback sin WebGL (kill-switch / contexto perdido): misma imagen, en grises, vía CSS */
+#hero.gl-off::before{content:"";position:absolute;inset:0;
+  background:var(--g-900) url('https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0126-fe7dcde43e1705c60c17830260611791-1024-1024.webp') center/cover no-repeat;
+  filter:grayscale(1) contrast(1.15) brightness(.55)}
+#hero .layer{position:absolute;inset:0;pointer-events:none}
+.hero-type{position:absolute;left:0;right:0;bottom:5vh;padding:0 28px;z-index:5}
+/* El piso negro que garantiza el contraste bajo la tipografía monumental */
+.hero-type::before{content:"";position:absolute;left:0;right:0;bottom:-5vh;height:78vh;
+  background:linear-gradient(to top,#000 6%,rgba(0,0,0,.92) 30%,rgba(0,0,0,.55) 62%,transparent 100%);
+  z-index:-1;pointer-events:none}
+/* La marca ocupa el ancho del viewport: es el logo real, a escala monumental */
+.hero-lock{margin:0}
+.hero-mark{width:calc(100vw - 56px);height:auto;fill:var(--white)}
+.hero-sub{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:22px;
+  font-size:10px;text-transform:uppercase;color:var(--g-300)}
+@media(max-width:820px){
+  .hero-mark{width:calc(100vw - 44px)}
+}
+.hero-jp{position:absolute;top:16vh;right:28px;z-index:5;text-align:right;font-family:var(--jp);font-size:12px;letter-spacing:.3em;color:var(--g-300);line-height:2.2}
+
+/* ═══ MARQUESINAS BIDIRECCIONALES ═══ */
+.mq{overflow:hidden;white-space:nowrap;border-top:1px solid var(--g-700);border-bottom:1px solid var(--g-700);padding:14px 0}
+.mq__t{display:inline-block;font-family:var(--display);font-size:clamp(2rem,5vw,4rem);text-transform:uppercase;letter-spacing:.02em}
+.mq--a .mq__t{animation:mqa 26s linear infinite}
+.mq--b{border-top:none}
+.mq--b .mq__t{animation:mqb 32s linear infinite;font-family:var(--mono);font-size:11px;letter-spacing:.25em;color:var(--g-300)}
+@keyframes mqa{to{transform:translateX(-50%)}}
+@keyframes mqb{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+
+/* ═══ MANIFIESTO BUSHIDO ═══ */
+.bushido{padding:16vh 28px 16vh 66px;border-bottom:1px solid var(--g-700)}
+@media(max-width:820px){.bushido{padding:12vh 22px}}
+.bushido .lead{font-family:var(--geo);font-weight:400;font-size:clamp(1.6rem,3.4vw,3rem);line-height:1.22;max-width:22ch;letter-spacing:-.01em}
+.bushido .lead b{font-weight:800}
+.virtues{display:flex;flex-wrap:wrap;gap:0;margin-top:8vh;border-top:1px solid var(--g-700)}
+.v{flex:1 1 130px;border-right:1px solid var(--g-700);padding:22px 16px;min-width:120px}
+.v:last-child{border-right:none}
+.v .k{font-family:var(--jp);font-size:34px;font-weight:700;line-height:1}
+.v .r{font-size:9px;color:var(--g-500);margin-top:8px;text-transform:uppercase}
+.v .e{font-size:10px;margin-top:3px;text-transform:uppercase}
+.v:hover{background:var(--white);color:var(--black)}
+
+/* ═══ SCROLL HORIZONTAL PINEADO ═══ */
+#pin{position:relative;height:400vh}
+#pin .sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center}
+#pin .track{display:flex;gap:4vw;padding:0 28px;will-change:transform}
+.panel{flex:0 0 auto;width:min(34vw,420px);position:relative}
+.panel img{width:100%;aspect-ratio:3/4;object-fit:cover;filter:grayscale(1) contrast(1.12)}
+.panel:hover img{filter:grayscale(0) contrast(1)}
+.panel .cap{display:flex;justify-content:space-between;margin-top:12px;font-size:10px;text-transform:uppercase}
+.panel .idx{position:absolute;top:-30px;left:0;font-family:var(--display);font-size:26px;color:var(--g-700)}
+.panel .nm{font-family:var(--display);font-size:clamp(1.4rem,2.4vw,2.4rem);text-transform:uppercase;line-height:.9;margin-top:6px}
+.pin-head{position:absolute;top:9vh;left:28px;right:28px;display:flex;justify-content:space-between;font-size:10px;text-transform:uppercase;color:var(--g-300);z-index:3}
+.pin-head .big{font-family:var(--jp);font-size:clamp(3rem,8vw,6rem);font-weight:700;line-height:1;color:var(--g-800)}
+
+/* ═══ REVELADO POR CURSOR (linterna) ═══ */
+#reveal{position:relative;height:100vh;overflow:hidden;border-top:1px solid var(--g-700)}
+#reveal .under,#reveal .over{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+#reveal .under{background:var(--g-900);padding:0}
+#reveal .under img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.15) brightness(1.05)}
+#reveal .over{background:var(--black);color:var(--white)}
+#reveal h2{font-family:var(--display);font-size:clamp(2.6rem,10vw,9rem);line-height:.85;text-transform:uppercase}
+#reveal .sm{font-size:10px;margin-top:20px;text-transform:uppercase;letter-spacing:.3em}
+#reveal .jp{font-family:var(--jp);font-size:clamp(2rem,6vw,5rem);font-weight:700;margin-bottom:10px}
+
+/* ═══ GRILLA ASIMÉTRICA + PARALLAX ═══ */
+.shop{padding:14vh 28px 14vh 66px;background:var(--white);color:var(--black)}
+@media(max-width:820px){.shop{padding:12vh 22px}}
+.shop-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px;
+  border-bottom:1px solid var(--black);padding-bottom:14px;margin-bottom:7vh}
+.shop-head h2{font-family:var(--display);font-size:clamp(2.4rem,7vw,6rem);line-height:.85;text-transform:uppercase}
+.shop-head .r{font-size:10px;text-transform:uppercase;text-align:right}
+.pgrid{display:grid;grid-template-columns:repeat(12,1fr);gap:6vh 2vw}
+.p{position:relative}
+.p img{width:100%;aspect-ratio:4/5;object-fit:cover;filter:grayscale(1) contrast(1.08);transition:filter .5s}
+.p:hover img{filter:grayscale(0) contrast(1)}
+.p .meta{margin-top:10px;display:flex;justify-content:space-between;gap:10px;font-size:10px;text-transform:uppercase}
+.p .nm{font-family:var(--geo);font-weight:800;font-size:13px;letter-spacing:.02em;line-height:1.15}
+.p .sku{font-size:9px;color:var(--g-500);margin-top:2px;word-break:break-all}
+.p .pr{white-space:nowrap;font-variant-numeric:tabular-nums}
+.p .flag{position:absolute;top:8px;left:8px;background:var(--black);color:var(--white);font-size:9px;padding:4px 7px}
+.p--a{grid-column:1/span 5}
+.p--b{grid-column:7/span 4;margin-top:10vh}
+.p--c{grid-column:2/span 3}
+.p--d{grid-column:6/span 6;margin-top:-6vh}
+@media(max-width:820px){.p--a,.p--b,.p--c,.p--d{grid-column:1/span 12;margin-top:0}}
+
+/* ═══ TIPO HIPERTROFIADA AMPUTADA ═══ */
+.oversize{padding:12vh 0;overflow:hidden;border-top:1px solid var(--g-700);border-bottom:1px solid var(--g-700)}
+.oversize .line{font-family:var(--display);font-size:23vw;line-height:.8;white-space:nowrap;text-transform:uppercase;will-change:transform}
+.oversize .l2{margin-left:-8vw}
+
+/* ═══ ARCHIVO ═══ */
+.archive{padding:16vh 28px;text-align:center;display:grid;gap:26px;justify-items:center}
+.archive .jp{font-family:var(--jp);font-size:clamp(3.5rem,13vw,11rem);font-weight:700;line-height:.9}
+.archive .t{font-family:var(--geo);font-weight:400;font-size:clamp(1.2rem,2.4vw,1.9rem);max-width:26ch;line-height:1.35}
+.archive .n{font-family:var(--display);font-size:clamp(3rem,9vw,7rem);line-height:.9}
+
+/* ═══ FOOTER TERMINAL ═══ */
+footer{border-top:1px solid var(--g-700);padding:60px 28px 34px;font-size:10px;text-transform:uppercase}
+.f-term{font-family:var(--mono);font-size:11px;color:var(--g-300);line-height:2;word-break:break-word;margin-bottom:50px}
+.f-term b{color:var(--white);font-weight:400}
+.f-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:30px}
+.f-grid p.h{color:var(--g-500);margin-bottom:10px}
+.f-grid a{display:block;padding:2px 0}
+.f-sign{margin-top:60px;padding-top:16px;border-top:1px solid var(--g-700);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;color:var(--g-500);font-size:9px}
+
+/* ═══ TAKEOVER MENU (padding superior contempla la barra vidriera) ═══ */
+#take{position:fixed;inset:0;z-index:950;background:var(--black);transform:translateY(-100%);transition:transform .8s cubic-bezier(.76,0,.24,1);display:grid;grid-template-rows:auto 1fr auto;padding:54px 28px 34px}
+#take.on{transform:translateY(0)}
+#take .tk-top{display:flex;justify-content:space-between;font-size:10px;text-transform:uppercase}
+#take .tk-top button{background:none;border:none;color:inherit;font:inherit;cursor:none;text-transform:uppercase;letter-spacing:.1em}
+#take nav{display:grid;align-content:center;gap:.4vh}
+#take nav a{font-family:var(--display);font-size:clamp(2.2rem,8.5vw,7rem);line-height:.88;text-transform:uppercase;
+  display:flex;align-items:baseline;gap:18px;transition:padding-left .35s}
+#take nav a:hover{padding-left:2.4vw}
+#take nav a .jp{font-family:var(--jp);font-size:.24em;font-weight:400;color:var(--g-500)}
+#take nav a .n{font-family:var(--mono);font-size:.12em;color:var(--g-500)}
+#take .tk-bot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:10px;color:var(--g-500);text-transform:uppercase}
+
+@media(prefers-reduced-motion:reduce){
+  *,#grain{animation:none!important;transition:none!important}
+  #grain{display:none}
+  #loader{display:none}
+  body,a,.hd-r button,#take .tk-top button{cursor:auto}
+  #cur,#cur-ring{display:none}
+  /* la sección pineada se despina: scroll normal, mismo contenido */
+  #pin{height:auto}
+  #pin .sticky{position:static;height:auto;padding:12vh 0}
+  #pin .track{overflow-x:auto;transform:none!important}
+}
+@media(max-width:820px){
+  body,a,.hd-r button,#take .tk-top button{cursor:auto}
+  #cur,#cur-ring{display:none}.vert-kana{display:none}
+  .hide-s{display:none}
+  .hero-type h1{font-size:22vw;white-space:normal}
+  #pin{height:auto}#pin .sticky{position:static;height:auto;padding:12vh 0}
+  #pin .track{flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x mandatory}
+  .panel{width:78vw;scroll-snap-align:center}
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#hero">IR AL CONTENIDO</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="pm-lockup" viewBox="0 0 640 103"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM519.167 33.833L526.333 34L530.5 35L535 37.167L536.333 39.333L531.167 45.667L524.667 43.333L519.833 43.167L515.833 44.5L513.167 46.667L511 50.5L510.5 56.333L511.833 60.5L514.333 63.5L517.667 65.333L522.5 66L526.833 64.667L529.333 62.167L530.167 60L529.833 58.667L521.667 58.333L520.833 57.667L520.667 51.833L521.333 50.833L539.5 50.667L540.833 51.833L540.5 60.333L537.833 67.5L532.833 72.5L526.333 75L517.333 75L509.833 72.333L504.167 67.167L500.833 59.667L500.333 56.167L500.667 50.167L503.833 42.333L507.5 38.333L510.5 36.333L515.167 34.5L519.167 34ZM571.167 33.833L579 34.167L583.667 35.667L587.333 37.833L592.167 43L594.833 49.667L595 58.167L592.5 65.5L587 71.5L584.167 73.167L578.333 75L569.333 75L561.667 72.167L556.167 67L554.5 64.333L552.833 59.333L552.667 50.667L553.667 46.833L555.833 42.5L558.833 39L562.333 36.5L566.667 34.667L571.167 34ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667ZM132.167 34.667L152.667 34.667L156.5 35.333L160.5 37L164 40L166.5 45.667L166.667 50.333L165.667 54.333L164 57.167L161.333 59.667L154.5 62.5L142 62.833L141.167 63.333L140.833 73.667L139.333 74.5L132.167 74.333L131.167 72.667L131.167 36.167L132.167 34.833ZM222.5 34.667L225 35.333L248.333 54.5L249.167 54.5L249.667 53.167L249.667 35.5L250.167 34.833L251.5 34.667L253.167 35.5L276.5 54.5L277.5 53.5L277.667 35.333L279.167 34.667L286.5 35L287.167 36.333L287 73.667L286.167 74.333L284.333 74L261.167 54.167L259.667 53.833L259.167 55.5L259.167 73.5L258.333 74.333L256.667 74.167L234 54.833L231.667 53.833L231.167 55L231.167 73.5L229.5 74.5L222 74.167L221.5 73.333L221.5 35.667L222.5 34.833ZM303.667 34.667L311.667 34.667L312.5 35.667L312.5 73.167L311 74.5L304.5 74.5L303.333 74.167L302.667 73L302.667 35.833L303.667 34.833ZM344.667 34.667L347.333 35.167L364.333 51L366 50.5L382.167 35.333L383.333 34.667L385.5 35L385.5 74L377.667 74.5L376.167 73.833L376 55.833L375.5 55L374.333 55.333L366.667 63L365.167 63.667L363.333 63.167L357.833 57.5L355.167 55.167L354 55L353.5 73.833L352 74.5L344.333 74.167L343.833 73L343.833 36L344.667 34.833ZM452.667 34.667L474.667 34.833L479.5 36.167L484.167 39.5L486.833 44.5L487.167 51L485.5 55.833L481.167 60.167L481 61.667L489 72.667L488.833 74.167L478.5 74.167L471.667 64.167L469.833 62.833L462.833 62.833L461.833 63.333L461.5 73.5L461 74.167L453.5 74.5L452 73.833L451.833 35.5L452.667 34.833ZM606.333 34.667L639.667 34.833L639.667 42.833L629.833 43L628.333 43.333L627.833 44.167L627.833 73.167L627 74.333L619.833 74.5L618.333 74L618 44.333L617.333 43.333L615.833 43L606 42.833L605.5 42.167L605.5 35.5L606.333 34.833ZM189.5 34.833L191.5 35.5L193.333 38.833L210.667 71.667L211 74.167L201.5 74.333L198 69.833L182.333 69.833L181.167 70.5L178.833 74.333L170.333 74.5L169 73.833L184.5 43.333L189.5 35ZM418.333 34.833L420.167 35.333L422.5 39.5L440 72.667L439.667 74.333L430.167 74.333L427.833 70.5L426.667 69.833L411 69.833L407.5 74.333L399 74.5L398 74L398.333 71.833L417.5 35.5L418.333 35ZM143.167 43L141.667 43.167L141 44L141 54L141.5 54.667L150.333 54.833L153.333 54.167L155.167 53L156.333 50.667L156.5 47.833L154.667 44.5L151.833 43.167L143.333 43ZM463.667 43L462.167 43.333L461.5 44.5L461.5 53.333L462.167 54.667L472.333 54.667L476.167 52.5L477.167 48.333L475.333 44.5L472.333 43.167L463.833 43ZM572.667 43.167L568.167 44.5L564.833 47.333L562.833 51.667L562.667 56.5L564.333 61L567 63.833L571.167 65.667L575.5 65.833L579.833 64.333L583.333 61L584.833 57.5L585 52.5L583.5 48.333L581.167 45.667L576.833 43.5L572.833 43.167ZM189.833 52.5L188.167 54.833L185.167 62.167L186 62.833L194.333 62.833L194.833 61.167L191.167 53.333L190 52.5ZM418.667 52.5L416.833 55.167L414 62.167L414.667 62.833L423 62.833L423.667 61.167L419.667 52.833L418.833 52.5Z"/></symbol><symbol id="pm-mono" viewBox="0 0 104 103"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667Z"/></symbol></defs></svg>
+
+<!-- ═══ BARRA VIDRIERA ═══ -->
+<div id="viabar">
+  <a href="./index.html">[ &lt;&lt; ] VIDRIERA</a>
+  <span class="via-tag">CAMINO A :: GRAVEDAD · <span lang="ja" aria-hidden="true">重力</span></span>
+</div>
+
+<div id="grain"></div>
+<div id="prog"></div>
+<div id="cur"></div>
+<div id="cur-ring"><span></span></div>
+
+<!-- ═══ LOADER ═══ -->
+<div id="loader">
+  <div class="lz">
+    <div class="lockup lockup--stack" style="font-size:16px;justify-self:center">
+      <svg class="pm-lockup" aria-hidden="true" focusable="false"><use href="#pm-lockup"/></svg>
+      </div>
+    <div class="kn" lang="ja" aria-hidden="true">バーニ　マーゴット</div>
+    <div class="num" id="ldnum">000</div>
+  </div>
+</div>
+
+<div class="vert-kana" lang="ja" aria-hidden="true">バーニ　マーゴット</div>
+
+<header>
+  <a class="hd-l lockup" href="#" aria-label="Panni Margot — inicio">
+    <svg class="pm-lockup" aria-hidden="true" focusable="false"><use href="#pm-lockup"/></svg>
+    </a>
+  <div class="hd-r">
+    <span class="hide-s">BUENOS AIRES // 34°35'S</span>
+    <button id="openmenu" data-mag>ÍNDICE [ + ]</button>
+    <!-- CARRITO es elemento de compra: sin magnetismo, por regla del camino A -->
+    <button>CARRITO(0)</button>
+  </div>
+</header>
+
+<!-- ═══ HERO WEBGL ═══ -->
+<section id="hero">
+  <canvas id="gl"></canvas>
+  <div class="hero-jp" aria-hidden="true">
+    <span lang="ja">ブエノスアイレス<br>で作られた</span><br><span style="color:var(--g-500)">MADE IN BUENOS AIRES</span>
+  </div>
+  <div class="hero-type">
+    <h1 class="hero-lock" aria-label="Panni Margot">
+      <svg class="pm-lockup hero-mark" aria-hidden="true" focusable="false"><use href="#pm-lockup"/></svg>
+    </h1>
+    <div class="hero-sub">
+      <span>&lt;&lt;GENDERLESS(<span lang="ja" aria-hidden="true">ジェンダーレス</span>)//FASHION#()&gt;&gt;</span>
+      <span>&gt;&gt;HONDURAS4940##</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MARQUESINAS ═══ -->
+<div class="mq mq--a" lang="ja" aria-hidden="true"><div class="mq__t" id="mqa">
+  一点物 · PIEZA ÚNICA · 手描き · PINTADO A MANO · 不連続 · DISCONTINUOS ·
+  一点物 · PIEZA ÚNICA · 手描き · PINTADO A MANO · 不連続 · DISCONTINUOS ·
+</div></div>
+<div class="mq mq--b" lang="ja" aria-hidden="true"><div class="mq__t">
+  ".SHOP((ショップ$ディスカウントNN@!!!))"" BUENOS AIRES//デザイナー ..DESIGNER &gt;&gt;HONDURAS4940## ENVÍOS A TODO EL PAÍS ::
+  ".SHOP((ショップ$ディスカウントNN@!!!))"" BUENOS AIRES//デザイナー ..DESIGNER &gt;&gt;HONDURAS4940## ENVÍOS A TODO EL PAÍS ::
+</div></div>
+
+<!-- ═══ BUSHIDO ═══ -->
+<section class="bushido">
+  <p class="lead" data-split>
+    No vestimos hombres ni mujeres. <b>Vestimos personas.</b>
+  </p>
+  <div class="virtues">
+    <div class="v"><div class="k" lang="ja" aria-hidden="true">義</div><div class="r">gi</div><div class="e">Rectitud</div></div>
+    <div class="v"><div class="k" lang="ja" aria-hidden="true">勇</div><div class="r">yū</div><div class="e">Coraje</div></div>
+    <div class="v"><div class="k" lang="ja" aria-hidden="true">仁</div><div class="r">jin</div><div class="e">Compasión</div></div>
+    <div class="v"><div class="k" lang="ja" aria-hidden="true">礼</div><div class="r">rei</div><div class="e">Respeto</div></div>
+    <div class="v"><div class="k" lang="ja" aria-hidden="true">誠</div><div class="r">makoto</div><div class="e">Honestidad</div></div>
+    <div class="v"><div class="k" lang="ja" aria-hidden="true">名誉</div><div class="r">meiyo</div><div class="e">Honor</div></div>
+    <div class="v"><div class="k" lang="ja" aria-hidden="true">忠義</div><div class="r">chūgi</div><div class="e">Lealtad</div></div>
+  </div>
+</section>
+
+<!-- ═══ SCROLL HORIZONTAL PINEADO ═══ -->
+<section id="pin">
+  <div class="sticky">
+    <div class="pin-head">
+      <div><div class="big" lang="ja" aria-hidden="true">一点物</div>PIEZAS ÚNICAS · UNA UNIDAD CADA UNA</div>
+      <div id="pinprog">01 / 05</div>
+    </div>
+    <div class="track" id="track">
+      <article class="panel">
+        <span class="idx">01</span>
+        <img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0087-b7a922169f6f8b83a117830243699603-640-0.jpg" alt="Tapado Aka">
+        <div class="nm">Tapado Aka</div>
+        <div class="cap"><span>PM/ABRIGOS/AKA</span><span>$970.000</span></div>
+      </article>
+      <article class="panel">
+        <span class="idx">02</span>
+        <img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0126-fe7dcde43e1705c60c17830260611791-640-0.webp" alt="Tapado Suko">
+        <div class="nm">Tapado Suko</div>
+        <div class="cap"><span>PM/ABRIGOS/SUKO</span><span>$970.000</span></div>
+      </article>
+      <article class="panel">
+        <span class="idx">03</span>
+        <img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0331-c04b11d8ca48be376917835404772676-640-0.webp" alt="Tapado Purotto">
+        <div class="nm">Tapado Purotto</div>
+        <div class="cap"><span>PM/ABRIGOS/PUROTTO</span><span>$970.000</span></div>
+      </article>
+      <article class="panel">
+        <span class="idx">04</span>
+        <img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/tapado-kimono-brushed-takai-7-ad2c2f23976c6c883217194294041586-640-0.webp" alt="Tapado Kimono Brushed Takai">
+        <div class="nm">Kimono Takai</div>
+        <div class="cap"><span>PM/KIMONOS/TAKAI</span><span>$723.900</span></div>
+      </article>
+      <article class="panel">
+        <span class="idx">05</span>
+        <img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/trench-firewall-black-satin-8-dd17ac45b7653231cd17183866984987-640-0.webp" alt="Trench Firewall">
+        <div class="nm">Trench Firewall</div>
+        <div class="cap"><span>PM/ABRIGOS/FIREWALL</span><span>$590.000</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ REVELADO POR CURSOR ═══ -->
+<section id="reveal">
+  <div class="under">
+    <img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/tapado-kimono-brushed-takai-7-ad2c2f23976c6c883217194294041586-1024-1024.webp" alt="Pieza pintada a mano">
+  </div>
+  <div class="over" id="overlay">
+    <div>
+      <div class="jp" lang="ja" aria-hidden="true">手描き</div>
+      <h2>Pintado<br>a mano</h2>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ GRILLA COMERCIAL ═══ -->
+<section class="shop">
+  <div class="shop-head">
+    <h2>Novedades<br><span lang="ja" aria-hidden="true">新着</span></h2>
+    <div class="r">192 PIEZAS PUBLICADAS<br>ÍNDICE COMPLETO [ → ]</div>
+  </div>
+  <div class="pgrid">
+    <article class="p p--a" data-par="0.06">
+      <span class="flag">1/1</span>
+      <img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/capa-camisa-fudo-6-2d10df457879ca9b1417194235662614-640-0.webp" alt="Capa Camisa Fudo">
+      <div class="meta"><div><div class="nm">Capa Camisa Fudo</div><div class="sku">PM/CAMISAS/FUDO</div></div><div class="pr">$293.900</div></div>
+    </article>
+    <article class="p p--b" data-par="-0.05">
+      <img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/pantalon-wakusei-2-b5a85660a588c09c0c17187383919344-640-0.webp" alt="Pantalón Wakusei">
+      <div class="meta"><div><div class="nm">Pantalón Wakusei</div><div class="sku">PM/PANTALONES/WAKUSEI</div></div><div class="pr">$123.900</div></div>
+    </article>
+    <article class="p p--c" data-par="0.08">
+      <img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/remeron-besuto-3-ba65fba7f8a0892d1617187352318677-640-0.webp" alt="Remerón Besuto">
+      <div class="meta"><div><div class="nm">Remerón Besuto</div><div class="sku">PM/REMERAS/BESUTO</div></div><div class="pr">$155.000</div></div>
+    </article>
+    <article class="p p--d" data-par="-0.03">
+      <img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0331-c04b11d8ca48be376917835404772676-640-0.webp" alt="Tapado Purotto">
+      <div class="meta"><div><div class="nm">Tapado Purotto</div><div class="sku">PM/ABRIGOS/PUROTTO</div></div><div class="pr">$970.000</div></div>
+    </article>
+  </div>
+</section>
+
+<!-- ═══ TIPOGRAFÍA AMPUTADA ═══ -->
+<section class="oversize">
+  <div class="line" data-x="-14">HONDURAS 4940 — HONDURAS 4940 —</div>
+  <div class="line l2" data-x="14">PALERMO SOHO — PALERMO SOHO —</div>
+</section>
+
+<!-- ═══ ARCHIVO ═══ -->
+<section class="archive">
+  <div class="jp" lang="ja" aria-hidden="true">完売</div>
+  <div class="n" id="arcnum">59</div>
+  <p class="t">piezas ya encontraron dueño.<br>Sus páginas siguen abiertas.</p>
+  <p style="font-size:10px;color:var(--g-500)">[ ENTRAR AL ARCHIVO &gt;&gt; ]</p>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="f-term" aria-hidden="true">
+    &lt;&lt;GENDERLESS(ジェンダーレス)//FASHION#()ファッション-))<br>
+    ".&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SHOP((ショップ$ディスカウント<b>NN</b>@!!!))""<br>
+    BUENOS AIRES//デザイナー ..DESIGNER &gt;&gt;<b>HONDURAS4940</b>##
+  </div>
+  <div class="f-grid">
+    <div><p class="h">ÍNDICE</p><a>TODAS LAS PIEZAS</a><a>MANUK.WORLD</a><a><span lang="ja" aria-hidden="true">不連続</span> DISCONTINUOS</a><a>ARCHIVO <span lang="ja" aria-hidden="true">完売</span></a></div>
+    <div><p class="h">CASA</p><a>HONDURAS 4940</a><a>PALERMO SOHO · CABA</a><a>+54 9 11 3027 4940 →</a></div>
+    <div><p class="h">LEGAL</p><a>CAMBIOS Y DEVOLUCIONES</a><a>BOTÓN DE ARREPENTIMIENTO</a><a>DATA FISCAL</a></div>
+    <div><p class="h">RED</p><a>INSTAGRAM</a><a>TIKTOK</a></div>
+  </div>
+  <div class="f-sign">
+    <span class="lockup" style="font-size:10px">
+      <svg class="pm-lockup" aria-hidden="true" focusable="false"><use href="#pm-lockup"/></svg>
+      <span class="wm">© 2026</span>
+    </span>
+    <span lang="ja" aria-hidden="true">ブエノスアイレスで作られた</span>
+    <span>MADE IN BUENOS AIRES</span>
+  </div>
+</footer>
+
+<!-- ═══ TAKEOVER MENU ═══ -->
+<div id="take">
+  <div class="tk-top">
+    <span>ÍNDICE // <span lang="ja" aria-hidden="true">目次</span></span>
+    <button id="closemenu" data-mag>[ × ] CERRAR</button>
+  </div>
+  <nav>
+    <a><span>Abrigos</span><span class="jp" lang="ja" aria-hidden="true">コート</span><span class="n">42</span></a>
+    <a><span>Camisas</span><span class="jp" lang="ja" aria-hidden="true">シャツ</span><span class="n">35</span></a>
+    <a><span>Pantalones</span><span class="jp" lang="ja" aria-hidden="true">ズボン</span><span class="n">40</span></a>
+    <a><span>Kimonos</span><span class="jp" lang="ja" aria-hidden="true">着物</span><span class="n">08</span></a>
+    <a><span>Remeras</span><span class="jp" lang="ja" aria-hidden="true">Tシャツ</span><span class="n">30</span></a>
+    <a><span>Manuk</span><span class="jp" lang="ja" aria-hidden="true">世界</span><span class="n">15</span></a>
+  </nav>
+  <div class="tk-bot">
+    <span class="lockup" style="font-size:10px">
+      <svg class="pm-lockup" aria-hidden="true" focusable="false"><use href="#pm-lockup"/></svg>
+      <span class="wm">HONDURAS 4940 · PALERMO SOHO</span>
+    </span>
+    <span>&gt;&gt;GENDERLESS//<span lang="ja" aria-hidden="true">ジェンダーレス</span></span>
+  </div>
+</div>
+
+<script>
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const MOB = matchMedia('(max-width: 820px)').matches;
+
+/* ── LOADER HONESTO: el % refleja la precarga real de las imágenes ── */
+(function(){
+  const el=document.getElementById('loader'), n=document.getElementById('ldnum');
+  if(RM){el.remove();return}
+  /* solo hero + paneles: lo que se ve primero; el resto queda lazy */
+  const urls=[...new Set(
+    [...document.querySelectorAll('#track img')].map(i=>i.currentSrc||i.src)
+      .concat(['https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0126-fe7dcde43e1705c60c17830260611791-1024-1024.webp'])
+  )].filter(Boolean);
+  const total=urls.length;
+  let done=0,closed=false;
+  const fin=()=>{
+    if(closed)return;closed=true;
+    n.textContent='100';
+    setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),1000)},260);
+  };
+  if(!total){fin();return}
+  const tick=()=>{
+    done++;
+    n.textContent=String(Math.min(100,Math.round(done/total*100))).padStart(3,'0');
+    if(done>=total)fin();
+  };
+  urls.forEach(u=>{const im=new Image();im.onload=tick;im.onerror=tick;im.src=u});
+  /* red de seguridad: si la red se cuelga, la página no queda rehén del loader */
+  setTimeout(fin,9000);
+})();
+
+/* ── CURSOR: resorte + magnetismo + estados ── */
+(function(){
+  if(RM||MOB)return;
+  const dot=document.getElementById('cur'), ring=document.getElementById('cur-ring'), lbl=ring.querySelector('span');
+  let mx=innerWidth/2,my=innerHeight/2,dx=mx,dy=my,rx=mx,ry=my;
+  addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+  (function loop(){
+    dx+=(mx-dx)*.55; dy+=(my-dy)*.55;
+    rx+=(mx-rx)*.13;  ry+=(my-ry)*.13;
+    dot.style.transform=`translate3d(${dx}px,${dy}px,0)`;
+    ring.style.transform=`translate3d(${rx}px,${ry}px,0)`;
+    requestAnimationFrame(loop);
+  })();
+  // El cursor cambia de forma, nunca da instrucciones: el sitio no se explica.
+  const set=(cls,txt)=>{ring.className=cls;lbl.textContent=txt};
+  document.querySelectorAll('.panel,.p').forEach(el=>{
+    el.addEventListener('mouseenter',()=>set('big','[ + ]'));
+    el.addEventListener('mouseleave',()=>set('',''));
+  });
+  document.querySelectorAll('a,button,.v').forEach(el=>{
+    el.addEventListener('mouseenter',()=>set('big',''));
+    el.addEventListener('mouseleave',()=>set('',''));
+  });
+  const rev=document.getElementById('reveal');
+  rev.addEventListener('mouseenter',()=>set('lens',''));
+  rev.addEventListener('mouseleave',()=>set('',''));
+})();
+
+/* ── MAGNETISMO REAL (#40): botones de header y takeover.
+     Desplazamiento ≤8px hacia el cursor en radio ~70px, resorte de retorno.
+     NUNCA en elementos de compra (CARRITO queda afuera). ── */
+(function(){
+  if(RM||MOB)return;
+  const R=70,MAX=8;
+  const els=[...document.querySelectorAll('[data-mag]')].map(el=>({el,x:0,y:0,vx:0,vy:0,tx:0,ty:0}));
+  if(!els.length)return;
+  let mx=-1e4,my=-1e4;
+  addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY},{passive:true});
+  (function loop(){
+    els.forEach(o=>{
+      const r=o.el.getBoundingClientRect();
+      const cx=r.left+r.width/2-o.x, cy=r.top+r.height/2-o.y;
+      const dx=mx-cx, dy=my-cy, d=Math.hypot(dx,dy);
+      if(d>0&&d<R){const f=(1-d/R)*MAX/d;o.tx=dx*f;o.ty=dy*f}
+      else{o.tx=0;o.ty=0}
+      /* resorte: aceleración hacia el objetivo + fricción → retorno elástico */
+      o.vx+=(o.tx-o.x)*.14; o.vy+=(o.ty-o.y)*.14;
+      o.vx*=.74; o.vy*=.74;
+      o.x+=o.vx; o.y+=o.vy;
+      o.el.style.transform=`translate3d(${o.x.toFixed(2)}px,${o.y.toFixed(2)}px,0)`;
+    });
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ── PROGRESO DE LECTURA ─────────────────── */
+addEventListener('scroll',()=>{
+  const d=document.documentElement;
+  document.getElementById('prog').style.width=(d.scrollTop/(d.scrollHeight-d.clientHeight)*100)+'%';
+},{passive:true});
+
+/* ── WEBGL: distorsión líquida + grano + aberración ── */
+(function(){
+  const cv=document.getElementById('gl');
+  const hero=document.getElementById('hero');
+  const fall=()=>{cv.style.display='none';hero.classList.add('gl-off')};
+  /* Kill-switch por hardware (regla 1.11): equipos chicos o reduced-motion → fallback CSS, sin WebGL */
+  const dm=navigator.deviceMemory, hc=navigator.hardwareConcurrency;
+  if(RM||(dm&&dm<4)||(hc&&hc<4)){fall();return}
+  const gl=cv.getContext('webgl',{antialias:false,alpha:false});
+  if(!gl){fall();return}
+  /* Robustez: si el contexto se pierde, el canvas cae y queda el DOM debajo */
+  let dead=false;
+  cv.addEventListener('webglcontextlost',e=>{e.preventDefault();dead=true;fall()});
+  const VS=`attribute vec2 p;varying vec2 uv;void main(){uv=p*0.5+0.5;gl_Position=vec4(p,0.,1.);}`;
+  const FS=`precision highp float;varying vec2 uv;
+    uniform sampler2D tex;uniform float uT;uniform vec2 uM;uniform float uV;uniform vec2 uRes;
+    float rnd(vec2 c){return fract(sin(dot(c,vec2(12.9898,78.233)))*43758.5453);}
+    float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+      return mix(mix(rnd(i),rnd(i+vec2(1,0)),f.x),mix(rnd(i+vec2(0,1)),rnd(i+vec2(1,1)),f.x),f.y);}
+    void main(){
+      vec2 st=uv;
+      /* ondulación líquida, amplificada por la velocidad de scroll */
+      float w=sin(st.y*9.0+uT*0.8)*0.006*(1.0+uV*4.0)
+             +noise(st*3.0+uT*0.15)*0.010*(0.35+uV*3.0);
+      st.x+=w;
+      /* atracción hacia el cursor: la tela se estira donde mirás */
+      float d=distance(st,uM);
+      st+=normalize(st-uM+0.0001)*(-0.030)*exp(-d*5.5);
+      /* aberración cromática en función del movimiento */
+      float ab=0.003+uV*0.014;
+      float r=texture2D(tex,st+vec2(ab,0.)).r;
+      float g=texture2D(tex,st).g;
+      float b=texture2D(tex,st-vec2(ab,0.)).b;
+      vec3 col=vec3(r,g,b);
+      /* monocromo estricto */
+      float lum=dot(col,vec3(0.299,0.587,0.114));
+      col=vec3(lum);
+      col=(col-0.5)*1.34+0.34;                      /* contraste duro, medios abajo */
+      col+=(rnd(uv*uRes+uT)-0.5)*0.085;             /* grano */
+      col*=1.0-smoothstep(0.42,1.15,length(uv-0.5))*0.92;  /* viñeta profunda */
+      /* Cortina inferior: la tipografía monumental necesita piso negro */
+      col*=smoothstep(-0.10,0.52,uv.y);
+      /* Sombra superior: el header vive ahí y debe leerse siempre */
+      col*=1.0-smoothstep(0.78,1.0,uv.y)*0.82;
+      gl_FragColor=vec4(col,1.);
+    }`;
+  const sh=(t,s)=>{const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);return o};
+  const pr=gl.createProgram();
+  gl.attachShader(pr,sh(gl.VERTEX_SHADER,VS));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,FS));
+  gl.linkProgram(pr);gl.useProgram(pr);
+  const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  const loc=gl.getAttribLocation(pr,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  const uT=gl.getUniformLocation(pr,'uT'),uM=gl.getUniformLocation(pr,'uM'),
+        uV=gl.getUniformLocation(pr,'uV'),uRes=gl.getUniformLocation(pr,'uRes');
+  const tx=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tx);
+  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([20,20,20,255]));
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+  const img=new Image();img.crossOrigin='anonymous';
+  img.onload=()=>{if(dead)return;gl.bindTexture(gl.TEXTURE_2D,tx);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img)};
+  img.src='https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0126-fe7dcde43e1705c60c17830260611791-1024-1024.webp';
+  let mouse=[.5,.5],vel=0,lastY=scrollY;
+  addEventListener('mousemove',e=>{mouse=[e.clientX/innerWidth,1-e.clientY/innerHeight]});
+  addEventListener('scroll',()=>{vel=Math.min(Math.abs(scrollY-lastY)/45,1);lastY=scrollY},{passive:true});
+  const size=()=>{const d=Math.min(devicePixelRatio,1.75);cv.width=innerWidth*d;cv.height=innerHeight*d;gl.viewport(0,0,cv.width,cv.height)};
+  size();addEventListener('resize',size);
+  const t0=performance.now();
+  (function draw(t){
+    if(dead)return;
+    if(document.hidden){requestAnimationFrame(draw);return}
+    vel*=0.93;
+    gl.uniform1f(uT,(t-t0)/1000);
+    gl.uniform2f(uM,mouse[0],mouse[1]);
+    gl.uniform1f(uV,RM?0:vel);
+    gl.uniform2f(uRes,cv.width,cv.height);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+    requestAnimationFrame(draw);
+  })(t0);
+})();
+
+/* ── SCROLL HORIZONTAL PINEADO ───────────── */
+(function(){
+  if(MOB||RM)return;
+  const sec=document.getElementById('pin'),track=document.getElementById('track'),
+        prog=document.getElementById('pinprog');
+  let cur=0;
+  function upd(){
+    const r=sec.getBoundingClientRect();
+    const total=sec.offsetHeight-innerHeight;
+    const p=Math.min(Math.max(-r.top/total,0),1);
+    const dist=track.scrollWidth-innerWidth+56;
+    cur+=(p*dist-cur)*0.1;
+    track.style.transform=`translate3d(${-cur}px,0,0)`;
+    const n=Math.min(5,Math.floor(p*5)+1);
+    prog.textContent=String(n).padStart(2,'0')+' / 05';
+    requestAnimationFrame(upd);
+  }
+  upd();
+})();
+
+/* ── REVELADO POR CURSOR (linterna) ──────── */
+(function(){
+  const sec=document.getElementById('reveal'),ov=document.getElementById('overlay');
+  if(RM){
+    /* sin animación: agujero estático centrado — la imagen y el texto conviven */
+    ov.style.webkitMaskImage=ov.style.maskImage=
+      'radial-gradient(circle 170px at 50% 28%, transparent 0 96%, #000 100%)';
+    return;
+  }
+  let x=50,y=50,tx=50,ty=50,hov=false;
+  sec.addEventListener('mousemove',e=>{hov=true;const r=sec.getBoundingClientRect();
+    tx=(e.clientX-r.left)/r.width*100; ty=(e.clientY-r.top)/r.height*100});
+  sec.addEventListener('mouseleave',()=>{hov=false;tx=50;ty=50});
+  (function loop(){
+    x+=(tx-x)*.12;y+=(ty-y)*.12;
+    // máscara: agujero circular que sigue al cursor
+    ov.style.webkitMaskImage=ov.style.maskImage=
+      `radial-gradient(circle ${hov?170:0}px at ${x}% ${y}%, transparent 0 96%, #000 100%)`;
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ── PARALLAX ASIMÉTRICO ─────────────────── */
+(function(){
+  if(RM)return;
+  const items=[...document.querySelectorAll('[data-par]')];
+  const lines=[...document.querySelectorAll('.oversize .line')];
+  (function loop(){
+    const y=scrollY;
+    items.forEach(el=>{
+      const r=el.getBoundingClientRect();
+      const off=(r.top+r.height/2-innerHeight/2)*parseFloat(el.dataset.par);
+      el.style.transform=`translate3d(0,${off}px,0)`;
+    });
+    lines.forEach(el=>{
+      const r=el.getBoundingClientRect();
+      const p=(innerHeight-r.top)/(innerHeight+r.height);
+      el.style.transform=`translate3d(${parseFloat(el.dataset.x)*p*4}vw,0,0)`;
+    });
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ── SCRAMBLE TEXT ───────────────────────── */
+(function(){
+  const CH='>#/:*.-01ノハマ';
+  const run=(el)=>{
+    const final=el.dataset.final||el.textContent;el.dataset.final=final;
+    let f=0;const total=16;
+    const t=setInterval(()=>{
+      f++;
+      el.textContent=final.split('').map((c,i)=>{
+        if(c===' ')return ' ';
+        return i<f*(final.length/total)?c:CH[Math.floor(Math.random()*CH.length)];
+      }).join('');
+      if(f>=total){el.textContent=final;clearInterval(t)}
+    },34);
+  };
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting&&!e.target.dataset.done){e.target.dataset.done='1';if(!RM)run(e.target)}
+  }),{threshold:.6});
+  document.querySelectorAll('.v .e,.shop-head .r,#arcnum,.pin-head #pinprog').forEach(el=>io.observe(el));
+})();
+
+/* ── CONTADOR ARCHIVO ────────────────────── */
+(function(){
+  const el=document.getElementById('arcnum');
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(!e.isIntersecting)return;io.disconnect();
+    if(RM){el.textContent='59';return}
+    let v=0;const t=setInterval(()=>{v+=2;el.textContent=Math.min(v,59);if(v>=59)clearInterval(t)},26);
+  }),{threshold:.5});
+  io.observe(el);
+})();
+
+/* ── TAKEOVER MENU ───────────────────────── */
+(function(){
+  const t=document.getElementById('take');
+  document.getElementById('openmenu').onclick=()=>t.classList.add('on');
+  document.getElementById('closemenu').onclick=()=>t.classList.remove('on');
+  addEventListener('keydown',e=>{if(e.key==='Escape')t.classList.remove('on')});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DERIVA · 漂流 :: PANNI MARGOT</title>
+<link rel="icon" href="./favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@100..900&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#000; --white:#fff;
+  --g-900:#0a0a0a; --g-800:#141414; --g-700:#242424; --g-500:#5c5c5c; --g-300:#a8a8a8; --g-100:#e6e6e6;
+  --display:"Anton",Impact,sans-serif;
+  --geo:"Archivo",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  --jp:"Noto Sans JP",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased;height:100%}
+body{height:100%;background:var(--black);color:var(--white);font-family:var(--mono);font-size:11px;letter-spacing:.08em;overflow:hidden;overflow-x:hidden;cursor:none}
+img{display:block;max-width:100%;-webkit-user-drag:none;user-select:none}
+a{color:inherit;text-decoration:none;cursor:none}
+button{background:none;border:none;color:inherit;font:inherit;letter-spacing:inherit;cursor:none}
+::selection{background:var(--white);color:var(--black)}
+a:focus-visible,button:focus-visible{outline:1px solid var(--white);outline-offset:3px}
+
+.skip{position:fixed;top:-60px;left:16px;z-index:10001;background:var(--white);color:var(--black);padding:10px 16px;font-family:var(--mono);font-size:10px;text-transform:uppercase;transition:top .2s}
+.skip:focus-visible{top:44px;outline:1px solid var(--black)}
+
+/* ═══ GRANO FÍLMICO ═══ */
+#grain{position:fixed;inset:-150%;z-index:9998;pointer-events:none;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 1s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,-4%)}40%{transform:translate(-6%,2%)}60%{transform:translate(3%,-5%)}80%{transform:translate(-2%,4%)}100%{transform:translate(2%,-2%)}}
+
+/* ═══ CURSOR DOBLE MASA ═══ */
+#cur,#cur-ring{position:fixed;top:0;left:0;z-index:9999;pointer-events:none;mix-blend-mode:difference;will-change:transform}
+#cur{width:6px;height:6px;background:var(--white);border-radius:50%;margin:-3px 0 0 -3px}
+#cur-ring{width:38px;height:38px;border:1px solid var(--white);border-radius:50%;margin:-19px 0 0 -19px;transition:width .3s,height .3s,margin .3s}
+#cur-ring.big{width:96px;height:96px;margin:-48px 0 0 -48px}
+
+/* ═══ BARRA VIDRIERA ═══ */
+#vbar{position:fixed;top:0;left:0;right:0;height:36px;z-index:960;background:var(--black);border-bottom:1px solid var(--g-700);
+  display:flex;justify-content:space-between;align-items:center;padding:0 16px;font-size:9px;text-transform:uppercase;color:var(--g-300)}
+#vbar a{padding:4px 0}
+#vbar a:hover{color:var(--white)}
+
+/* ═══ HEADER ═══ */
+header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-content:space-between;align-items:center;
+  padding:18px 28px;mix-blend-mode:difference;font-size:10px;text-transform:uppercase;pointer-events:none}
+header a,header button{pointer-events:auto}
+.pm-lockup{display:block;height:1em;width:calc(1em * 640 / 103);fill:currentColor}
+.lockup{display:inline-flex;align-items:center;gap:.7em}
+.lockup .pm-lockup{font-size:2.1em}
+.hd-r{display:flex;gap:22px;align-items:center}
+.hd-r .dat{color:var(--g-300);font-variant-numeric:tabular-nums}
+#btn-lista{border:1px solid var(--white);padding:9px 14px;font-size:10px;text-transform:uppercase;letter-spacing:.14em}
+#btn-lista:hover{background:var(--white);color:var(--black)}
+
+.vert-kana{position:fixed;left:22px;top:50%;transform:translateY(-50%);z-index:850;
+  font-family:var(--jp);font-size:13px;letter-spacing:.5em;
+  writing-mode:vertical-rl;color:var(--white);mix-blend-mode:difference;opacity:.85;pointer-events:none}
+
+/* ═══ EL TERRITORIO ═══ */
+#mapa{position:fixed;top:36px;left:0;right:0;bottom:0;overflow:hidden;touch-action:none;background:var(--black);-webkit-user-select:none;user-select:none}
+#plano{position:absolute;top:0;left:0;width:3000px;height:2000px;will-change:transform}
+#voro{position:absolute;inset:0;pointer-events:none}
+#voro polygon{fill:none;stroke:var(--g-700);stroke-width:1}
+#voro circle{fill:var(--g-700)}
+
+.pz{position:absolute;display:block;padding:0;text-align:left;will-change:transform}
+.pz img{width:100%;aspect-ratio:3/4;object-fit:cover;filter:grayscale(1) contrast(1.12);pointer-events:none}
+.pz:hover img{filter:grayscale(0) contrast(1)}
+.pz .tag{display:block;margin-top:7px;font-size:9px;letter-spacing:.12em;color:var(--g-300);text-transform:uppercase;white-space:nowrap}
+.pz.sold .tag{color:var(--g-500)}
+.pz:focus-visible{outline:1px solid var(--white);outline-offset:6px}
+
+/* ═══ FOCO DE LINTERNA ═══ */
+#luz{position:absolute;inset:0;z-index:5;pointer-events:none;
+  background:radial-gradient(circle 300px at var(--fx,50%) var(--fy,50%),rgba(0,0,0,0) 0 42%,rgba(0,0,0,.66) 78%)}
+
+/* ═══ HUD (dato puro, sobre el foco) ═══ */
+.hud{position:absolute;z-index:7;pointer-events:none;mix-blend-mode:difference}
+h1.hud{top:7vh;left:66px;font-family:var(--display);font-weight:400;font-size:clamp(2.6rem,7vw,5.4rem);line-height:.9;text-transform:uppercase;letter-spacing:.02em}
+h1.hud .kj{display:block;font-family:var(--jp);font-weight:700;font-size:.5em;margin-top:10px;color:var(--g-300)}
+#coords{bottom:20px;left:66px;font-size:9px;color:var(--g-300);font-variant-numeric:tabular-nums;letter-spacing:.14em}
+#term{bottom:20px;right:24px;text-align:right;font-size:9px;color:var(--g-500);line-height:2}
+
+/* ═══ RIPPLE (arrastre-suelta) ═══ */
+.ripple{position:fixed;z-index:940;width:16px;height:16px;margin:-8px 0 0 -8px;border:1px solid var(--white);border-radius:50%;
+  pointer-events:none;mix-blend-mode:difference;animation:rip .6s ease-out forwards}
+@keyframes rip{0%{transform:scale(1);opacity:.9}100%{transform:scale(9);opacity:0}}
+
+/* ═══ FICHA · REVELADO CIRCULAR ═══ */
+#ficha{position:fixed;inset:0;z-index:980;background:var(--black);visibility:hidden;
+  clip-path:circle(0px at var(--cx,50%) var(--cy,50%));transition:clip-path .7s cubic-bezier(.3,.7,.2,1),visibility 0s .7s}
+#ficha.open{visibility:visible;clip-path:circle(150vmax at var(--cx,50%) var(--cy,50%));transition:clip-path .7s cubic-bezier(.3,.7,.2,1)}
+.fi-grid{display:grid;grid-template-columns:44% 1fr;height:100%}
+.fi-ph{overflow:hidden;border-right:1px solid var(--g-700)}
+.fi-ph img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.12)}
+.fi-ph:hover img{filter:grayscale(0) contrast(1)}
+.fi-meta{padding:14vh 5vw 8vh;display:grid;align-content:center;gap:22px}
+.fi-meta .sku{font-size:11px;color:var(--g-300);text-transform:uppercase}
+.fi-meta .nm{font-family:var(--display);font-size:clamp(2.2rem,5.6vw,4.8rem);line-height:.92;text-transform:uppercase}
+.fi-meta .pr{font-family:var(--geo);font-weight:800;font-size:clamp(1.4rem,3vw,2.2rem)}
+.fi-meta .stamp{display:inline-flex;gap:12px;align-items:baseline;border:1px solid var(--white);padding:9px 14px;font-size:10px;text-transform:uppercase;width:max-content}
+.fi-meta .stamp.off{border-color:var(--g-500);color:var(--g-300)}
+.fi-meta .kj{font-family:var(--jp);font-size:13px;letter-spacing:.4em;color:var(--g-500)}
+#fi-close{position:absolute;top:56px;right:24px;font-size:13px;padding:12px 16px;border:1px solid var(--g-700)}
+#fi-close:hover{background:var(--white);color:var(--black)}
+
+/* ═══ VISTA LISTA (la renuncia hecha sistema) ═══ */
+#lista{position:fixed;inset:0;z-index:985;background:var(--black);display:none;overflow-y:auto;padding:96px 28px 60px}
+#lista.open{display:block}
+.li-head{display:flex;justify-content:space-between;align-items:baseline;max-width:1100px;margin:0 auto 34px;text-transform:uppercase;color:var(--g-300);font-size:10px}
+.li-head .t{font-family:var(--display);font-size:clamp(1.6rem,4vw,2.6rem);color:var(--white);letter-spacing:.02em}
+#li-close{border:1px solid var(--g-700);padding:10px 16px;font-size:11px}
+#li-close:hover{background:var(--white);color:var(--black)}
+#lista ol{list-style:none;max-width:1100px;margin:0 auto;border-top:1px solid var(--g-700)}
+.row{display:grid;grid-template-columns:44px 1fr 220px 110px 96px;gap:14px;align-items:baseline;width:100%;
+  padding:15px 4px;border-bottom:1px solid var(--g-800);font-size:11px;text-transform:uppercase;text-align:left}
+.row:hover{background:var(--g-900)}
+.row .ix{color:var(--g-500)}
+.row .nm{font-family:var(--geo);font-weight:600;letter-spacing:.05em}
+.row .sk{color:var(--g-300);font-size:10px}
+.row .pr{font-variant-numeric:tabular-nums;text-align:right}
+.row .es{color:var(--g-300);font-size:9px;text-align:right}
+.row .es .sj{color:var(--g-500)}
+.li-foot{max-width:1100px;margin:60px auto 0;font-size:10px;text-transform:uppercase}
+.li-foot .f-term{font-family:var(--mono);font-size:11px;color:var(--g-300);line-height:2;word-break:break-word;margin-bottom:36px;text-transform:none}
+.li-foot .f-term b{color:var(--white);font-weight:400}
+.li-foot nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:30px}
+.li-foot nav p{color:var(--g-500);margin-bottom:10px}
+.li-foot nav a{display:block;padding:2px 0}
+.li-sign{margin-top:44px;padding-top:16px;border-top:1px solid var(--g-700);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;color:var(--g-500);font-size:9px}
+
+/* ═══ REDUCED MOTION ═══ */
+@media(prefers-reduced-motion:reduce){
+  *,#grain{animation:none!important;transition:none!important}
+  body,a,button{cursor:auto}
+  #cur,#cur-ring{display:none}
+  #luz{display:none}
+  .ripple{display:none}
+  #ficha{transition:none}
+  #ficha.open{clip-path:none}
+}
+
+/* ═══ MOBILE ═══ */
+@media(max-width:820px){
+  body,a,button{cursor:auto}
+  #cur,#cur-ring{display:none}
+  .vert-kana{display:none}
+  header{padding:14px 16px}
+  .hd-r{gap:12px}
+  .hd-r .dat{display:none}
+  h1.hud{left:20px;top:9vh}
+  #coords{left:20px}
+  #term{display:none}
+  .fi-grid{grid-template-columns:1fr;grid-template-rows:46% 1fr}
+  .fi-ph{border-right:none;border-bottom:1px solid var(--g-700)}
+  .fi-meta{padding:5vh 20px}
+  #fi-close{top:48px;right:12px}
+  #lista{padding:88px 16px 48px}
+  .row{grid-template-columns:34px 1fr 96px;gap:10px}
+  .row .sk,.row .es{display:none}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="pm-lockup" viewBox="0 0 640 103"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM519.167 33.833L526.333 34L530.5 35L535 37.167L536.333 39.333L531.167 45.667L524.667 43.333L519.833 43.167L515.833 44.5L513.167 46.667L511 50.5L510.5 56.333L511.833 60.5L514.333 63.5L517.667 65.333L522.5 66L526.833 64.667L529.333 62.167L530.167 60L529.833 58.667L521.667 58.333L520.833 57.667L520.667 51.833L521.333 50.833L539.5 50.667L540.833 51.833L540.5 60.333L537.833 67.5L532.833 72.5L526.333 75L517.333 75L509.833 72.333L504.167 67.167L500.833 59.667L500.333 56.167L500.667 50.167L503.833 42.333L507.5 38.333L510.5 36.333L515.167 34.5L519.167 34ZM571.167 33.833L579 34.167L583.667 35.667L587.333 37.833L592.167 43L594.833 49.667L595 58.167L592.5 65.5L587 71.5L584.167 73.167L578.333 75L569.333 75L561.667 72.167L556.167 67L554.5 64.333L552.833 59.333L552.667 50.667L553.667 46.833L555.833 42.5L558.833 39L562.333 36.5L566.667 34.667L571.167 34ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667ZM132.167 34.667L152.667 34.667L156.5 35.333L160.5 37L164 40L166.5 45.667L166.667 50.333L165.667 54.333L164 57.167L161.333 59.667L154.5 62.5L142 62.833L141.167 63.333L140.833 73.667L139.333 74.5L132.167 74.333L131.167 72.667L131.167 36.167L132.167 34.833ZM222.5 34.667L225 35.333L248.333 54.5L249.167 54.5L249.667 53.167L249.667 35.5L250.167 34.833L251.5 34.667L253.167 35.5L276.5 54.5L277.5 53.5L277.667 35.333L279.167 34.667L286.5 35L287.167 36.333L287 73.667L286.167 74.333L284.333 74L261.167 54.167L259.667 53.833L259.167 55.5L259.167 73.5L258.333 74.333L256.667 74.167L234 54.833L231.667 53.833L231.167 55L231.167 73.5L229.5 74.5L222 74.167L221.5 73.333L221.5 35.667L222.5 34.833ZM303.667 34.667L311.667 34.667L312.5 35.667L312.5 73.167L311 74.5L304.5 74.5L303.333 74.167L302.667 73L302.667 35.833L303.667 34.833ZM344.667 34.667L347.333 35.167L364.333 51L366 50.5L382.167 35.333L383.333 34.667L385.5 35L385.5 74L377.667 74.5L376.167 73.833L376 55.833L375.5 55L374.333 55.333L366.667 63L365.167 63.667L363.333 63.167L357.833 57.5L355.167 55.167L354 55L353.5 73.833L352 74.5L344.333 74.167L343.833 73L343.833 36L344.667 34.833ZM452.667 34.667L474.667 34.833L479.5 36.167L484.167 39.5L486.833 44.5L487.167 51L485.5 55.833L481.167 60.167L481 61.667L489 72.667L488.833 74.167L478.5 74.167L471.667 64.167L469.833 62.833L462.833 62.833L461.833 63.333L461.5 73.5L461 74.167L453.5 74.5L452 73.833L451.833 35.5L452.667 34.833ZM606.333 34.667L639.667 34.833L639.667 42.833L629.833 43L628.333 43.333L627.833 44.167L627.833 73.167L627 74.333L619.833 74.5L618.333 74L618 44.333L617.333 43.333L615.833 43L606 42.833L605.5 42.167L605.5 35.5L606.333 34.833ZM189.5 34.833L191.5 35.5L193.333 38.833L210.667 71.667L211 74.167L201.5 74.333L198 69.833L182.333 69.833L181.167 70.5L178.833 74.333L170.333 74.5L169 73.833L184.5 43.333L189.5 35ZM418.333 34.833L420.167 35.333L422.5 39.5L440 72.667L439.667 74.333L430.167 74.333L427.833 70.5L426.667 69.833L411 69.833L407.5 74.333L399 74.5L398 74L398.333 71.833L417.5 35.5L418.333 35ZM143.167 43L141.667 43.167L141 44L141 54L141.5 54.667L150.333 54.833L153.333 54.167L155.167 53L156.333 50.667L156.5 47.833L154.667 44.5L151.833 43.167L143.333 43ZM463.667 43L462.167 43.333L461.5 44.5L461.5 53.333L462.167 54.667L472.333 54.667L476.167 52.5L477.167 48.333L475.333 44.5L472.333 43.167L463.833 43ZM572.667 43.167L568.167 44.5L564.833 47.333L562.833 51.667L562.667 56.5L564.333 61L567 63.833L571.167 65.667L575.5 65.833L579.833 64.333L583.333 61L584.833 57.5L585 52.5L583.5 48.333L581.167 45.667L576.833 43.5L572.833 43.167ZM189.833 52.5L188.167 54.833L185.167 62.167L186 62.833L194.333 62.833L194.833 61.167L191.167 53.333L190 52.5ZM418.667 52.5L416.833 55.167L414 62.167L414.667 62.833L423 62.833L423.667 61.167L419.667 52.833L418.833 52.5Z"/></symbol><symbol id="pm-mono" viewBox="0 0 104 103"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667Z"/></symbol></defs></svg>
+
+<a class="skip" href="#contenido">SALTAR AL CONTENIDO</a>
+
+<div id="grain"></div>
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<div id="vbar">
+  <a href="./index.html">[ &lt;&lt; ] VIDRIERA</a>
+  <span>CAMINO G :: DERIVA · <span lang="ja" aria-hidden="true">漂流</span></span>
+</div>
+
+<div class="vert-kana" lang="ja" aria-hidden="true">バーニ　マーゴット</div>
+
+<header>
+  <a class="lockup" href="./index.html" aria-label="Panni Margot — vidriera">
+    <svg class="pm-lockup" aria-hidden="true" focusable="false"><use href="#pm-lockup"/></svg>
+  </a>
+  <div class="hd-r">
+    <span class="dat">16 / 192 EN PLANO</span>
+    <button id="btn-lista" aria-haspopup="dialog" aria-expanded="false">[ ≡ ] VISTA LISTA</button>
+  </div>
+</header>
+
+<main id="contenido">
+
+<!-- ═══ EL TERRITORIO: LIENZO INFINITO ═══ -->
+<section id="mapa" aria-label="Mapa del catálogo — 16 piezas en territorio">
+  <div id="plano">
+    <!-- #23 · Voronoi estático precalculado (seed 20260812) -->
+    <svg id="voro" viewBox="0 0 3000 2000" width="3000" height="2000" aria-hidden="true" focusable="false">
+      <polygon points="1957,521 2307,528 2605,1083 2431,1244 1927,906"/><polygon points="1802,1092 1800,1097 1081,1160 1009,825 1111,755"/><polygon points="1624,0 3000,0 3000,172 2307,528 1957,521 1655,211"/><polygon points="3000,172 3000,1031 2605,1083 2307,528"/><polygon points="3000,1031 3000,2000 2257,2000 2431,1244 2605,1083"/><polygon points="1927,906 2431,1244 2257,2000 1870,2000 1776,1763 1800,1097 1802,1092"/><polygon points="1870,2000 661,2000 756,1622 1079,1206 1776,1763"/><polygon points="547,0 1624,0 1655,211 1111,755 1009,825 688,707"/><polygon points="1009,825 1081,1160 1079,1206 756,1622 266,940 688,707"/><polygon points="339,2000 0,2000 0,925 189,950"/><polygon points="756,1622 661,2000 339,2000 189,950 266,940"/><polygon points="1081,1160 1800,1097 1776,1763 1079,1206"/><polygon points="0,0 547,0 688,707 266,940 189,950 0,925"/><polygon points="1655,211 1957,521 1927,906 1802,1092 1111,755"/>
+      <circle cx="2306" cy="935" r="2"/><circle cx="1475" cy="1025" r="2"/><circle cx="2323" cy="121" r="2"/><circle cx="2647" cy="752" r="2"/><circle cx="2731" cy="1392" r="2"/><circle cx="2097" cy="1246" r="2"/><circle cx="1189" cy="1605" r="2"/><circle cx="990" cy="318" r="2"/><circle cx="666" cy="1199" r="2"/><circle cx="128" cy="1438" r="2"/><circle cx="384" cy="1401" r="2"/><circle cx="1493" cy="1225" r="2"/><circle cx="260" cy="464" r="2"/><circle cx="1548" cy="876" r="2"/>
+    </svg>
+
+    <button class="pz" data-nm="Tapado Aka" data-sku="ABRIGO.AKA/014" data-pr="$970.000" data-es="EN SALA" data-kj="コート" aria-label="Tapado Aka — ABRIGO.AKA/014 — $970.000 — ver ficha"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0087-b7a922169f6f8b83a117830243699603-640-0.jpg" alt=""><span class="tag" aria-hidden="true">ABRIGO.AKA/014</span></button>
+    <button class="pz" data-nm="Tapado Suko" data-sku="ABRIGO.SUKO/022" data-pr="$970.000" data-es="EN SALA" data-kj="コート" aria-label="Tapado Suko — ABRIGO.SUKO/022 — $970.000 — ver ficha"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0126-fe7dcde43e1705c60c17830260611791-640-0.webp" alt=""><span class="tag" aria-hidden="true">ABRIGO.SUKO/022</span></button>
+    <button class="pz" data-nm="Tapado Purotto" data-sku="ABRIGO.PUROTTO/025" data-pr="$970.000" data-es="EN SALA" data-kj="コート" aria-label="Tapado Purotto — ABRIGO.PUROTTO/025 — $970.000 — ver ficha"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0331-c04b11d8ca48be376917835404772676-640-0.webp" alt=""><span class="tag" aria-hidden="true">ABRIGO.PUROTTO/025</span></button>
+    <button class="pz sold" data-nm="Kimono Takai" data-sku="KIMONO.TAKAI/001" data-pr="$723.900" data-es="VENDIDA" data-kj="着物 · 手描き" aria-label="Kimono Takai — KIMONO.TAKAI/001 — $723.900 — vendida — ver ficha"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/tapado-kimono-brushed-takai-7-ad2c2f23976c6c883217194294041586-640-0.webp" alt=""><span class="tag" aria-hidden="true">KIMONO.TAKAI/001</span></button>
+    <button class="pz" data-nm="Trench Firewall" data-sku="TRENCH.FIREWALL/031" data-pr="$590.000" data-es="EN SALA" data-kj="コート" aria-label="Trench Firewall — TRENCH.FIREWALL/031 — $590.000 — ver ficha"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/trench-firewall-black-satin-8-dd17ac45b7653231cd17183866984987-640-0.webp" alt=""><span class="tag" aria-hidden="true">TRENCH.FIREWALL/031</span></button>
+    <button class="pz" data-nm="Capa Camisa Fudo" data-sku="CAMISA.FUDO/038" data-pr="$293.900" data-es="EN SALA" data-kj="シャツ" aria-label="Capa Camisa Fudo — CAMISA.FUDO/038 — $293.900 — ver ficha"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/capa-camisa-fudo-6-2d10df457879ca9b1417194235662614-640-0.webp" alt=""><span class="tag" aria-hidden="true">CAMISA.FUDO/038</span></button>
+    <button class="pz" data-nm="Pantalón Wakusei" data-sku="PANTALON.WAKUSEI/044" data-pr="$123.900" data-es="EN SALA" data-kj="ズボン" aria-label="Pantalón Wakusei — PANTALON.WAKUSEI/044 — $123.900 — ver ficha"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/pantalon-wakusei-2-b5a85660a588c09c0c17187383919344-640-0.webp" alt=""><span class="tag" aria-hidden="true">PANTALON.WAKUSEI/044</span></button>
+    <button class="pz" data-nm="Remerón Besuto" data-sku="REMERA.BESUTO/052" data-pr="$155.000" data-es="EN SALA" data-kj="Tシャツ" aria-label="Remerón Besuto — REMERA.BESUTO/052 — $155.000 — ver ficha"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/remeron-besuto-3-ba65fba7f8a0892d1617187352318677-640-0.webp" alt=""><span class="tag" aria-hidden="true">REMERA.BESUTO/052</span></button>
+    <button class="pz" data-nm="Capa Kagyaku" data-sku="CAPA.KAGYAKU/047" data-pr="$465.000" data-es="EN SALA" data-kj="コート" aria-label="Capa Kagyaku — CAPA.KAGYAKU/047 — $465.000 — ver ficha"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0628-16ec2f55db5cbe96a017835415963188-640-0.webp" alt=""><span class="tag" aria-hidden="true">CAPA.KAGYAKU/047</span></button>
+    <button class="pz" data-nm="Camisa Katto" data-sku="CAMISA.KATTO/053" data-pr="$168.000" data-es="EN SALA" data-kj="シャツ" aria-label="Camisa Katto — CAMISA.KATTO/053 — $168.000 — ver ficha"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0629-c79357f21ac6666a0117835415972816-640-0.webp" alt=""><span class="tag" aria-hidden="true">CAMISA.KATTO/053</span></button>
+    <button class="pz" data-nm="Manuk Hoodie 001 Green" data-sku="MANUK.HOODIE/001.&gt;&gt;GREEN" data-pr="$113.900" data-es="EN SALA" data-kj="世界" aria-label="Manuk Hoodie 001 Green — $113.900 — ver ficha"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/manuk-hoodie_001-__green-b59b8392542aef38dd17187443458756-640-0.webp" alt=""><span class="tag" aria-hidden="true">MANUK.HOODIE/001</span></button>
+    <button class="pz" data-nm="Manuk Hoodie 001 Black" data-sku="MANUK.HOODIE/001.&gt;&gt;BLACK" data-pr="$113.900" data-es="EN SALA" data-kj="世界" aria-label="Manuk Hoodie 001 Black — $113.900 — ver ficha"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/manuk-hoodie_001-__black-bf3cc081a4157944f217187442991524-640-0.webp" alt=""><span class="tag" aria-hidden="true">MANUK.HOODIE/001</span></button>
+    <button class="pz" data-nm="Manuk Hoodie 001 Pink" data-sku="MANUK.HOODIE/001.&gt;&gt;PINK" data-pr="$113.900" data-es="EN SALA" data-kj="世界" aria-label="Manuk Hoodie 001 Pink — $113.900 — ver ficha"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/manuk-hoodie_001-__pink-c4fa7b3523a39d415617187444334485-640-0.webp" alt=""><span class="tag" aria-hidden="true">MANUK.HOODIE/001</span></button>
+    <button class="pz" data-nm="Manuk Hoodie 002 PTW Black" data-sku="MANUK.HOODIE/002.&gt;&gt;PTW BLACK" data-pr="$139.000" data-es="EN SALA" data-kj="世界" aria-label="Manuk Hoodie 002 PTW Black — $139.000 — ver ficha"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/manuk-hoodie_002-__ptw-black-01f161fe7f5b89690f17187444744233-640-0.webp" alt=""><span class="tag" aria-hidden="true">MANUK.HOODIE/002</span></button>
+    <button class="pz" data-nm="Manuk Hoodie 002 PTW White" data-sku="MANUK.HOODIE/002.&gt;&gt;PTW WHITE" data-pr="$139.000" data-es="EN SALA" data-kj="世界" aria-label="Manuk Hoodie 002 PTW White — $139.000 — ver ficha"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/manuk-hoodie_002-__ptw-white-e65b88d66778f17a8617187445068760-640-0.webp" alt=""><span class="tag" aria-hidden="true">MANUK.HOODIE/002</span></button>
+    <button class="pz" data-nm="Manuk Jersey 78 Pink" data-sku="MANUK.JERSEY78.&gt;&gt;PINK" data-pr="$81.900" data-es="EN SALA" data-kj="世界" aria-label="Manuk Jersey 78 Pink — $81.900 — ver ficha"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/manuk-jersey78-__pink-5cb2da7e4a5a4030ea17187445872360-640-0.webp" alt=""><span class="tag" aria-hidden="true">MANUK.JERSEY78</span></button>
+  </div>
+
+  <!-- #59 · foco de linterna -->
+  <div id="luz" aria-hidden="true"></div>
+
+  <h1 class="hud" aria-label="Deriva — el catálogo como territorio">DERIVA<span class="kj" lang="ja" aria-hidden="true">漂流 // 領土</span></h1>
+  <div class="hud" id="coords" aria-hidden="true">X:+0000 :: Y:+0000 :: 漂流</div>
+  <div class="hud" id="term" aria-hidden="true">
+    &gt;&gt;HONDURAS4940##<br>
+    &lt;&lt;GENDERLESS(ジェンダーレス)//FASHION#()&gt;&gt;<br>
+    192 PIEZAS :: SIN ORDEN :: 漂流
+  </div>
+</section>
+
+</main>
+
+<!-- ═══ FICHA · REVELADO CIRCULAR ═══ -->
+<div id="ficha" role="dialog" aria-modal="true" aria-labelledby="fi-nm">
+  <div class="fi-grid">
+    <div class="fi-ph"><img id="fi-img" alt="" loading="lazy"></div>
+    <div class="fi-meta">
+      <div class="kj" id="fi-kj" lang="ja" aria-hidden="true"></div>
+      <div class="sku" id="fi-sku"></div>
+      <div class="nm" id="fi-nm"></div>
+      <div><span class="stamp" id="fi-es"></span></div>
+      <div class="pr" id="fi-pr"></div>
+      <div style="font-size:10px;color:var(--g-500);text-transform:uppercase"><span lang="ja" aria-hidden="true">一点物</span> · 1/1 · HONDURAS 4940</div>
+    </div>
+  </div>
+  <button id="fi-close" aria-label="Cerrar ficha">[ × ]</button>
+</div>
+
+<!-- ═══ VISTA LISTA · la renuncia hecha sistema ═══ -->
+<div id="lista" role="dialog" aria-modal="true" aria-label="Vista lista del territorio">
+  <div class="li-head">
+    <div>
+      <div class="t">VISTA LISTA</div>
+      <div>16 PIEZAS EN PLANO · <span lang="ja" aria-hidden="true">目録</span></div>
+    </div>
+    <button id="li-close" aria-label="Cerrar vista lista">[ × ] CERRAR</button>
+  </div>
+  <ol>
+    <li><button class="row" data-i="0"><span class="ix">01</span><span class="nm">Tapado Aka</span><span class="sk">ABRIGO.AKA/014</span><span class="pr">$970.000</span><span class="es">EN SALA</span></button></li>
+    <li><button class="row" data-i="1"><span class="ix">02</span><span class="nm">Tapado Suko</span><span class="sk">ABRIGO.SUKO/022</span><span class="pr">$970.000</span><span class="es">EN SALA</span></button></li>
+    <li><button class="row" data-i="2"><span class="ix">03</span><span class="nm">Tapado Purotto</span><span class="sk">ABRIGO.PUROTTO/025</span><span class="pr">$970.000</span><span class="es">EN SALA</span></button></li>
+    <li><button class="row" data-i="3"><span class="ix">04</span><span class="nm">Kimono Takai</span><span class="sk">KIMONO.TAKAI/001</span><span class="pr">$723.900</span><span class="es">VENDIDA <span class="sj" lang="ja" aria-hidden="true">完売</span></span></button></li>
+    <li><button class="row" data-i="4"><span class="ix">05</span><span class="nm">Trench Firewall</span><span class="sk">TRENCH.FIREWALL/031</span><span class="pr">$590.000</span><span class="es">EN SALA</span></button></li>
+    <li><button class="row" data-i="5"><span class="ix">06</span><span class="nm">Capa Camisa Fudo</span><span class="sk">CAMISA.FUDO/038</span><span class="pr">$293.900</span><span class="es">EN SALA</span></button></li>
+    <li><button class="row" data-i="6"><span class="ix">07</span><span class="nm">Pantalón Wakusei</span><span class="sk">PANTALON.WAKUSEI/044</span><span class="pr">$123.900</span><span class="es">EN SALA</span></button></li>
+    <li><button class="row" data-i="7"><span class="ix">08</span><span class="nm">Remerón Besuto</span><span class="sk">REMERA.BESUTO/052</span><span class="pr">$155.000</span><span class="es">EN SALA</span></button></li>
+    <li><button class="row" data-i="8"><span class="ix">09</span><span class="nm">Capa Kagyaku</span><span class="sk">CAPA.KAGYAKU/047</span><span class="pr">$465.000</span><span class="es">EN SALA</span></button></li>
+    <li><button class="row" data-i="9"><span class="ix">10</span><span class="nm">Camisa Katto</span><span class="sk">CAMISA.KATTO/053</span><span class="pr">$168.000</span><span class="es">EN SALA</span></button></li>
+    <li><button class="row" data-i="10"><span class="ix">11</span><span class="nm">Manuk Hoodie 001 Green</span><span class="sk">MANUK.HOODIE/001.&gt;&gt;GREEN</span><span class="pr">$113.900</span><span class="es">EN SALA</span></button></li>
+    <li><button class="row" data-i="11"><span class="ix">12</span><span class="nm">Manuk Hoodie 001 Black</span><span class="sk">MANUK.HOODIE/001.&gt;&gt;BLACK</span><span class="pr">$113.900</span><span class="es">EN SALA</span></button></li>
+    <li><button class="row" data-i="12"><span class="ix">13</span><span class="nm">Manuk Hoodie 001 Pink</span><span class="sk">MANUK.HOODIE/001.&gt;&gt;PINK</span><span class="pr">$113.900</span><span class="es">EN SALA</span></button></li>
+    <li><button class="row" data-i="13"><span class="ix">14</span><span class="nm">Manuk Hoodie 002 PTW Black</span><span class="sk">MANUK.HOODIE/002.&gt;&gt;PTW BLACK</span><span class="pr">$139.000</span><span class="es">EN SALA</span></button></li>
+    <li><button class="row" data-i="14"><span class="ix">15</span><span class="nm">Manuk Hoodie 002 PTW White</span><span class="sk">MANUK.HOODIE/002.&gt;&gt;PTW WHITE</span><span class="pr">$139.000</span><span class="es">EN SALA</span></button></li>
+    <li><button class="row" data-i="15"><span class="ix">16</span><span class="nm">Manuk Jersey 78 Pink</span><span class="sk">MANUK.JERSEY78.&gt;&gt;PINK</span><span class="pr">$81.900</span><span class="es">EN SALA</span></button></li>
+  </ol>
+  <div class="li-foot">
+    <div class="f-term" aria-hidden="true">
+      &lt;&lt;GENDERLESS(ジェンダーレス)//FASHION#()ファッション-))<br>
+      ".&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SHOP((ショップ$ディスカウント<b>NN</b>@!!!))""<br>
+      BUENOS AIRES//デザイナー ..DESIGNER &gt;&gt;<b>HONDURAS4940</b>##
+    </div>
+    <nav aria-label="Índice de la vidriera">
+      <div><p>ÍNDICE</p><a href="./index.html">VIDRIERA</a><a href="./gravedad.html">CAMINO A · GRAVEDAD</a><a href="./oficio.html">CAMINO B · OFICIO</a><a href="./archivo.html">CAMINO C · ARCHIVO</a></div>
+      <div><p>CASA</p><a href="./index.html">HONDURAS 4940</a><a href="./index.html">PALERMO SOHO · CABA</a><a href="./index.html">+54 9 11 3027 4940</a></div>
+      <div><p>TERRITORIO</p><a href="./index.html">192 PIEZAS PUBLICADAS</a><a href="./index.html">59 EN ARCHIVO <span lang="ja" aria-hidden="true">完売</span></a></div>
+    </nav>
+    <div class="li-sign">
+      <span class="lockup" style="font-size:10px">
+        <svg class="pm-lockup" aria-hidden="true" focusable="false"><use href="#pm-lockup"/></svg>
+        <span>© 2026</span>
+      </span>
+      <span lang="ja" aria-hidden="true">ブエノスアイレスで作られた</span>
+      <span>MADE IN BUENOS AIRES</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const MOB = matchMedia('(max-width: 820px)').matches;
+if(RM){document.body.style.cursor='auto'}
+
+/* ── SEED DETERMINISTA (mismo plano en cada carga) ── */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+
+const mapa=document.getElementById('mapa'), plano=document.getElementById('plano');
+const PW=3000,PH=2000;
+const piezas=[...plano.querySelectorAll('.pz')];
+const POS=[];
+
+/* ── #56 DISPOSICIÓN RADIAL/ORGÁNICA: espiral de ángulo áureo + jitter con seed ── */
+(function(){
+  const rnd=mulberry32(20260812);
+  const cx=PW/2, cy=PH/2, GA=2.39996322;
+  piezas.forEach((b,i)=>{
+    const r=205*Math.sqrt(i+0.7);
+    const th=i*GA+(rnd()-0.5)*0.5;
+    const x=cx+Math.cos(th)*r*1.42+(rnd()-0.5)*120;
+    const y=cy+Math.sin(th)*r*0.82+(rnd()-0.5)*90;
+    const w=(MOB?120:150)+rnd()*(MOB?70:110);
+    const rot=(rnd()*6-3);
+    b.style.width=w+'px';
+    b.style.left=Math.round(x-w/2)+'px';
+    b.style.top=Math.round(y-w*0.66)+'px';
+    b.style.transform='rotate('+rot.toFixed(2)+'deg)';
+    POS.push({x:x,y:y});
+  });
+})();
+
+/* ── #45 LIENZO INFINITO: pointer + inercia + límites elásticos con rebote ── */
+const view={w:0,h:0};
+function medir(){view.w=mapa.clientWidth;view.h=mapa.clientHeight}
+medir();addEventListener('resize',medir);
+/* el foco por teclado no scrollea el contenedor recortado: el paneo lo hace el plano */
+mapa.addEventListener('scroll',()=>{mapa.scrollLeft=0;mapa.scrollTop=0});
+let tx=(0-PW/2)+innerWidth/2, ty=(0-PH/2)+innerHeight/2;   /* centrado */
+let cxp=tx, cyp=ty, vx=0, vy=0;
+let down=false, moved=0, sx0=0, sy0=0, bx0=0, by0=0, lx=0, ly=0;
+let pid=null, cap=false;
+let lastInput=performance.now(), driftAng=0.7;
+function clampX(v){return Math.min(0,Math.max(view.w-PW,v))}
+function clampY(v){return Math.min(0,Math.max(view.h-PH,v))}
+function marca(){lastInput=performance.now()}
+
+mapa.addEventListener('pointerdown',e=>{
+  if(down)return;   /* multi-touch: solo el primer puntero conduce */
+  down=true;cap=false;pid=e.pointerId;moved=0;sx0=e.clientX;sy0=e.clientY;bx0=tx;by0=ty;lx=e.clientX;ly=e.clientY;vx=0;vy=0;
+  marca();
+  luzTo(e.clientX,e.clientY);
+});
+addEventListener('pointermove',e=>{
+  marca();
+  if(!down||e.pointerId!==pid)return;
+  if(e.pointerType==='mouse'&&e.buttons===0){down=false;return}   /* botón soltado fuera de la ventana: no queda arrastre fantasma */
+  const dx=e.clientX-sx0, dy=e.clientY-sy0;
+  moved=Math.max(moved,Math.hypot(dx,dy));
+  /* captura del puntero recién al confirmar arrastre: el click limpio sigue llegando a las piezas */
+  if(moved>6&&!cap){cap=true;try{mapa.setPointerCapture(pid)}catch(_){}}
+  let nx=bx0+dx, ny=by0+dy;
+  /* resistencia elástica fuera de límites */
+  const cxv=clampX(nx), cyv=clampY(ny);
+  nx=cxv+(nx-cxv)*0.32; ny=cyv+(ny-cyv)*0.32;
+  tx=nx;ty=ny;
+  vx=e.clientX-lx;vy=e.clientY-ly;lx=e.clientX;ly=e.clientY;
+});
+function soltar(e){
+  if(!down)return;
+  if(e&&e.pointerId!=null&&e.pointerId!==pid)return;   /* suelta de otro dedo no corta el arrastre */
+  down=false;marca();
+  if(cap){cap=false;try{mapa.releasePointerCapture(pid)}catch(_){}}
+  /* el click sintetizado tras el arrastre todavía lee moved>6; después se limpia */
+  setTimeout(()=>{moved=0},0);
+  /* #44 ripple en el arrastre-suelta */
+  if(!RM&&moved>6&&e&&e.clientX!=null){
+    const r=document.createElement('div');r.className='ripple';
+    r.style.left=e.clientX+'px';r.style.top=e.clientY+'px';
+    document.body.appendChild(r);
+    r.addEventListener('animationend',()=>r.remove());
+  }
+}
+addEventListener('pointerup',soltar);
+addEventListener('pointercancel',soltar);
+addEventListener('blur',()=>{down=false;cap=false});
+/* clic posterior al arrastre no abre ficha (e.detail>0: el click de teclado —detail 0— pasa siempre) */
+mapa.addEventListener('click',e=>{if(moved>6&&e.detail>0){e.stopPropagation();e.preventDefault()}},true);
+/* la rueda también recorre el plano (no hay scroll de página) */
+mapa.addEventListener('wheel',e=>{e.preventDefault();marca();tx-=e.deltaX;ty-=e.deltaY},{passive:false});
+
+/* ── TECLADO: las flechas recorren el plano ── */
+addEventListener('keydown',e=>{
+  if(document.getElementById('lista').classList.contains('open'))return;
+  if(document.getElementById('ficha').classList.contains('open'))return;
+  const paso=e.shiftKey?260:90;
+  let usado=true;
+  if(e.key==='ArrowLeft')tx+=paso;
+  else if(e.key==='ArrowRight')tx-=paso;
+  else if(e.key==='ArrowUp')ty+=paso;
+  else if(e.key==='ArrowDown')ty-=paso;
+  else usado=false;
+  if(usado){e.preventDefault();marca();tx=clampX(tx);ty=clampY(ty)}
+});
+
+/* ── FOCO POR TECLADO: al tabular a una pieza, el plano la trae a la vista ── */
+plano.addEventListener('focusin',e=>{
+  const b=e.target.closest('.pz');
+  if(!b||!b.matches(':focus-visible'))return;
+  marca();
+  const i=piezas.indexOf(b);
+  tx=clampX(view.w/2-POS[i].x);
+  ty=clampY(view.h/2-POS[i].y);
+  luzTo(view.w/2,view.h/2+36);
+});
+
+/* ── #59 FOCO DE LINTERNA (sigue cursor; en touch, el último tap) ── */
+const luz=document.getElementById('luz');
+let fx=innerWidth/2,fy=innerHeight/2,fxT=fx,fyT=fy;
+function luzTo(x,y){fxT=x;fyT=y-36}
+if(!MOB){mapa.addEventListener('pointermove',e=>luzTo(e.clientX,e.clientY))}
+
+/* ── #49 FICHA CON REVELADO CIRCULAR ── */
+/* aria-modal de verdad: el fondo queda inerte mientras un diálogo está abierto */
+const fondo=[document.getElementById('vbar'),document.querySelector('header'),document.getElementById('contenido')];
+function fondoInerte(on){fondo.forEach(el=>{if(on)el.setAttribute('inert','');else el.removeAttribute('inert')})}
+const ficha=document.getElementById('ficha'), fiClose=document.getElementById('fi-close');
+let volverA=null;
+function abrirFicha(b,px,py){
+  volverA=document.activeElement;
+  document.getElementById('fi-img').src=b.querySelector('img').src;
+  document.getElementById('fi-img').alt=b.dataset.nm;
+  document.getElementById('fi-kj').textContent=b.dataset.kj;
+  document.getElementById('fi-nm').textContent=b.dataset.nm;
+  document.getElementById('fi-pr').textContent=b.dataset.pr;
+  const es=document.getElementById('fi-es');
+  if(b.dataset.es==='VENDIDA'){es.innerHTML='<span lang="ja" aria-hidden="true">完売</span> · VENDIDA'}
+  else{es.textContent=b.dataset.es}
+  es.className='stamp'+(b.dataset.es==='VENDIDA'?' off':'');
+  ficha.style.setProperty('--cx',px+'px');
+  ficha.style.setProperty('--cy',py+'px');
+  ficha.classList.add('open');
+  fondoInerte(true);
+  scramble(document.getElementById('fi-sku'),b.dataset.sku);
+  fiClose.focus();
+}
+function cerrarFicha(){
+  ficha.classList.remove('open');
+  if(!lista.classList.contains('open'))fondoInerte(false);   /* quitar inert ANTES de devolver el foco */
+  if(volverA&&volverA.focus)volverA.focus();
+}
+piezas.forEach(b=>{
+  b.addEventListener('click',e=>{
+    if(moved>6&&e.detail>0)return;
+    const rc=b.getBoundingClientRect();
+    const px=(e.clientX||0)>0?e.clientX:rc.left+rc.width/2;
+    const py=(e.clientY||0)>0?e.clientY:rc.top+rc.height/2;
+    abrirFicha(b,px,py);
+  });
+});
+fiClose.addEventListener('click',cerrarFicha);
+
+/* ── SCRAMBLE en el SKU de la ficha ── */
+function scramble(el,final){
+  el.textContent=final;
+  if(RM)return;
+  if(el._t){clearInterval(el._t)}   /* apertura rápida consecutiva: sin dos intervalos peleando el mismo nodo */
+  const CH='>#/:*.-01ノハマ';
+  let f=0;const total=14;
+  const t=el._t=setInterval(()=>{
+    f++;
+    el.textContent=final.split('').map((c,i)=>{
+      if(c===' ')return ' ';
+      return i<f*(final.length/total)?c:CH[Math.floor(Math.random()*CH.length)];
+    }).join('');
+    if(f>=total){el.textContent=final;clearInterval(t);el._t=null}
+  },34);
+}
+
+/* ── VISTA LISTA (obligatoria: la renuncia hecha sistema) ── */
+const lista=document.getElementById('lista'), btnLista=document.getElementById('btn-lista'), liClose=document.getElementById('li-close');
+let volverLista=null;
+function abrirLista(){
+  volverLista=document.activeElement;
+  lista.classList.add('open');
+  fondoInerte(true);
+  btnLista.setAttribute('aria-expanded','true');
+  liClose.focus();
+}
+function cerrarLista(){
+  lista.classList.remove('open');
+  btnLista.setAttribute('aria-expanded','false');
+  if(!ficha.classList.contains('open'))fondoInerte(false);
+  if(volverLista&&volverLista.focus)volverLista.focus();
+}
+btnLista.addEventListener('click',abrirLista);
+liClose.addEventListener('click',cerrarLista);
+lista.querySelectorAll('.row').forEach(r=>{
+  r.addEventListener('click',()=>{
+    const b=piezas[parseInt(r.dataset.i,10)];
+    cerrarLista();
+    abrirFicha(b,innerWidth/2,innerHeight/2);
+  });
+});
+addEventListener('keydown',e=>{
+  if(e.key!=='Escape')return;
+  if(ficha.classList.contains('open'))cerrarFicha();
+  else if(lista.classList.contains('open'))cerrarLista();
+});
+
+/* ── CURSOR DOBLE MASA ── */
+const dot=document.getElementById('cur'), ring=document.getElementById('cur-ring');
+let mx=innerWidth/2,my=innerHeight/2,ddx=mx,ddy=my,rx=mx,ry=my;
+if(!RM&&!MOB){
+  addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+  document.querySelectorAll('a,button').forEach(el=>{
+    el.addEventListener('mouseenter',()=>ring.classList.add('big'));
+    el.addEventListener('mouseleave',()=>ring.classList.remove('big'));
+  });
+}
+
+/* ── COORDENADAS (dato puro) ── */
+const coords=document.getElementById('coords');
+let cootxt='';
+function pad(v){const s=Math.abs(Math.round(v)).toString().padStart(4,'0');return (v<0?'-':'+')+s}
+
+/* ── BUCLE MAESTRO ── */
+(function(){
+  const LERP=RM?1:0.14;
+  function frame(){
+    requestAnimationFrame(frame);
+    if(document.hidden)return;
+    const now=performance.now();
+    if(!down){
+      if(!RM){
+        /* inercia */
+        tx+=vx;ty+=vy;vx*=0.94;vy*=0.94;
+        /* rebote elástico hacia los límites */
+        tx+=(clampX(tx)-tx)*0.12;
+        ty+=(clampY(ty)-ty)*0.12;
+        /* #73 estado de reposo: sin input 6 s, el plano deriva solo */
+        if(now-lastInput>6000){
+          driftAng+=0.0011;
+          tx=clampX(tx+Math.cos(driftAng)*0.2);
+          ty=clampY(ty+Math.sin(driftAng)*0.2);
+        }
+      }else{tx=clampX(tx);ty=clampY(ty)}
+    }
+    cxp+=(tx-cxp)*LERP;cyp+=(ty-cyp)*LERP;
+    plano.style.transform='translate3d('+cxp.toFixed(1)+'px,'+cyp.toFixed(1)+'px,0)';
+    /* linterna */
+    if(!RM){
+      fx+=(fxT-fx)*0.12;fy+=(fyT-fy)*0.12;
+      luz.style.setProperty('--fx',fx.toFixed(0)+'px');
+      luz.style.setProperty('--fy',fy.toFixed(0)+'px');
+    }
+    /* cursor */
+    if(!RM&&!MOB){
+      ddx+=(mx-ddx)*0.55;ddy+=(my-ddy)*0.55;
+      rx+=(mx-rx)*0.13;ry+=(my-ry)*0.13;
+      dot.style.transform='translate3d('+ddx+'px,'+ddy+'px,0)';
+      ring.style.transform='translate3d('+rx+'px,'+ry+'px,0)';
+    }
+    /* coordenadas relativas al centro del plano */
+    const t='X:'+pad(-(cxp-(view.w-PW)/2))+' :: Y:'+pad(-(cyp-(view.h-PH)/2))+' :: 漂流';
+    if(t!==cootxt){cootxt=t;coords.textContent=t}
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TERMINAL · 端末 :: PANNI MARGOT</title>
+<link rel="icon" href="./favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#000; --white:#fff;
+  --g-900:#0a0a0a; --g-800:#141414; --g-700:#242424; --g-500:#5c5c5c; --g-300:#a8a8a8; --g-100:#e6e6e6;
+  --display:"Anton",Impact,sans-serif;
+  --geo:"Archivo",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  --jp:"Noto Sans JP",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased}
+body{background:var(--black);color:var(--white);font-family:var(--mono);font-size:11px;letter-spacing:.08em;overflow-x:hidden;cursor:none;padding-top:36px}
+img{display:block;max-width:100%;-webkit-user-drag:none;user-select:none}
+a{color:inherit;text-decoration:none;cursor:none}
+button{background:none;border:none;color:inherit;font:inherit;letter-spacing:inherit;cursor:none}
+::selection{background:var(--white);color:var(--black)}
+a:focus-visible,button:focus-visible{outline:1px solid var(--white);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.skip{position:fixed;top:-60px;left:16px;z-index:10001;background:var(--white);color:var(--black);padding:10px 16px;font-family:var(--mono);font-size:10px;text-transform:uppercase;transition:top .2s}
+.skip:focus-visible{top:44px;outline:1px solid var(--black)}
+
+/* ═══ GRANO FÍLMICO ═══ */
+#grain{position:fixed;inset:-150%;z-index:9998;pointer-events:none;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 1s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,-4%)}40%{transform:translate(-6%,2%)}60%{transform:translate(3%,-5%)}80%{transform:translate(-2%,4%)}100%{transform:translate(2%,-2%)}}
+
+/* ═══ #18 CRT B&N: scanlines + viñeta + flicker en 2 niveles ═══ */
+#crt{position:fixed;inset:0;z-index:9995;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 3px);
+  animation:flick .14s steps(2,end) infinite}
+@keyframes flick{0%{opacity:.72}100%{opacity:1}}
+#vig{position:fixed;inset:0;z-index:9994;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 50%,transparent 56%,rgba(0,0,0,.44) 100%)}
+
+/* ═══ #28 GLITCH: slices con clip-path, nunca en loop (animation 1 vez por disparo) ═══ */
+.gs{position:fixed;inset:0;z-index:9993;pointer-events:none;background:var(--white);mix-blend-mode:difference;opacity:0}
+#gs1{clip-path:inset(24% 0 68% 0)}
+#gs2{clip-path:inset(66% 0 30% 0)}
+.gs.on{animation:gsl .22s steps(3,end) 1}
+@keyframes gsl{0%{opacity:1;transform:translateX(-12px)}33%{opacity:1;transform:translateX(9px)}66%{opacity:1;transform:translateX(-4px)}100%{opacity:0;transform:none}}
+.gl{animation:secgl .24s steps(2,end) 1}
+@keyframes secgl{0%{transform:translateX(-6px)}50%{transform:translateX(4px)}100%{transform:none}}
+
+/* ═══ CURSOR DOBLE MASA + #42 RASTRO DE FÓSFORO ═══ */
+#cur,#cur-ring,.gh{position:fixed;top:0;left:0;z-index:9999;pointer-events:none;mix-blend-mode:difference;will-change:transform}
+#cur{width:6px;height:6px;background:var(--white);border-radius:50%;margin:-3px 0 0 -3px}
+#cur-ring{width:38px;height:38px;border:1px solid var(--white);border-radius:50%;margin:-19px 0 0 -19px;transition:width .3s,height .3s,margin .3s}
+#cur-ring.big{width:96px;height:96px;margin:-48px 0 0 -48px}
+.gh{width:5px;height:5px;background:var(--white);border-radius:50%;margin:-2.5px 0 0 -2.5px}
+
+/* ═══ #44 RIPPLE ═══ */
+.rip{position:fixed;top:0;left:0;width:14px;height:14px;margin:-7px 0 0 -7px;border:1px solid var(--white);border-radius:50%;mix-blend-mode:difference;opacity:0;pointer-events:none;z-index:9996}
+.rip.on{animation:rip .5s ease-out 1}
+@keyframes rip{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(13)}}
+
+/* ═══ BOOT (menos de 800 ms, RM lo salta) ═══ */
+#boot{position:fixed;inset:0;z-index:10005;background:var(--black);display:none;padding:24vh 28px;font-family:var(--mono);font-size:11px;line-height:2.1;color:var(--g-100);letter-spacing:.08em}
+#boot.on{display:block}
+#boot.off{opacity:0;transition:opacity .15s}
+#bootlog{white-space:pre}
+.bcur{display:inline-block;width:.6em;height:1em;background:var(--white);vertical-align:-2px;animation:bl .5s steps(2) infinite}
+@keyframes bl{to{opacity:0}}
+
+/* ═══ BARRA VIDRIERA ═══ */
+#vbar{position:fixed;top:0;left:0;right:0;height:36px;z-index:960;background:var(--black);border-bottom:1px solid var(--g-700);
+  display:flex;justify-content:space-between;align-items:center;padding:0 16px;font-size:9px;text-transform:uppercase;color:var(--g-300)}
+#vbar a{padding:4px 0}
+#vbar a:hover{color:var(--white)}
+
+/* ═══ #10 HEADER DIRECCIONAL (barra de estado que se retrae) ═══ */
+header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-content:space-between;align-items:center;
+  padding:18px 28px;mix-blend-mode:difference;font-size:10px;text-transform:uppercase;transition:transform .35s cubic-bezier(.3,.7,.2,1)}
+header.hid{transform:translateY(-160%)}
+.pm-lockup{display:block;height:1em;width:calc(1em * 640 / 103);fill:currentColor}
+.pm-mono-svg{display:block;width:44px;height:44px;fill:currentColor}
+.lockup{display:inline-flex;align-items:center;gap:.7em}
+.lockup .pm-lockup{font-size:2.1em}
+.lockup .wm{font-family:var(--mono);letter-spacing:.12em;white-space:nowrap;line-height:1}
+#sysline{display:flex;gap:12px;align-items:baseline;font-variant-numeric:tabular-nums;color:var(--g-300)}
+#sysline b{color:var(--white);font-weight:400}
+
+.vert-kana{position:fixed;left:22px;top:50%;transform:translateY(-50%);z-index:850;
+  font-family:var(--jp);font-size:13px;letter-spacing:.5em;
+  writing-mode:vertical-rl;color:var(--white);mix-blend-mode:difference;opacity:.85}
+
+/* ═══ HERO: #17 ASCII (uso 1 de 2) ═══ */
+#hero{min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr;gap:5vw;align-items:center;padding:16vh 28px 10vh 66px;position:relative}
+.h-sys{font-size:10px;color:var(--g-500);text-transform:uppercase;margin-bottom:3vh}
+#hero h1{font-family:var(--display);font-size:clamp(3.4rem,11vw,9.5rem);line-height:.9;text-transform:uppercase;letter-spacing:.01em}
+#hero h1 .hk{display:block;font-family:var(--jp);font-weight:700;font-size:.42em;color:var(--g-300);margin-top:12px}
+.ficha{margin-top:6vh;border:1px solid var(--g-700);padding:16px 18px;width:max-content;max-width:100%;font-size:11px;line-height:2;text-transform:uppercase}
+.ficha .fs{color:var(--white)}
+.ficha .fm{color:var(--g-300)}
+.h-term{margin-top:5vh;font-size:9px;color:var(--g-500);line-height:2;text-transform:none}
+.a-box{position:relative;width:100%;aspect-ratio:3/4;max-height:76vh;border:1px solid var(--g-700);background:var(--g-900);overflow:hidden;justify-self:end}
+.a-box img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.15)}
+.a-box canvas{position:absolute;inset:0;width:100%;height:100%}
+.a-tag{position:absolute;right:10px;bottom:8px;z-index:3;font-size:9px;color:var(--g-500);background:var(--black);padding:3px 7px;border:1px solid var(--g-800);text-transform:uppercase}
+
+/* ═══ MARQUESINA DIALECTO ═══ */
+#mq{border-top:1px solid var(--g-700);border-bottom:1px solid var(--g-700);padding:13px 0;overflow:hidden;white-space:nowrap}
+.mq-track{display:inline-block;font-family:var(--mono);font-size:11px;color:var(--g-300);animation:mq 26s linear infinite;will-change:transform}
+#mq:hover .mq-track{animation-play-state:paused}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* ═══ GRILLA ÍNDICE DE DIRECTORIO + #17 ASCII EN HOVER (uso 2 de 2, única columna de preview) ═══ */
+#grid{padding:14vh 0 16vh}
+.sec-head{display:flex;justify-content:space-between;padding:0 28px;margin-bottom:6vh;font-size:10px;color:var(--g-300);text-transform:uppercase}
+.grid-wrap{display:grid;grid-template-columns:1fr 320px;gap:4vw;padding:0 28px;align-items:start}
+.rowh,.row{display:grid;grid-template-columns:1.5fr 1fr .7fr .6fr;gap:12px;align-items:baseline;padding:14px 18px;border-bottom:1px solid var(--g-800);text-align:left;width:100%}
+.rowh{color:var(--g-500);font-size:9px;text-transform:uppercase;border-bottom:1px solid var(--g-700)}
+.row{font-size:11px;text-transform:uppercase;transition:background .15s}
+.row:hover,.row:focus-visible{background:var(--g-900)}
+.row .c-cw{color:var(--g-300)}
+.row .c-p{text-align:right}
+.row .c-s{text-align:right;color:var(--g-500)}
+#prev{position:sticky;top:130px}
+.pv-head{display:flex;justify-content:space-between;gap:10px;font-size:9px;color:var(--g-500);text-transform:uppercase;margin-bottom:10px}
+.pv-box{position:relative;aspect-ratio:3/4;border:1px solid var(--g-700);background:var(--g-900);overflow:hidden}
+.pv-box canvas{position:absolute;inset:0;width:100%;height:100%}
+.pv-idle{position:absolute;inset:0;display:grid;place-items:center;color:var(--g-700);font-size:10px;letter-spacing:.3em;text-transform:uppercase}
+
+/* ═══ #35 MORFOSIS DE IDIOMA ═══ */
+#morph-sec{border-top:1px solid var(--g-700);padding:18vh 28px;text-align:center}
+#morph{font-family:"Archivo","Noto Sans JP",sans-serif;font-weight:800;font-size:clamp(2.4rem,8.5vw,7rem);line-height:1.1;min-height:1.2em;text-transform:uppercase;letter-spacing:.02em}
+.morph-sub{margin-top:4vh;font-size:10px;color:var(--g-500);text-transform:uppercase}
+
+/* ═══ #75 HUEVO DE PASCUA (sin pista visible) ═══ */
+#egg{position:fixed;inset:0;z-index:10002;background:rgba(0,0,0,.88);display:grid;place-items:center;padding:20px}
+#egg[hidden]{display:none}
+.egg-box{background:var(--black);border:1px solid var(--white);width:min(520px,92vw);padding:18px;display:grid;gap:14px}
+.egg-head{display:flex;justify-content:space-between;align-items:baseline;font-size:10px;text-transform:uppercase}
+.egg-head button:hover{color:var(--g-300)}
+.egg-box img{width:100%;max-height:56vh;object-fit:contain;filter:grayscale(1)}
+.egg-foot{font-size:9px;color:var(--g-500);text-transform:uppercase}
+
+/* ═══ FOOTER ═══ */
+footer{border-top:1px solid var(--g-700);padding:60px 28px 34px;font-size:10px;text-transform:uppercase}
+.f-term{font-family:var(--mono);font-size:11px;color:var(--g-300);line-height:2;word-break:break-word;margin-bottom:40px;text-transform:none}
+.f-term b{color:var(--white);font-weight:400}
+.f-status{margin-bottom:40px;color:var(--g-500);font-size:9px;line-height:2}
+.f-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:30px}
+.f-grid p.h{color:var(--g-500);margin-bottom:10px}
+.f-grid a{display:block;padding:2px 0}
+.f-sign{margin-top:60px;padding-top:16px;border-top:1px solid var(--g-700);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;color:var(--g-500);font-size:9px}
+
+/* ═══ REDUCED MOTION ═══ */
+@media(prefers-reduced-motion:reduce){
+  *,#grain,#crt{animation:none!important;transition:none!important}
+  body,a,button{cursor:auto}
+  #grain{display:none}
+  #cur,#cur-ring,.gh,.rip,.gs{display:none}
+  #boot{display:none!important}
+  header{transform:none!important}
+  .mq-track{animation:none}
+}
+
+/* ═══ MOBILE ═══ */
+@media(max-width:820px){
+  body,a,button{cursor:auto}
+  #cur,#cur-ring,.gh{display:none}
+  .vert-kana{display:none}
+  header{padding:14px 16px}
+  #sysline{font-size:9px}
+  #hero{grid-template-columns:1fr;padding:13vh 20px 8vh;gap:6vh}
+  .a-box{justify-self:stretch;max-height:64vh}
+  .grid-wrap{grid-template-columns:1fr;padding:0 16px}
+  #prev{display:none}
+  .rowh,.row{grid-template-columns:1.3fr .9fr .8fr;padding:13px 10px}
+  .rowh .c-s,.row .c-s{display:none}
+  .sec-head{padding:0 16px}
+  #morph-sec{padding:14vh 16px}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="pm-lockup" viewBox="0 0 640 103"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM519.167 33.833L526.333 34L530.5 35L535 37.167L536.333 39.333L531.167 45.667L524.667 43.333L519.833 43.167L515.833 44.5L513.167 46.667L511 50.5L510.5 56.333L511.833 60.5L514.333 63.5L517.667 65.333L522.5 66L526.833 64.667L529.333 62.167L530.167 60L529.833 58.667L521.667 58.333L520.833 57.667L520.667 51.833L521.333 50.833L539.5 50.667L540.833 51.833L540.5 60.333L537.833 67.5L532.833 72.5L526.333 75L517.333 75L509.833 72.333L504.167 67.167L500.833 59.667L500.333 56.167L500.667 50.167L503.833 42.333L507.5 38.333L510.5 36.333L515.167 34.5L519.167 34ZM571.167 33.833L579 34.167L583.667 35.667L587.333 37.833L592.167 43L594.833 49.667L595 58.167L592.5 65.5L587 71.5L584.167 73.167L578.333 75L569.333 75L561.667 72.167L556.167 67L554.5 64.333L552.833 59.333L552.667 50.667L553.667 46.833L555.833 42.5L558.833 39L562.333 36.5L566.667 34.667L571.167 34ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667ZM132.167 34.667L152.667 34.667L156.5 35.333L160.5 37L164 40L166.5 45.667L166.667 50.333L165.667 54.333L164 57.167L161.333 59.667L154.5 62.5L142 62.833L141.167 63.333L140.833 73.667L139.333 74.5L132.167 74.333L131.167 72.667L131.167 36.167L132.167 34.833ZM222.5 34.667L225 35.333L248.333 54.5L249.167 54.5L249.667 53.167L249.667 35.5L250.167 34.833L251.5 34.667L253.167 35.5L276.5 54.5L277.5 53.5L277.667 35.333L279.167 34.667L286.5 35L287.167 36.333L287 73.667L286.167 74.333L284.333 74L261.167 54.167L259.667 53.833L259.167 55.5L259.167 73.5L258.333 74.333L256.667 74.167L234 54.833L231.667 53.833L231.167 55L231.167 73.5L229.5 74.5L222 74.167L221.5 73.333L221.5 35.667L222.5 34.833ZM303.667 34.667L311.667 34.667L312.5 35.667L312.5 73.167L311 74.5L304.5 74.5L303.333 74.167L302.667 73L302.667 35.833L303.667 34.833ZM344.667 34.667L347.333 35.167L364.333 51L366 50.5L382.167 35.333L383.333 34.667L385.5 35L385.5 74L377.667 74.5L376.167 73.833L376 55.833L375.5 55L374.333 55.333L366.667 63L365.167 63.667L363.333 63.167L357.833 57.5L355.167 55.167L354 55L353.5 73.833L352 74.5L344.333 74.167L343.833 73L343.833 36L344.667 34.833ZM452.667 34.667L474.667 34.833L479.5 36.167L484.167 39.5L486.833 44.5L487.167 51L485.5 55.833L481.167 60.167L481 61.667L489 72.667L488.833 74.167L478.5 74.167L471.667 64.167L469.833 62.833L462.833 62.833L461.833 63.333L461.5 73.5L461 74.167L453.5 74.5L452 73.833L451.833 35.5L452.667 34.833ZM606.333 34.667L639.667 34.833L639.667 42.833L629.833 43L628.333 43.333L627.833 44.167L627.833 73.167L627 74.333L619.833 74.5L618.333 74L618 44.333L617.333 43.333L615.833 43L606 42.833L605.5 42.167L605.5 35.5L606.333 34.833ZM189.5 34.833L191.5 35.5L193.333 38.833L210.667 71.667L211 74.167L201.5 74.333L198 69.833L182.333 69.833L181.167 70.5L178.833 74.333L170.333 74.5L169 73.833L184.5 43.333L189.5 35ZM418.333 34.833L420.167 35.333L422.5 39.5L440 72.667L439.667 74.333L430.167 74.333L427.833 70.5L426.667 69.833L411 69.833L407.5 74.333L399 74.5L398 74L398.333 71.833L417.5 35.5L418.333 35ZM143.167 43L141.667 43.167L141 44L141 54L141.5 54.667L150.333 54.833L153.333 54.167L155.167 53L156.333 50.667L156.5 47.833L154.667 44.5L151.833 43.167L143.333 43ZM463.667 43L462.167 43.333L461.5 44.5L461.5 53.333L462.167 54.667L472.333 54.667L476.167 52.5L477.167 48.333L475.333 44.5L472.333 43.167L463.833 43ZM572.667 43.167L568.167 44.5L564.833 47.333L562.833 51.667L562.667 56.5L564.333 61L567 63.833L571.167 65.667L575.5 65.833L579.833 64.333L583.333 61L584.833 57.5L585 52.5L583.5 48.333L581.167 45.667L576.833 43.5L572.833 43.167ZM189.833 52.5L188.167 54.833L185.167 62.167L186 62.833L194.333 62.833L194.833 61.167L191.167 53.333L190 52.5ZM418.667 52.5L416.833 55.167L414 62.167L414.667 62.833L423 62.833L423.667 61.167L419.667 52.833L418.833 52.5Z"/></symbol><symbol id="pm-mono" viewBox="0 0 104 103"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667Z"/></symbol></defs></svg>
+
+<a class="skip" href="#contenido">SALTAR AL CONTENIDO</a>
+
+<div id="boot" aria-hidden="true"><div><span id="bootlog"></span><span class="bcur"></span></div></div>
+<script>
+(function(){
+  var b=document.getElementById('boot');
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){if(b.parentNode)b.parentNode.removeChild(b);return}
+  b.classList.add('on');
+  var l=document.getElementById('bootlog');
+  var L1='> MANUK.WORLD :: BOOT v2.6';
+  var L2='> SYS.OK :: 192 PIEZAS :: HONDURAS4940';
+  var i=0;
+  var t=setInterval(function(){
+    i++;
+    l.textContent=L1.slice(0,i)+(i>L1.length?'\n'+L2.slice(0,i-L1.length):'');
+    if(i>=L1.length+L2.length)clearInterval(t);
+  },8);
+  setTimeout(function(){b.classList.add('off')},620);
+  setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b);if(window.__glitch)window.__glitch(null)},780);
+})();
+</script>
+
+<div id="grain"></div>
+<div id="crt" aria-hidden="true"></div>
+<div id="vig" aria-hidden="true"></div>
+<div class="gs" id="gs1" aria-hidden="true"></div>
+<div class="gs" id="gs2" aria-hidden="true"></div>
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<div id="vbar">
+  <a href="./index.html">[ &lt;&lt; ] VIDRIERA</a>
+  <span>CAMINO D :: TERMINAL · <span lang="ja" aria-hidden="true">端末</span></span>
+</div>
+
+<div class="vert-kana" lang="ja" aria-hidden="true">バーニ　マーゴット</div>
+
+<header id="hdr">
+  <a class="lockup" href="./index.html" aria-label="Panni Margot — vidriera">
+    <svg class="pm-lockup" aria-hidden="true" focusable="false"><use href="#pm-lockup"/></svg>
+  </a>
+  <div id="sysline">
+    <span>MANUK.WORLD//<b>SYS OK</b></span>
+    <span aria-hidden="true">::</span>
+    <span>192 PIEZAS</span>
+  </div>
+</header>
+
+<main id="contenido" tabindex="-1" style="outline:none">
+
+<!-- ═══ HERO: la prenda decodificada a caracteres (#17, uso 1 de 2) ═══ -->
+<section id="hero">
+  <div>
+    <p class="h-sys" data-scramble>SYS :: MANUK.WORLD//OK</p>
+    <h1>TERMINAL<span class="hk" lang="ja" aria-hidden="true">端末</span></h1>
+    <div class="ficha">
+      <div class="fs" data-scramble>MANUK.HOODIE/001.&gt;&gt;GREEN</div>
+      <div class="fm">$113.900 :: STK 02 :: <span lang="ja" aria-hidden="true">世界</span> MANUK</div>
+      <div class="fm">RENDER :: ASCII//MONO · 640PX</div>
+    </div>
+    <div class="h-term" aria-hidden="true">
+      &lt;&lt;GENDERLESS(ジェンダーレス)//FASHION#()&gt;&gt;<br>
+      &gt;&gt;HONDURAS4940##<br>
+      SUB.MUNDO // MANUK.WORLD // 端末
+    </div>
+  </div>
+  <div class="a-box">
+    <img id="afall" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/manuk-hoodie_001-__green-b59b8392542aef38dd17187443458756-640-0.webp" alt="MANUK Hoodie 001, colorway green">
+    <canvas id="ascii" aria-hidden="true"></canvas>
+    <span class="a-tag" aria-hidden="true">SEÑAL :: 01/01</span>
+  </div>
+</section>
+
+<!-- ═══ MARQUESINA DIALECTO ═══ -->
+<section id="mq" data-glitch aria-label="Dialecto terminal de la marca">
+  <span class="sr">GENDERLESS FASHION — HONDURAS 4940 — BUENOS AIRES</span>
+  <div class="mq-track" aria-hidden="true">&lt;&lt;GENDERLESS(ジェンダーレス)//FASHION#()&gt;&gt; :: &gt;&gt;HONDURAS4940## :: ".SHOP((ショップ$ディスカウントNN@!!!))"" :: BUENOS AIRES//デザイナー ..DESIGNER :: &lt;&lt;GENDERLESS(ジェンダーレス)//FASHION#()&gt;&gt; :: &gt;&gt;HONDURAS4940## :: ".SHOP((ショップ$ディスカウントNN@!!!))"" :: BUENOS AIRES//デザイナー ..DESIGNER :: </div>
+</section>
+
+<!-- ═══ GRILLA: índice de directorio, ASCII solo en la columna de preview (#17, uso 2 de 2) ═══ -->
+<section id="grid" data-glitch>
+  <div class="sec-head">
+    <span>DIR://MANUK.WORLD/INDEX</span>
+    <span>06 ITEMS</span>
+  </div>
+  <div class="grid-wrap">
+    <div>
+      <div class="rowh" aria-hidden="true">
+        <span>SKU</span><span>COLORWAY</span><span class="c-p">PRECIO</span><span class="c-s">STOCK</span>
+      </div>
+      <button class="row" type="button" data-i="0">
+        <span class="c-sku" data-scramble>MANUK.HOODIE/001</span><span class="c-cw">&gt;&gt;GREEN</span><span class="c-p">$113.900</span><span class="c-s">STK:02</span>
+      </button>
+      <button class="row" type="button" data-i="1">
+        <span class="c-sku" data-scramble>MANUK.HOODIE/001</span><span class="c-cw">&gt;&gt;BLACK</span><span class="c-p">$113.900</span><span class="c-s">STK:03</span>
+      </button>
+      <button class="row" type="button" data-i="2">
+        <span class="c-sku" data-scramble>MANUK.HOODIE/001</span><span class="c-cw">&gt;&gt;PINK</span><span class="c-p">$113.900</span><span class="c-s">STK:01</span>
+      </button>
+      <button class="row" type="button" data-i="3">
+        <span class="c-sku" data-scramble>MANUK.HOODIE/002</span><span class="c-cw">&gt;&gt;PTW BLACK</span><span class="c-p">$139.000</span><span class="c-s">STK:02</span>
+      </button>
+      <button class="row" type="button" data-i="4">
+        <span class="c-sku" data-scramble>MANUK.HOODIE/002</span><span class="c-cw">&gt;&gt;PTW WHITE</span><span class="c-p">$139.000</span><span class="c-s">STK:01</span>
+      </button>
+      <button class="row" type="button" data-i="5">
+        <span class="c-sku" data-scramble>MANUK.JERSEY78</span><span class="c-cw">&gt;&gt;PINK</span><span class="c-p">$81.900</span><span class="c-s">STK:04</span>
+      </button>
+    </div>
+    <aside id="prev" aria-hidden="true">
+      <div class="pv-head"><span id="pv-sku">STANDBY</span><span>PREVIEW :: ASCII</span></div>
+      <div class="pv-box">
+        <span class="pv-idle" id="pv-idle">SIN SEÑAL</span>
+        <canvas id="pvc"></canvas>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ═══ #35 MORFOSIS DE IDIOMA ═══ -->
+<section id="morph-sec" data-glitch>
+  <div class="sec-head" style="padding:0;margin-bottom:8vh">
+    <span>SYS://LANG</span>
+    <span>3 ESTADOS</span>
+  </div>
+  <span class="sr">GENDERLESS · SIN GÉNERO</span>
+  <div id="morph" aria-hidden="true">GENDERLESS</div>
+  <p class="morph-sub">LA MÁQUINA NO ELIGE IDIOMA :: LOS RECORRE</p>
+</section>
+
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer data-glitch>
+  <div class="f-term" aria-hidden="true">
+    &lt;&lt;GENDERLESS(ジェンダーレス)//FASHION#()ファッション-))<br>
+    ".&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SHOP((ショップ$ディスカウント<b>NN</b>@!!!))""<br>
+    BUENOS AIRES//デザイナー ..DESIGNER &gt;&gt;<b>HONDURAS4940</b>##
+  </div>
+  <div class="f-status">
+    SND :: OFF · PREVISTO, SILENCIADO POR DEFECTO<br>
+    CRT :: MONO · SIN COLOR :: ASCII :: DOSIS 2/2
+  </div>
+  <div class="f-grid">
+    <div><p class="h">ÍNDICE</p><a href="./index.html">VIDRIERA</a><a href="./gravedad.html">CAMINO A · GRAVEDAD</a><a href="./oficio.html">CAMINO B · OFICIO</a><a href="./archivo.html">CAMINO C · ARCHIVO</a></div>
+    <div><p class="h">CASA</p><a href="./index.html">HONDURAS 4940</a><a href="./index.html">PALERMO SOHO · CABA</a><a href="./index.html">+54 9 11 3027 4940</a></div>
+    <div><p class="h">MANUK</p><a href="./index.html">6 ITEMS EN LÍNEA</a><a href="./index.html"><span lang="ja" aria-hidden="true">世界</span> MANUK WORLD</a></div>
+  </div>
+  <div class="f-sign">
+    <span class="lockup" style="font-size:10px">
+      <svg class="pm-lockup" aria-hidden="true" focusable="false"><use href="#pm-lockup"/></svg>
+      <span class="wm">© 2026</span>
+    </span>
+    <span lang="ja" aria-hidden="true">ブエノスアイレスで作られた</span>
+    <span>MADE IN BUENOS AIRES</span>
+  </div>
+</footer>
+
+<!-- ═══ #75: overlay del sistema (se abre por secuencia de teclas, sin pista) ═══ -->
+<div id="egg" role="dialog" aria-modal="true" aria-label="Sistema MANUK World" hidden>
+  <div class="egg-box">
+    <div class="egg-head">
+      <span>SISTEMA :: MANUK.WORLD//OK</span>
+      <button id="egg-x" type="button" aria-label="Cerrar">[ × ]</button>
+    </div>
+    <svg class="pm-mono-svg" aria-hidden="true" focusable="false"><use href="#pm-mono"/></svg>
+    <img src="./grafica-colab.webp" alt="Gráfica de edición limitada de MANUK" loading="lazy">
+    <p class="egg-foot">NN :: EDICION LIMITADA · <span lang="ja" aria-hidden="true">世界</span> MANUK WORLD</p>
+  </div>
+</div>
+
+<script>
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const MOB = matchMedia('(max-width: 820px)').matches;
+const LOWHW = (navigator.deviceMemory && navigator.deviceMemory < 4) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4);
+
+const CDN='https://acdn-us.mitiendanube.com/stores/004/814/798/products/';
+const IMGS=[
+  CDN+'manuk-hoodie_001-__green-b59b8392542aef38dd17187443458756-640-0.webp',
+  CDN+'manuk-hoodie_001-__black-bf3cc081a4157944f217187442991524-640-0.webp',
+  CDN+'manuk-hoodie_001-__pink-c4fa7b3523a39d415617187444334485-640-0.webp',
+  CDN+'manuk-hoodie_002-__ptw-black-01f161fe7f5b89690f17187444744233-640-0.webp',
+  CDN+'manuk-hoodie_002-__ptw-white-e65b88d66778f17a8617187445068760-640-0.webp',
+  CDN+'manuk-jersey78-__pink-5cb2da7e4a5a4030ea17187445872360-640-0.webp'
+];
+
+/* ── carga de imágenes con CORS (cache de promesas) ── */
+const IMGCACHE={};
+function loadImg(src){
+  if(IMGCACHE[src])return IMGCACHE[src];
+  return IMGCACHE[src]=new Promise((res,rej)=>{
+    const im=new Image();
+    im.crossOrigin='anonymous';
+    im.onload=()=>res(im);
+    im.onerror=()=>{delete IMGCACHE[src];rej()};
+    im.src=src;
+  });
+}
+
+/* ── #17 RENDER ASCII (canvas 2D: luminancia por celda → carácter mono) ── */
+function ascii(img,canvas,cell,sweep){
+  const box=canvas.parentElement;
+  const W=box.clientWidth,H=box.clientHeight;
+  if(!W||!H)return;
+  const dpr=Math.min(window.devicePixelRatio||1,1.75);
+  canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+  const ctx=canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  const cw=cell*0.62;
+  const cols=Math.max(4,Math.floor(W/cw)),rows=Math.max(4,Math.floor(H/cell));
+  const off=ascii._off||(ascii._off=document.createElement('canvas'));
+  off.width=cols;off.height=rows;
+  const octx=off.getContext('2d',{willReadFrequently:true});
+  const iw=img.naturalWidth,ih=img.naturalHeight,ta=W/H;
+  let sx=0,sy=0,sw=iw,sh=ih;
+  if(iw/ih>ta){sw=ih*ta;sx=(iw-sw)/2}else{sh=iw/ta;sy=(ih-sh)/2}
+  octx.drawImage(img,sx,sy,sw,sh,0,0,cols,rows);
+  let d;
+  try{d=octx.getImageData(0,0,cols,rows).data}
+  catch(e){canvas.hidden=true;return}
+  canvas.hidden=false;
+  ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
+  ctx.font=cell+'px "JetBrains Mono",monospace';
+  ctx.textBaseline='top';
+  const CH=' .:-=+*#%@';
+  function drawRow(r){
+    for(let c=0;c<cols;c++){
+      const k=(r*cols+c)*4;
+      let L=(0.2126*d[k]+0.7152*d[k+1]+0.0722*d[k+2])/255;
+      L=Math.min(1,Math.max(0,(L-0.5)*1.45+0.5));
+      const idx=Math.round(L*(CH.length-1));
+      if(!idx)continue;
+      ctx.fillStyle=L>0.66?'#e6e6e6':'#5c5c5c';
+      ctx.fillText(CH[idx],c*cw,r*cell);
+    }
+  }
+  if(sweep&&!RM){
+    let r=0;
+    (function step(){
+      for(let n=0;n<3&&r<rows;n++,r++)drawRow(r);
+      if(r<rows)requestAnimationFrame(step);
+    })();
+  }else{
+    for(let r=0;r<rows;r++)drawRow(r);
+  }
+}
+
+/* ── HERO ASCII: uso 1 de 2. Barrido de filas una sola vez; nunca en loop ── */
+(function(){
+  const cv=document.getElementById('ascii');
+  const cell=LOWHW?12:9;
+  const fonts=(document.fonts&&document.fonts.ready)
+    ?Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,1500))])
+    :Promise.resolve();
+  Promise.all([loadImg(IMGS[0]),fonts]).then(([im])=>{
+    window.__heroimg=im;
+    ascii(im,cv,cell,true);
+  }).catch(()=>{cv.hidden=true});
+  let t;
+  addEventListener('resize',()=>{
+    clearTimeout(t);
+    t=setTimeout(()=>{if(window.__heroimg)ascii(window.__heroimg,cv,cell,false)},220);
+  });
+})();
+
+/* ── GRILLA: preview ASCII en hover/focus (uso 2 de 2, única columna) ── */
+(function(){
+  const rows=[...document.querySelectorAll('.row')];
+  const pvc=document.getElementById('pvc');
+  const sk=document.getElementById('pv-sku');
+  const idle=document.getElementById('pv-idle');
+  let cur=-1;
+  function show(r){
+    if(matchMedia('(max-width: 820px)').matches)return;
+    const i=+r.dataset.i;
+    if(i===cur)return;
+    cur=i;
+    sk.textContent=r.querySelector('.c-sku').textContent+' '+r.querySelector('.c-cw').textContent;
+    loadImg(IMGS[i]).then(im=>{
+      if(cur!==i)return;
+      idle.hidden=true;
+      ascii(im,pvc,LOWHW?10:7,false);
+    }).catch(()=>{if(cur===i)cur=-1;sk.textContent='SIN SEÑAL'});
+  }
+  rows.forEach(r=>{
+    r.addEventListener('mouseenter',()=>show(r));
+    r.addEventListener('focus',()=>show(r));
+  });
+  /* precarga diferida del resto */
+  if(!MOB&&!LOWHW)setTimeout(()=>{IMGS.forEach(s=>loadImg(s).catch(()=>{}))},4000);
+})();
+
+/* ── #28 GLITCH: al cargar y al cruzar secciones, una vez cada una, jamás en loop ── */
+(function(){
+  const g1=document.getElementById('gs1'),g2=document.getElementById('gs2');
+  window.__glitch=function(sec){
+    if(RM)return;
+    [g1,g2].forEach(g=>{g.classList.remove('on');void g.offsetWidth;g.classList.add('on')});
+    if(sec){sec.classList.remove('gl');void sec.offsetWidth;sec.classList.add('gl')}
+  };
+  if(RM)return;
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting&&!e.target.dataset.gl){
+      e.target.dataset.gl='1';
+      window.__glitch(e.target);
+    }
+  }),{threshold:.25});
+  document.querySelectorAll('[data-glitch]').forEach(s=>io.observe(s));
+})();
+
+/* ── #35 MORFOSIS DE IDIOMA: GENDERLESS ⇄ ジェンダーレス ⇄ SIN GÉNERO ── */
+(function(){
+  const el=document.getElementById('morph');
+  if(RM){el.textContent='GENDERLESS';return}
+  const states=[['GENDERLESS',''],['ジェンダーレス','ja'],['SIN GÉNERO','']];
+  const CH='>#/:*.-01ノハマ';
+  let i=0,busy=false;
+  function to(n){
+    const target=states[n][0];
+    busy=true;
+    const len=Math.max(el.textContent.length,target.length);
+    let f=0;const T=14;
+    const t=setInterval(()=>{
+      f++;
+      let out='';
+      for(let j=0;j<len;j++){
+        if(j<f*(len/T))out+=(target[j]||'');
+        else out+=CH[(Math.random()*CH.length)|0];
+      }
+      el.textContent=out;
+      if(f>=T){
+        el.textContent=target;
+        if(states[n][1])el.setAttribute('lang',states[n][1]);
+        else el.removeAttribute('lang');
+        clearInterval(t);busy=false;
+      }
+    },42);
+  }
+  setInterval(()=>{
+    if(document.hidden||busy)return;
+    i=(i+1)%states.length;
+    to(i);
+  },3400);
+})();
+
+/* ── SCRAMBLE del sistema (una vez por elemento) ── */
+(function(){
+  const CH='>#/:*.-01ノハマ';
+  const run=el=>{
+    const final=el.dataset.final||el.textContent;
+    el.dataset.final=final;
+    let f=0;const total=16;
+    const t=setInterval(()=>{
+      f++;
+      el.textContent=final.split('').map((c,j)=>{
+        if(c===' ')return ' ';
+        return j<f*(final.length/total)?c:CH[Math.floor(Math.random()*CH.length)];
+      }).join('');
+      if(f>=total){el.textContent=final;clearInterval(t)}
+    },34);
+  };
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting&&!e.target.dataset.done){
+      e.target.dataset.done='1';
+      if(!RM)run(e.target);
+    }
+  }),{threshold:.6});
+  document.querySelectorAll('[data-scramble]').forEach(el=>io.observe(el));
+})();
+
+/* ── #44 RIPPLE: acuse de recibo del sistema, 500 ms, 1px de borde ── */
+(function(){
+  if(RM)return;
+  const N=4,pool=[];let i=0;
+  for(let j=0;j<N;j++){
+    const d=document.createElement('div');
+    d.className='rip';d.setAttribute('aria-hidden','true');
+    document.body.appendChild(d);pool.push(d);
+  }
+  addEventListener('pointerdown',e=>{
+    const d=pool[i];i=(i+1)%N;
+    d.style.left=e.clientX+'px';d.style.top=e.clientY+'px';
+    d.classList.remove('on');void d.offsetWidth;d.classList.add('on');
+  });
+})();
+
+/* ── #10 HEADER DIRECCIONAL: la barra de estado se retrae al bajar ── */
+(function(){
+  if(RM)return;
+  const h=document.getElementById('hdr');
+  let py=scrollY;
+  addEventListener('scroll',()=>{
+    const y=scrollY;
+    if(y>140&&y-py>2)h.classList.add('hid');
+    else if(py-y>2||y<80)h.classList.remove('hid');
+    py=y;
+  },{passive:true});
+})();
+
+/* ── #75 HUEVO DE PASCUA: secuencia de teclas N N. Esc cierra. Sin pista visible ── */
+(function(){
+  const egg=document.getElementById('egg');
+  const x=document.getElementById('egg-x');
+  let prev='',last=0,lastFocus=null;
+  function open(){
+    if(!egg.hidden)return;
+    lastFocus=document.activeElement;
+    egg.hidden=false;
+    document.body.style.overflow='hidden';
+    x.focus();
+  }
+  function close(){
+    egg.hidden=true;
+    document.body.style.overflow='';
+    if(lastFocus&&lastFocus.focus)lastFocus.focus();
+  }
+  addEventListener('keydown',e=>{
+    if(!egg.hidden){
+      if(e.key==='Escape')close();
+      else if(e.key==='Tab'){e.preventDefault();x.focus()}
+      return;
+    }
+    const k=(e.key||'').toLowerCase();
+    const now=Date.now();
+    if(k==='n'&&prev==='n'&&now-last<900){open();prev='';return}
+    prev=k;last=now;
+  });
+  x.addEventListener('pointerup',close);
+  x.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();close()}});
+  egg.addEventListener('pointerup',e=>{if(e.target===egg)close()});
+})();
+
+/* ── BUCLE MAESTRO: cursor doble masa + #42 rastro de fósforo ── */
+(function(){
+  if(RM||MOB)return;
+  const dot=document.getElementById('cur');
+  const ring=document.getElementById('cur-ring');
+  const NG=5,ghosts=[],gp=[];
+  const GO=[.4,.28,.19,.12,.07];
+  for(let j=0;j<NG;j++){
+    const g=document.createElement('div');
+    g.className='gh';g.setAttribute('aria-hidden','true');
+    g.style.opacity=GO[j];
+    document.body.appendChild(g);
+    ghosts.push(g);gp.push({x:innerWidth/2,y:innerHeight/2});
+  }
+  let mx=innerWidth/2,my=innerHeight/2,dx=mx,dy=my,rx=mx,ry=my;
+  addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+  document.querySelectorAll('a,button').forEach(el=>{
+    el.addEventListener('mouseenter',()=>ring.classList.add('big'));
+    el.addEventListener('mouseleave',()=>ring.classList.remove('big'));
+  });
+  function frame(){
+    requestAnimationFrame(frame);
+    if(document.hidden)return;
+    dx+=(mx-dx)*0.55;dy+=(my-dy)*0.55;
+    rx+=(mx-rx)*0.13;ry+=(my-ry)*0.13;
+    dot.style.transform='translate3d('+dx+'px,'+dy+'px,0)';
+    ring.style.transform='translate3d('+rx+'px,'+ry+'px,0)';
+    /* fósforo: cada copia persigue a la anterior — retardo creciente, opacidad decreciente */
+    let px=dx,pyy=dy;
+    for(let j=0;j<NG;j++){
+      const p=gp[j];
+      p.x+=(px-p.x)*(0.32-j*0.045);
+      p.y+=(pyy-p.y)*(0.32-j*0.045);
+      ghosts[j].style.transform='translate3d('+p.x+'px,'+p.y+'px,0)';
+      px=p.x;pyy=p.y;
+    }
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

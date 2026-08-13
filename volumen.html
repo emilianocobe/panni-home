@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VOLUMEN · 立体 :: PANNI MARGOT</title>
+<link rel="icon" href="./favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#000; --white:#fff;
+  --g-900:#0a0a0a; --g-800:#141414; --g-700:#242424; --g-500:#5c5c5c; --g-300:#a8a8a8; --g-100:#e6e6e6;
+  --display:"Anton",Impact,sans-serif;
+  --geo:"Archivo",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  --jp:"Noto Sans JP",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased}
+body{background:var(--black);color:var(--white);font-family:var(--mono);font-size:11px;letter-spacing:.08em;overflow-x:hidden;cursor:none;padding-top:36px}
+img{display:block;max-width:100%;-webkit-user-drag:none;user-select:none}
+a{color:inherit;text-decoration:none;cursor:none}
+button{background:none;border:none;color:inherit;font:inherit;letter-spacing:inherit;cursor:none}
+::selection{background:var(--white);color:var(--black)}
+a:focus-visible,button:focus-visible{outline:1px solid var(--white);outline-offset:3px}
+
+.skip{position:fixed;top:-60px;left:16px;z-index:10001;background:var(--white);color:var(--black);padding:10px 16px;font-family:var(--mono);font-size:10px;text-transform:uppercase;transition:top .2s}
+.skip:focus-visible{top:44px;outline:1px solid var(--black)}
+
+/* ═══ GRANO FÍLMICO ═══ */
+#grain{position:fixed;inset:-150%;z-index:9998;pointer-events:none;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 1s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,-4%)}40%{transform:translate(-6%,2%)}60%{transform:translate(3%,-5%)}80%{transform:translate(-2%,4%)}100%{transform:translate(2%,-2%)}}
+
+/* ═══ CURSOR DOBLE MASA ═══ */
+#cur,#cur-ring{position:fixed;top:0;left:0;z-index:9999;pointer-events:none;mix-blend-mode:difference;will-change:transform}
+#cur{width:6px;height:6px;background:var(--white);border-radius:50%;margin:-3px 0 0 -3px}
+#cur-ring{width:38px;height:38px;border:1px solid var(--white);border-radius:50%;margin:-19px 0 0 -19px;transition:width .3s,height .3s,margin .3s}
+#cur-ring.big{width:96px;height:96px;margin:-48px 0 0 -48px}
+
+/* ═══ BARRA VIDRIERA ═══ */
+#vbar{position:fixed;top:0;left:0;right:0;height:36px;z-index:960;background:var(--black);border-bottom:1px solid var(--g-700);
+  display:flex;justify-content:space-between;align-items:center;padding:0 16px;font-size:9px;text-transform:uppercase;color:var(--g-300)}
+#vbar a{padding:4px 0}
+#vbar a:hover{color:var(--white)}
+
+/* ═══ HEADER ═══ */
+header{position:fixed;top:36px;left:0;right:0;z-index:900;display:flex;justify-content:space-between;align-items:center;
+  padding:18px 28px;mix-blend-mode:difference;font-size:10px;text-transform:uppercase}
+.pm-lockup{display:block;height:1em;width:calc(1em * 640 / 103);fill:currentColor}
+.lockup{display:inline-flex;align-items:center;gap:.7em}
+.lockup .pm-lockup{font-size:2.1em}
+.lockup .wm{font-family:var(--mono);letter-spacing:.12em;white-space:nowrap;line-height:1}
+#hmeta{display:flex;gap:18px;align-items:baseline}
+
+.vert-kana{position:fixed;left:22px;top:50%;transform:translateY(-50%);z-index:850;
+  font-family:var(--jp);font-size:13px;letter-spacing:.5em;
+  writing-mode:vertical-rl;color:var(--white);mix-blend-mode:difference;opacity:.85}
+
+/* ═══ HERO: PARALAJE 3 CAPAS (#21, simulado y declarado) ═══ */
+#hero{position:relative;min-height:100vh;overflow:hidden;display:grid;align-content:end;padding:0 28px 8vh 66px}
+.plx{position:absolute;inset:0;z-index:1}
+.plx img{position:absolute;inset:-7%;width:114%;height:114%;object-fit:cover;object-position:50% 30%;filter:grayscale(1) contrast(1.15) brightness(.72);will-change:transform}
+.plx .l2{-webkit-mask-image:radial-gradient(ellipse 42% 55% at 50% 46%,#000 0 62%,transparent 100%);mask-image:radial-gradient(ellipse 42% 55% at 50% 46%,#000 0 62%,transparent 100%)}
+.plx .l3{-webkit-mask-image:radial-gradient(ellipse 22% 32% at 50% 44%,#000 0 55%,transparent 100%);mask-image:radial-gradient(ellipse 22% 32% at 50% 44%,#000 0 55%,transparent 100%);filter:grayscale(1) contrast(1.28) brightness(.9)}
+#hero h1{position:relative;z-index:3;mix-blend-mode:difference;line-height:.86}
+#hero .kanji{display:block;font-family:var(--jp);font-weight:700;font-size:clamp(6rem,22vw,17rem)}
+#hero .word{display:block;font-family:var(--display);font-size:clamp(3rem,12vw,10rem);letter-spacing:.02em;text-transform:uppercase}
+.hero-meta{position:relative;z-index:3;margin-top:5vh;display:flex;gap:34px;flex-wrap:wrap;color:var(--g-300);text-transform:uppercase}
+.hero-decl{position:absolute;right:28px;bottom:8vh;z-index:3;text-align:right;font-size:9px;color:var(--g-500);line-height:2;text-transform:uppercase}
+.hero-term{position:absolute;right:28px;top:14vh;z-index:3;text-align:right;font-size:9px;color:var(--g-500);line-height:2}
+
+/* ═══ MARQUESINA ═══ */
+#mq{border-top:1px solid var(--g-700);border-bottom:1px solid var(--g-700);overflow:hidden;white-space:nowrap;padding:12px 0}
+#mq .in{display:inline-block;font-size:10px;letter-spacing:.24em;text-transform:uppercase;animation:mq 26s linear infinite}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* ═══ VISOR: ROTACIÓN SIMULADA (#4) ═══ */
+#visor-sec{height:340vh;position:relative}
+.visor-pin{position:sticky;top:36px;height:calc(100vh - 36px);display:grid;grid-template-columns:1fr minmax(0,52vh) 1fr;align-items:center;overflow:hidden}
+#visor{grid-column:2;position:relative;aspect-ratio:3/4;max-height:78vh;width:100%;touch-action:pan-y;background:var(--g-900);border:1px solid var(--g-700)}
+#visor .view{position:absolute;inset:0;opacity:0;transition:opacity .45s ease}
+#visor .view.on{opacity:1}
+#visor .view img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.12);pointer-events:none}
+.visor-meta-l{grid-column:1;padding:0 3vw 0 66px;text-transform:uppercase;color:var(--g-300);display:grid;gap:16px;align-content:center}
+.visor-meta-l .sku{color:var(--white)}
+.visor-meta-l .price{font-family:var(--display);font-size:clamp(1.6rem,3vw,2.6rem);color:var(--white)}
+.visor-meta-r{grid-column:3;padding:0 28px 0 3vw;display:grid;gap:18px;align-content:center;justify-items:start;text-transform:uppercase}
+#vcnt{font-family:var(--display);font-size:clamp(1.2rem,2.2vw,1.9rem);letter-spacing:.06em;font-variant-numeric:tabular-nums}
+#vnext{border:1px solid var(--white);padding:11px 18px;font-size:10px;letter-spacing:.2em}
+#vnext:hover{background:var(--white);color:var(--black)}
+.visor-decl{font-size:9px;color:var(--g-500);line-height:2;max-width:26ch}
+.visor-title{position:absolute;top:9vh;left:66px;right:28px;z-index:2;display:flex;justify-content:space-between;text-transform:uppercase;color:var(--g-500);font-size:10px;pointer-events:none}
+
+/* ═══ COMPARADOR DERECHO/REVÉS (#68) ═══ */
+#cmp-sec{border-top:1px solid var(--g-700);padding:14vh 28px 14vh 66px}
+#cmp-sec h2,#persp h2,#cinta h2{font-family:var(--display);font-size:clamp(2rem,6vw,4.6rem);line-height:.92;text-transform:uppercase;margin-bottom:2vh}
+.sec-sub{font-size:10px;color:var(--g-500);text-transform:uppercase;margin-bottom:6vh;line-height:2}
+#cmp{position:relative;max-width:860px;aspect-ratio:4/5;--cut:50%;border:1px solid var(--g-700);background:var(--g-900)}
+#cmp img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.1)}
+#cmp .over{position:absolute;inset:0;clip-path:inset(0 calc(100% - var(--cut)) 0 0)}
+#cmp .over img{position:absolute;inset:0}
+#cmprange{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;cursor:none}
+#cmp .hand{position:absolute;top:0;bottom:0;left:var(--cut);width:0;pointer-events:none}
+#cmp .hand::before{content:"";position:absolute;top:0;bottom:0;left:-.5px;width:1px;background:var(--white)}
+#cmp .pill{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);background:var(--black);border:1px solid var(--white);padding:8px 10px;font-size:10px;letter-spacing:.1em;white-space:nowrap}
+#cmprange:focus-visible ~ .hand .pill{outline:1px solid var(--white);outline-offset:3px}
+.cmp-labels{position:absolute;left:14px;right:14px;top:14px;display:flex;justify-content:space-between;font-size:9px;text-transform:uppercase;color:var(--g-100);text-shadow:0 0 6px #000;pointer-events:none}
+#cmpout{position:absolute;right:14px;bottom:12px;font-size:9px;color:var(--g-100);text-shadow:0 0 6px #000;pointer-events:none;font-variant-numeric:tabular-nums}
+
+/* ═══ PERSPECTIVA REAL (#8) + TILT (#58) ═══ */
+#persp{border-top:1px solid var(--g-700);padding:14vh 28px 16vh 66px}
+.stage{perspective:1200px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3.4vw;transform-style:preserve-3d}
+.pcard{position:relative;transform:translateZ(var(--z,0px)) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transform-style:preserve-3d;transition:transform .18s ease-out;background:var(--g-900);border:1px solid var(--g-700);will-change:transform}
+.pcard .ph{position:relative;overflow:hidden;aspect-ratio:3/4}
+.pcard .ph img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.12);transition:filter .35s}
+.pcard:hover .ph img{filter:grayscale(0) contrast(1)}
+.pcard::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .25s;
+  background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.16),transparent 58%)}
+.pcard:hover::after{opacity:1}
+.pcard .info{padding:14px;display:grid;gap:6px;text-transform:uppercase;font-size:10px}
+.pcard .info .nm{font-family:var(--geo);font-weight:800;font-size:13px;letter-spacing:.04em}
+.pcard .info .pr{color:var(--g-300)}
+.pcard .zlab{position:absolute;top:10px;right:10px;font-size:9px;color:var(--g-100);background:var(--black);border:1px solid var(--g-700);padding:4px 7px;font-variant-numeric:tabular-nums}
+
+/* ═══ CINTA CILÍNDRICA (#26, CSS puro) ═══ */
+#cinta{border-top:1px solid var(--g-700);padding:14vh 0 16vh}
+#cinta .head{padding:0 28px 0 66px}
+.drum-wrap{margin-top:7vh;overflow:hidden;padding:2vh 0}
+.drum{display:flex;justify-content:center;gap:1.1vw;perspective:1000px}
+.ct{flex:0 0 auto;width:min(140px,17vw);transform:rotateY(var(--ry,0deg));opacity:var(--op,1)}
+.ct img{width:100%;aspect-ratio:3/4;object-fit:cover;filter:grayscale(1) contrast(1.1)}
+.ct .cap{margin-top:8px;font-size:8px;text-transform:uppercase;color:var(--g-500);text-align:center;letter-spacing:.1em}
+
+/* ═══ FOOTER ═══ */
+footer{border-top:1px solid var(--g-700);padding:60px 28px 34px;font-size:10px;text-transform:uppercase}
+.f-debt{font-size:9px;color:var(--g-500);line-height:2;margin-bottom:40px;text-transform:uppercase}
+.f-term{font-family:var(--mono);font-size:11px;color:var(--g-300);line-height:2;word-break:break-word;margin-bottom:50px;text-transform:none}
+.f-term b{color:var(--white);font-weight:400}
+.f-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:30px}
+.f-grid p.h{color:var(--g-500);margin-bottom:10px}
+.f-grid a{display:block;padding:2px 0}
+.f-sign{margin-top:60px;padding-top:16px;border-top:1px solid var(--g-700);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;color:var(--g-500);font-size:9px}
+
+/* ═══ REDUCED MOTION ═══ */
+@media(prefers-reduced-motion:reduce){
+  *,#grain{animation:none!important;transition:none!important}
+  body,a,button,#cmprange{cursor:auto}
+  #cur,#cur-ring{display:none}
+  .plx img{transform:none!important}
+  #visor-sec{height:auto}
+  .visor-pin{position:static;height:auto;grid-template-columns:1fr;gap:4vh;padding:10vh 28px}
+  #visor{position:static;aspect-ratio:auto;max-height:none;border:none;background:none;display:grid;gap:3vh}
+  #visor .view{position:static;opacity:1}
+  #visor .view img{height:auto}
+  .visor-title{position:static;padding:0}
+  #vnext{display:none}
+  .pcard{transform:none!important}
+  .pcard::after{display:none}
+  .ct{transform:none}
+}
+
+/* ═══ MOBILE ═══ */
+@media(max-width:820px){
+  body,a,button,#cmprange{cursor:auto}
+  #cur,#cur-ring{display:none}
+  .vert-kana{display:none}
+  header{padding:14px 16px}
+  #hmeta{font-size:9px;gap:10px}
+  #hero{padding:0 20px 10vh}
+  .hero-term{display:none}
+  .hero-decl{right:20px}
+  #visor-sec{height:auto}
+  .visor-pin{position:static;height:auto;grid-template-columns:1fr;gap:4vh;padding:8vh 20px}
+  #visor{grid-column:1;max-height:none}
+  .visor-meta-l,.visor-meta-r{grid-column:1;padding:0}
+  .visor-title{position:static;padding:0 0 2vh}
+  #cmp-sec{padding:10vh 20px}
+  #persp{padding:10vh 20px}
+  .stage{grid-template-columns:1fr;perspective:none}
+  .pcard{transform:none!important}
+  #cinta .head{padding:0 20px}
+  .drum-wrap{overflow-x:auto;scrollbar-width:none}
+  .drum-wrap::-webkit-scrollbar{display:none}
+  .drum{justify-content:flex-start;perspective:none;padding:0 20px;width:max-content}
+  .ct{transform:none;width:34vw}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="pm-lockup" viewBox="0 0 640 103"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM519.167 33.833L526.333 34L530.5 35L535 37.167L536.333 39.333L531.167 45.667L524.667 43.333L519.833 43.167L515.833 44.5L513.167 46.667L511 50.5L510.5 56.333L511.833 60.5L514.333 63.5L517.667 65.333L522.5 66L526.833 64.667L529.333 62.167L530.167 60L529.833 58.667L521.667 58.333L520.833 57.667L520.667 51.833L521.333 50.833L539.5 50.667L540.833 51.833L540.5 60.333L537.833 67.5L532.833 72.5L526.333 75L517.333 75L509.833 72.333L504.167 67.167L500.833 59.667L500.333 56.167L500.667 50.167L503.833 42.333L507.5 38.333L510.5 36.333L515.167 34.5L519.167 34ZM571.167 33.833L579 34.167L583.667 35.667L587.333 37.833L592.167 43L594.833 49.667L595 58.167L592.5 65.5L587 71.5L584.167 73.167L578.333 75L569.333 75L561.667 72.167L556.167 67L554.5 64.333L552.833 59.333L552.667 50.667L553.667 46.833L555.833 42.5L558.833 39L562.333 36.5L566.667 34.667L571.167 34ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667ZM132.167 34.667L152.667 34.667L156.5 35.333L160.5 37L164 40L166.5 45.667L166.667 50.333L165.667 54.333L164 57.167L161.333 59.667L154.5 62.5L142 62.833L141.167 63.333L140.833 73.667L139.333 74.5L132.167 74.333L131.167 72.667L131.167 36.167L132.167 34.833ZM222.5 34.667L225 35.333L248.333 54.5L249.167 54.5L249.667 53.167L249.667 35.5L250.167 34.833L251.5 34.667L253.167 35.5L276.5 54.5L277.5 53.5L277.667 35.333L279.167 34.667L286.5 35L287.167 36.333L287 73.667L286.167 74.333L284.333 74L261.167 54.167L259.667 53.833L259.167 55.5L259.167 73.5L258.333 74.333L256.667 74.167L234 54.833L231.667 53.833L231.167 55L231.167 73.5L229.5 74.5L222 74.167L221.5 73.333L221.5 35.667L222.5 34.833ZM303.667 34.667L311.667 34.667L312.5 35.667L312.5 73.167L311 74.5L304.5 74.5L303.333 74.167L302.667 73L302.667 35.833L303.667 34.833ZM344.667 34.667L347.333 35.167L364.333 51L366 50.5L382.167 35.333L383.333 34.667L385.5 35L385.5 74L377.667 74.5L376.167 73.833L376 55.833L375.5 55L374.333 55.333L366.667 63L365.167 63.667L363.333 63.167L357.833 57.5L355.167 55.167L354 55L353.5 73.833L352 74.5L344.333 74.167L343.833 73L343.833 36L344.667 34.833ZM452.667 34.667L474.667 34.833L479.5 36.167L484.167 39.5L486.833 44.5L487.167 51L485.5 55.833L481.167 60.167L481 61.667L489 72.667L488.833 74.167L478.5 74.167L471.667 64.167L469.833 62.833L462.833 62.833L461.833 63.333L461.5 73.5L461 74.167L453.5 74.5L452 73.833L451.833 35.5L452.667 34.833ZM606.333 34.667L639.667 34.833L639.667 42.833L629.833 43L628.333 43.333L627.833 44.167L627.833 73.167L627 74.333L619.833 74.5L618.333 74L618 44.333L617.333 43.333L615.833 43L606 42.833L605.5 42.167L605.5 35.5L606.333 34.833ZM189.5 34.833L191.5 35.5L193.333 38.833L210.667 71.667L211 74.167L201.5 74.333L198 69.833L182.333 69.833L181.167 70.5L178.833 74.333L170.333 74.5L169 73.833L184.5 43.333L189.5 35ZM418.333 34.833L420.167 35.333L422.5 39.5L440 72.667L439.667 74.333L430.167 74.333L427.833 70.5L426.667 69.833L411 69.833L407.5 74.333L399 74.5L398 74L398.333 71.833L417.5 35.5L418.333 35ZM143.167 43L141.667 43.167L141 44L141 54L141.5 54.667L150.333 54.833L153.333 54.167L155.167 53L156.333 50.667L156.5 47.833L154.667 44.5L151.833 43.167L143.333 43ZM463.667 43L462.167 43.333L461.5 44.5L461.5 53.333L462.167 54.667L472.333 54.667L476.167 52.5L477.167 48.333L475.333 44.5L472.333 43.167L463.833 43ZM572.667 43.167L568.167 44.5L564.833 47.333L562.833 51.667L562.667 56.5L564.333 61L567 63.833L571.167 65.667L575.5 65.833L579.833 64.333L583.333 61L584.833 57.5L585 52.5L583.5 48.333L581.167 45.667L576.833 43.5L572.833 43.167ZM189.833 52.5L188.167 54.833L185.167 62.167L186 62.833L194.333 62.833L194.833 61.167L191.167 53.333L190 52.5ZM418.667 52.5L416.833 55.167L414 62.167L414.667 62.833L423 62.833L423.667 61.167L419.667 52.833L418.833 52.5Z"/></symbol><symbol id="pm-mono" viewBox="0 0 104 103"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667Z"/></symbol></defs></svg>
+
+<a class="skip" href="#contenido">SALTAR AL CONTENIDO</a>
+
+<div id="grain"></div>
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<div id="vbar">
+  <a href="./index.html">[ &lt;&lt; ] VIDRIERA</a>
+  <span>CAMINO F :: VOLUMEN · <span lang="ja" aria-hidden="true">立体</span></span>
+</div>
+
+<div class="vert-kana" lang="ja" aria-hidden="true">バーニ　マーゴット</div>
+
+<header>
+  <a class="lockup" href="./index.html" aria-label="Panni Margot — vidriera">
+    <svg class="pm-lockup" aria-hidden="true" focusable="false"><use href="#pm-lockup"/></svg>
+  </a>
+  <div id="hmeta">
+    <span lang="ja" aria-hidden="true">立体</span>
+    <span>EL OBJETO</span>
+    <span>CARRITO(0)</span>
+  </div>
+</header>
+
+<main id="contenido">
+
+<!-- ═══ HERO: PARALAJE POR PROFUNDIDAD SIMULADO (#21) ═══ -->
+<section id="hero">
+  <div class="plx" aria-hidden="true">
+    <img class="l1" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_v8a0073-3a86f8af6c54222b8717649731032963-640-0.webp" alt="">
+    <img class="l2" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_v8a0073-3a86f8af6c54222b8717649731032963-640-0.webp" alt="">
+    <img class="l3" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_v8a0073-3a86f8af6c54222b8717649731032963-640-0.webp" alt="">
+  </div>
+  <div class="hero-term" aria-hidden="true">
+    &gt;&gt;HONDURAS4940##<br>
+    &lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()&gt;&gt;<br>
+    CÁMARA NEGRA // <span lang="ja">立体</span>
+  </div>
+  <h1 aria-label="Volumen — la prenda se rodea">
+    <span class="kanji" lang="ja" aria-hidden="true">立体</span>
+    <span class="word" aria-hidden="true">Volumen</span>
+  </h1>
+  <div class="hero-meta">
+    <div>LA PRENDA NO ES UNA FOTO<br>ES UN VOLUMEN</div>
+    <div><span lang="ja" aria-hidden="true">一点物</span> · SILUETA = PRODUCTO<br>FRENTE / ESPALDA / REVÉS</div>
+  </div>
+  <div class="hero-decl" aria-hidden="true">
+    PROFUNDIDAD :: SIMULADA<br>
+    3 CAPAS × 1 FOTO · MÁSCARAS RADIALES<br>
+    SIN MAPA DE PROFUNDIDAD REAL
+  </div>
+</section>
+
+<!-- ═══ MARQUESINA ═══ -->
+<div id="mq" aria-hidden="true">
+  <span class="in"><span lang="ja">立体</span> · VOLUMEN :: 4 VISTAS · ROTACIÓN SIMULADA :: DERECHO ⇄ REVÉS :: &lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()&gt;&gt; :: &nbsp; <span lang="ja">立体</span> · VOLUMEN :: 4 VISTAS · ROTACIÓN SIMULADA :: DERECHO ⇄ REVÉS :: &lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()&gt;&gt; :: &nbsp;</span>
+</div>
+
+<!-- ═══ VISOR: ROTACIÓN SIMULADA (#4) — 4 vistas + crossfade ═══ -->
+<section id="visor-sec" aria-label="Visor de la pieza en cuatro vistas">
+  <div class="visor-pin">
+    <div class="visor-title" aria-hidden="true">
+      <span>VISOR :: <span lang="ja">回転</span> · ROTACIÓN SIMULADA</span>
+      <span>CROSSFADE · 640PX</span>
+    </div>
+    <div class="visor-meta-l">
+      <div class="sku" data-scramble>ABRIGO.PUROTTO/025 :: 1/1</div>
+      <div>PAÑO DOBLE FAZ · OVERSIZE</div>
+      <div class="price">$970.000</div>
+      <div><span lang="ja" aria-hidden="true">一点物</span> · PIEZA ÚNICA</div>
+    </div>
+    <div id="visor" data-sim="4-vistas">
+      <figure class="view on"><img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0628-16ec2f55db5cbe96a017835415963188-640-0.webp" alt="Pieza única, vista 1 de 4 — frente"></figure>
+      <figure class="view"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0629-c79357f21ac6666a0117835415972816-640-0.webp" alt="Pieza única, vista 2 de 4 — tres cuartos"></figure>
+      <figure class="view"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_v8a0330-9d76799c87f2eafdcc17857870471781-640-0.webp" alt="Pieza única, vista 3 de 4 — perfil"></figure>
+      <figure class="view"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_v8a0343-fe0e968814b7db44b317857870469013-640-0.webp" alt="Pieza única, vista 4 de 4 — detalle"></figure>
+    </div>
+    <div class="visor-meta-r">
+      <div id="vcnt" aria-live="polite">VISTA 01 / 04</div>
+      <button id="vnext" type="button" aria-label="Vista siguiente">[ VISTA &gt;&gt; ]</button>
+      <div class="visor-decl" aria-hidden="true">
+        SIMULACIÓN :: 4 VISTAS FIJAS + CROSSFADE<br>
+        SECUENCIA 360 REAL = MESA GIRATORIA<br>
+        (DECLARADO EN LA VIDRIERA)
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COMPARADOR DERECHO/REVÉS (#68) ═══ -->
+<section id="cmp-sec">
+  <h2>Derecho / Revés</h2>
+  <p class="sec-sub">
+    <span lang="ja" aria-hidden="true">裏地</span> · EN UNA MARCA QUE FORRA SUS PRENDAS, EL REVÉS ES ARGUMENTO DE VENTA<br>
+    PAR REAL DE SESIÓN :: DOS ÁNGULOS // PRODUCCIÓN REAL = DERECHO + FORRO
+  </p>
+  <div id="cmp">
+    <img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0629-c79357f21ac6666a0117835415972816-640-0.webp" alt="Pieza única, revés — forro" loading="lazy">
+    <div class="over" aria-hidden="true">
+      <img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0628-16ec2f55db5cbe96a017835415963188-640-0.webp" alt="" loading="lazy">
+    </div>
+    <input type="range" id="cmprange" min="0" max="100" value="50" step="1" aria-label="Comparador derecho y revés, porcentaje de corte" aria-valuetext="50 por ciento derecho">
+    <div class="hand" aria-hidden="true"><span class="pill">[ | ]</span></div>
+    <div class="cmp-labels" aria-hidden="true"><span>DERECHO</span><span>REVÉS · <span lang="ja">裏地</span></span></div>
+    <output id="cmpout" for="cmprange" aria-hidden="true">50%</output>
+  </div>
+</section>
+
+<!-- ═══ PERSPECTIVA 3D REAL (#8) + TILT ±6° (#58) ═══ -->
+<section id="persp">
+  <h2>Profundidad real</h2>
+  <p class="sec-sub">PERSPECTIVE 1200PX :: TRES PLANOS EN TRANSLATEZ ESCALONADO · TILT ±6° CON BRILLO ESPECULAR</p>
+  <div class="stage">
+    <article class="pcard" style="--z:-320px">
+      <span class="zlab" aria-hidden="true">Z −320</span>
+      <div class="ph"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/trench-firewall-black-satin-8-dd17ac45b7653231cd17183866984987-640-0.webp" alt="Trench Firewall, satén negro"></div>
+      <div class="info">
+        <span class="nm">Trench Firewall</span>
+        <span data-scramble>TRENCH.FIREWALL/031</span>
+        <span class="pr">$590.000 · <span lang="ja" aria-hidden="true">一点物</span></span>
+      </div>
+    </article>
+    <article class="pcard" style="--z:-160px">
+      <span class="zlab" aria-hidden="true">Z −160</span>
+      <div class="ph"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/tapado-kimono-brushed-takai-7-ad2c2f23976c6c883217194294041586-640-0.webp" alt="Kimono Takai, pintado a mano"></div>
+      <div class="info">
+        <span class="nm">Kimono Takai</span>
+        <span data-scramble>KIMONO.TAKAI/001</span>
+        <span class="pr">$723.900 · <span lang="ja" aria-hidden="true">手描き</span></span>
+      </div>
+    </article>
+    <article class="pcard" style="--z:0px">
+      <span class="zlab" aria-hidden="true">Z 0</span>
+      <div class="ph"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0331-c04b11d8ca48be376917835404772676-640-0.webp" alt="Tapado Purotto"></div>
+      <div class="info">
+        <span class="nm">Tapado Purotto</span>
+        <span data-scramble>ABRIGO.PUROTTO/025</span>
+        <span class="pr">$970.000 · <span lang="ja" aria-hidden="true">一点物</span></span>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ═══ CINTA CILÍNDRICA (#26, CSS puro) ═══ -->
+<section id="cinta">
+  <div class="head">
+    <h2>El perchero</h2>
+    <p class="sec-sub">TAMBOR :: ROTATEY DECRECIENTE HACIA LOS BORDES · CSS PURO, SIN JS</p>
+  </div>
+  <div class="drum-wrap">
+    <div class="drum">
+      <figure class="ct" style="--ry:32deg;--op:.55"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0087-b7a922169f6f8b83a117830243699603-640-0.jpg" alt="Tapado Aka"><figcaption class="cap">AKA</figcaption></figure>
+      <figure class="ct" style="--ry:22deg;--op:.7"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0126-fe7dcde43e1705c60c17830260611791-640-0.webp" alt="Tapado Suko"><figcaption class="cap">SUKO</figcaption></figure>
+      <figure class="ct" style="--ry:13deg;--op:.85"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0331-c04b11d8ca48be376917835404772676-640-0.webp" alt="Tapado Purotto"><figcaption class="cap">PUROTTO</figcaption></figure>
+      <figure class="ct" style="--ry:5deg"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/tapado-kimono-brushed-takai-7-ad2c2f23976c6c883217194294041586-640-0.webp" alt="Kimono Takai"><figcaption class="cap">TAKAI</figcaption></figure>
+      <figure class="ct" style="--ry:-5deg"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/trench-firewall-black-satin-8-dd17ac45b7653231cd17183866984987-640-0.webp" alt="Trench Firewall"><figcaption class="cap">FIREWALL</figcaption></figure>
+      <figure class="ct" style="--ry:-13deg;--op:.85"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/capa-camisa-fudo-6-2d10df457879ca9b1417194235662614-640-0.webp" alt="Capa Camisa Fudo"><figcaption class="cap">FUDO</figcaption></figure>
+      <figure class="ct" style="--ry:-22deg;--op:.7"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/pantalon-wakusei-2-b5a85660a588c09c0c17187383919344-640-0.webp" alt="Pantalón Wakusei"><figcaption class="cap">WAKUSEI</figcaption></figure>
+      <figure class="ct" style="--ry:-32deg;--op:.55"><img loading="lazy" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/remeron-besuto-3-ba65fba7f8a0892d1617187352318677-640-0.webp" alt="Remerón Besuto"><figcaption class="cap">BESUTO</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <p class="f-debt">#27 INSTANCED MESHES :: N/A EN ESTE MOCKUP (SIN WEBGL) — REQUISITO DEL SITIO REAL, DECLARADO EN LA VIDRIERA</p>
+  <div class="f-term" aria-hidden="true">
+    &lt;&lt;GENDERLESS(ジェンダーレス)//FASHION#()ファッション-))<br>
+    ".&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SHOP((ショップ$ディスカウント<b>NN</b>@!!!))""<br>
+    BUENOS AIRES//デザイナー ..DESIGNER &gt;&gt;<b>HONDURAS4940</b>##
+  </div>
+  <div class="f-grid">
+    <div><p class="h">ÍNDICE</p><a href="./index.html">VIDRIERA</a><a href="./gravedad.html">CAMINO A · GRAVEDAD</a><a href="./oficio.html">CAMINO B · OFICIO</a><a href="./archivo.html">CAMINO C · ARCHIVO</a></div>
+    <div><p class="h">CASA</p><a href="./index.html">HONDURAS 4940</a><a href="./index.html">PALERMO SOHO · CABA</a><a href="./index.html">+54 9 11 3027 4940</a></div>
+    <div><p class="h">DATOS</p><a href="./index.html">192 PIEZAS PUBLICADAS</a><a href="./index.html">59 EN ARCHIVO <span lang="ja" aria-hidden="true">完売</span></a></div>
+  </div>
+  <div class="f-sign">
+    <span class="lockup" style="font-size:10px">
+      <svg class="pm-lockup" aria-hidden="true" focusable="false"><use href="#pm-lockup"/></svg>
+      <span class="wm">© 2026</span>
+    </span>
+    <span lang="ja" aria-hidden="true">ブエノスアイレスで作られた</span>
+    <span>MADE IN BUENOS AIRES</span>
+  </div>
+</footer>
+
+<script>
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const MOB = matchMedia('(max-width: 820px)').matches;
+/* kill-switch por hardware: sin WebGL en esta página, pero el visor degrada a 2 vistas */
+const DEG = (navigator.deviceMemory && navigator.deviceMemory < 4) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4);
+
+/* ── VISOR: rotación simulada (#4) — recorrido por puntero horizontal o por la sección pineada ── */
+const VISOR=(function(){
+  const visor=document.getElementById('visor');
+  const sec=document.getElementById('visor-sec');
+  const cnt=document.getElementById('vcnt');
+  const btn=document.getElementById('vnext');
+  let views=[...visor.querySelectorAll('.view')];
+  let NV=views.length;
+  if(DEG){
+    /* degradación: 2 vistas fijas + botón de alternado */
+    views.slice(2).forEach(v=>v.remove());
+    views=views.slice(0,2);
+    NV=2;
+    visor.dataset.sim='2-vistas';
+    views.forEach(v=>{const im=v.querySelector('img');im.alt=im.alt.replace('de 4','de 2')});
+  }
+  let dragOff=0,down=false,sx=0,base=0,cur=-1;
+  const pad=n=>String(n).padStart(2,'0');
+  function show(i){
+    if(i===cur)return;
+    cur=i;
+    views.forEach((v,k)=>v.classList.toggle('on',k===i));
+    cnt.textContent='VISTA '+pad(i+1)+' / '+pad(NV);
+  }
+  function calc(){
+    let sIdx=0;
+    if(!MOB&&!RM){
+      const r=sec.getBoundingClientRect();
+      const total=sec.offsetHeight-innerHeight;
+      if(total>60){
+        const p=Math.min(Math.max(-r.top/total,0),1);
+        sIdx=Math.min(NV-1,Math.floor(p*NV));
+      }
+    }
+    show(((sIdx+dragOff)%NV+NV)%NV);
+  }
+  function adv(){dragOff++;calc()}
+  btn.addEventListener('click',adv);
+  if(!RM){
+    visor.addEventListener('pointerdown',e=>{
+      down=true;sx=e.clientX;base=dragOff;
+      visor.setPointerCapture(e.pointerId);
+    });
+    visor.addEventListener('pointermove',e=>{
+      if(!down)return;
+      dragOff=base-Math.round((e.clientX-sx)/110);
+      calc();
+    });
+    const up=()=>{down=false};
+    visor.addEventListener('pointerup',up);
+    visor.addEventListener('pointercancel',up);
+  }
+  show(0);
+  return{calc};
+})();
+
+/* ── COMPARADOR (#68): range invisible encima — puntero Y teclado (flechas) ── */
+(function(){
+  const rg=document.getElementById('cmprange');
+  const cmp=document.getElementById('cmp');
+  const out=document.getElementById('cmpout');
+  const set=()=>{
+    const v=parseInt(rg.value,10);
+    cmp.style.setProperty('--cut',v+'%');
+    out.textContent=String(v).padStart(2,'0')+'%';
+    rg.setAttribute('aria-valuetext',v+' por ciento derecho');
+  };
+  rg.addEventListener('input',set);
+  set();
+})();
+
+/* ── TILT ±6° con brillo especular (#58) — nunca en touch ni con RM ── */
+(function(){
+  if(RM||MOB)return;
+  document.querySelectorAll('.pcard').forEach(card=>{
+    card.addEventListener('pointermove',e=>{
+      if(e.pointerType==='touch')return;
+      const r=card.getBoundingClientRect();
+      const px=(e.clientX-r.left)/r.width-.5;
+      const py=(e.clientY-r.top)/r.height-.5;
+      card.style.setProperty('--rx',(-py*6).toFixed(2)+'deg');
+      card.style.setProperty('--ry',(px*6).toFixed(2)+'deg');
+      card.style.setProperty('--gx',(px*100+50).toFixed(1)+'%');
+      card.style.setProperty('--gy',(py*100+50).toFixed(1)+'%');
+    });
+    card.addEventListener('pointerleave',()=>{
+      card.style.setProperty('--rx','0deg');
+      card.style.setProperty('--ry','0deg');
+    });
+  });
+})();
+
+/* ── SCRAMBLE en los SKU (sistema) ── */
+(function(){
+  const CH='>#/:*.-01ノハマ';
+  const run=el=>{
+    const final=el.dataset.final||el.textContent;el.dataset.final=final;
+    let f=0;const total=16;
+    const t=setInterval(()=>{
+      f++;
+      el.textContent=final.split('').map((c,i)=>{
+        if(c===' ')return ' ';
+        return i<f*(final.length/total)?c:CH[Math.floor(Math.random()*CH.length)];
+      }).join('');
+      if(f>=total){el.textContent=final;clearInterval(t)}
+    },34);
+  };
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting&&!e.target.dataset.done){e.target.dataset.done='1';if(!RM)run(e.target)}
+  }),{threshold:.6});
+  document.querySelectorAll('[data-scramble]').forEach(el=>io.observe(el));
+})();
+
+/* ── BUCLE MAESTRO: cursor doble masa + paralaje 3 capas + visor por scroll ── */
+(function(){
+  if(RM)return;
+  const dot=document.getElementById('cur'), ring=document.getElementById('cur-ring');
+  const hero=document.getElementById('hero');
+  const l1=hero.querySelector('.l1'), l2=hero.querySelector('.l2'), l3=hero.querySelector('.l3');
+  let mx=innerWidth/2,my=innerHeight/2,dx=mx,dy=my,rx=mx,ry=my;
+  let p1=0,p2=0,p3=0,q1=0,q2=0,q3=0;
+  if(!MOB){
+    addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+    document.querySelectorAll('a,button,#visor,#cmp,.pcard,.ct').forEach(el=>{
+      el.addEventListener('mouseenter',()=>ring.classList.add('big'));
+      el.addEventListener('mouseleave',()=>ring.classList.remove('big'));
+    });
+  }
+  function frame(){
+    requestAnimationFrame(frame);
+    if(document.hidden)return;
+    if(!MOB){
+      /* cursor doble masa */
+      dx+=(mx-dx)*0.55;dy+=(my-dy)*0.55;
+      rx+=(mx-rx)*0.13;ry+=(my-ry)*0.13;
+      dot.style.transform='translate3d('+dx+'px,'+dy+'px,0)';
+      ring.style.transform='translate3d('+rx+'px,'+ry+'px,0)';
+      /* paralaje: cada capa corre a velocidad distinta */
+      const cx=mx/innerWidth-.5, cy=my/innerHeight-.5;
+      p1+=(cx*-10-p1)*0.06; q1+=(cy*-6-q1)*0.06;
+      p2+=(cx*-26-p2)*0.06; q2+=(cy*-14-q2)*0.06;
+      p3+=(cx*-48-p3)*0.06; q3+=(cy*-24-q3)*0.06;
+      l1.style.transform='translate3d('+p1.toFixed(1)+'px,'+q1.toFixed(1)+'px,0)';
+      l2.style.transform='translate3d('+p2.toFixed(1)+'px,'+q2.toFixed(1)+'px,0) scale(1.04)';
+      l3.style.transform='translate3d('+p3.toFixed(1)+'px,'+q3.toFixed(1)+'px,0) scale(1.09)';
+    }
+    /* visor atado a la sección pineada */
+    VISOR.calc();
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

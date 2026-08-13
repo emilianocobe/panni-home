@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MOLDERÍA · 型紙 :: PANNI MARGOT</title>
+<link rel="icon" href="./favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#000; --white:#fff;
+  --g-900:#0a0a0a; --g-800:#141414; --g-700:#242424; --g-500:#5c5c5c; --g-300:#a8a8a8; --g-100:#e6e6e6;
+  --display:"Anton",Impact,sans-serif;
+  --geo:"Archivo",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  --jp:"Noto Sans JP",sans-serif;
+  --bg:var(--white); --fg:var(--black);
+  --barra:36px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased}
+/* Papel técnico: grilla milimétrica de fondo (línea fina cada 8px, guía cada 80px) */
+body{color:var(--fg);font-family:var(--mono);font-size:11px;letter-spacing:.08em;overflow-x:hidden;cursor:none;
+  background:
+    repeating-linear-gradient(0deg,rgba(0,0,0,.085) 0 1px,transparent 1px 80px),
+    repeating-linear-gradient(90deg,rgba(0,0,0,.085) 0 1px,transparent 1px 80px),
+    repeating-linear-gradient(0deg,rgba(0,0,0,.038) 0 1px,transparent 1px 8px),
+    repeating-linear-gradient(90deg,rgba(0,0,0,.038) 0 1px,transparent 1px 8px),
+    var(--white)}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none;cursor:none}
+::selection{background:var(--black);color:var(--white)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--black);outline-offset:3px}
+
+/* skip a contenido */
+.skip{position:fixed;top:-60px;left:16px;z-index:10001;background:var(--black);color:var(--white);padding:10px 16px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;transition:top .2s}
+.skip:focus{top:calc(var(--barra) + 8px)}
+
+/* ═══ GRANO (bajado para papel blanco) ═══ */
+#grain{position:fixed;inset:-150%;z-index:9998;pointer-events:none;opacity:.04;filter:grayscale(1);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 1s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,-4%)}40%{transform:translate(-6%,2%)}60%{transform:translate(3%,-5%)}80%{transform:translate(-2%,4%)}100%{transform:translate(2%,-2%)}}
+
+/* ═══ CURSOR DOBLE MASA ═══ */
+#cur,#cur-ring{position:fixed;top:0;left:0;z-index:9999;pointer-events:none;mix-blend-mode:difference;will-change:transform}
+#cur{width:6px;height:6px;background:var(--white);border-radius:50%;margin:-3px 0 0 -3px}
+#cur-ring{width:38px;height:38px;border:1px solid var(--white);border-radius:50%;margin:-19px 0 0 -19px;
+  transition:width .3s,height .3s,margin .3s}
+#cur-ring.big{width:96px;height:96px;margin:-48px 0 0 -48px}
+
+/* ═══ BARRA VIDRIERA ═══ */
+#barra{position:fixed;top:0;left:0;right:0;height:var(--barra);z-index:960;background:var(--white);
+  border-bottom:1px solid var(--black);display:flex;justify-content:space-between;align-items:center;
+  padding:0 20px;font-size:9px;letter-spacing:.14em;text-transform:uppercase}
+#barra a{padding:4px 0}
+
+/* ═══ CORTINA MORFOSIS SVG (#48) ═══ */
+#cortina{position:fixed;inset:0;z-index:930;pointer-events:none;width:100%;height:100%;display:block}
+#cortina path{fill:var(--black)}
+
+/* ═══ HEADER ═══ */
+header{display:flex;justify-content:space-between;align-items:center;padding:calc(var(--barra) + 18px) 28px 18px;
+  font-size:10px;text-transform:uppercase;border-bottom:1px solid var(--black);background:var(--white)}
+/* La marca: siempre el vector oficial, nunca compuesta con tipografía */
+.pm-lockup{display:block;height:1em;width:calc(1em * 640 / 103);fill:currentColor}
+.lockup{display:inline-flex;align-items:center;gap:.7em}
+.lockup .pm-lockup{font-size:2.1em}
+.hd-r{display:flex;gap:22px;align-items:center}
+.hd-r button{background:none;border:none;color:inherit;font:inherit;letter-spacing:.1em;text-transform:uppercase;cursor:none}
+
+/* katakana vertical de la fachada */
+.vert-kana{position:fixed;left:22px;top:55%;transform:translateY(-50%);z-index:850;
+  font-family:var(--jp);font-size:13px;letter-spacing:.5em;writing-mode:vertical-rl;
+  color:var(--white);mix-blend-mode:difference;opacity:.85;pointer-events:none}
+
+/* ═══ HERO + TEXTO SOBRE TRAZADO (#32) ═══ */
+#hero{position:relative;display:grid;grid-template-columns:5fr 7fr;min-height:calc(100vh - var(--barra));border-bottom:1px solid var(--black)}
+.hero-txt{padding:8vh 2vw 6vh 66px;display:flex;flex-direction:column;justify-content:space-between;background:var(--white);border-right:1px solid var(--black)}
+.hero-txt h1{font-family:var(--display);font-size:clamp(3.4rem,9vw,8.6rem);line-height:.84;text-transform:uppercase;letter-spacing:.01em}
+.stroke-t{-webkit-text-stroke:1px var(--black);color:transparent;font-family:var(--display);font-size:clamp(3.4rem,9vw,8.6rem);line-height:.84;text-transform:uppercase}
+@supports not (-webkit-text-stroke:1px #000){.stroke-t{color:var(--g-500)}}
+.hero-kanji{font-family:var(--jp);font-weight:700;font-size:clamp(2.4rem,6vw,5.2rem);line-height:1;margin-top:2vh}
+.hero-data{font-size:10px;text-transform:uppercase;color:var(--g-500);line-height:2.1}
+.hero-plano{position:relative;overflow:hidden;min-height:60vh}
+.hero-plano svg{position:absolute;inset:0;width:100%;height:100%}
+.seam-line{fill:none;stroke:var(--black);stroke-width:1.5;stroke-dasharray:7 5}
+.seam-txt{font-family:var(--mono);font-size:15px;letter-spacing:.28em;fill:var(--black);text-transform:uppercase}
+.mk{stroke:var(--black);stroke-width:1;fill:none}
+.hero-tag{position:absolute;bottom:14px;right:16px;z-index:4;background:var(--white);border:1px solid var(--black);padding:6px 10px;font-size:9px;text-transform:uppercase}
+
+/* ═══ MARQUESINA ═══ */
+.mq{overflow:hidden;white-space:nowrap;border-bottom:1px solid var(--black);padding:11px 0;background:var(--white)}
+.mq__t{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.25em;animation:mqa 34s linear infinite}
+.mq:hover .mq__t{animation-play-state:paused}
+@keyframes mqa{to{transform:translateX(-50%)}}
+
+/* ═══ MANIFIESTO ═══ */
+.manif{padding:16vh 28px 16vh 66px;border-bottom:1px solid var(--black)}
+.manif .lead{font-family:var(--geo);font-weight:400;font-size:clamp(1.6rem,3.4vw,3rem);line-height:1.22;max-width:26ch;letter-spacing:-.01em}
+.manif .lead b{font-weight:800}
+.manif .mini{margin-top:6vh;font-size:10px;text-transform:uppercase;color:var(--g-500);letter-spacing:.2em}
+
+/* ═══ PINEADO MULTI-ETAPA (#6): EL ARMADO ═══ */
+.pin-wrap{position:relative;height:440vh;border-bottom:1px solid var(--black)}
+.pin-vp{position:sticky;top:var(--barra);height:calc(100vh - var(--barra));overflow:hidden;
+  display:grid;grid-template-columns:4fr 8fr;gap:0}
+.pin-meta{padding:7vh 2vw 6vh 66px;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--black);background:var(--white)}
+.pin-meta h2{font-family:var(--display);font-size:clamp(2.2rem,4.6vw,4.4rem);line-height:.88;text-transform:uppercase}
+.pin-meta .cnt{margin-top:3vh;font-size:clamp(1.1rem,2vw,1.6rem);letter-spacing:.18em;font-variant-numeric:tabular-nums}
+.pin-meta .cnt .kan{font-family:var(--jp);font-weight:700}
+.pin-meta .desc{margin-top:2vh;font-family:var(--geo);font-size:clamp(.9rem,1.2vw,1.05rem);line-height:1.5;max-width:26ch;min-height:4.5em}
+.pin-meta .renuncia{font-size:9px;text-transform:uppercase;color:var(--g-500);letter-spacing:.18em;line-height:1.9}
+.pin-frame{position:relative;overflow:hidden}
+.pin-frame svg.molde{position:absolute;inset:4% 3%;width:94%;height:92%;transition:opacity .8s}
+.foto{position:absolute;inset:0;opacity:0;transition:opacity .9s}
+.foto img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.15)}
+.foto .ficha{position:absolute;bottom:16px;left:16px;background:var(--white);border:1px solid var(--black);padding:8px 12px;font-size:9px;text-transform:uppercase;line-height:1.9}
+.pin-vp.st4 svg.molde{opacity:.05}
+.pin-vp.st4 .foto{opacity:1}
+
+/* moldería: trazo digno — corte continuo 1.5px, costura discontinua, piquetes, hilo */
+.pz{transition:transform 1s cubic-bezier(.25,.9,.25,1);transform-box:fill-box;transform-origin:center}
+.pz rect.corte{fill:var(--white);stroke:var(--black);stroke-width:1.5}
+.pz .costura{fill:none;stroke:var(--g-500);stroke-width:1;stroke-dasharray:5 4}
+.pz .pique{fill:none;stroke:var(--black);stroke-width:1.3}
+.pz .hilo{stroke:var(--black);stroke-width:1.2}
+.pz .lbl{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;fill:var(--black);text-transform:uppercase}
+.pz .lbl2{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;fill:var(--g-500);text-transform:uppercase}
+/* Etapa 01 — CORTE: piezas planas separadas sobre el pliego */
+.pz-b1{transform:translate(-152px,10px)}
+.pz-b2{transform:translate(150px,22px)}
+.pz-ml{transform:translate(-158px,-38px) rotate(-3deg)}
+.pz-mr{transform:translate(158px,-30px) rotate(2deg)}
+.pz-ol{transform:translate(-256px,28px) rotate(2deg)}
+.pz-or{transform:translate(254px,20px) rotate(-2deg)}
+.pz-cu{transform:translate(-44px,-26px) rotate(-2deg)}
+/* Etapa 02 — UNIÓN: cada pieza busca su posición en el plano */
+.pin-vp.st2 .pz,.pin-vp.st3 .pz,.pin-vp.st4 .pz{transform:none}
+/* Etapa 03 — PLIEGUE: mangas y delanteros se pliegan sobre el cuerpo */
+.pz-ml{transform-origin:100% 6%}
+.pz-mr{transform-origin:0% 6%}
+.pin-vp.st3 .pz-ml,.pin-vp.st4 .pz-ml{transform:rotate(-72deg) scale(.98)}
+.pin-vp.st3 .pz-mr,.pin-vp.st4 .pz-mr{transform:rotate(72deg) scale(.98)}
+.pin-vp.st3 .pz-ol,.pin-vp.st4 .pz-ol{transform:translate(46px,0)}
+.pin-vp.st3 .pz-or,.pin-vp.st4 .pz-or{transform:translate(-46px,0)}
+.pin-vp.st3 .pz-cu,.pin-vp.st4 .pz-cu{transform:translate(0,16px) scale(.94,1)}
+
+/* ═══ PAPEL DE CALCO (#22) ═══ */
+.calco{position:absolute;top:0;left:0;width:340px;height:250px;z-index:6;pointer-events:none;opacity:0;
+  border:1px solid var(--black);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
+  background:rgba(255,255,255,.28);transition:opacity .4s;will-change:transform}
+@supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){.calco{background:rgba(255,255,255,.85)}}
+.calco span{position:absolute;bottom:8px;left:10px;font-size:9px;letter-spacing:.2em;text-transform:uppercase}
+.calco i{position:absolute;top:8px;right:10px;font-style:normal;font-size:9px;color:var(--g-500)}
+.pin-frame:hover .calco{opacity:1}
+
+/* ═══ PERSIANAS / TAJOS (#50): LA TIJERA ═══ */
+.tajos{padding:12vh 28px 12vh 66px;border-bottom:1px solid var(--black)}
+.tajos-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px;
+  border-bottom:1px solid var(--black);padding-bottom:14px;margin-bottom:6vh}
+.tajos-head h2{font-family:var(--display);font-size:clamp(2.2rem,6vw,5rem);line-height:.86;text-transform:uppercase}
+.tajos-head .r{font-size:10px;text-transform:uppercase;text-align:right;color:var(--g-500)}
+.tajos-fig{position:relative;display:flex;gap:8px;height:min(76vh,680px);margin:0}
+.strip{position:relative;flex:1;overflow:hidden;background:var(--g-100)}
+.strip img{position:absolute;top:0;left:calc(var(--i) * -100%);width:500%;height:100%;max-width:none;object-fit:cover;filter:grayscale(1) contrast(1.12)}
+.strip{transform:translateY(103%);transition:transform .8s cubic-bezier(.22,.9,.24,1) calc(var(--i) * 95ms)}
+.tajos-fig.on .strip{transform:none}
+.tajos-cap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:12px;font-size:10px;text-transform:uppercase}
+
+/* ═══ PANTALLA DIVIDIDA (#53): PLANO / PRENDA ═══ */
+.split{display:grid;grid-template-columns:5fr 7fr;border-bottom:1px solid var(--black)}
+.split .plano{position:sticky;top:var(--barra);align-self:start;height:calc(100vh - var(--barra));
+  border-right:1px solid var(--black);padding:5vh 2vw;display:flex;flex-direction:column}
+.split .plano h2{font-family:var(--display);font-size:clamp(1.8rem,3.4vw,3rem);line-height:.9;text-transform:uppercase;margin-bottom:2vh}
+.split .plano svg{flex:1;width:100%;min-height:0}
+.split .plano .pie{margin-top:2vh;display:flex;justify-content:space-between;font-size:9px;text-transform:uppercase;color:var(--g-500)}
+.split .der{padding:8vh 28px 8vh 3vw}
+.split .der article{margin-bottom:10vh;max-width:520px}
+.split .der article:nth-child(even){margin-left:12%}
+.split .der .ph{background:var(--g-100)}
+.split .der img{width:100%;aspect-ratio:3/4;object-fit:cover;filter:grayscale(1) contrast(1.1);transition:filter .4s,opacity .6s}
+.split .der article:hover img{filter:grayscale(0) contrast(1.02)}
+.split .der .cap{display:flex;justify-content:space-between;gap:10px;margin-top:10px;font-size:10px;text-transform:uppercase}
+.split .der .nm{font-family:var(--geo);font-weight:800;font-size:13px;letter-spacing:.02em}
+.split .der .sku{font-size:9px;color:var(--g-500);margin-top:2px}
+.split .der .pr{white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* LQIP (#66 heredado del sistema) */
+img.lq{opacity:0}
+.ph img,.foto img{transition:opacity .6s ease,filter .4s}
+
+/* botón */
+.btn{position:relative;display:inline-block;padding:14px 24px;border:1px solid var(--g-300);
+  font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;background:none;color:inherit;cursor:none}
+.btn::before,.btn::after{content:"";position:absolute;width:0;height:0;pointer-events:none}
+.btn::before{top:-1px;left:-1px;border-top:1px solid var(--black);border-right:1px solid var(--black);transition:width .18s linear,height .18s linear .18s}
+.btn::after{bottom:-1px;right:-1px;border-bottom:1px solid var(--black);border-left:1px solid var(--black);transition:width .18s linear,height .18s linear .18s}
+.btn:hover::before,.btn:hover::after,.btn:focus-visible::before,.btn:focus-visible::after{width:calc(100% + 2px);height:calc(100% + 2px)}
+
+/* ═══ FOOTER ═══ */
+footer{border-top:1px solid var(--black);padding:60px 28px 34px;font-size:10px;text-transform:uppercase;background:var(--white)}
+.f-term{font-family:var(--mono);font-size:11px;color:var(--g-500);line-height:2;word-break:break-word;margin-bottom:50px;text-transform:none}
+.f-term b{color:var(--black);font-weight:400}
+.f-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:30px}
+.f-grid p.h{color:var(--g-500);margin-bottom:10px}
+.f-grid a{display:block;padding:2px 0}
+.f-sign{margin-top:60px;padding-top:16px;border-top:1px solid var(--g-100);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;color:var(--g-500);font-size:9px}
+
+/* ═══ REDUCED MOTION ═══ */
+@media(prefers-reduced-motion:reduce){
+  *,#grain{animation:none!important;transition:none!important}
+  body,a,button,.btn,.hd-r button{cursor:auto}
+  #cur,#cur-ring{display:none}
+  #cortina{display:none}
+  .calco{display:none}
+  .pin-wrap{height:auto}
+  .pin-vp{position:static;height:auto;overflow:visible;grid-template-columns:1fr}
+  .pin-meta{border-right:none;border-bottom:1px solid var(--black);padding:6vh 28px}
+  .pin-meta .cnt{display:none}
+  .pin-frame{height:auto;overflow:visible}
+  .pz{transform:none!important}
+  .foto{position:relative;opacity:1;height:64vh}
+  .pin-vp svg.molde{position:relative;inset:auto;display:block;width:94%;height:auto;aspect-ratio:1000/620;margin:4% 3%}
+  .strip{transform:none}
+  .tajos-fig .strip{transition:none}
+}
+/* ═══ MOBILE ═══ */
+@media(max-width:820px){
+  body,a,button,.btn,.hd-r button{cursor:auto}
+  #cur,#cur-ring{display:none}
+  .vert-kana{display:none}
+  .calco{display:none}
+  header{padding:calc(var(--barra) + 14px) 22px 14px}
+  .hd-r{gap:14px}
+  .hd-r>span{display:none}
+  #hero{grid-template-columns:1fr;min-height:auto}
+  .hero-txt{padding:6vh 22px 5vh;border-right:none;border-bottom:1px solid var(--black)}
+  .hero-plano{min-height:52vh}
+  .manif{padding:10vh 22px}
+  .pin-wrap{height:380vh}
+  .pin-vp{grid-template-columns:1fr;grid-template-rows:auto 1fr}
+  .pin-meta{padding:3vh 22px;border-right:none;border-bottom:1px solid var(--black);gap:8px}
+  .pin-meta .desc{min-height:0;display:none}
+  .pin-meta .renuncia{display:none}
+  .tajos{padding:9vh 22px}
+  .tajos-fig{height:56vh;gap:5px}
+  .split{grid-template-columns:1fr}
+  .split .plano{position:static;height:52vh;border-right:none;border-bottom:1px solid var(--black)}
+  .split .der{padding:7vh 22px}
+  .split .der article:nth-child(even){margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="pm-lockup" viewBox="0 0 640 103"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM519.167 33.833L526.333 34L530.5 35L535 37.167L536.333 39.333L531.167 45.667L524.667 43.333L519.833 43.167L515.833 44.5L513.167 46.667L511 50.5L510.5 56.333L511.833 60.5L514.333 63.5L517.667 65.333L522.5 66L526.833 64.667L529.333 62.167L530.167 60L529.833 58.667L521.667 58.333L520.833 57.667L520.667 51.833L521.333 50.833L539.5 50.667L540.833 51.833L540.5 60.333L537.833 67.5L532.833 72.5L526.333 75L517.333 75L509.833 72.333L504.167 67.167L500.833 59.667L500.333 56.167L500.667 50.167L503.833 42.333L507.5 38.333L510.5 36.333L515.167 34.5L519.167 34ZM571.167 33.833L579 34.167L583.667 35.667L587.333 37.833L592.167 43L594.833 49.667L595 58.167L592.5 65.5L587 71.5L584.167 73.167L578.333 75L569.333 75L561.667 72.167L556.167 67L554.5 64.333L552.833 59.333L552.667 50.667L553.667 46.833L555.833 42.5L558.833 39L562.333 36.5L566.667 34.667L571.167 34ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667ZM132.167 34.667L152.667 34.667L156.5 35.333L160.5 37L164 40L166.5 45.667L166.667 50.333L165.667 54.333L164 57.167L161.333 59.667L154.5 62.5L142 62.833L141.167 63.333L140.833 73.667L139.333 74.5L132.167 74.333L131.167 72.667L131.167 36.167L132.167 34.833ZM222.5 34.667L225 35.333L248.333 54.5L249.167 54.5L249.667 53.167L249.667 35.5L250.167 34.833L251.5 34.667L253.167 35.5L276.5 54.5L277.5 53.5L277.667 35.333L279.167 34.667L286.5 35L287.167 36.333L287 73.667L286.167 74.333L284.333 74L261.167 54.167L259.667 53.833L259.167 55.5L259.167 73.5L258.333 74.333L256.667 74.167L234 54.833L231.667 53.833L231.167 55L231.167 73.5L229.5 74.5L222 74.167L221.5 73.333L221.5 35.667L222.5 34.833ZM303.667 34.667L311.667 34.667L312.5 35.667L312.5 73.167L311 74.5L304.5 74.5L303.333 74.167L302.667 73L302.667 35.833L303.667 34.833ZM344.667 34.667L347.333 35.167L364.333 51L366 50.5L382.167 35.333L383.333 34.667L385.5 35L385.5 74L377.667 74.5L376.167 73.833L376 55.833L375.5 55L374.333 55.333L366.667 63L365.167 63.667L363.333 63.167L357.833 57.5L355.167 55.167L354 55L353.5 73.833L352 74.5L344.333 74.167L343.833 73L343.833 36L344.667 34.833ZM452.667 34.667L474.667 34.833L479.5 36.167L484.167 39.5L486.833 44.5L487.167 51L485.5 55.833L481.167 60.167L481 61.667L489 72.667L488.833 74.167L478.5 74.167L471.667 64.167L469.833 62.833L462.833 62.833L461.833 63.333L461.5 73.5L461 74.167L453.5 74.5L452 73.833L451.833 35.5L452.667 34.833ZM606.333 34.667L639.667 34.833L639.667 42.833L629.833 43L628.333 43.333L627.833 44.167L627.833 73.167L627 74.333L619.833 74.5L618.333 74L618 44.333L617.333 43.333L615.833 43L606 42.833L605.5 42.167L605.5 35.5L606.333 34.833ZM189.5 34.833L191.5 35.5L193.333 38.833L210.667 71.667L211 74.167L201.5 74.333L198 69.833L182.333 69.833L181.167 70.5L178.833 74.333L170.333 74.5L169 73.833L184.5 43.333L189.5 35ZM418.333 34.833L420.167 35.333L422.5 39.5L440 72.667L439.667 74.333L430.167 74.333L427.833 70.5L426.667 69.833L411 69.833L407.5 74.333L399 74.5L398 74L398.333 71.833L417.5 35.5L418.333 35ZM143.167 43L141.667 43.167L141 44L141 54L141.5 54.667L150.333 54.833L153.333 54.167L155.167 53L156.333 50.667L156.5 47.833L154.667 44.5L151.833 43.167L143.333 43ZM463.667 43L462.167 43.333L461.5 44.5L461.5 53.333L462.167 54.667L472.333 54.667L476.167 52.5L477.167 48.333L475.333 44.5L472.333 43.167L463.833 43ZM572.667 43.167L568.167 44.5L564.833 47.333L562.833 51.667L562.667 56.5L564.333 61L567 63.833L571.167 65.667L575.5 65.833L579.833 64.333L583.333 61L584.833 57.5L585 52.5L583.5 48.333L581.167 45.667L576.833 43.5L572.833 43.167ZM189.833 52.5L188.167 54.833L185.167 62.167L186 62.833L194.333 62.833L194.833 61.167L191.167 53.333L190 52.5ZM418.667 52.5L416.833 55.167L414 62.167L414.667 62.833L423 62.833L423.667 61.167L419.667 52.833L418.833 52.5Z"/></symbol><symbol id="pm-mono" viewBox="0 0 104 103"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667Z"/></symbol></defs></svg>
+
+<a class="skip" href="#contenido">CONTENIDO [ ↓ ]</a>
+
+<div id="grain"></div>
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<div class="vert-kana" lang="ja" aria-hidden="true">バーニ　マーゴット</div>
+
+<!-- ═══ CORTINA MORFOSIS (#48): línea de corte que barre entre secciones ═══ -->
+<svg id="cortina" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d=""/></svg>
+
+<!-- ═══ BARRA VIDRIERA ═══ -->
+<nav id="barra" aria-label="Vidriera de caminos">
+  <a href="./index.html">[ &lt;&lt; ] VIDRIERA</a>
+  <span>CAMINO E :: MOLDERÍA · <span lang="ja" aria-hidden="true">型紙</span></span>
+</nav>
+
+<header>
+  <a class="lockup" href="./index.html" aria-label="Panni Margot — vidriera">
+    <svg class="pm-lockup" aria-hidden="true" focusable="false"><use href="#pm-lockup"/></svg>
+  </a>
+  <div class="hd-r">
+    <span>BUENOS AIRES // <span lang="ja" aria-hidden="true">デザイナー</span> ..DESIGNER</span>
+    <button>ÍNDICE [ + ]</button>
+    <button>CARRITO(0)</button>
+  </div>
+</header>
+
+<main id="contenido" tabindex="-1" style="outline:none">
+
+<!-- ═══ HERO: EL PLIEGO + TEXTO SOBRE TRAZADO (#32) ═══ -->
+<section id="hero">
+  <div class="hero-txt">
+    <div>
+      <h1>Moldería</h1>
+      <div class="stroke-t">El plano</div>
+      <div class="hero-kanji" lang="ja" aria-hidden="true">型紙</div>
+    </div>
+    <div class="hero-data">
+      PLIEGO // CORTE // PIQUETE // HILO<br>
+      &lt;&lt;GENDERLESS(<span lang="ja" aria-hidden="true">ジェンダーレス</span>)//FASHION#()&gt;&gt;<br>
+      &gt;&gt;HONDURAS4940##
+    </div>
+  </div>
+  <div class="hero-plano">
+    <svg viewBox="0 0 900 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#000"/></marker>
+      </defs>
+      <!-- costura curva rotulada -->
+      <path id="seam" class="seam-line" pathLength="1200" d="M30,470 C200,150 560,70 870,290"/>
+      <text class="seam-txt"><textPath id="seamtp" href="#seam" startOffset="0">
+        68 CM :: TALLE 2 :: HILO DE LA TELA -&gt; 24 CM :: PIQUETE :: 型紙 :: 42 CM :: MANGA ×2 :: AL HILO -&gt; 68 CM :: TALLE 2 :: HILO DE LA TELA -&gt; 24 CM :: PIQUETE :: 型紙 :: 42 CM :: MANGA ×2 :: AL HILO -&gt; 68 CM :: TALLE 2 :: HILO DE LA TELA -&gt; 24 CM :: PIQUETE :: 型紙 :: 42 CM :: MANGA ×2 :: AL HILO -&gt;
+      </textPath></text>
+      <!-- marcas de pliego -->
+      <path class="mk" d="M70,80 h26 M83,67 v26"/>
+      <path class="mk" d="M790,470 h26 M803,457 v26"/>
+      <circle class="mk" cx="120" cy="440" r="10"/>
+      <path class="mk" d="M110,440 h20 M120,430 v20"/>
+      <!-- hilo de la tela -->
+      <line x1="690" y1="120" x2="690" y2="330" stroke="#000" stroke-width="1.2" marker-start="url(#arr)" marker-end="url(#arr)"/>
+      <text class="seam-txt" x="676" y="352" font-size="11">AL HILO</text>
+      <!-- piquetes sueltos sobre la costura -->
+      <path class="mk" d="M244,262 l8,14 l8,-14"/>
+      <path class="mk" d="M470,138 l8,14 l8,-14"/>
+    </svg>
+    <div class="hero-tag"><span lang="ja" aria-hidden="true">型紙</span> :: PLIEGO 1:5 :: TINTA 1.5PX</div>
+  </div>
+</section>
+
+<!-- ═══ MARQUESINA ═══ -->
+<div class="mq" aria-hidden="true"><div class="mq__t">
+  <span lang="ja">型紙</span> · MOLDERÍA :: EL PLANO ANTES DE LA PRENDA :: ".SHOP((<span lang="ja">ショップ</span>$<span lang="ja">ディスカウント</span>NN@!!!))"" :: &gt;&gt;HONDURAS4940## ::
+  <span lang="ja">型紙</span> · MOLDERÍA :: EL PLANO ANTES DE LA PRENDA :: ".SHOP((<span lang="ja">ショップ</span>$<span lang="ja">ディスカウント</span>NN@!!!))"" :: &gt;&gt;HONDURAS4940## ::
+</div></div>
+
+<!-- ═══ MANIFIESTO ═══ -->
+<section class="manif" data-cortina>
+  <p class="lead">
+    Antes de la ropa está el papel: el molde, las líneas de corte, los piquetes,
+    el hilo de la tela. Cada pieza es primero un plano.
+    <b>La página no se recorre: se arma.</b>
+  </p>
+  <p class="mini">KIMONO.TAKAI/001 :: 6 PIEZAS :: <span lang="ja" aria-hidden="true">一点物</span> PIEZA ÚNICA :: TALLE 2</p>
+</section>
+
+<!-- ═══ EL ARMADO: PINEADO MULTI-ETAPA (#6) + PAPEL DE CALCO (#22) ═══ -->
+<div class="pin-wrap" data-cortina>
+  <section class="pin-vp" id="pinvp" aria-label="Armado del molde en cuatro etapas">
+    <div class="pin-meta">
+      <div>
+        <h2>El<br>armado</h2>
+        <p class="cnt"><span id="stnum">01/04</span> :: <span id="stname">CORTE</span> <span class="kan" id="stkan" lang="ja" aria-hidden="true">裁断</span></p>
+        <p class="desc" id="stdesc">Seis piezas planas sobre el pliego. El kimono es rectangular: cuerpo, mangas, delanteros, cuello.</p>
+      </div>
+      <p class="renuncia">MOLDERÍA ESQUEMÁTICA :: LOS PLANOS REALES QUEDAN EN EL TALLER<br>KIMONO.TAKAI/001 :: $723.900 :: <span lang="ja" aria-hidden="true">手描き</span> PINTADO A MANO</p>
+    </div>
+    <div class="pin-frame">
+      <svg class="molde" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+        <defs>
+          <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#000"/></marker>
+        </defs>
+        <g class="mgrp">
+          <!-- CUELLO ×1 -->
+          <g class="pz pz-cu">
+            <rect class="corte" x="400" y="44" width="200" height="32"/>
+            <line class="costura" x1="408" y1="52" x2="592" y2="52"/>
+            <path class="pique" d="M494,44 l6,9 l6,-9"/>
+            <text class="lbl" x="414" y="66">CUELLO ×1</text>
+          </g>
+          <!-- MANGA IZQ -->
+          <g class="pz pz-ml">
+            <rect class="corte" x="266" y="96" width="144" height="210"/>
+            <rect class="costura" x="274" y="104" width="128" height="194"/>
+            <path class="pique" d="M266,190 l9,6 l-9,6"/>
+            <path class="pique" d="M330,96 l6,9 l6,-9"/>
+            <line class="hilo" x1="338" y1="130" x2="338" y2="270" marker-start="url(#arr2)" marker-end="url(#arr2)"/>
+            <text class="lbl" x="280" y="128">MANGA ×2</text>
+            <text class="lbl2" x="280" y="292">AL HILO</text>
+          </g>
+          <!-- MANGA DER -->
+          <g class="pz pz-mr">
+            <rect class="corte" x="590" y="96" width="144" height="210"/>
+            <rect class="costura" x="598" y="104" width="128" height="194"/>
+            <path class="pique" d="M734,190 l-9,6 l9,6"/>
+            <path class="pique" d="M652,96 l6,9 l6,-9"/>
+            <line class="hilo" x1="662" y1="130" x2="662" y2="270" marker-start="url(#arr2)" marker-end="url(#arr2)"/>
+            <text class="lbl" x="604" y="128">MANGA ×2</text>
+          </g>
+          <!-- CUERPO 1 -->
+          <g class="pz pz-b1">
+            <rect class="corte" x="410" y="90" width="90" height="460"/>
+            <line class="costura" x1="418" y1="98" x2="418" y2="542"/>
+            <path class="pique" d="M410,300 l9,6 l-9,6"/>
+            <path class="pique" d="M452,90 l6,9 l6,-9"/>
+            <line class="hilo" x1="455" y1="150" x2="455" y2="490" marker-start="url(#arr2)" marker-end="url(#arr2)"/>
+            <text class="lbl" transform="rotate(90 470 120)" x="470" y="120">CUERPO ×2 · AL HILO</text>
+          </g>
+          <!-- CUERPO 2 -->
+          <g class="pz pz-b2">
+            <rect class="corte" x="500" y="90" width="90" height="460"/>
+            <line class="costura" x1="582" y1="98" x2="582" y2="542"/>
+            <path class="pique" d="M590,300 l-9,6 l9,6"/>
+            <path class="pique" d="M538,90 l6,9 l6,-9"/>
+            <line class="hilo" x1="545" y1="150" x2="545" y2="490" marker-start="url(#arr2)" marker-end="url(#arr2)"/>
+            <text class="lbl" transform="rotate(90 560 120)" x="560" y="120">CUERPO ×2</text>
+          </g>
+          <!-- DELANTERO IZQ (okumi) -->
+          <g class="pz pz-ol">
+            <rect class="corte" x="368" y="320" width="42" height="230"/>
+            <line class="costura" x1="376" y1="328" x2="376" y2="542"/>
+            <path class="pique" d="M368,430 l9,6 l-9,6"/>
+            <text class="lbl" transform="rotate(90 384 336)" x="384" y="336">DELANTERO ×2</text>
+          </g>
+          <!-- DELANTERO DER (okumi) -->
+          <g class="pz pz-or">
+            <rect class="corte" x="590" y="320" width="42" height="230"/>
+            <line class="costura" x1="624" y1="328" x2="624" y2="542"/>
+            <path class="pique" d="M632,430 l-9,6 l9,6"/>
+            <text class="lbl" transform="rotate(90 606 336)" x="606" y="336">DELANTERO ×2</text>
+          </g>
+        </g>
+        <!-- rótulo del pliego -->
+        <text class="lbl2" x="30" y="600">KIMONO.TAKAI/001 :: PLIEGO 1:5 :: 6 PIEZAS :: PIQUETES MARCADOS</text>
+      </svg>
+      <div class="foto">
+        <img id="foto-takai" src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/tapado-kimono-brushed-takai-7-ad2c2f23976c6c883217194294041586-1024-1024.webp" alt="Kimono Takai pintado a mano, la prenda armada" loading="lazy">
+        <div class="ficha">KIMONO.TAKAI/001 :: 1/1 :: $723.900<br><span lang="ja" aria-hidden="true">手描き</span> PINTADO A MANO</div>
+      </div>
+      <div class="calco" id="calco" aria-hidden="true"><i>BLUR 2PX</i><span>PAPEL DE CALCO :: 1:5</span></div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══ LA TIJERA: PERSIANAS / TAJOS (#50) ═══ -->
+<section class="tajos" data-cortina>
+  <div class="tajos-head">
+    <h2>La tijera<br><span lang="ja" aria-hidden="true">裁断</span></h2>
+    <div class="r"><span data-scr>5 FRANJAS :: CORTE VERTICAL</span><br><span data-scr>PM/ABRIGOS/PUROTTO :: $970.000</span></div>
+  </div>
+  <figure class="tajos-fig" id="tajos" role="img" aria-label="Tapado Purotto, la imagen cortada en cinco franjas verticales">
+    <div class="strip" style="--i:0" aria-hidden="true"><img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0331-c04b11d8ca48be376917835404772676-640-0.webp" alt="" loading="lazy"></div>
+    <div class="strip" style="--i:1" aria-hidden="true"><img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0331-c04b11d8ca48be376917835404772676-640-0.webp" alt="" loading="lazy"></div>
+    <div class="strip" style="--i:2" aria-hidden="true"><img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0331-c04b11d8ca48be376917835404772676-640-0.webp" alt="" loading="lazy"></div>
+    <div class="strip" style="--i:3" aria-hidden="true"><img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0331-c04b11d8ca48be376917835404772676-640-0.webp" alt="" loading="lazy"></div>
+    <div class="strip" style="--i:4" aria-hidden="true"><img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0331-c04b11d8ca48be376917835404772676-640-0.webp" alt="" loading="lazy"></div>
+  </figure>
+  <div class="tajos-cap">
+    <span>TAPADO PUROTTO :: <span lang="ja" aria-hidden="true">一点物</span> PIEZA ÚNICA</span>
+    <span data-scr>CORTE 01—05 :: SIN RETAZO</span>
+  </div>
+</section>
+
+<!-- ═══ PANTALLA DIVIDIDA (#53): PLANO STICKY / PRENDA CORRIENDO ═══ -->
+<section class="split" data-cortina>
+  <div class="plano">
+    <h2>Plano /<br>prenda</h2>
+    <svg viewBox="0 0 420 560" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+      <defs>
+        <marker id="arr3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#000"/></marker>
+      </defs>
+      <!-- DELANTERO pantalón -->
+      <g>
+        <path d="M56,44 L158,44 C158,116 196,148 194,208 L180,516 L74,516 Z" fill="#fff" stroke="#000" stroke-width="1.5"/>
+        <path d="M64,52 L150,52" stroke="#5c5c5c" stroke-width="1" stroke-dasharray="5 4" fill="none"/>
+        <path d="M74,500 L180,500" stroke="#5c5c5c" stroke-width="1" stroke-dasharray="5 4" fill="none"/>
+        <path d="M66,330 l9,6 l-9,6" fill="none" stroke="#000" stroke-width="1.3"/>
+        <path d="M188,330 l-9,6 l9,6" fill="none" stroke="#000" stroke-width="1.3"/>
+        <line x1="124" y1="100" x2="124" y2="460" stroke="#000" stroke-width="1.2" marker-start="url(#arr3)" marker-end="url(#arr3)"/>
+        <text class="lbl" transform="rotate(90 138 150)" x="138" y="150" style="font:12.5px 'JetBrains Mono',monospace;letter-spacing:.14em">DELANTERO ×2 · AL HILO</text>
+      </g>
+      <!-- TRASERO pantalón -->
+      <g>
+        <path d="M238,40 L352,40 C352,120 386,152 382,216 L370,516 L250,516 Z" fill="#fff" stroke="#000" stroke-width="1.5"/>
+        <path d="M246,48 L344,48" stroke="#5c5c5c" stroke-width="1" stroke-dasharray="5 4" fill="none"/>
+        <path d="M250,500 L370,500" stroke="#5c5c5c" stroke-width="1" stroke-dasharray="5 4" fill="none"/>
+        <path d="M242,330 l9,6 l-9,6" fill="none" stroke="#000" stroke-width="1.3"/>
+        <path d="M378,330 l-9,6 l9,6" fill="none" stroke="#000" stroke-width="1.3"/>
+        <path d="M296,40 l6,9 l6,-9" fill="none" stroke="#000" stroke-width="1.3"/>
+        <line x1="308" y1="100" x2="308" y2="460" stroke="#000" stroke-width="1.2" marker-start="url(#arr3)" marker-end="url(#arr3)"/>
+        <text class="lbl" transform="rotate(90 322 150)" x="322" y="150" style="font:12.5px 'JetBrains Mono',monospace;letter-spacing:.14em">TRASERO ×2 · AL HILO</text>
+      </g>
+      <text x="30" y="548" style="font:10.5px 'JetBrains Mono',monospace;letter-spacing:.1em" fill="#5c5c5c">PM/PANTALONES/WAKUSEI :: PLIEGO 1:5 :: PIQUETES EN RODILLA</text>
+    </svg>
+    <div class="pie"><span>PLANO FIJO</span><span data-scr>PRENDA 01—03</span></div>
+  </div>
+  <div class="der">
+    <article>
+      <div class="ph"><img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/pantalon-wakusei-2-b5a85660a588c09c0c17187383919344-640-0.webp" alt="Pantalón Wakusei" loading="lazy"></div>
+      <div class="cap"><div><div class="nm">Pantalón Wakusei</div><div class="sku" data-scr>PM/PANTALONES/WAKUSEI</div></div><div class="pr">$123.900</div></div>
+    </article>
+    <article>
+      <div class="ph"><img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/trench-firewall-black-satin-8-dd17ac45b7653231cd17183866984987-640-0.webp" alt="Trench Firewall" loading="lazy"></div>
+      <div class="cap"><div><div class="nm">Trench Firewall</div><div class="sku" data-scr>PM/ABRIGOS/FIREWALL</div></div><div class="pr">$590.000</div></div>
+    </article>
+    <article>
+      <div class="ph"><img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/_dsc0087-b7a922169f6f8b83a117830243699603-640-0.jpg" alt="Tapado Aka" loading="lazy"></div>
+      <div class="cap"><div><div class="nm">Tapado Aka</div><div class="sku" data-scr>PM/ABRIGOS/AKA</div></div><div class="pr">$970.000</div></div>
+    </article>
+    <div style="text-align:right"><a class="btn" href="./index.html">[ &lt;&lt; ] VOLVER A LA VIDRIERA</a></div>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="f-term" aria-hidden="true">
+    &lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()<span lang="ja">ファッション</span>-))<br>
+    ".&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SHOP((<span lang="ja">ショップ</span>$<span lang="ja">ディスカウント</span><b>NN</b>@!!!))""<br>
+    BUENOS AIRES//<span lang="ja">デザイナー</span> ..DESIGNER &gt;&gt;<b>HONDURAS4940</b>##
+  </div>
+  <div class="f-grid">
+    <div><p class="h">ÍNDICE</p><a>TODAS LAS PIEZAS</a><a>MANUK.WORLD</a><a><span lang="ja" aria-hidden="true">不連続</span> DISCONTINUOS</a><a>ARCHIVO <span lang="ja" aria-hidden="true">完売</span></a></div>
+    <div><p class="h">CASA</p><a>HONDURAS 4940</a><a>PALERMO SOHO · CABA</a><a>+54 9 11 3027 4940 →</a></div>
+    <div><p class="h">LEGAL</p><a>CAMBIOS Y DEVOLUCIONES</a><a>BOTÓN DE ARREPENTIMIENTO</a><a>DATA FISCAL</a></div>
+    <div><p class="h">CAMINOS</p><a href="./index.html">[ &lt;&lt; ] VIDRIERA</a><a href="./gravedad.html">A :: GRAVEDAD</a><a href="./oficio.html">B :: OFICIO</a><a href="./archivo.html">C :: ARCHIVO</a></div>
+  </div>
+  <div class="f-sign">
+    <span class="lockup" style="font-size:10px">
+      <svg class="pm-lockup" aria-hidden="true" focusable="false"><use href="#pm-lockup"/></svg>
+      <span>© 2026</span>
+    </span>
+    <span lang="ja" aria-hidden="true">ブエノスアイレスで作られた</span>
+    <span>MADE IN BUENOS AIRES</span>
+  </div>
+</footer>
+
+<script>
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const MOB = matchMedia('(max-width: 820px)').matches;
+
+/* ── LQIP: fondo gris, la imagen entra al cargar ── */
+(function(){
+  document.querySelectorAll('img').forEach(im=>{
+    if(!im.complete){
+      im.classList.add('lq');
+      im.addEventListener('load',()=>im.classList.remove('lq'),{once:true});
+      im.addEventListener('error',()=>im.classList.remove('lq'),{once:true});
+    }
+  });
+})();
+
+/* ── CURSOR DOBLE MASA ── */
+(function(){
+  if(RM||MOB)return;
+  const dot=document.getElementById('cur'), ring=document.getElementById('cur-ring');
+  let mx=innerWidth/2,my=innerHeight/2,dx=mx,dy=my,rx=mx,ry=my;
+  addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+  (function loop(){
+    requestAnimationFrame(loop);
+    if(document.hidden)return;
+    dx+=(mx-dx)*.55; dy+=(my-dy)*.55;
+    rx+=(mx-rx)*.13;  ry+=(my-ry)*.13;
+    dot.style.transform=`translate3d(${dx}px,${dy}px,0)`;
+    ring.style.transform=`translate3d(${rx}px,${ry}px,0)`;
+  })();
+  document.querySelectorAll('a,button,.split .der article').forEach(el=>{
+    el.addEventListener('mouseenter',()=>ring.classList.add('big'));
+    el.addEventListener('mouseleave',()=>ring.classList.remove('big'));
+  });
+})();
+
+/* ── CORTINA MORFOSIS SVG (#48) ──────────────────────────────────
+   Un path negro barre la pantalla al entrar a cada sección marcada.
+   El borde muta de recta a curva y vuelve a recta: lerp de puntos en JS.
+   Una vez por sección. */
+(function(){
+  const svg=document.getElementById('cortina'), path=svg.querySelector('path');
+  if(RM){svg.remove();return}
+  let W=innerWidth,H=innerHeight;
+  const size=()=>{W=innerWidth;H=innerHeight;svg.setAttribute('viewBox','0 0 '+W+' '+H)};
+  size();addEventListener('resize',size);
+  const N=26, MG=Math.min(240,W*.25);
+  let running=false;
+  function run(){
+    if(running)return;running=true;
+    const t0=performance.now(), DUR=880;
+    function frame(now){
+      const t=Math.min(1,(now-t0)/DUR);
+      const e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+      const span=W+2*MG;
+      const lead=e*span-MG;
+      const trail=Math.max(0,(t-.22)/.78);
+      const et=trail<.5?2*trail*trail:1-Math.pow(-2*trail+2,2)/2;
+      const back=et*span-MG;
+      const K=Math.sin(Math.PI*t)*MG;      /* recta → curva → recta */
+      let d='M'+back.toFixed(1)+',0 ';
+      for(let i=0;i<N;i++){const y=H*i/(N-1);d+='L'+(lead+K*Math.sin(Math.PI*i/(N-1))).toFixed(1)+','+y.toFixed(1)+' '}
+      for(let i=N-1;i>=0;i--){const y=H*i/(N-1);d+='L'+(back-K*.6*Math.sin(Math.PI*i/(N-1))).toFixed(1)+','+y.toFixed(1)+' '}
+      d+='Z';
+      path.setAttribute('d',d);
+      if(t<1){requestAnimationFrame(frame)}else{path.setAttribute('d','');running=false}
+    }
+    requestAnimationFrame(frame);
+  }
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting&&!e.target.dataset.cort){e.target.dataset.cort='1';io.unobserve(e.target);run()}
+  }),{threshold:.18});
+  document.querySelectorAll('[data-cortina]').forEach(s=>io.observe(s));
+})();
+
+/* ── TEXTO SOBRE TRAZADO (#32): las medidas corren por la costura ── */
+(function(){
+  const tp=document.getElementById('seamtp');
+  if(!tp||RM)return;
+  let t=0,off=0;
+  addEventListener('scroll',()=>{t=scrollY*.14},{passive:true});
+  (function lp(){
+    requestAnimationFrame(lp);
+    if(document.hidden||Math.abs(t-off)<.05)return;
+    off+=(t-off)*.08;
+    tp.setAttribute('startOffset',(-(off%700)).toFixed(1));
+  })();
+})();
+
+/* ── PINEADO MULTI-ETAPA (#6): 01 CORTE → 02 UNIÓN → 03 PLIEGUE → 04 PRENDA ── */
+(function(){
+  const wrap=document.querySelector('.pin-wrap'), vp=document.getElementById('pinvp');
+  if(!wrap||RM)return;
+  const num=document.getElementById('stnum'), name=document.getElementById('stname'),
+        kan=document.getElementById('stkan'), desc=document.getElementById('stdesc');
+  const ET=[
+    ['CORTE','裁断','Seis piezas planas sobre el pliego. El kimono es rectangular: cuerpo, mangas, delanteros, cuello.'],
+    ['UNIÓN','縫製','Cada pieza busca su lugar: los piquetes coinciden, la costura casa con la costura.'],
+    ['PLIEGUE','折り','Las mangas caen sobre el cuerpo, los delanteros se cruzan. El plano toma volumen.'],
+    ['PRENDA','着物','Del papel a la tela: Kimono Takai, pintado a mano. Pieza única.']
+  ];
+  let cur=0,ticking=false;
+  function upd(){
+    ticking=false;
+    const total=wrap.offsetHeight-innerHeight;
+    if(total<=0)return;
+    const p=Math.min(1,Math.max(0,-wrap.getBoundingClientRect().top/total));
+    const s=Math.min(4,Math.floor(p*4.4)+1);
+    if(s!==cur){
+      cur=s;
+      vp.classList.remove('st1','st2','st3','st4');
+      vp.classList.add('st'+s);
+      num.textContent='0'+s+'/04';
+      name.textContent=ET[s-1][0];
+      kan.textContent=ET[s-1][1];
+      desc.textContent=ET[s-1][2];
+    }
+  }
+  addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(upd)}},{passive:true});
+  upd();
+})();
+
+/* ── PAPEL DE CALCO (#22): sigue al cursor con lerp sobre el molde ── */
+(function(){
+  if(RM||MOB)return;
+  const frame=document.querySelector('.pin-frame'), cal=document.getElementById('calco');
+  if(!frame||!cal)return;
+  let mx=40,my=40,cx=40,cy=40,on=false;
+  frame.addEventListener('mousemove',e=>{
+    const r=frame.getBoundingClientRect();
+    mx=Math.min(r.width-350,Math.max(6,e.clientX-r.left-170));
+    my=Math.min(r.height-260,Math.max(6,e.clientY-r.top-125));
+    on=true;
+  });
+  frame.addEventListener('mouseleave',()=>{on=false});
+  (function lp(){
+    requestAnimationFrame(lp);
+    if(document.hidden||!on)return;
+    cx+=(mx-cx)*.1; cy+=(my-cy)*.1;
+    cal.style.transform=`translate3d(${cx.toFixed(1)}px,${cy.toFixed(1)}px,0)`;
+  })();
+})();
+
+/* ── PERSIANAS / TAJOS (#50): cinco franjas entran desfasadas ── */
+(function(){
+  const fig=document.getElementById('tajos');
+  if(!fig)return;
+  if(RM){fig.classList.add('on');return}
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){fig.classList.add('on');io.disconnect()}
+  }),{threshold:.25});
+  io.observe(fig);
+})();
+
+/* ── SCRAMBLE en rótulos mono ── */
+(function(){
+  const CH='>#/:*.-01ノハマ';
+  const run=(el)=>{
+    const final=el.dataset.final||el.textContent;el.dataset.final=final;
+    let f=0;const total=16;
+    const t=setInterval(()=>{
+      f++;
+      el.textContent=final.split('').map((c,i)=>{
+        if(c===' ')return ' ';
+        return i<f*(final.length/total)?c:CH[Math.floor(Math.random()*CH.length)];
+      }).join('');
+      if(f>=total){el.textContent=final;clearInterval(t)}
+    },34);
+  };
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting&&!e.target.dataset.done){e.target.dataset.done='1';io.unobserve(e.target);if(!RM)run(e.target)}
+  }),{threshold:.6});
+  document.querySelectorAll('[data-scr]').forEach(el=>io.observe(el));
+})();
+</script>
+</body>
+</html>
