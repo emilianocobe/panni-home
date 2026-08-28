@@ -234,6 +234,11 @@ footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
 }
 </style>
 
+
+
+
+
+
 <style id="pmgate-css">
 /* ═══ CORTINA DE ACCESO — estética de la casa, fail-closed ═══ */
 #pmgate{position:fixed;inset:0;z-index:99999;background:#000;color:#fff;
@@ -241,7 +246,7 @@ footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
   font-family:"JetBrains Mono",ui-monospace,monospace;
   opacity:1;transition:opacity .45s ease}
 #pmgate.pmgate--out{opacity:0;pointer-events:none}
-#pmgate::after{content:"";position:absolute;inset:-150%;pointer-events:none;opacity:.055;
+#pmgate::after{content:"";position:absolute;inset:-25%;pointer-events:none;opacity:.055;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
   animation:pmgate-grain 1s steps(6) infinite}
 @keyframes pmgate-grain{0%{transform:translate(0,0)}25%{transform:translate(-3%,-4%)}50%{transform:translate(-6%,2%)}75%{transform:translate(3%,-5%)}100%{transform:translate(2%,-2%)}}
@@ -266,7 +271,7 @@ footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
 .pmgate-go:focus-visible{outline:2px solid #fff;outline-offset:3px}
 #pmgate-i:focus-visible{outline:none}
 .pmgate-err{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#a8a8a8;min-height:1.2em}
-.pmgate-foot{font-size:9px;letter-spacing:.2em;color:#242424;text-transform:uppercase;line-height:2}
+.pmgate-foot{font-size:9px;letter-spacing:.2em;color:#5c5c5c;text-transform:uppercase;line-height:2}
 .pmgate-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
   clip:rect(0 0 0 0);white-space:nowrap;border:0}
 html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
@@ -292,8 +297,8 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
       </div>
       <p class="pmgate-err" id="pmgate-e" role="status" aria-live="polite"></p>
     </form>
-    <p class="pmgate-foot">
-      &lt;&lt;GENDERLESS(<span lang="ja" aria-hidden="true">ジェンダーレス</span>)//FASHION#()&gt;&gt;<br>
+    <p class="pmgate-foot" aria-hidden="true">
+      &lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()&gt;&gt;<br>
       &gt;&gt;HONDURAS4940##
     </p>
   </div>
@@ -320,6 +325,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     <svg class="pm-lockup" aria-hidden="true" focusable="false"><use href="#pm-lockup"/></svg>
   </span>
   <div class="hd-r">
+    <a href="./roadmap.html" style="color:var(--white);text-decoration:none;border:1px solid var(--g-500);padding:6px 12px;letter-spacing:.16em">ROADMAP · <span class="ja" lang="ja" aria-hidden="true">工程</span></a>
     <span>HOME :: 8 CAMINOS</span>
     <span>DOC.INTERNO/2026</span>
   </div>
@@ -1007,6 +1013,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   <div class="idx-sheet">
     <div class="idx-head"><span>ÍNDICE :: 2 ACTOS · 8 CAMINOS</span><button id="idxcls" type="button" aria-label="Cerrar índice">[ × ]</button></div>
     <nav class="idx-nav" aria-label="Saltos internos">
+      <a id="idx-roadmap" href="./roadmap.html" style="background:var(--white);color:var(--black)">▸ ROADMAP DE LA OBRA<span class="ja" lang="ja" aria-hidden="true" style="color:var(--g-500)">工程</span></a>
       <a class="idx-acto" href="#acto-i">ACTO I :: LA MANO</a>
       <a href="#c-a">A :: GRAVEDAD<span class="ja" lang="ja" aria-hidden="true">重力</span></a>
       <a href="#c-b">B :: OFICIO<span class="ja" lang="ja" aria-hidden="true">手仕事</span></a>
@@ -1092,6 +1099,11 @@ const TAB   = matchMedia('(min-width: 641px) and (max-width: 1024px)').matches;
   }));
 })();
 </script>
+
+
+
+
+
 
 <script id="pmgate-js">
 /* Cortina de acceso. Recuerda el ingreso por dispositivo. */
