@@ -307,7 +307,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   <p style="max-width:640px;margin-top:26px;font-size:14px;line-height:1.7;color:var(--g-300)">
     Cuatro meses, cuatro niveles, ocho sprints, veintiséis hitos. Este documento muestra
     <strong style="color:var(--white)">de dónde venimos, dónde estamos y hacia dónde vamos</strong> —
-    y se recalcula solo cada día contra el calendario real de Buenos Aires.
+    El calendario corre solo contra la fecha real de Buenos Aires; el avance se marca a mano, hito por hito, porque que un día haya pasado no significa que el trabajo esté hecho.
   </p>
 
   <div id="dash">
@@ -315,7 +315,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     <div class="cell"><span class="k">DÍA DE OBRA</span><span class="v"><span id="d-dia" class="count">0</span><small> /122</small></span></div>
     <div class="cell"><span class="k">PROGRESO PLAN</span><span class="v"><span id="d-pct" class="count">0</span><small>%</small></span></div>
     <div class="cell"><span class="k">SPRINT</span><span class="v" id="d-sprint">—</span></div>
-    <div class="cell"><span class="k">HITOS CUMPLIDOS</span><span class="v"><span id="d-hitos" class="count">0</span><small> /26</small></span></div>
+    <div class="cell"><span class="k">HITOS HECHOS</span><span class="v"><span id="d-hitos" class="count">0</span><small> /26</small></span></div>
     <div class="cell"><span class="k">LANZAMIENTO EN</span><span class="v"><span id="d-launch" class="count">—</span><small> DÍAS</small></span></div>
   </div>
 
@@ -413,6 +413,17 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
       <div class="sp" role="listitem" data-a="2026-12-07" data-b="2026-12-18"><b>S8</b><span>07–18 DIC</span><em>LANZAMIENTO <span class="ja" lang="ja" aria-hidden="true">発</span></em></div>
       <div class="sp sp--frz" role="listitem" data-a="2026-12-21" data-b="2026-12-31"><b>❄</b><span>21–31 DIC</span><em>FREEZE + RETRO</em></div>
     </div>
+
+    <!-- estado de obra: marcado a mano -->
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:26px;align-items:center">
+      <button id="estado-copy" class="btn-obra" type="button">[ COPIAR ESTADO DE OBRA ]</button>
+      <span id="estado-feedback" class="tag" role="status" aria-live="polite"></span>
+    </div>
+    <p class="tag" style="margin-top:14px;max-width:660px;line-height:2">
+      CÓMO SE MARCA :: CADA HITO TIENE SU BOTÓN «MARCAR COMO HECHO». LAS MARCAS QUEDAN EN CADA
+      DISPOSITIVO; BELÉN CONSOLIDA EL ESTADO EN LA DEMO DE CADA VIERNES Y LA AGENCIA LO PUBLICA
+      ACÁ COMO OFICIAL ✓ — SELLADO PARA LAS DOS MESAS.
+    </p>
 
     <!-- distribución del esfuerzo (gráfica donut) -->
     <div class="grid" style="grid-template-columns:auto 1fr;gap:40px;align-items:center;margin-top:48px">
@@ -694,6 +705,22 @@ label.chip:has(input:checked){font-weight:600}
 .kit-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
 .kit-tags span{border:1px solid var(--g-500);font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:7px 10px;text-transform:uppercase}
 .kit-tags span.no{border-style:dashed;color:var(--g-300);text-decoration:line-through;text-decoration-thickness:1px}
+
+/* marcado de hitos e insumos */
+button.h-mark{margin-top:4px;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  background:var(--white);color:var(--ink);border:1px solid var(--ink);padding:10px 12px;min-height:44px;cursor:pointer;text-align:left}
+button.h-mark:hover{background:var(--ink);color:var(--white)}
+button.h-mark:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.hito--done button.h-mark{background:var(--ink);color:var(--white);border-color:var(--white)}
+.hito--done button.h-mark:hover{background:var(--white);color:var(--ink)}
+.hito--done button.h-mark:focus-visible{outline-color:var(--white)}
+span.h-mark--of{margin-top:4px;display:block;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--g-300);border-top:1px dashed var(--g-500);padding-top:10px}
+#ins-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:2px}
+.ins-chip{border:1px solid var(--g-100);padding:12px 10px;align-items:flex-start}
+.ins-chip input{margin-top:3px}
+.ins-chip:has(input:checked) b{text-decoration:line-through;text-decoration-thickness:1.5px}
+@media (max-width:640px){#ins-grid{grid-template-columns:1fr}}
 /* equipo */
 #equipo .eq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
 .eq{border:1px solid var(--g-800);padding:20px;display:flex;flex-direction:column;gap:10px}
@@ -831,34 +858,73 @@ label.chip:has(input:checked){font-weight:600}
 <section id="equipo">
   <div class="wrap">
     <div class="sec-head" style="border-color:var(--g-800)">
-      <h2 class="disp h-big">LA MESA DE OBRA</h2>
-      <span class="n">CAP.03 :: 6 ROLES · CADA HITO TIENE NOMBRE</span>
+      <h2 class="disp h-big">LAS DOS MESAS</h2>
+      <span class="n">CAP.03 :: 9 ROLES · CADA HITO TIENE NOMBRE</span>
     </div>
+
+    <p class="tag" style="margin-bottom:18px">LA MESA DE LA MARCA</p>
     <div class="eq-grid">
       <div class="eq"><span class="rol">CEO · DIRECCIÓN GENERAL</span><h4>PANNI</h4><span class="kj" lang="ja" aria-hidden="true">総</span>
-        <ul><li>Firma la síntesis de diseño y el universo pincelada</li><li>Dueña del «Ghost in the Shell dirigido por Thom Yorke»</li><li>Aprieta el botón el 10 de diciembre</li></ul>
-        <div class="necesita"><span class="tag">LA OBRA NECESITA DE ELLA</span><ul><li>Decisiones de síntesis en S1 (no después)</li><li>Los diseños de pintura para el personalizador, digitalizados antes del 30 OCT</li></ul></div>
+        <ul><li>Firma la síntesis de diseño y el universo pincelada</li><li>Dueño del «Ghost in the Shell dirigido por Thom Yorke»</li><li>Aprieta el botón el 10 de diciembre</li></ul>
+        <div class="necesita"><span class="tag">LA OBRA NECESITA DE ÉL</span><ul><li>Decisiones de síntesis en S1 (no después)</li><li>Los diseños de pintura para el personalizador, digitalizados antes del 30 OCT</li><li>La pieza musical elegida de Envato (25 SEP)</li></ul></div>
       </div>
       <div class="eq"><span class="rol">SOCIO · DIRECTOR CREATIVO</span><h4>JAVIER</h4><span class="kj" lang="ja" aria-hidden="true">創</span>
         <ul><li>Aprobación estética de cada nivel</li><li>Curaduría de los conjuntos del cross-selling</li><li>Voz final del mailing y las plantillas</li></ul>
-        <div class="necesita"><span class="tag">LA OBRA NECESITA DE ÉL</span><ul><li>Revisiones en 48 h para no frenar sprints</li><li>La primera lista de conjuntos combinables (S6)</li></ul></div>
+        <div class="necesita"><span class="tag">LA OBRA NECESITA DE ÉL</span><ul><li>Manual de marca, logo original y piezas de branding (11 SEP)</li><li>Revisiones en 48 h para no frenar sprints</li><li>La primera lista de conjuntos combinables (13 NOV)</li></ul></div>
       </div>
       <div class="eq"><span class="rol">HERMANO · DUEÑO DE MANUK</span><h4>MANUK</h4><span class="kj" lang="ja" aria-hidden="true">世界</span>
         <ul><li>Define cómo vive MANUK WORLD dentro del sitio</li><li>Hereda el dialecto terminal ya construido</li></ul>
-        <div class="necesita"><span class="tag">LA OBRA NECESITA DE ÉL</span><ul><li>Catálogo MANUK validado en S3</li><li>Decisión sobre el camino TERMINAL como casa de su línea</li></ul></div>
+        <div class="necesita"><span class="tag">LA OBRA NECESITA DE ÉL</span><ul><li>Catálogo y contenidos MANUK validados (09 OCT)</li><li>Decisión sobre el camino TERMINAL como casa de su línea</li></ul></div>
       </div>
       <div class="eq"><span class="rol">JEFA DE PRODUCCIÓN</span><h4>SOFÍA</h4><span class="kj" lang="ja" aria-hidden="true">手仕事</span>
         <ul><li>Medidas reales por molde para la guía de talles</li><li>Fichas de producción del personalizador</li><li>Sesión de fotos auténticas (antes del 20 NOV)</li></ul>
-        <div class="necesita"><span class="tag">LA OBRA NECESITA DE ELLA</span><ul><li>Tabla de medidas por talle y prenda (S4)</li><li>Flujo real: pedido personalizado → taller</li></ul></div>
+        <div class="necesita"><span class="tag">LA OBRA NECESITA DE ELLA</span><ul><li>Fichas de producto: materiales, cuidados y medidas por talle (16 OCT)</li><li>Fotos crudas de producto con derechos (20 NOV)</li><li>Flujo real: pedido personalizado → taller</li></ul></div>
       </div>
       <div class="eq"><span class="rol">JEFA DE OPERACIONES · BOUTIQUE</span><h4>VERÓNICA</h4><span class="kj" lang="ja" aria-hidden="true">店</span>
         <ul><li>La jueza del back office: si ella no lo opera sola, no está listo</li><li>Reglas del local: apartados, arreglos, prensa</li><li>El POS de mostrador es suyo</li></ul>
-        <div class="necesita"><span class="tag">LA OBRA NECESITA DE ELLA</span><ul><li>Media hora de pruebas por sprint desde S4</li><li>El test sagrado: cargar una pieza única en menos de 2 minutos</li></ul></div>
+        <div class="necesita"><span class="tag">LA OBRA NECESITA DE ELLA</span><ul><li>Conteo físico inicial del stock, pieza por pieza (16 OCT)</li><li>Políticas de cambios/envíos y datos fiscales (23 OCT)</li><li>El test sagrado: cargar una pieza única en menos de 2 minutos</li></ul></div>
       </div>
-      <div class="eq"><span class="rol">DESARROLLO · MANO Y MÁQUINA</span><h4>EMILIANO + IA</h4><span class="kj" lang="ja" aria-hidden="true">機</span>
-        <ul><li>Construcción completa: storefront, back office, stock, checkout, canales</li><li>Verificación en navegador real de cada entrega</li><li>Este documento, actualizado siempre</li></ul>
-        <div class="necesita"><span class="tag">LA OBRA NECESITA</span><ul><li>Accesos completos el VIE 04 SEP (hito con fecha dura)</li><li>Feedback del equipo dentro de cada sprint, no al final</li></ul></div>
+    </div>
+
+    <p class="tag" style="margin:38px 0 18px">LA MESA DE LA AGENCIA</p>
+    <div class="eq-grid">
+      <div class="eq"><span class="rol">DIRECCIÓN ESTRATÉGICA</span><h4>EMILIANO</h4><span class="kj" lang="ja" aria-hidden="true">戦</span>
+        <ul><li>Dirección del proyecto y de la síntesis de diseño</li><li>Interlocución con Panni y Javier en las decisiones de marca</li><li>El universo pincelada y los conceptos de la casa</li></ul>
+        <div class="necesita"><span class="tag">RESPONDE POR</span><ul><li>Onboarding, síntesis firmada, universo aplicado, retro de cierre</li></ul></div>
       </div>
+      <div class="eq"><span class="rol">PROJECT MANAGER</span><h4>BELÉN</h4><span class="kj" lang="ja" aria-hidden="true">調</span>
+        <ul><li>Calendario, actas y estado oficial de este roadmap</li><li>Coordinación de las dos mesas y de los insumos</li><li>Demo de cada viernes de fin de sprint</li></ul>
+        <div class="necesita"><span class="tag">RESPONDE POR</span><ul><li>Accesos e insumos completos a fecha, QA coordinado, capacitación del equipo</li></ul></div>
+      </div>
+      <div class="eq"><span class="rol">DESARROLLO WEB Y SISTEMAS</span><h4>DAMIÁN</h4><span class="kj" lang="ja" aria-hidden="true">機</span>
+        <ul><li>Storefront, back office, stock, checkout e integraciones</li><li>Infraestructura, staging y despliegues</li><li>Verificación en navegador real de cada entrega</li></ul>
+        <div class="necesita"><span class="tag">RESPONDE POR</span><ul><li>Catálogo migrado, doctrina de pieza única, lanzamiento técnico y guardia</li></ul></div>
+      </div>
+      <div class="eq"><span class="rol">ANALISTA DE MEDIOS DIGITALES</span><h4>TRINI</h4><span class="kj" lang="ja" aria-hidden="true">媒</span>
+        <ul><li>Baseline SEO y mapa de redirecciones 301</li><li>Feed META / Google, analítica y medición</li><li>Mailing: flujos, newsletters y métricas</li></ul>
+        <div class="necesita"><span class="tag">RESPONDE POR</span><ul><li>Que el posicionamiento ganado no se pierda en la migración, y que diciembre se mida</li></ul></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ INSUMOS — LO QUE LA OBRA NECESITA DE LA MARCA ═══════════════ -->
+<section class="papel" id="insumos">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="disp h-big">INSUMOS DE LA MARCA</h2>
+      <span class="n">CAP.03B :: SIN ESTO NO HAY OBRA · <span id="ins-count">0</span>/12 ENTREGADOS</span>
+    </div>
+    <p style="max-width:640px;font-size:14px;line-height:1.75;color:var(--g-800);margin-bottom:10px">
+      La lista completa de lo que necesitamos que la marca entregue, con su fecha y su responsable.
+      Marcá lo entregado — queda guardado en este dispositivo y el botón copia los pendientes
+      para reclamarlos por WhatsApp sin redactar nada.
+    </p>
+    <div class="bar bar--thin" style="max-width:420px;margin-bottom:26px;color:var(--ink)"><i id="ins-bar"></i></div>
+    <div id="ins-grid"></div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;align-items:center">
+      <button id="ins-copy" class="btn-obra" type="button">[ COPIAR PENDIENTES ]</button>
+      <span id="ins-feedback" class="tag" role="status" aria-live="polite"></span>
     </div>
   </div>
 </section>
@@ -968,32 +1034,32 @@ function fmt(t){ return DIAS_FMT[t.getDay()]+' '+String(t.getDate()).padStart(2,
 
 /* ---- los 26 hitos ---- */
 var H = [
- {n:1,f:'2026-09-01',t:'REUNIÓN DE ONBOARDING',d:'La mesa completa recorre los 8 caminos con el tablero de selección de esta página. Se elige, se discute, se firma el acta fundacional de la obra.',fr:'MESA',r:'EMILIANO',a:'PANNI',e:'Acta + tablero de bloques completo',c:'Los 6 de la mesa marcaron sus bloques y el acta circula esa misma tarde.',xp:40},
- {n:1,f:'2026-09-04',t:'ACCESOS COMPLETOS',d:'Admin de Tienda Nube, dominio y DNS, credenciales de Mercado Pago (test y producción), META Business, GA4, cuenta Envato y fotos crudas. Fecha dura.',fr:'MESA',r:'VERÓNICA + JAVIER',a:'EMILIANO',e:'Checklist de accesos 100% verde',c:'Cada credencial probada con un login real, no prometida.',xp:30},
+ {n:1,f:'2026-09-01',t:'REUNIÓN DE ONBOARDING',d:'La mesa completa recorre los 8 caminos con el tablero de selección de esta página. Se elige, se discute, se firma el acta fundacional de la obra.',fr:'MESA',r:'EMILIANO + BELÉN',a:'PANNI',e:'Acta + tablero de bloques completo',c:'Las dos mesas marcaron sus bloques y el acta circula esa misma tarde.',xp:40},
+ {n:1,f:'2026-09-04',t:'ACCESOS COMPLETOS',d:'Admin de Tienda Nube, dominio y DNS, credenciales de Mercado Pago (test y producción), META Business, GA4, cuenta Envato y fotos crudas. Fecha dura.',fr:'MESA',r:'VERÓNICA + JAVIER',a:'BELÉN',e:'Checklist de accesos 100% verde',c:'Cada credencial probada con un login real, no prometida.',xp:30},
  {n:1,f:'2026-09-11',t:'SÍNTESIS DE DISEÑO FIRMADA',d:'De los bloques elegidos sale UN documento: qué camino (o combinación) es el sitio, arquitectura de información y wireflow home → ficha → checkout.',fr:'IDENTIDAD',r:'EMILIANO',a:'PANNI + JAVIER',e:'Doc de síntesis + wireflow',c:'Panni y Javier lo firman; después de acá, cambiar cuesta calendario.',xp:40},
- {n:1,f:'2026-09-11',t:'BASELINE SEO + MAPA 301',d:'Radiografía del posicionamiento actual (GA4 activo en TN) y mapa de redirecciones 1:1 de cada URL vieja a su nueva casa.',fr:'CANALES',r:'EMILIANO',a:'JAVIER',e:'Informe baseline + tabla 301 completa',c:'Las 251 URLs de producto tienen destino escrito.',xp:25},
- {n:1,f:'2026-09-18',t:'MOCKUP «PINCELADA · <span lang="ja" aria-hidden="true">筆</span>»',d:'El universo 9 que pidió el equipo: pinceladas y pintura. Trazo que se dibuja, halftone de tinta, la mano de la diseñadora como sistema visual.',fr:'IDENTIDAD',r:'EMILIANO',a:'PANNI + JAVIER',e:'Mockup navegable en la galería',c:'Aprobado como capa estética del sitio real (o iterado una vez).',xp:45},
- {n:1,f:'2026-09-25',t:'SISTEMA DE DISEÑO v1 + DECISIONES',d:'Tokens definitivos, componentes (botones, cards, formularios), grilla. Y dos decisiones que cierran: proveedor de mailing y pieza musical opt-in.',fr:'IDENTIDAD',r:'EMILIANO',a:'JAVIER',e:'Design system documentado en el repo',c:'Un componente nuevo se arma solo con piezas del sistema.',xp:25},
- {n:1,f:'2026-09-25',t:'INFRAESTRUCTURA + STAGING',d:'Hosting productivo (storefront + Medusa + Postgres), CI/CD, staging con el portón de la casa para que el equipo mire la obra cuando quiera.',fr:'STOREFRONT',r:'EMILIANO',a:'EMILIANO',e:'Staging online con deploy automático',c:'Un push llega a staging solo, sin manos.',xp:15},
- {n:2,f:'2026-10-09',t:'CATÁLOGO COMPLETO EN MEDUSA',d:'251 productos, 560 variantes, categorías, matriz talle/color y fotos optimizadas. Sofía valida que lo que dice el sistema es lo que hay.',fr:'BACK OFFICE',r:'EMILIANO + SOFÍA',a:'VERÓNICA',e:'Catálogo íntegro y validado',c:'Muestreo de 20 piezas al azar: cero diferencias contra la percha.',xp:45},
- {n:2,f:'2026-10-09',t:'STOREFRONT CORE NAVEGABLE',d:'Home con el universo elegido (v1), grilla por categoría, ficha de producto con transiciones FLIP — el órgano de cohesión de toda la casa.',fr:'STOREFRONT',r:'EMILIANO',a:'JAVIER',e:'Sitio navegable en staging',c:'Home → categoría → ficha sin salir del universo visual.',xp:55},
- {n:2,f:'2026-10-16',t:'BACK OFFICE F1 — PARIDAD SUPERADA',d:'El panel propio hiper sencillo: alta de pieza en una sola pantalla, edición, fotos, liquidación con tachado, cupones y venta manual de mostrador (POS mínimo).',fr:'BACK OFFICE',r:'EMILIANO',a:'VERÓNICA',e:'Panel operativo sobre el catálogo real',c:'EL TEST SAGRADO: Verónica carga una pieza única con fotos en menos de 2 minutos, sin ayuda.',xp:60},
- {n:2,f:'2026-10-23',t:'STOCK UNIFICADO <span lang="ja" aria-hidden="true">一点物</span>',d:'La doctrina completa: disponible = existencia − reservado en la base, reserva de 20 min al iniciar pago, estados de pieza, etiquetas QR, kardex y alertas WhatsApp al equipo.',fr:'BACK OFFICE',r:'EMILIANO',a:'VERÓNICA',e:'Stock local+online con una sola verdad',c:'Test de carrera: dos checkouts y un POS pelean la misma 1/1 y la base deja pasar exactamente uno.',xp:60},
- {n:2,f:'2026-10-30',t:'CHECKOUT COMPLETO',d:'Mercado Pago Bricks con cuotas visibles, envío cotizado antes de pagar (Correo Argentino + Andreani + retiro en Palermo + moto CABA), factura ARCA automática y emails transaccionales.',fr:'PAGOS',r:'EMILIANO',a:'PANNI',e:'Compra test de punta a punta',c:'Pago aprobado + etiqueta de envío + factura + email, sin tocar nada a mano.',xp:60},
- {n:2,f:'2026-11-06',t:'CANALES: META + GOOGLE + SEO ON',d:'Feed de catálogo a Instagram Shopping generado desde el stock real (una pieza vendida deja de estar etiquetada), Google Merchant, metadatos, JSON-LD y sitemap.',fr:'CANALES',r:'EMILIANO',a:'JAVIER',e:'Feed validado por META',c:'El validador de META aprueba y una 1/1 vendida desaparece del feed en la siguiente corrida.',xp:35},
- {n:2,f:'2026-11-06',t:'SELLO 1/1 + ARCHIVO VIVO',d:'La señal de pieza única en grilla, ficha y carrito — «PIEZA ÚNICA · 1/1», «alguien está comprando esta pieza» solo si es verdad — y el ARCHIVO <span lang="ja" aria-hidden="true">記憶</span> de vendidas como sala de memoria.',fr:'STOREFRONT',r:'EMILIANO',a:'PANNI',e:'Sistema de señalización + página de archivo',c:'Una pieza vendida pasa sola de la grilla al archivo con su sello <span lang="ja" aria-hidden="true">完売</span>.',xp:25},
- {n:3,f:'2026-11-13',t:'UNIVERSO PINCELADA APLICADO',d:'La capa de identidad final sobre todo el storefront: los trazos, la tinta, el gesto de la mano — con el motion decreciendo hacia el pago, como manda la casa.',fr:'IDENTIDAD',r:'EMILIANO',a:'JAVIER + PANNI',e:'El sitio entero habla pincelada',c:'Javier lo recorre y no encuentra una pantalla que se sienta plantilla.',xp:55},
- {n:3,f:'2026-11-20',t:'PERSONALIZADOR DE PINTURA (MVP)',d:'En prendas elegibles: elegir un diseño de pintura del catálogo de la casa, verlo aplicado en la prenda y pedirlo — la ficha llega a producción con todo lo que el taller necesita.',fr:'STOREFRONT',r:'EMILIANO + SOFÍA',a:'PANNI',e:'Flujo completo pedido → taller',c:'Un pedido personalizado de prueba llega a Sofía con ficha correcta y sin llamados aclaratorios.',xp:55},
- {n:3,f:'2026-11-20',t:'KIT NIVEL 4 ACTIVO',d:'Las 17 herramientas aprobadas: completá el conjunto curado por Javier, lookbook shoppable, guía de talles con cm reales, avisame cuando vuelva, wishlist, probátela en Palermo, cupones sobrios, gift cards.',fr:'STOREFRONT',r:'EMILIANO + JAVIER',a:'PANNI',e:'Kit completo en staging',c:'Ni una sola herramienta excluida se coló; las 17 funcionan con datos reales.',xp:45},
- {n:3,f:'2026-11-27',t:'MAILING COMPLETO',d:'Newsletters con la plantilla de la casa, flujo de bienvenida, post-compra con cuidado de la prenda, y el único email de carrito abandonado — sobrio, sin descuento, como corresponde.',fr:'CANALES',r:'EMILIANO',a:'JAVIER',e:'Todos los flujos disparando desde eventos reales',c:'Compra de prueba dispara la secuencia completa correcta en bandeja real.',xp:35},
- {n:3,f:'2026-11-27',t:'MÚSICA OPT-IN (LICENCIADA)',d:'La pieza elegida de Envato con licencia comercial, silencio absoluto por defecto, interruptor visible. Con métricas de uso para que los datos zanjen nuestra reserva.',fr:'IDENTIDAD',r:'EMILIANO',a:'PANNI',e:'Player integrado + licencia archivada',c:'Ningún autoplay en ningún navegador; el interruptor se ve sin buscarlo.',xp:15},
- {n:3,f:'2026-12-04',t:'QA TOTAL + CONTENIDO FINAL',d:'Fotos de la sesión de Sofía cargadas, textos finales, QA cross-browser y mobile, auditoría de accesibilidad, Lighthouse ≥ 90, prueba de carga. La beta queda lista.',fr:'STOREFRONT',r:'EMILIANO',a:'JAVIER',e:'Sitio candidato a producción',c:'Cero defectos bloqueantes abiertos; checklist de QA firmada.',xp:75},
- {n:4,f:'2026-12-07',t:'BETA CERRADA — EL EQUIPO COMPRA',d:'Una semana de uso real: los 6 de la mesa compran, cambian, devuelven, cargan piezas y operan el back office. Feedback congelado el miércoles 09.',fr:'OPERACIÓN',r:'TODO EL EQUIPO',a:'PANNI',e:'Lista de ajustes priorizada y cerrada',c:'Cada rol completó su circuito sin asistencia.',xp:30},
- {n:4,f:'2026-12-10',t:'LANZAMIENTO <span lang="ja" aria-hidden="true">発</span>',d:'El DNS apunta al sitio nuevo. Redirecciones 301 activas, monitoreo encendido, el equipo mirando. Honduras 4940 abre en internet.',fr:'OPERACIÓN',r:'EMILIANO',a:'PANNI',e:'pannimargot.com es el sitio nuevo',c:'Primera venta real procesada + checklist post-launch en verde + posiciones SEO monitoreadas.',xp:50},
- {n:4,f:'2026-12-15',t:'CAPACITACIÓN DEL EQUIPO',d:'Sesión de operación con Verónica y Sofía: back office, stock, apartados, personalizados. Manual en video y documento, para consultar sin llamar.',fr:'OPERACIÓN',r:'EMILIANO',a:'VERÓNICA',e:'Manual + grabación entregados',c:'Verónica opera una semana entera sin escribirnos una sola duda bloqueante.',xp:25},
- {n:4,f:'2026-12-18',t:'HARDENING CON DATOS REALES',d:'Primera semana de métricas verdaderas: correcciones, ajustes de conversión, performance bajo tráfico real de temporada.',fr:'OPERACIÓN',r:'EMILIANO',a:'JAVIER',e:'Informe semana 1 + ajustes aplicados',c:'Errores de producción en cero; métricas base documentadas.',xp:25},
- {n:4,f:'2026-12-21',t:'FREEZE DE FIESTAS ❄',d:'Del 21 al 31, solo guardia. El sitio pasa su primera Navidad vendiendo y nadie despliega nada. La mejor ingeniería de diciembre es no tocar.',fr:'OPERACIÓN',r:'EMILIANO (GUARDIA)',a:'PANNI',e:'Calma',c:'Cero deploys salvo emergencia declarada por Panni.',xp:10},
- {n:4,f:'2026-12-30',t:'RETRO + ROADMAP 2027',d:'Métricas del primer mes, aprendizajes, y el backlog priorizado de la fase siguiente: referidos, testimonios de marca, MANUK WORLD profundo, lo que la obra enseñó.',fr:'MESA',r:'EMILIANO',a:'TODO EL EQUIPO',e:'Doc de cierre + roadmap 2027 v0',c:'La mesa sale sabiendo qué sigue — igual que hoy.',xp:20},
+ {n:1,f:'2026-09-11',t:'BASELINE SEO + MAPA 301',d:'Radiografía del posicionamiento actual (GA4 activo en TN) y mapa de redirecciones 1:1 de cada URL vieja a su nueva casa.',fr:'CANALES',r:'TRINI',a:'EMILIANO',e:'Informe baseline + tabla 301 completa',c:'Las 251 URLs de producto tienen destino escrito.',xp:25},
+ {n:1,f:'2026-09-18',t:'MOCKUP «PINCELADA · <span lang="ja" aria-hidden="true">筆</span>»',d:'El universo 9 que pidió el equipo: pinceladas y pintura. Trazo que se dibuja, halftone de tinta, la mano de la diseñadora como sistema visual.',fr:'IDENTIDAD',r:'EMILIANO + DAMIÁN',a:'PANNI + JAVIER',e:'Mockup navegable en la galería',c:'Aprobado como capa estética del sitio real (o iterado una vez).',xp:45},
+ {n:1,f:'2026-09-25',t:'SISTEMA DE DISEÑO v1 + DECISIONES',d:'Tokens definitivos, componentes (botones, cards, formularios), grilla. Y dos decisiones que cierran: proveedor de mailing y pieza musical opt-in.',fr:'IDENTIDAD',r:'EMILIANO + DAMIÁN',a:'JAVIER',e:'Design system documentado en el repo',c:'Un componente nuevo se arma solo con piezas del sistema.',xp:25},
+ {n:1,f:'2026-09-25',t:'INFRAESTRUCTURA + STAGING',d:'Hosting productivo (storefront + Medusa + Postgres), CI/CD, staging con el portón de la casa para que el equipo mire la obra cuando quiera.',fr:'STOREFRONT',r:'DAMIÁN',a:'BELÉN',e:'Staging online con deploy automático',c:'Un push llega a staging solo, sin manos.',xp:15},
+ {n:2,f:'2026-10-09',t:'CATÁLOGO COMPLETO EN MEDUSA',d:'251 productos, 560 variantes, categorías, matriz talle/color y fotos optimizadas. Sofía valida que lo que dice el sistema es lo que hay.',fr:'BACK OFFICE',r:'DAMIÁN + SOFÍA',a:'VERÓNICA',e:'Catálogo íntegro y validado',c:'Muestreo de 20 piezas al azar: cero diferencias contra la percha.',xp:45},
+ {n:2,f:'2026-10-09',t:'STOREFRONT CORE NAVEGABLE',d:'Home con el universo elegido (v1), grilla por categoría, ficha de producto con transiciones FLIP — el órgano de cohesión de toda la casa.',fr:'STOREFRONT',r:'DAMIÁN',a:'JAVIER',e:'Sitio navegable en staging',c:'Home → categoría → ficha sin salir del universo visual.',xp:55},
+ {n:2,f:'2026-10-16',t:'BACK OFFICE F1 — PARIDAD SUPERADA',d:'El panel propio hiper sencillo: alta de pieza en una sola pantalla, edición, fotos, liquidación con tachado, cupones y venta manual de mostrador (POS mínimo).',fr:'BACK OFFICE',r:'DAMIÁN',a:'VERÓNICA',e:'Panel operativo sobre el catálogo real',c:'EL TEST SAGRADO: Verónica carga una pieza única con fotos en menos de 2 minutos, sin ayuda.',xp:60},
+ {n:2,f:'2026-10-23',t:'STOCK UNIFICADO <span lang="ja" aria-hidden="true">一点物</span>',d:'La doctrina completa: disponible = existencia − reservado en la base, reserva de 20 min al iniciar pago, estados de pieza, etiquetas QR, kardex y alertas WhatsApp al equipo.',fr:'BACK OFFICE',r:'DAMIÁN',a:'VERÓNICA',e:'Stock local+online con una sola verdad',c:'Test de carrera: dos checkouts y un POS pelean la misma 1/1 y la base deja pasar exactamente uno.',xp:60},
+ {n:2,f:'2026-10-30',t:'CHECKOUT COMPLETO',d:'Mercado Pago Bricks con cuotas visibles, envío cotizado antes de pagar (Correo Argentino + Andreani + retiro en Palermo + moto CABA), factura ARCA automática y emails transaccionales.',fr:'PAGOS',r:'DAMIÁN',a:'PANNI',e:'Compra test de punta a punta',c:'Pago aprobado + etiqueta de envío + factura + email, sin tocar nada a mano.',xp:60},
+ {n:2,f:'2026-11-06',t:'CANALES: META + GOOGLE + SEO ON',d:'Feed de catálogo a Instagram Shopping generado desde el stock real (una pieza vendida deja de estar etiquetada), Google Merchant, metadatos, JSON-LD y sitemap.',fr:'CANALES',r:'TRINI + DAMIÁN',a:'JAVIER',e:'Feed validado por META',c:'El validador de META aprueba y una 1/1 vendida desaparece del feed en la siguiente corrida.',xp:35},
+ {n:2,f:'2026-11-06',t:'SELLO 1/1 + ARCHIVO VIVO',d:'La señal de pieza única en grilla, ficha y carrito — «PIEZA ÚNICA · 1/1», «alguien está comprando esta pieza» solo si es verdad — y el ARCHIVO <span lang="ja" aria-hidden="true">記憶</span> de vendidas como sala de memoria.',fr:'STOREFRONT',r:'DAMIÁN',a:'PANNI',e:'Sistema de señalización + página de archivo',c:'Una pieza vendida pasa sola de la grilla al archivo con su sello <span lang="ja" aria-hidden="true">完売</span>.',xp:25},
+ {n:3,f:'2026-11-13',t:'UNIVERSO PINCELADA APLICADO',d:'La capa de identidad final sobre todo el storefront: los trazos, la tinta, el gesto de la mano — con el motion decreciendo hacia el pago, como manda la casa.',fr:'IDENTIDAD',r:'EMILIANO + DAMIÁN',a:'JAVIER + PANNI',e:'El sitio entero habla pincelada',c:'Javier lo recorre y no encuentra una pantalla que se sienta plantilla.',xp:55},
+ {n:3,f:'2026-11-20',t:'PERSONALIZADOR DE PINTURA (MVP)',d:'En prendas elegibles: elegir un diseño de pintura del catálogo de la casa, verlo aplicado en la prenda y pedirlo — la ficha llega a producción con todo lo que el taller necesita.',fr:'STOREFRONT',r:'DAMIÁN + SOFÍA',a:'PANNI',e:'Flujo completo pedido → taller',c:'Un pedido personalizado de prueba llega a Sofía con ficha correcta y sin llamados aclaratorios.',xp:55},
+ {n:3,f:'2026-11-20',t:'KIT NIVEL 4 ACTIVO',d:'Las 17 herramientas aprobadas: completá el conjunto curado por Javier, lookbook shoppable, guía de talles con cm reales, avisame cuando vuelva, wishlist, probátela en Palermo, cupones sobrios, gift cards.',fr:'STOREFRONT',r:'DAMIÁN + JAVIER',a:'PANNI',e:'Kit completo en staging',c:'Ni una sola herramienta excluida se coló; las 17 funcionan con datos reales.',xp:45},
+ {n:3,f:'2026-11-27',t:'MAILING COMPLETO',d:'Newsletters con la plantilla de la casa, flujo de bienvenida, post-compra con cuidado de la prenda, y el único email de carrito abandonado — sobrio, sin descuento, como corresponde.',fr:'CANALES',r:'TRINI',a:'JAVIER',e:'Todos los flujos disparando desde eventos reales',c:'Compra de prueba dispara la secuencia completa correcta en bandeja real.',xp:35},
+ {n:3,f:'2026-11-27',t:'MÚSICA OPT-IN (LICENCIADA)',d:'La pieza elegida de Envato con licencia comercial, silencio absoluto por defecto, interruptor visible. Con métricas de uso para que los datos zanjen nuestra reserva.',fr:'IDENTIDAD',r:'DAMIÁN',a:'PANNI',e:'Player integrado + licencia archivada',c:'Ningún autoplay en ningún navegador; el interruptor se ve sin buscarlo.',xp:15},
+ {n:3,f:'2026-12-04',t:'QA TOTAL + CONTENIDO FINAL',d:'Fotos de la sesión de Sofía cargadas, textos finales, QA cross-browser y mobile, auditoría de accesibilidad, Lighthouse ≥ 90, prueba de carga. La beta queda lista.',fr:'STOREFRONT',r:'BELÉN + DAMIÁN',a:'JAVIER',e:'Sitio candidato a producción',c:'Cero defectos bloqueantes abiertos; checklist de QA firmada.',xp:75},
+ {n:4,f:'2026-12-07',t:'BETA CERRADA — EL EQUIPO COMPRA',d:'Una semana de uso real: las dos mesas compran, cambian, devuelven, cargan piezas y operan el back office. Feedback congelado el miércoles 09.',fr:'OPERACIÓN',r:'LAS DOS MESAS',a:'PANNI',e:'Lista de ajustes priorizada y cerrada',c:'Cada rol completó su circuito sin asistencia.',xp:30},
+ {n:4,f:'2026-12-10',t:'LANZAMIENTO <span lang="ja" aria-hidden="true">発</span>',d:'El DNS apunta al sitio nuevo. Redirecciones 301 activas, monitoreo encendido, el equipo mirando. Honduras 4940 abre en internet.',fr:'OPERACIÓN',r:'DAMIÁN + EMILIANO',a:'PANNI',e:'pannimargot.com es el sitio nuevo',c:'Primera venta real procesada + checklist post-launch en verde + posiciones SEO monitoreadas.',xp:50},
+ {n:4,f:'2026-12-15',t:'CAPACITACIÓN DEL EQUIPO',d:'Sesión de operación con Verónica y Sofía: back office, stock, apartados, personalizados. Manual en video y documento, para consultar sin llamar.',fr:'OPERACIÓN',r:'BELÉN',a:'VERÓNICA',e:'Manual + grabación entregados',c:'Verónica opera una semana entera sin escribirnos una sola duda bloqueante.',xp:25},
+ {n:4,f:'2026-12-18',t:'HARDENING CON DATOS REALES',d:'Primera semana de métricas verdaderas: correcciones, ajustes de conversión, performance bajo tráfico real de temporada.',fr:'OPERACIÓN',r:'DAMIÁN + TRINI',a:'JAVIER',e:'Informe semana 1 + ajustes aplicados',c:'Errores de producción en cero; métricas base documentadas.',xp:25},
+ {n:4,f:'2026-12-21',t:'FREEZE DE FIESTAS ❄',d:'Del 21 al 31, solo guardia. El sitio pasa su primera Navidad vendiendo y nadie despliega nada. La mejor ingeniería de diciembre es no tocar.',fr:'OPERACIÓN',r:'DAMIÁN (GUARDIA)',a:'PANNI',e:'Calma',c:'Cero deploys salvo emergencia declarada por Panni.',xp:10},
+ {n:4,f:'2026-12-30',t:'RETRO + ROADMAP 2027',d:'Métricas del primer mes, aprendizajes, y el backlog priorizado de la fase siguiente: referidos, testimonios de marca, MANUK WORLD profundo, lo que la obra enseñó.',fr:'MESA',r:'EMILIANO + BELÉN',a:'LAS DOS MESAS',e:'Doc de cierre + roadmap 2027 v0',c:'La mesa sale sabiendo qué sigue — igual que hoy.',xp:20},
 ];
 
 /* ---- tablero de selección (bloques por camino) ---- */
@@ -1010,25 +1076,37 @@ var CAM = [
 
 var $=function(s,c){return (c||document).querySelector(s)}, $$=function(s,c){return [].slice.call((c||document).querySelectorAll(s))};
 
+/* ---- estado de la obra: oficial (h.ok, versionado por la agencia en cada
+   publicación) + marcas de este dispositivo (localStorage). La fecha NO marca
+   nada sola: que un día haya pasado no significa que el trabajo esté hecho. ---- */
+var MKEY='pm_rm_done';
+var marks={}; try{ var _m=JSON.parse(localStorage.getItem(MKEY)||'{}'); if(_m&&typeof _m==='object'&&!Array.isArray(_m)) marks=_m; }catch(e){}
+function hecho(i){ return H[i].ok===1 || marks[i]===1; }
+function nHechos(){ var n=0; for(var i=0;i<H.length;i++) if(hecho(i)) n++; return n; }
+
 /* ---- dashboard vivo ---- */
 var dia = Math.round((HOY-T0)/DIA)+1;
 var pct = HOY<T0?0:Math.round(frac(HOY)*100);
-var done = H.filter(function(h){return d(h.f)<HOY;});
-var next = H.filter(function(h){return d(h.f)>=HOY;})[0];
 var LANZ = d('2026-12-10');
 $('#d-hoy').textContent = fmt(HOY)+' 2026';
 $('#d-dia').dataset.count = Math.max(0,Math.min(122,dia));
 $('#d-pct').dataset.count = pct;
-$('#d-hitos').dataset.count = done.length;
 var dl = Math.round((LANZ-HOY)/DIA);
 $('#d-launch').dataset.count = Math.max(0,dl);
 if(dl<0){ $('#d-launch').parentElement.innerHTML='<span style="font-size:clamp(16px,2vw,24px)">EN EL AIRE <span lang="ja" aria-hidden="true">発</span></span>'; }
 var sp = $$('.sp').findIndex(function(s){return HOY>=d(s.dataset.a)&&HOY<=d(s.dataset.b);});
 $('#d-sprint').textContent = HOY<T0 ? 'PRE-OBRA' : (sp<0?'ENTRE SPRINTS':($$('.sp')[sp].querySelector('b').textContent));
-$('#d-prox').textContent = next ? (fmt(d(next.f))+' — '+next.t) : 'OBRA COMPLETA';
-var gp=Math.max(0,pct);
-$('#gfill').style.width=gp+'%'; $('#gpct').textContent=gp+'%';
-$('#gprog').setAttribute('aria-valuenow',gp);
+
+function pintarEstado(){
+  var hs=nHechos();
+  $('#d-hitos').textContent = hs;
+  var prox=null;
+  for(var i=0;i<H.length;i++){ if(!hecho(i)){ prox=H[i]; break; } }
+  $('#d-prox').textContent = prox ? (fmt(d(prox.f))+' — '+prox.t.replace(/<[^>]*>/g,'')) : 'OBRA COMPLETA';
+  var gp=Math.round(hs/H.length*100);
+  $('#gfill').style.width=gp+'%'; $('#gpct').textContent=gp+'%';
+  $('#gprog').setAttribute('aria-valuenow',gp);
+}
 
 /* ---- gantt: barras posicionadas + línea HOY ---- */
 $$('#gantt .g-row').forEach(function(r){
@@ -1051,29 +1129,121 @@ $$('.sp').forEach(function(s){
   else if(HOY>=d(s.dataset.a)) s.classList.add('sp--on');
 });
 
-/* ---- render de hitos por nivel ---- */
-var XPN={1:0,2:0,3:0,4:0}, XPT={1:0,2:0,3:0,4:0}, CNT={1:0,2:0,3:0,4:0};
-var focoAsignado=false;
-H.forEach(function(h){
-  var fh=d(h.f), st = fh<HOY?'done':(!focoAsignado?'foco':'pend');
-  if(st!=='done'&&!focoAsignado) focoAsignado=true;
-  XPT[h.n]+=h.xp;
-  if(st==='done'){ XPN[h.n]+=h.xp; CNT[h.n]++; }
-  var el=document.createElement('article');
-  el.className='hito'+(st==='done'?' hito--done':'')+(st==='foco'?' hito--foco':'');
-  el.innerHTML='<div class="h-top"><span>'+fmt(fh)+'</span><span>'+h.fr+'</span></div>'+
-    '<h4>'+h.t+'</h4><p class="h-desc">'+h.d+'</p>'+
-    '<div class="h-meta"><span>RESPONSABLE :: <b>'+h.r+'</b></span><span>APRUEBA :: <b>'+h.a+'</b></span>'+
-    '<span>ENTREGABLE :: <b>'+h.e+'</b></span><span class="h-xp">+'+h.xp+' XP</span></div>'+
-    '<p class="h-crit">'+h.c+'</p>';
-  $('.hitos[data-nivel="'+h.n+'"]').appendChild(el);
+/* ---- render de hitos por nivel (re-renderiza al marcar) ---- */
+function renderHitos(){
+  var XPN={1:0,2:0,3:0,4:0}, XPT={1:0,2:0,3:0,4:0}, CNT={1:0,2:0,3:0,4:0};
+  $$('.hitos').forEach(function(g){ g.innerHTML=''; });
+  var focoAsignado=false;
+  H.forEach(function(h,i){
+    var fh=d(h.f), hk=hecho(i);
+    var st = hk?'done':(!focoAsignado?'foco':'pend');
+    if(!hk&&!focoAsignado) focoAsignado=true;
+    XPT[h.n]+=h.xp;
+    if(hk){ XPN[h.n]+=h.xp; CNT[h.n]++; }
+    var el=document.createElement('article');
+    el.className='hito'+(st==='done'?' hito--done':'')+(st==='foco'?' hito--foco':'');
+    var ctl = h.ok===1
+      ? '<span class="h-mark h-mark--of">OFICIAL ✓ CONFIRMADO POR LA AGENCIA</span>'
+      : '<button class="h-mark" type="button" data-i="'+i+'" aria-pressed="'+(hk?'true':'false')+'">'+(hk?'[ HECHO ✓ — TOCAR PARA DESMARCAR ]':'[ MARCAR COMO HECHO ]')+'</button>';
+    el.innerHTML='<div class="h-top"><span>'+fmt(fh)+'</span><span>'+h.fr+'</span></div>'+
+      '<h4>'+h.t+'</h4><p class="h-desc">'+h.d+'</p>'+
+      '<div class="h-meta"><span>RESPONSABLE :: <b>'+h.r+'</b></span><span>APRUEBA :: <b>'+h.a+'</b></span>'+
+      '<span>ENTREGABLE :: <b>'+h.e+'</b></span><span class="h-xp">+'+h.xp+' XP</span></div>'+
+      '<p class="h-crit">'+h.c+'</p>'+ctl;
+    $('.hitos[data-nivel="'+h.n+'"]').appendChild(el);
+  });
+  [1,2,3,4].forEach(function(n){
+    var f=XPT[n]?XPN[n]/XPT[n]:0;
+    var bar=$('[data-nivel-bar="'+n+'"]'); if(bar) bar.style.width=(f*100)+'%';
+    var xps=$('.n'+n+'xp'); if(xps) xps.textContent=XPN[n];
+    var c=$('[data-nivel-count="'+n+'"]'); if(c) c.textContent=CNT[n];
+  });
+  pintarEstado();
+}
+renderHitos();
+document.addEventListener('click',function(ev){
+  var b=ev.target.closest('button.h-mark'); if(!b) return;
+  var i=+b.dataset.i;
+  if(marks[i]===1) delete marks[i]; else marks[i]=1;
+  try{ localStorage.setItem(MKEY,JSON.stringify(marks)); }catch(e){}
+  renderHitos();
 });
-[1,2,3,4].forEach(function(n){
-  var f=XPT[n]?XPN[n]/XPT[n]:0;
-  var bar=$('[data-nivel-bar="'+n+'"]'); if(bar) bar.style.width=(f*100)+'%';
-  var xps=$('.n'+n+'xp'); if(xps) xps.textContent=XPN[n];
-  var c=$('[data-nivel-count="'+n+'"]'); if(c) c.textContent=CNT[n];
+/* copiar estado para la agencia */
+var ce=$('#estado-copy');
+if(ce) ce.addEventListener('click',function(){
+  var lin=[], pend=[];
+  H.forEach(function(h,i){
+    var t=h.t.replace(/<[^>]*>/g,'');
+    if(h.ok===1) lin.push('✓✓ '+fmt(d(h.f))+' — '+t+' (OFICIAL)');
+    else if(marks[i]===1) lin.push('✓ '+fmt(d(h.f))+' — '+t+' (marcado en este dispositivo)');
+    else pend.push('· '+fmt(d(h.f))+' — '+t);
+  });
+  var txt='ESTADO DE OBRA :: '+fmt(HOY)+' 2026 :: '+nHechos()+'/26 HITOS\n\nHECHOS:\n'+(lin.join('\n')||'(ninguno)')+'\n\nPENDIENTES:\n'+pend.join('\n');
+  (navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(txt):Promise.reject()).then(function(){
+    $('#estado-feedback').textContent='[ OK ] ESTADO COPIADO';
+  }).catch(function(){
+    var ta=$('#estado-manual');
+    if(!ta){ ta=document.createElement('textarea'); ta.id='estado-manual'; ta.readOnly=true; ta.setAttribute('aria-label','Estado para copiar a mano');
+      ta.style.cssText='width:100%;min-height:120px;margin-top:14px;font-family:var(--mono);font-size:11px;padding:10px;border:1px solid var(--ink);background:var(--white);color:var(--ink)';
+      ce.parentElement.appendChild(ta); }
+    ta.value=txt; ta.hidden=false; ta.focus(); ta.select();
+    var ok=false; try{ ok=document.execCommand('copy'); }catch(e){}
+    $('#estado-feedback').textContent= ok?'[ OK ] ESTADO COPIADO':'[ !! ] SELECCIONALO Y COPIALO A MANO';
+  });
 });
+
+/* ---- insumos de la marca (checklist persistente) ---- */
+var INS=[
+ ['Accesos completos: TN admin, dominio/DNS, Mercado Pago, META Business, GA4, Envato','VERÓNICA + JAVIER','2026-09-04'],
+ ['Manual de marca, logo original vectorial y piezas de branding','JAVIER','2026-09-11'],
+ ['Textos institucionales: historia, manifiesto, quiénes somos','PANNI + JAVIER','2026-09-18'],
+ ['Pieza musical elegida de Envato (licencia comercial)','PANNI','2026-09-25'],
+ ['Catálogo y contenidos MANUK validados','MANUK','2026-10-09'],
+ ['Fichas de producto: materiales, cuidados, medidas por talle','SOFÍA','2026-10-16'],
+ ['Conteo físico inicial del stock, pieza por pieza','VERÓNICA','2026-10-16'],
+ ['Políticas de cambios/envíos + datos fiscales (ARCA)','VERÓNICA','2026-10-23'],
+ ['Diseños de pintura digitalizados para el personalizador','PANNI','2026-10-30'],
+ ['Lista curada de conjuntos combinables (cross-selling)','JAVIER','2026-11-13'],
+ ['Fotos crudas de producto con derechos (sesión nueva)','SOFÍA','2026-11-20'],
+ ['Textos finales de campaña de lanzamiento','PANNI + JAVIER','2026-11-27'],
+];
+var IKEY='pm_rm_ins';
+var ins={}; try{ var _i=JSON.parse(localStorage.getItem(IKEY)||'{}'); if(_i&&typeof _i==='object'&&!Array.isArray(_i)) ins=_i; }catch(e){}
+var ig=$('#ins-grid');
+if(ig){
+  var ih='';
+  INS.forEach(function(it,i){
+    ih+='<label class="chip ins-chip"><input type="checkbox" data-ii="'+i+'"'+(ins[i]?' checked':'')+'><span><b>'+it[0]+'</b><br><span class="tag" style="letter-spacing:.14em">'+it[1]+' · LÍMITE '+fmt(d(it[2]))+'</span></span></label>';
+  });
+  ig.innerHTML=ih;
+  function insPinta(){
+    var n=0; INS.forEach(function(_,i){ if(ins[i]) n++; });
+    $('#ins-count').textContent=n;
+    var b=$('#ins-bar'); if(b) b.style.width=Math.round(n/INS.length*100)+'%';
+  }
+  insPinta();
+  ig.addEventListener('change',function(ev){
+    var i=ev.target; if(!('ii' in i.dataset)) return;
+    if(i.checked) ins[i.dataset.ii]=1; else delete ins[i.dataset.ii];
+    try{ localStorage.setItem(IKEY,JSON.stringify(ins)); }catch(e){}
+    insPinta();
+  });
+  $('#ins-copy').addEventListener('click',function(){
+    var pend=INS.filter(function(_,i){return !ins[i];}).map(function(it){return '· '+it[0]+' — '+it[1]+' (límite '+fmt(d(it[2]))+')';});
+    var txt='INSUMOS PENDIENTES DE LA MARCA :: '+fmt(HOY)+' 2026\n'+(pend.join('\n')||'(todo entregado ✓)');
+    (navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(txt):Promise.reject()).then(function(){
+      $('#ins-feedback').textContent='[ OK ] PENDIENTES COPIADOS — '+pend.length;
+    }).catch(function(){
+      var ta=$('#ins-manual');
+      if(!ta){ ta=document.createElement('textarea'); ta.id='ins-manual'; ta.readOnly=true; ta.setAttribute('aria-label','Pendientes para copiar a mano');
+        ta.style.cssText='width:100%;min-height:120px;margin-top:14px;font-family:var(--mono);font-size:11px;padding:10px;border:1px solid var(--ink);background:var(--white);color:var(--ink)';
+        $('#insumos .wrap').appendChild(ta); }
+      ta.value=txt; ta.hidden=false; ta.focus(); ta.select();
+      var ok=false; try{ ok=document.execCommand('copy'); }catch(e){}
+      $('#ins-feedback').textContent= ok?'[ OK ] PENDIENTES COPIADOS':'[ !! ] SELECCIONALO Y COPIALO A MANO';
+    });
+  });
+}
 
 /* ---- tablero de selección (localStorage) ---- */
 var KEY='pm_rm_sel';
