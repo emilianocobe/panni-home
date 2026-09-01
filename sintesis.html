@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SÍNTESIS · 統合 :: PANNI MARGOT</title>
+<link rel="icon" href="./favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@100..900&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#000; --white:#fff;
+  --g-900:#0a0a0a; --g-800:#141414; --g-700:#242424; --g-500:#5c5c5c; --g-300:#a8a8a8; --g-100:#e6e6e6;
+  --display:"Anton",Impact,sans-serif;
+  --geo:"Archivo",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  --jp:"Noto Sans JP",sans-serif;
+  --barra:36px;
+  /* módulo conceptual (negro) por defecto; body.com invierte al módulo de compra */
+  --bg:var(--black); --fg:var(--white);
+  --ln:var(--g-700); --ln2:var(--g-800);
+  --mut:var(--g-300); --sua:var(--g-500);
+}
+body.com{--bg:var(--white);--fg:var(--black);--ln:var(--black);--ln2:var(--g-100);--mut:var(--g-500);--sua:var(--g-500)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);padding-top:var(--barra);font-family:var(--mono);font-size:11px;letter-spacing:.08em;overflow-x:hidden;transition:background .35s,color .35s}
+img{display:block;max-width:100%;user-select:none;-webkit-user-drag:none}
+a{color:inherit;text-decoration:none}
+button{background:none;border:none;color:inherit;font:inherit;letter-spacing:inherit;cursor:pointer}
+select,input{font:inherit;letter-spacing:inherit;color:inherit}
+::selection{background:var(--fg);color:var(--bg)}
+a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--fg);outline-offset:3px}
+[hidden]{display:none!important}
+
+.skip{position:fixed;top:-60px;left:16px;z-index:10001;background:var(--fg);color:var(--bg);padding:10px 16px;font-size:10px;text-transform:uppercase;transition:top .2s}
+.skip:focus{top:calc(var(--barra) + 8px)}
+
+/* ═══ GRANO — solo respira sobre el módulo conceptual ═══ */
+#grain{position:fixed;inset:-150%;z-index:9998;pointer-events:none;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 1s steps(6) infinite;transition:opacity .35s}
+body.com #grain{opacity:0;animation-play-state:paused}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,-4%)}40%{transform:translate(-6%,2%)}60%{transform:translate(3%,-5%)}80%{transform:translate(-2%,4%)}100%{transform:translate(2%,-2%)}}
+
+/* ═══ BARRA CONTEXTO ═══ */
+#vbar{position:fixed;top:0;left:0;right:0;height:var(--barra);z-index:960;background:var(--bg);border-bottom:1px solid var(--ln);
+  display:flex;justify-content:space-between;align-items:center;padding:0 16px;font-size:9px;text-transform:uppercase;color:var(--mut);transition:background .35s,color .35s}
+#vbar a{padding:13px 8px}
+#vbar a:hover{color:var(--fg)}
+#vbar .vb-r{display:flex;gap:18px;align-items:center}
+#vbar .vb-r .mod{color:var(--mut)}
+body.com #vbar .vb-r .mod{color:var(--g-500)}
+
+/* ═══ HEADER + NAV DEL SITIO ═══ */
+header{position:sticky;top:var(--barra);z-index:940;display:flex;justify-content:space-between;align-items:center;gap:14px;
+  padding:16px 28px;background:var(--bg);border-bottom:1px solid var(--ln);font-size:10px;text-transform:uppercase;transition:background .35s}
+.pm-lockup{display:block;height:1em;width:calc(1em * 640 / 103);fill:currentColor}
+.lockup{display:inline-flex;align-items:center;gap:.7em}
+.lockup .pm-lockup{font-size:2em}
+nav.principal{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+nav.principal a,nav.principal .off{padding:12px 12px;letter-spacing:.14em}
+nav.principal a{border-bottom:1px solid transparent}
+nav.principal a:hover{border-bottom-color:var(--fg)}
+nav.principal a[aria-current="page"]{border-bottom-color:var(--fg)}
+nav.principal a .ja{color:var(--mut);margin-left:6px}
+nav.principal .off{color:var(--mut);border:0}
+body.com nav.principal .off{color:var(--g-500)}
+nav.principal .off .pr{border:1px solid var(--ln2);padding:2px 6px;margin-left:6px;font-size:9px}
+#btn-cart{border:1px solid var(--ln);padding:10px 14px;letter-spacing:.14em;min-height:44px}
+#btn-cart:hover{background:var(--fg);color:var(--bg)}
+#btn-cart .n{font-variant-numeric:tabular-nums}
+
+.vert-kana{position:fixed;left:22px;top:55%;transform:translateY(-50%);z-index:850;
+  font-family:var(--jp);font-size:13px;letter-spacing:.5em;writing-mode:vertical-rl;
+  color:var(--white);mix-blend-mode:difference;opacity:.85;pointer-events:none}
+
+/* ═══ VISTAS ═══ */
+.vista{min-height:calc(100vh - var(--barra))}
+.vista:focus{outline:none}
+
+/* ─── HOME · módulo conceptual ─── */
+#v-home .hero{position:relative;min-height:calc(100vh - var(--barra) - 78px);min-height:calc(100svh - var(--barra) - 78px);
+  overflow:hidden;display:grid;align-content:center;padding:10vh 28px 12vh 66px;border-bottom:1px solid var(--ln)}
+.dvz{position:absolute;inset:0;pointer-events:none}
+.dv{position:absolute;width:clamp(110px,14vw,190px);padding:0;text-align:left;pointer-events:auto;opacity:.9}
+.dv img{width:100%;aspect-ratio:3/4;object-fit:cover;filter:grayscale(1) contrast(1.12)}
+.dv:hover img{filter:grayscale(0) contrast(1)}
+.dv .tag{display:block;margin-top:6px;font-size:9px;letter-spacing:.12em;color:var(--g-300);text-transform:uppercase}
+.dv{animation:derivar var(--dvt,34s) ease-in-out var(--dvd,0s) infinite alternate}
+@keyframes derivar{from{transform:translate(0,0) rotate(var(--dvr,0deg))}to{transform:translate(var(--dvx,26px),var(--dvy,-20px)) rotate(calc(var(--dvr,0deg) * -1))}}
+.hero-in{position:relative;z-index:3;pointer-events:none;mix-blend-mode:difference}
+.hero-in .kicker{font-size:10px;letter-spacing:.3em;color:var(--g-300);text-transform:uppercase;margin-bottom:3vh}
+.hero-in h1{font-family:var(--display);font-weight:400;font-size:clamp(2.6rem,7.8vw,7rem);line-height:.88;text-transform:uppercase;letter-spacing:.01em;max-width:14ch}
+.hero-in .kj{display:block;font-family:var(--jp);font-weight:700;font-size:clamp(1.2rem,3vw,2.4rem);margin-top:2.2vh;color:var(--g-300)}
+.hero-in .baj{margin-top:4vh;font-family:var(--geo);font-size:clamp(.95rem,1.5vw,1.15rem);line-height:1.5;max-width:44ch;color:var(--g-100)}
+.hero-cta{position:relative;z-index:4;margin-top:5vh;display:flex;gap:14px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--fg);padding:0 22px;min-height:48px;
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;transition:background .15s,color .15s}
+.btn:hover{background:var(--fg);color:var(--bg)}
+.btn.gh{border-color:var(--ln);color:var(--mut)}
+.btn.gh:hover{border-color:var(--fg);background:none;color:var(--fg)}
+.hero-term{position:absolute;bottom:18px;right:22px;z-index:3;text-align:right;font-size:9px;color:var(--g-300);line-height:2;pointer-events:none}
+
+.mq{overflow:hidden;white-space:nowrap;border-bottom:1px solid var(--ln);padding:12px 0}
+.mq__t{display:inline-block;font-size:11px;letter-spacing:.25em;animation:mqa 36s linear infinite}
+.mq:hover .mq__t{animation-play-state:paused}
+@keyframes mqa{to{transform:translateX(-50%)}}
+
+/* landing de secciones — la corrección de Sofía hecha grilla */
+.secs{padding:10vh 28px 12vh 66px;border-bottom:1px solid var(--ln)}
+.secs .sh{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:6vh}
+.secs h2,.blq h2{font-family:var(--display);font-size:clamp(2rem,5vw,3.8rem);line-height:.88;text-transform:uppercase}
+.secs .sh .r{font-size:10px;color:var(--g-300);text-transform:uppercase;text-align:right;line-height:1.9}
+.sec-gr{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1px;background:var(--ln);border:1px solid var(--ln)}
+.sec{position:relative;background:var(--bg);padding:26px 20px 22px;min-height:150px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;transition:background .2s,color .2s}
+.sec:hover{background:var(--white);color:var(--black)}
+.sec .nm{font-family:var(--display);font-size:clamp(1.3rem,2.4vw,1.9rem);text-transform:uppercase;line-height:.95}
+.sec .kja{font-family:var(--jp);font-weight:700;font-size:15px;margin-top:6px;color:var(--g-300)}
+.sec:hover .kja{color:var(--g-500)}
+.sec .ct{display:flex;justify-content:space-between;align-items:baseline;margin-top:18px;font-size:9px;text-transform:uppercase;color:var(--g-300)}
+.sec:hover .ct{color:var(--g-500)}
+.sec.manuk{background:var(--white);color:var(--black)}
+.sec.manuk .kja{color:var(--g-500)}
+.sec.manuk .ct{color:var(--g-500)}
+.sec.manuk:hover{background:var(--black);color:var(--white)}
+.sec.manuk:hover .kja,.sec.manuk:hover .ct{color:var(--g-300)}
+.sec.disc{color:var(--g-300)}
+.sec.disc .nm{color:inherit}
+
+/* bloque genérico del módulo conceptual */
+.blq{padding:10vh 28px 12vh 66px;border-bottom:1px solid var(--ln)}
+.blq .lead{font-family:var(--geo);font-weight:400;font-size:clamp(1.5rem,3.2vw,2.7rem);line-height:1.24;max-width:28ch;letter-spacing:-.01em}
+.blq .lead b{font-weight:800}
+.blq .mini{margin-top:5vh;font-size:10px;text-transform:uppercase;color:var(--g-300);letter-spacing:.2em;line-height:2.2}
+
+/* ─── TERRITORIO (deriva de una sección) ─── */
+#v-terr .t-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:18px 28px;border-bottom:1px solid var(--ln);font-size:10px;text-transform:uppercase}
+#v-terr .t-head h1{font-family:var(--display);font-size:clamp(1.5rem,3.4vw,2.4rem);text-transform:uppercase;line-height:.9}
+#v-terr .t-head .kja{font-family:var(--jp);color:var(--g-300);margin-left:10px;font-size:14px}
+#v-terr .t-acc{display:flex;gap:10px;flex-wrap:wrap}
+.t-btn{border:1px solid var(--ln);padding:0 16px;min-height:44px;display:inline-flex;align-items:center;gap:8px;letter-spacing:.14em;text-transform:uppercase;font-size:10px}
+.t-btn:hover{background:var(--fg);color:var(--bg)}
+#terr-mapa{position:relative;height:calc(100vh - var(--barra) - 160px);min-height:460px;overflow:hidden}
+.tz{position:absolute;width:clamp(130px,16vw,210px);padding:0;text-align:left;
+  animation:derivar var(--dvt,46s) ease-in-out var(--dvd,0s) infinite alternate}
+.tz img{width:100%;aspect-ratio:3/4;object-fit:cover;filter:grayscale(1) contrast(1.12)}
+.tz:hover img{filter:grayscale(0) contrast(1)}
+.tz .tag{display:block;margin-top:7px;font-size:9px;letter-spacing:.12em;color:var(--g-300);text-transform:uppercase;white-space:nowrap}
+#terr-luz,#terr-luz2{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle 340px at var(--fx,50%) var(--fy,45%),rgba(0,0,0,0) 0 44%,rgba(0,0,0,.6) 80%)}
+#terr-pie{position:absolute;bottom:16px;left:28px;font-size:9px;color:var(--g-300);letter-spacing:.14em;pointer-events:none}
+
+/* ─── SHOP · módulo de compra (blanco, patrón Demobaza) ─── */
+#v-shop{padding-bottom:8vh}
+.sh-head{padding:5vh 28px 0;display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap}
+.sh-head h1{font-family:var(--display);font-size:clamp(2rem,5vw,3.6rem);text-transform:uppercase;line-height:.9}
+.sh-head .r{font-size:10px;text-transform:uppercase;color:var(--g-500);text-align:right;line-height:1.9}
+.filtros{position:sticky;top:calc(var(--barra) + 78px);z-index:920;background:var(--bg);display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  padding:14px 28px;border-bottom:1px solid var(--ln);margin-top:3vh;font-size:10px;text-transform:uppercase}
+.chip{border:1px solid var(--g-100);padding:0 14px;min-height:40px;display:inline-flex;align-items:center;gap:7px;letter-spacing:.12em;font-size:10px;text-transform:uppercase}
+.chip .ja{color:var(--g-500)}
+.chip:hover{border-color:var(--black)}
+.chip[aria-pressed="true"]{background:var(--black);color:var(--white);border-color:var(--black)}
+.chip[aria-pressed="true"] .ja{color:var(--g-300)}
+.f-sel{display:inline-flex;align-items:center;gap:8px}
+.f-sel label{color:var(--g-500)}
+.f-sel select{background:var(--bg);border:1px solid var(--g-100);min-height:40px;padding:0 10px;text-transform:uppercase;font-size:10px;letter-spacing:.1em}
+.f-sel select:hover{border-color:var(--black)}
+#f-vivo{margin-left:auto;color:var(--g-500);font-variant-numeric:tabular-nums}
+.grilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1px;background:var(--g-100);border-bottom:1px solid var(--g-100)}
+.pcard{position:relative;background:var(--bg);padding:0 0 16px;text-align:left;display:flex;flex-direction:column}
+.pcard img{width:100%;aspect-ratio:3/4;object-fit:cover;filter:grayscale(1) contrast(1.08);transition:filter .3s}
+.pcard:hover img{filter:grayscale(0) contrast(1)}
+.pcard .inf{padding:12px 14px 0;display:grid;gap:5px}
+.pcard .nm{font-family:var(--geo);font-weight:700;font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.pcard .sk{font-size:9px;color:var(--g-500)}
+.pcard .pr{font-variant-numeric:tabular-nums;font-size:12px}
+.pcard .sll{display:flex;gap:6px;flex-wrap:wrap;margin-top:3px}
+.sello{border:1px solid var(--g-100);padding:3px 7px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--g-500)}
+.sello.uno{border-color:var(--black);color:var(--black)}
+.pcard .tl{position:absolute;top:10px;right:10px;background:var(--bg);border:1px solid var(--g-100);padding:4px 8px;font-size:9px}
+.sh-vacio{padding:10vh 28px;text-align:center;font-size:11px;color:var(--g-500);text-transform:uppercase;letter-spacing:.2em}
+
+/* ─── FICHA · data dura ─── */
+#v-ficha .fw{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:0;border-bottom:1px solid var(--g-100)}
+.fx-ph{border-right:1px solid var(--g-100);position:relative}
+.fx-ph img{width:100%;height:100%;max-height:calc(100vh - var(--barra) - 70px);object-fit:cover;filter:grayscale(1) contrast(1.06)}
+.fx-ph:hover img{filter:grayscale(0)}
+.fx-ph .sll{position:absolute;top:14px;left:14px;display:flex;gap:8px;flex-wrap:wrap}
+.fx-ph .sello{background:var(--white)}
+.fx-meta{padding:6vh 3vw 6vh;display:grid;align-content:start;gap:20px}
+.fx-meta .vol{font-size:9px;color:var(--g-500);text-transform:uppercase;letter-spacing:.2em}
+.fx-meta h1{font-family:var(--display);font-size:clamp(1.8rem,3.6vw,3rem);line-height:.92;text-transform:uppercase}
+.fx-meta .kj{font-family:var(--jp);color:var(--g-500);font-size:13px;letter-spacing:.3em}
+.fx-meta .pr{font-family:var(--geo);font-weight:800;font-size:clamp(1.3rem,2.4vw,1.9rem)}
+.fx-meta .cuo{font-size:10px;color:var(--g-500);text-transform:uppercase;letter-spacing:.14em}
+.fx-tl{display:flex;gap:10px;align-items:center;font-size:10px;text-transform:uppercase}
+.fx-tl .t{border:1px solid var(--black);padding:10px 16px}
+.fx-tl .n{color:var(--g-500)}
+#f-add{background:var(--black);color:var(--white);border:1px solid var(--black);min-height:52px;padding:0 26px;
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;width:100%}
+#f-add:hover{background:var(--white);color:var(--black)}
+#f-add[disabled]{background:var(--g-100);border-color:var(--g-100);color:var(--g-500);cursor:default}
+.fx-env{font-size:10px;color:var(--g-500);text-transform:uppercase;line-height:2;letter-spacing:.1em}
+.dura{border-top:1px solid var(--g-100)}
+.dura details{border-bottom:1px solid var(--g-100)}
+.dura summary{list-style:none;display:flex;justify-content:space-between;align-items:center;min-height:48px;padding:0 2px;
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer}
+.dura summary::-webkit-details-marker{display:none}
+.dura summary::after{content:"[+]";color:var(--g-500)}
+.dura details[open] summary::after{content:"[–]"}
+.dura .cont{padding:0 2px 16px;font-size:11px;line-height:2;color:var(--black)}
+.dura .cont .k{color:var(--g-500)}
+.comp{padding:6vh 28px 4vh}
+.comp h2{font-family:var(--display);font-size:clamp(1.3rem,2.6vw,2rem);text-transform:uppercase;margin-bottom:3vh}
+.comp .gr{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1px;background:var(--g-100);border:1px solid var(--g-100);max-width:900px}
+.f-volver{padding:0 28px 4vh}
+
+/* ─── CARRITO LATERAL ─── */
+#velo{position:fixed;inset:0;z-index:970;background:rgba(0,0,0,.45)}
+#cart{position:fixed;top:0;right:0;bottom:0;z-index:980;width:min(420px,100%);background:var(--white);color:var(--black);
+  border-left:1px solid var(--black);display:flex;flex-direction:column;transform:translateX(102%);transition:transform .4s cubic-bezier(.25,.9,.25,1)}
+#cart.open{transform:none}
+.ct-h{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid var(--g-100);font-size:11px;text-transform:uppercase;letter-spacing:.18em}
+#cart-cls{border:1px solid var(--g-100);min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+#cart-cls:hover{background:var(--black);color:var(--white)}
+.ct-list{flex:1;overflow-y:auto;padding:8px 20px}
+.ct-it{display:grid;grid-template-columns:74px 1fr auto;gap:14px;padding:14px 0;border-bottom:1px solid var(--g-100);align-items:start}
+.ct-it img{width:74px;aspect-ratio:3/4;object-fit:cover;filter:grayscale(1)}
+.ct-it .nm{font-family:var(--geo);font-weight:700;font-size:11px;text-transform:uppercase}
+.ct-it .sk{font-size:9px;color:var(--g-500);margin-top:3px}
+.ct-it .un{font-size:9px;color:var(--g-500);margin-top:6px;text-transform:uppercase}
+.ct-it .pr{font-variant-numeric:tabular-nums;font-size:11px}
+.ct-it .qt{border:1px solid var(--g-100);padding:6px 10px;font-size:10px;margin-top:8px;justify-self:end}
+.ct-it .qt:hover{border-color:var(--black)}
+.ct-vacio{padding:8vh 0;text-align:center;color:var(--g-500);font-size:10px;text-transform:uppercase;letter-spacing:.2em;line-height:2.4}
+.ct-f{border-top:1px solid var(--black);padding:16px 20px 20px;display:grid;gap:12px}
+.ct-tot{display:flex;justify-content:space-between;font-size:13px;text-transform:uppercase;letter-spacing:.14em}
+.ct-tot b{font-variant-numeric:tabular-nums;font-family:var(--geo);font-weight:800;font-size:16px}
+.ct-nota{font-size:9px;color:var(--g-500);text-transform:uppercase;line-height:1.9;letter-spacing:.1em}
+#ct-go{background:var(--black);color:var(--white);min-height:52px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;border:1px solid var(--black)}
+#ct-go:hover{background:var(--white);color:var(--black)}
+
+/* checkout stub */
+#chk{position:fixed;inset:0;z-index:985;background:var(--white);color:var(--black);overflow-y:auto;padding:calc(var(--barra) + 40px) 28px 60px}
+#chk .in{max-width:720px;margin:0 auto;display:grid;gap:34px}
+#chk h1{font-family:var(--display);font-size:clamp(1.8rem,4.4vw,3rem);text-transform:uppercase;line-height:.9}
+#chk ol{list-style:none;counter-reset:p;display:grid;gap:1px;background:var(--g-100);border:1px solid var(--g-100)}
+#chk li{counter-increment:p;background:var(--white);padding:22px 20px;display:grid;gap:8px}
+#chk li .st{font-size:9px;letter-spacing:.24em;color:var(--g-500);text-transform:uppercase}
+#chk li .st::before{content:"PASO 0" counter(p) " :: "}
+#chk li .tt{font-family:var(--geo);font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.04em}
+#chk li .dd{font-size:11px;line-height:1.9;color:var(--black)}
+#chk li .dd .k{color:var(--g-500)}
+#chk .chk-pie{font-size:9px;color:var(--g-500);text-transform:uppercase;letter-spacing:.14em;line-height:2}
+#chk-cls{border:1px solid var(--g-100);min-height:48px;padding:0 22px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;width:max-content}
+#chk-cls:hover{background:var(--black);color:var(--white)}
+
+/* ─── ARCHIVO ─── */
+#v-arch .t-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:18px 28px;border-bottom:1px solid var(--ln);font-size:10px;text-transform:uppercase}
+#v-arch .t-head h1{font-family:var(--display);font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:.9}
+#v-arch .t-head .kja{font-family:var(--jp);color:var(--g-300);margin-left:10px;font-size:14px}
+#arch-mapa{position:relative;height:calc(100vh - var(--barra) - 300px);min-height:420px;overflow:hidden;border-bottom:1px solid var(--ln)}
+#arch-mapa .tz .tag{color:var(--g-300)}
+#arch-mapa .tz img{opacity:.85}
+.arch-cta{padding:8vh 28px 10vh 66px}
+.arch-cta .lead{font-family:var(--geo);font-size:clamp(1.2rem,2.6vw,2rem);line-height:1.3;max-width:34ch}
+.arch-form{margin-top:4vh;display:grid;gap:14px;max-width:520px}
+.arch-form label{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--g-300)}
+.arch-form textarea{background:none;border:1px solid var(--ln);color:var(--fg);padding:14px;min-height:110px;resize:vertical;font:inherit;letter-spacing:.04em}
+.arch-form textarea:focus{outline:none;border-color:var(--fg)}
+.arch-form .fila{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+#arch-ok{font-size:10px;color:var(--g-300);text-transform:uppercase;letter-spacing:.16em;min-height:1.4em}
+
+/* ─── LA CASA ─── */
+.casa-manif{padding:12vh 28px 12vh 66px;border-bottom:1px solid var(--ln)}
+.casa-manif .lead{font-family:var(--geo);font-weight:400;font-size:clamp(1.6rem,3.6vw,3rem);line-height:1.24;max-width:28ch;letter-spacing:-.01em}
+.casa-manif .lead b{font-weight:800}
+.casa-manif .firma{margin-top:5vh;font-size:10px;text-transform:uppercase;color:var(--g-300);letter-spacing:.2em}
+.casa-gr{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--ln)}
+.casa-c{padding:8vh 28px 8vh 66px;border-right:1px solid var(--ln)}
+.casa-c:last-child{border-right:0}
+.casa-c h2{font-family:var(--display);font-size:clamp(1.5rem,3vw,2.4rem);text-transform:uppercase;line-height:.9;margin-bottom:3vh}
+.casa-c h2 .kja{font-family:var(--jp);font-size:.6em;color:var(--g-300);margin-left:10px}
+.casa-c p{font-size:11px;line-height:2.1;color:var(--g-100);max-width:46ch}
+.casa-c p .k{color:var(--g-300)}
+.casa-c .dato{margin-top:3vh;font-size:10px;text-transform:uppercase;letter-spacing:.16em;line-height:2.4;color:var(--g-300)}
+.casa-c .dato b{color:var(--white);font-weight:400}
+#reloj{display:inline-flex;gap:10px;align-items:baseline;border:1px solid var(--ln);padding:10px 16px;margin-top:2vh;font-size:10px;text-transform:uppercase;letter-spacing:.16em}
+#reloj .dot{width:7px;height:7px;border-radius:50%;background:var(--g-500);align-self:center}
+#reloj.abierto .dot{background:var(--white)}
+
+/* ═══ FOOTER ═══ */
+footer{border-top:1px solid var(--ln);padding:60px 28px 34px;font-size:10px;text-transform:uppercase}
+.f-term{font-family:var(--mono);font-size:11px;color:var(--sua);line-height:2;word-break:break-word;margin-bottom:44px;text-transform:none}
+.f-term b{color:var(--fg);font-weight:400}
+.f-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:30px}
+.f-grid p.h{color:var(--mut);margin-bottom:10px}
+.f-grid a,.f-grid button.fl{display:flex;align-items:center;min-height:34px;padding:0;text-transform:uppercase;text-align:left}
+.f-grid a:hover,.f-grid button.fl:hover{color:var(--mut)}
+body.com .f-grid a:hover,body.com .f-grid button.fl:hover{color:var(--g-500)}
+.news{display:flex;gap:0;margin-top:8px;max-width:280px}
+.news input{flex:1;min-width:0;background:none;border:1px solid var(--ln);border-right:0;padding:0 12px;min-height:44px;color:var(--fg);font-size:10px;letter-spacing:.1em}
+.news input::placeholder{color:var(--sua)}
+.news input:focus{outline:none;border-color:var(--fg)}
+.news button{border:1px solid var(--ln);min-height:44px;padding:0 14px;font-size:10px}
+.news button:hover{background:var(--fg);color:var(--bg)}
+#news-ok{margin-top:8px;font-size:9px;color:var(--mut);letter-spacing:.14em;min-height:1.2em;display:block}
+.f-sign{margin-top:54px;padding-top:16px;border-top:1px solid var(--ln2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;color:var(--mut);font-size:9px}
+
+/* ═══ REDUCED MOTION ═══ */
+@media(prefers-reduced-motion:reduce){
+  *,#grain{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+  .dv,.tz{animation:none!important}
+  #cart{transition:none}
+}
+
+/* ═══ TOUCH ═══ */
+@media (hover:none),(pointer:coarse){
+  .pcard:hover img,.dv:hover img,.tz:hover img,.fx-ph:hover img{filter:grayscale(1) contrast(1.08)}
+  #vbar a{padding:13px 10px}
+}
+
+/* ═══ TELÉFONO ═══ */
+@media(max-width:900px){
+  #v-ficha .fw{grid-template-columns:1fr}
+  .fx-ph{border-right:0;border-bottom:1px solid var(--g-100)}
+  .casa-gr{grid-template-columns:1fr}
+  .casa-c{border-right:0;border-bottom:1px solid var(--ln)}
+  .casa-c:last-child{border-bottom:0}
+}
+@media(max-width:640px){
+  .vert-kana{display:none}
+  header{padding:12px 16px;flex-wrap:wrap}
+  nav.principal{order:3;width:100%;justify-content:flex-start;gap:0;border-top:1px solid var(--ln2);margin-top:8px;padding-top:4px}
+  nav.principal a,nav.principal .off{padding:12px 9px;font-size:9px}
+  #v-home .hero{padding:8vh 20px 10vh}
+  .hero-term{display:none}
+  .secs,.blq,.arch-cta,.casa-manif,.casa-c{padding-left:20px;padding-right:20px}
+  .sh-head,.filtros,.comp,.f-volver{padding-left:16px;padding-right:16px}
+  .filtros{top:auto;position:static}
+  .fx-meta{padding:4vh 20px}
+  #chk{padding:calc(var(--barra) + 24px) 16px 48px}
+  footer{padding:48px 16px 28px}
+}
+</style>
+
+<style id="pmgate-css">
+/* ═══ CORTINA DE ACCESO — estética de la casa, fail-closed ═══ */
+#pmgate{position:fixed;inset:0;z-index:99999;background:#000;color:#fff;
+  display:grid;place-items:center;padding:24px;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  opacity:1;transition:opacity .45s ease}
+#pmgate.pmgate--out{opacity:0;pointer-events:none}
+#pmgate::after{content:"";position:absolute;inset:-25%;pointer-events:none;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:pmgate-grain 1s steps(6) infinite}
+@keyframes pmgate-grain{0%{transform:translate(0,0)}25%{transform:translate(-3%,-4%)}50%{transform:translate(-6%,2%)}75%{transform:translate(3%,-5%)}100%{transform:translate(2%,-2%)}}
+.pmgate-in{position:relative;z-index:2;width:min(420px,100%);display:grid;gap:26px;justify-items:center;text-align:center}
+.pmgate-mark{width:clamp(56px,14vw,76px);height:auto;fill:#fff}
+.pmgate-kana{font-family:"Noto Sans JP",sans-serif;font-size:clamp(11px,3vw,13px);letter-spacing:.5em;color:#a8a8a8;margin-right:-.5em}
+.pmgate-t{font-size:clamp(10px,2.6vw,11px);letter-spacing:.34em;text-transform:uppercase}
+.pmgate-f{width:100%;display:grid;gap:14px;justify-items:center}
+.pmgate-row{width:100%;display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid #5c5c5c;padding-bottom:10px;transition:border-color .2s}
+.pmgate-row:focus-within{border-bottom-color:#fff}
+.pmgate-cue{font-size:11px;color:#5c5c5c;flex:none}
+#pmgate-i{flex:1;min-width:0;background:none;border:0;color:#fff;
+  font:inherit;font-size:clamp(13px,3.4vw,15px);letter-spacing:.24em;
+  padding:8px 0;min-height:44px;caret-color:#fff}
+#pmgate-i:focus{outline:none}
+#pmgate-i::placeholder{color:#242424;letter-spacing:.3em}
+.pmgate-go{background:none;border:1px solid #5c5c5c;color:#fff;font:inherit;
+  font-size:11px;letter-spacing:.16em;padding:0 14px;min-height:44px;cursor:pointer;
+  transition:background .15s,color .15s,border-color .15s}
+.pmgate-go:hover,.pmgate-go:focus-visible{background:#fff;color:#000;border-color:#fff}
+.pmgate-go:focus-visible{outline:2px solid #fff;outline-offset:3px}
+#pmgate-i:focus-visible{outline:none}
+.pmgate-err{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#a8a8a8;min-height:1.2em}
+.pmgate-foot{font-size:9px;letter-spacing:.2em;color:#5c5c5c;text-transform:uppercase;line-height:2}
+.pmgate-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
+@media (prefers-reduced-motion:reduce){
+  #pmgate{transition:none}
+  #pmgate::after{animation:none}
+}
+</style>
+</head>
+<body>
+<div id="pmgate" role="dialog" aria-modal="true" aria-labelledby="pmgate-t">
+  <div class="pmgate-in">
+    <svg class="pmgate-mark" viewBox="0 0 104 103" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667Z"/></svg>
+    <p class="pmgate-kana" lang="ja" aria-hidden="true">バーニ　マーゴット</p>
+    <p class="pmgate-t" id="pmgate-t">ACCESO PRIVADO</p>
+    <form class="pmgate-f" id="pmgate-f" autocomplete="off" novalidate>
+      <label class="pmgate-sr" for="pmgate-i">Frase de acceso</label>
+      <div class="pmgate-row">
+        <span class="pmgate-cue" aria-hidden="true">&gt;&gt;</span>
+        <input id="pmgate-i" type="password" autocomplete="current-password"
+               spellcheck="false" placeholder="········" aria-describedby="pmgate-e">
+        <button class="pmgate-go" type="submit">[ OK ]</button>
+      </div>
+      <p class="pmgate-err" id="pmgate-e" role="status" aria-live="polite"></p>
+    </form>
+    <p class="pmgate-foot" aria-hidden="true">
+      &lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()&gt;&gt;<br>
+      &gt;&gt;HONDURAS4940##
+    </p>
+  </div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="pm-lockup" viewBox="0 0 640 103"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM519.167 33.833L526.333 34L530.5 35L535 37.167L536.333 39.333L531.167 45.667L524.667 43.333L519.833 43.167L515.833 44.5L513.167 46.667L511 50.5L510.5 56.333L511.833 60.5L514.333 63.5L517.667 65.333L522.5 66L526.833 64.667L529.333 62.167L530.167 60L529.833 58.667L521.667 58.333L520.833 57.667L520.667 51.833L521.333 50.833L539.5 50.667L540.833 51.833L540.5 60.333L537.833 67.5L532.833 72.5L526.333 75L517.333 75L509.833 72.333L504.167 67.167L500.833 59.667L500.333 56.167L500.667 50.167L503.833 42.333L507.5 38.333L510.5 36.333L515.167 34.5L519.167 34ZM571.167 33.833L579 34.167L583.667 35.667L587.333 37.833L592.167 43L594.833 49.667L595 58.167L592.5 65.5L587 71.5L584.167 73.167L578.333 75L569.333 75L561.667 72.167L556.167 67L554.5 64.333L552.833 59.333L552.667 50.667L553.667 46.833L555.833 42.5L558.833 39L562.333 36.5L566.667 34.667L571.167 34ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667ZM132.167 34.667L152.667 34.667L156.5 35.333L160.5 37L164 40L166.5 45.667L166.667 50.333L165.667 54.333L164 57.167L161.333 59.667L154.5 62.5L142 62.833L141.167 63.333L140.833 73.667L139.333 74.5L132.167 74.333L131.167 72.667L131.167 36.167L132.167 34.833ZM222.5 34.667L225 35.333L248.333 54.5L249.167 54.5L249.667 53.167L249.667 35.5L250.167 34.833L251.5 34.667L253.167 35.5L276.5 54.5L277.5 53.5L277.667 35.333L279.167 34.667L286.5 35L287.167 36.333L287 73.667L286.167 74.333L284.333 74L261.167 54.167L259.667 53.833L259.167 55.5L259.167 73.5L258.333 74.333L256.667 74.167L234 54.833L231.667 53.833L231.167 55L231.167 73.5L229.5 74.5L222 74.167L221.5 73.333L221.5 35.667L222.5 34.833ZM303.667 34.667L311.667 34.667L312.5 35.667L312.5 73.167L311 74.5L304.5 74.5L303.333 74.167L302.667 73L302.667 35.833L303.667 34.833ZM344.667 34.667L347.333 35.167L364.333 51L366 50.5L382.167 35.333L383.333 34.667L385.5 35L385.5 74L377.667 74.5L376.167 73.833L376 55.833L375.5 55L374.333 55.333L366.667 63L365.167 63.667L363.333 63.167L357.833 57.5L355.167 55.167L354 55L353.5 73.833L352 74.5L344.333 74.167L343.833 73L343.833 36L344.667 34.833ZM452.667 34.667L474.667 34.833L479.5 36.167L484.167 39.5L486.833 44.5L487.167 51L485.5 55.833L481.167 60.167L481 61.667L489 72.667L488.833 74.167L478.5 74.167L471.667 64.167L469.833 62.833L462.833 62.833L461.833 63.333L461.5 73.5L461 74.167L453.5 74.5L452 73.833L451.833 35.5L452.667 34.833ZM606.333 34.667L639.667 34.833L639.667 42.833L629.833 43L628.333 43.333L627.833 44.167L627.833 73.167L627 74.333L619.833 74.5L618.333 74L618 44.333L617.333 43.333L615.833 43L606 42.833L605.5 42.167L605.5 35.5L606.333 34.833ZM189.5 34.833L191.5 35.5L193.333 38.833L210.667 71.667L211 74.167L201.5 74.333L198 69.833L182.333 69.833L181.167 70.5L178.833 74.333L170.333 74.5L169 73.833L184.5 43.333L189.5 35ZM418.333 34.833L420.167 35.333L422.5 39.5L440 72.667L439.667 74.333L430.167 74.333L427.833 70.5L426.667 69.833L411 69.833L407.5 74.333L399 74.5L398 74L398.333 71.833L417.5 35.5L418.333 35ZM143.167 43L141.667 43.167L141 44L141 54L141.5 54.667L150.333 54.833L153.333 54.167L155.167 53L156.333 50.667L156.5 47.833L154.667 44.5L151.833 43.167L143.333 43ZM463.667 43L462.167 43.333L461.5 44.5L461.5 53.333L462.167 54.667L472.333 54.667L476.167 52.5L477.167 48.333L475.333 44.5L472.333 43.167L463.833 43ZM572.667 43.167L568.167 44.5L564.833 47.333L562.833 51.667L562.667 56.5L564.333 61L567 63.833L571.167 65.667L575.5 65.833L579.833 64.333L583.333 61L584.833 57.5L585 52.5L583.5 48.333L581.167 45.667L576.833 43.5L572.833 43.167ZM189.833 52.5L188.167 54.833L185.167 62.167L186 62.833L194.333 62.833L194.833 61.167L191.167 53.333L190 52.5ZM418.667 52.5L416.833 55.167L414 62.167L414.667 62.833L423 62.833L423.667 61.167L419.667 52.833L418.833 52.5Z"/></symbol></defs></svg>
+
+<a class="skip" href="#main">SALTAR AL CONTENIDO</a>
+<div id="grain" aria-hidden="true"></div>
+<div class="vert-kana" lang="ja" aria-hidden="true">バーニ　マーゴット</div>
+
+<div id="vbar">
+  <a href="./index.html">[ &lt;&lt; ] GALERÍA DE CAMINOS</a>
+  <div class="vb-r">
+    <span>SÍNTESIS :: <span lang="ja" aria-hidden="true">統合</span> · MOCKUP DE LA FÓRMULA 01/09</span>
+    <span class="mod" id="vb-mod">MÓDULO :: CONCEPTO</span>
+  </div>
+</div>
+
+<header>
+  <a class="lockup" href="#home" aria-label="Panni Margot — inicio">
+    <svg class="pm-lockup" aria-hidden="true" focusable="false"><use href="#pm-lockup"/></svg>
+  </a>
+  <nav class="principal" aria-label="Navegación del sitio">
+    <a href="#home" data-v="home" aria-current="page">INICIO</a>
+    <a href="#shop" data-v="shop">SHOP<span class="ja" lang="ja" aria-hidden="true">店</span></a>
+    <a href="#archivo" data-v="archivo">ARCHIVO<span class="ja" lang="ja" aria-hidden="true">記憶</span></a>
+    <a href="#casa" data-v="casa">LA CASA<span class="ja" lang="ja" aria-hidden="true">家</span></a>
+    <span class="off" title="Módulo en definición con la marca — llega después de la base">PERSONALIZAR<span class="pr">PRONTO</span></span>
+  </nav>
+  <button id="btn-cart" aria-haspopup="dialog" aria-expanded="false" aria-label="Abrir carrito">[ <span class="n" id="cart-n">0</span> ] CARRITO</button>
+</header>
+
+<main id="main">
+
+<!-- ═════════ VISTA · HOME (módulo conceptual) ═════════ -->
+<section class="vista" id="v-home" tabindex="-1" aria-label="Inicio — módulo conceptual">
+  <div class="hero">
+    <div class="dvz" id="dvz" role="group" aria-label="Piezas a la deriva — tocá una para ver su ficha"></div>
+    <div class="hero-in">
+      <p class="kicker">GENDERLESS FASHION :: BUENOS AIRES</p>
+      <h1>He visto<br>personas<span class="kj" lang="ja" aria-hidden="true">性別の廃止 // 未来</span></h1>
+      <p class="baj">Somos carbono, hidrógeno, oxígeno, nitrógeno. Un futuro donde la lucha
+        por la igualdad ya terminó — la ropa llegó primero.</p>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#shop">ENTRAR AL SHOP <span aria-hidden="true">&gt;&gt;</span></a>
+      <a class="btn gh" href="#casa">EL MANIFIESTO</a>
+    </div>
+    <div class="hero-term" aria-hidden="true">
+      &gt;&gt;HONDURAS4940##<br>
+      &lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()&gt;&gt;<br>
+      192 PIEZAS · CASI TODAS ÚNICAS · <span lang="ja">一点物</span>
+    </div>
+  </div>
+
+  <div class="mq" aria-hidden="true"><div class="mq__t">
+    <span lang="ja">コート</span> · <span lang="ja">シャツ</span> · <span lang="ja">ズボン</span> · <span lang="ja">着物</span> · <span lang="ja">Tシャツ</span> · <span lang="ja">世界</span> :: &lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()&gt;&gt; &gt;&gt;HONDURAS4940## <span lang="ja">バーニ　マーゴット</span> ::&nbsp;
+    <span lang="ja">コート</span> · <span lang="ja">シャツ</span> · <span lang="ja">ズボン</span> · <span lang="ja">着物</span> · <span lang="ja">Tシャツ</span> · <span lang="ja">世界</span> :: &lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()&gt;&gt; &gt;&gt;HONDURAS4940## <span lang="ja">バーニ　マーゴット</span> ::&nbsp;
+  </div></div>
+
+  <!-- landing de secciones: elegís categoría, entrás al territorio -->
+  <div class="secs" id="secciones">
+    <div class="sh">
+      <h2>Las secciones<span style="display:block;font-family:var(--jp);font-size:.5em;color:var(--g-300);margin-top:8px" lang="ja" aria-hidden="true">七つの領土</span></h2>
+      <div class="r">CADA CATEGORÍA ES UN TERRITORIO<br>SE ENTRA A LA DERIVA · SE COMPRA EN LA GRILLA</div>
+    </div>
+    <div class="sec-gr" id="sec-gr">
+      <button class="sec" data-terr="ABRIGOS"><span><span class="nm">Abrigos</span><span class="kja" lang="ja" aria-hidden="true">コート</span></span><span class="ct"><span>5 PIEZAS</span><span>TERRITORIO &gt;&gt;</span></span></button>
+      <button class="sec" data-cat="CAMISAS"><span><span class="nm">Camisas</span><span class="kja" lang="ja" aria-hidden="true">シャツ</span></span><span class="ct"><span>2 PIEZAS</span><span>VER &gt;&gt;</span></span></button>
+      <button class="sec" data-cat="PANTALONES"><span><span class="nm">Pantalones</span><span class="kja" lang="ja" aria-hidden="true">ズボン</span></span><span class="ct"><span>1 PIEZA</span><span>VER &gt;&gt;</span></span></button>
+      <button class="sec" data-cat="KIMONOS"><span><span class="nm">Kimonos</span><span class="kja" lang="ja" aria-hidden="true">着物</span></span><span class="ct"><span>EN ARCHIVO</span><span>VER &gt;&gt;</span></span></button>
+      <button class="sec" data-cat="REMERAS"><span><span class="nm">Remeras</span><span class="kja" lang="ja" aria-hidden="true">Tシャツ</span></span><span class="ct"><span>EN ARCHIVO</span><span>VER &gt;&gt;</span></span></button>
+      <button class="sec manuk" data-cat="MANUK"><span><span class="nm">Manuk World</span><span class="kja" lang="ja" aria-hidden="true">世界</span></span><span class="ct"><span>SUB-MARCA</span><span>ENTRAR &gt;&gt;</span></span></button>
+      <button class="sec disc" data-cat="DISCONTINOUS"><span><span class="nm">Discontinous</span><span class="kja" lang="ja" aria-hidden="true">不連続</span></span><span class="ct"><span>ÚLTIMAS</span><span>VER &gt;&gt;</span></span></button>
+    </div>
+  </div>
+
+  <div class="blq">
+    <p class="lead">Dos módulos, un solo cuerpo: el <b>concepto se recorre</b> en negro
+      y la <b>compra se resuelve</b> en blanco. Nada que contar dos veces,
+      nada que explicar.</p>
+    <p class="mini">DERIVA POR SECCIONES · E-COMMERCE CLARO · ARCHIVO VIVO<br>LA FÓRMULA QUE ELIGIÓ LA MESA :: 01 SEP 2026</p>
+  </div>
+</section>
+
+<!-- ═════════ VISTA · TERRITORIO DE UNA SECCIÓN ═════════ -->
+<section class="vista" id="v-terr" tabindex="-1" aria-label="Territorio de la sección" hidden>
+  <div class="t-head">
+    <h1 id="terr-t">ABRIGOS<span class="kja" lang="ja" aria-hidden="true" id="terr-kj">コート</span></h1>
+    <div class="t-acc">
+      <button class="t-btn" data-nav="home">[ &lt;&lt; ] SECCIONES</button>
+      <button class="t-btn" id="terr-shop">[ ≡ ] VISTA COMPRA</button>
+    </div>
+  </div>
+  <div id="terr-mapa" role="group" aria-label="Piezas de la sección a la deriva">
+    <div id="terr-luz" aria-hidden="true"></div>
+    <div id="terr-pie" aria-hidden="true">EL TERRITORIO SE RECORRE · LA GRILLA SE COMPRA :: <span lang="ja">漂流</span></div>
+  </div>
+</section>
+
+<!-- ═════════ VISTA · SHOP (módulo de compra · patrón claro) ═════════ -->
+<section class="vista" id="v-shop" tabindex="-1" aria-label="Shop — módulo de compra" hidden>
+  <div class="sh-head">
+    <h1 id="sh-t">Shop</h1>
+    <div class="r">TODO LO PUBLICADO ESTÁ DISPONIBLE<br>LO VENDIDO VIVE EN EL ARCHIVO</div>
+  </div>
+  <div class="filtros" role="group" aria-label="Filtros del catálogo">
+    <button class="chip" data-fcat="TODO" aria-pressed="true">TODO</button>
+    <button class="chip" data-fcat="ABRIGOS" aria-pressed="false">ABRIGOS<span class="ja" lang="ja" aria-hidden="true">コート</span></button>
+    <button class="chip" data-fcat="CAMISAS" aria-pressed="false">CAMISAS<span class="ja" lang="ja" aria-hidden="true">シャツ</span></button>
+    <button class="chip" data-fcat="PANTALONES" aria-pressed="false">PANTALONES<span class="ja" lang="ja" aria-hidden="true">ズボン</span></button>
+    <button class="chip" data-fcat="MANUK" aria-pressed="false">MANUK<span class="ja" lang="ja" aria-hidden="true">世界</span></button>
+    <button class="chip" data-fsello="手描き" aria-pressed="false">PINTADO A MANO<span class="ja" lang="ja" aria-hidden="true">手描き</span></button>
+    <div class="f-sel">
+      <label for="f-talle">MI TALLE</label>
+      <select id="f-talle">
+        <option value="TODO">TODOS</option>
+        <option value="S">S</option>
+        <option value="M">M</option>
+        <option value="L">L</option>
+        <option value="U">ÚNICO</option>
+      </select>
+    </div>
+    <div class="f-sel">
+      <label for="f-orden">ORDEN</label>
+      <select id="f-orden">
+        <option value="nuevo">LO NUEVO</option>
+        <option value="p-asc">PRECIO ↑</option>
+        <option value="p-desc">PRECIO ↓</option>
+      </select>
+    </div>
+    <span id="f-vivo" role="status" aria-live="polite">10 PIEZAS</span>
+  </div>
+  <div class="grilla" id="grilla"></div>
+  <p class="sh-vacio" id="sh-vacio" hidden>NADA EN ESTE CRUCE — PROBÁ SOLTAR UN FILTRO</p>
+</section>
+
+<!-- ═════════ VISTA · FICHA (data dura) ═════════ -->
+<section class="vista" id="v-ficha" tabindex="-1" aria-label="Ficha de producto" hidden>
+  <div class="fw">
+    <div class="fx-ph">
+      <img id="fx-img" alt="">
+      <div class="sll" id="fx-sll"></div>
+    </div>
+    <div class="fx-meta">
+      <p class="vol"><button data-nav="shop" style="letter-spacing:inherit;text-transform:inherit;font-size:inherit;color:inherit">[ &lt;&lt; ] SHOP</button> :: <span id="fx-cat"></span></p>
+      <h1 id="fx-nm"></h1>
+      <p class="kj" id="fx-sku"></p>
+      <p class="pr" id="fx-pr"></p>
+      <p class="cuo">HASTA 6 CUOTAS · MERCADO PAGO Y NAVE · O EN EL LOCAL CON POINT</p>
+      <div class="fx-tl"><span class="t" id="fx-tl">M</span><span class="n" id="fx-tl-n">TALLE DE ESTA PIEZA — ES ÚNICA, NO HAY OTRO</span></div>
+      <button id="f-add">AGREGAR AL CARRITO :: <span id="fx-pr2"></span></button>
+      <p class="fx-env">ENVÍO A TODO EL PAÍS · RETIRO EN HONDURAS 4940 SIN CARGO<br>DESPACHO EN 48 H · CAMBIOS DENTRO DE LOS 30 DÍAS</p>
+      <div class="dura">
+        <details open>
+          <summary>MATERIALES</summary>
+          <div class="cont" id="fx-mat"></div>
+        </details>
+        <details>
+          <summary>MEDIDAS DE ESTA PIEZA</summary>
+          <div class="cont" id="fx-med"></div>
+        </details>
+        <details>
+          <summary>CUIDADOS · ¿SE LAVA?</summary>
+          <div class="cont" id="fx-cui"></div>
+        </details>
+      </div>
+    </div>
+  </div>
+  <div class="comp">
+    <h2>Completá el conjunto</h2>
+    <div class="gr" id="fx-comp"></div>
+  </div>
+</section>
+
+<!-- ═════════ VISTA · ARCHIVO (en formato deriva) ═════════ -->
+<section class="vista" id="v-arch" tabindex="-1" aria-label="Archivo — piezas que ya se fueron" hidden>
+  <div class="t-head">
+    <h1>ARCHIVO<span class="kja" lang="ja" aria-hidden="true">記憶 · 完売</span></h1>
+    <div class="t-acc"><span style="color:var(--g-300)">LO VENDIDO NO DESAPARECE — QUEDA EN ÓRBITA</span></div>
+  </div>
+  <div id="arch-mapa" role="group" aria-label="Piezas vendidas a la deriva">
+    <div id="terr-luz2" aria-hidden="true"></div>
+  </div>
+  <div class="arch-cta">
+    <p class="lead">Cada pieza fue única y ya tiene dueño. Pero el taller sigue ahí:
+      si una te llama, se puede conversar un <b>remake en otro textil</b>.</p>
+    <form class="arch-form" id="arch-form">
+      <label for="arch-msg">PEDIDO ESPECIAL :: CONTANOS CUÁL Y CÓMO LA SOÑÁS</label>
+      <textarea id="arch-msg" placeholder=">> VI EL KIMONO TAKAI Y..."></textarea>
+      <div class="fila">
+        <button class="btn" type="submit">ENVIAR AL TALLER <span aria-hidden="true">&gt;&gt;</span></button>
+        <span id="arch-ok" role="status" aria-live="polite"></span>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ═════════ VISTA · LA CASA ═════════ -->
+<section class="vista" id="v-casa" tabindex="-1" aria-label="La casa — manifiesto, taller y boutique" hidden>
+  <div class="casa-manif">
+    <p class="lead">Nací como un acto hecho y concreto: un futuro donde la lucha por la igualdad
+      <b>ya terminó</b>. Futurista, minimalista, deconstructivo. Busco la abolición del género:
+      somos todos carbono, hidrógeno, oxígeno, nitrógeno. <b>He visto personas.</b></p>
+    <p class="firma">— PANNI · CEO Y DUEÑO DE LA CASA · <span lang="ja" aria-hidden="true">バーニ　マーゴット</span></p>
+  </div>
+  <div class="casa-gr">
+    <div class="casa-c">
+      <h2>El taller<span class="kja" lang="ja" aria-hidden="true">工房</span></h2>
+      <p>Acá no hay colecciones planificadas ni repeticiones: <span class="k">se corta, se pega,
+        se pinta y sale</span>. Piezas de a una, de a tres, de a cinco. Cuando una prenda lleva
+        pintura, la pinta a mano el pintor de la casa — cada trazo es de él y no vuelve a suceder.</p>
+      <p class="dato">PIEZAS ÚNICAS <b lang="ja">一点物</b> · PINTADO A MANO <b lang="ja">手描き</b> · SERIGRAFÍA PROPIA</p>
+    </div>
+    <div class="casa-c">
+      <h2>La boutique<span class="kja" lang="ja" aria-hidden="true">店</span></h2>
+      <p>La casa madre está en Palermo Soho. La ropa se prueba, se conversa y
+        <span class="k">se ajusta al cuerpo que la lleva</span> — ninguna prenda sale igual a otra.</p>
+      <p class="dato"><b>HONDURAS 4940</b> · PALERMO SOHO · CABA<br>LUN — SÁB · 11:00 — 19:00<br>INSTAGRAM :: <b>@PANNIMARGOT</b></p>
+      <div id="reloj"><span class="dot" aria-hidden="true"></span><span id="reloj-t">CONSULTANDO EL RELOJ…</span></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ═════════ CARRITO LATERAL ═════════ -->
+<div id="velo" hidden></div>
+<aside id="cart" role="dialog" aria-modal="true" aria-label="Carrito">
+  <div class="ct-h"><span>CARRITO :: <span id="ct-n2">0</span> <span lang="ja" aria-hidden="true">器</span></span><button id="cart-cls" aria-label="Cerrar carrito">[ × ]</button></div>
+  <div class="ct-list" id="ct-list"></div>
+  <div class="ct-f">
+    <div class="ct-tot"><span>TOTAL</span><b id="ct-tot">$0</b></div>
+    <p class="ct-nota">ENVÍO Y CUOTAS SE CALCULAN EN EL PASO SIGUIENTE · CADA PIEZA ES ÚNICA: EL CARRITO LA RESERVA MIENTRAS COMPRÁS</p>
+    <button id="ct-go">INICIAR COMPRA &gt;&gt;</button>
+  </div>
+</aside>
+
+<!-- ═════════ CHECKOUT · BOCETO ═════════ -->
+<div id="chk" role="dialog" aria-modal="true" aria-label="Checkout — boceto" hidden>
+  <div class="in">
+    <h1>Checkout<br><span style="font-size:.5em;color:var(--g-500)">TRES PASOS · SIN CUENTA OBLIGATORIA</span></h1>
+    <ol>
+      <li><span class="st"></span><span class="tt">TUS DATOS</span><span class="dd">Email y datos de entrega. <span class="k">Sin registro: el seguimiento del pedido llega por link.</span></span></li>
+      <li><span class="st"></span><span class="tt">ENVÍO</span><span class="dd">A todo el país, o <span class="k">retiro sin cargo en Honduras 4940</span> — la boutique embala igual de lindo.</span></li>
+      <li><span class="st"></span><span class="tt">PAGO</span><span class="dd">MERCADO PAGO · NAVE — BANCO GALICIA · HASTA 6 CUOTAS<br><span class="k">En el local: Point. El precio que viste es el precio que pagás.</span></span></li>
+    </ol>
+    <p class="chk-pie">BOCETO DE FLUJO — EL CHECKOUT REAL CORRE SOBRE EL BACK OFFICE PROPIO, CON STOCK 1/1 RESERVADO AL ENTRAR.</p>
+    <button id="chk-cls">[ &lt;&lt; ] VOLVER AL CARRITO</button>
+  </div>
+</div>
+
+<!-- ═════════ FOOTER ═════════ -->
+<footer>
+  <div class="f-term" aria-hidden="true">
+    &lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()<span lang="ja">ファッション</span>-))<br>
+    ".&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SHOP((<span lang="ja">ショップ</span>$<span lang="ja">ディスカウント</span><b>NN</b>@!!!))""<br>
+    BUENOS AIRES//<span lang="ja">デザイナー</span> ..DESIGNER &gt;&gt;<b>HONDURAS4940</b>##
+  </div>
+  <div class="f-grid">
+    <div>
+      <p class="h">EL SITIO</p>
+      <a href="#home">INICIO</a>
+      <a href="#shop">SHOP</a>
+      <a href="#archivo">ARCHIVO <span lang="ja" aria-hidden="true">完売</span></a>
+      <a href="#casa">LA CASA</a>
+    </div>
+    <div>
+      <p class="h">AYUDA</p>
+      <button class="fl" data-demo>GUÍA DE TALLES Y CUIDADOS</button>
+      <button class="fl" data-demo>ENVÍOS</button>
+      <button class="fl" data-demo>CAMBIOS Y DEVOLUCIONES</button>
+      <button class="fl" data-demo>BOTÓN DE ARREPENTIMIENTO</button>
+    </div>
+    <div>
+      <p class="h">LA BOUTIQUE</p>
+      <a href="#casa">HONDURAS 4940 · PALERMO SOHO</a>
+      <a href="#casa">LUN — SÁB · 11:00 — 19:00</a>
+      <button class="fl" data-demo>INSTAGRAM :: @PANNIMARGOT</button>
+    </div>
+    <div>
+      <p class="h">NOVEDADES <span lang="ja" aria-hidden="true">便り</span></p>
+      <form class="news" id="news" novalidate>
+        <label for="news-i" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Tu email</label>
+        <input id="news-i" type="email" placeholder="TU@EMAIL" autocomplete="off">
+        <button type="submit">[ OK ]</button>
+      </form>
+      <span id="news-ok" role="status" aria-live="polite"></span>
+    </div>
+  </div>
+  <div class="f-sign">
+    <span class="lockup" style="font-size:10px">
+      <svg class="pm-lockup" role="img" aria-label="Panni Margot" focusable="false"><use href="#pm-lockup"/></svg>
+      <span>© 2026</span>
+    </span>
+    <span lang="ja" aria-hidden="true">ブエノスアイレスで作られた</span>
+    <span>MADE IN BUENOS AIRES</span>
+  </div>
+</footer>
+<script>
+const RM   = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const FINE = matchMedia('(hover:hover) and (pointer:fine)').matches;
+
+/* ── SEED DETERMINISTA — mismo plano en cada carga ── */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+
+/* ══ CATÁLOGO DEMO (imágenes reales de la marca) ══ */
+const IMG='https://acdn-us.mitiendanube.com/stores/004/814/798/products/';
+const P=[
+ {id:'aka',   nm:'Tapado Aka',        sku:'ABRIGO.AKA/014',      pr:970000, cat:'ABRIGOS',   kj:'コート', tl:'M', ts:9,  sellos:['一点物'],        img:IMG+'_dsc0087-b7a922169f6f8b83a117830243699603-640-0.jpg',
+  mat:'<span class="k">EXTERIOR ::</span> PAÑO DE LANA RÍGIDO 80/20<br><span class="k">FORRERÍA ::</span> VISCOSA NEGRA<br><span class="k">HERRAJES ::</span> METAL PAVONADO',
+  med:'<span class="k">HOMBROS ::</span> 54 CM · <span class="k">PECHO ::</span> 126 CM · <span class="k">LARGO ::</span> 118 CM<br><span class="k">MEDIDAS DE ESTA PIEZA, NO DE UNA TABLA.</span> EN LA BOUTIQUE SE AJUSTA AL CUERPO.',
+  cui:'SE LAVA: SÍ — A MANO, EN FRÍO, CON JABÓN NEUTRO.<br>NO SECARROPAS · PLANCHA MEDIA DEL REVÉS · COLGADO EN PERCHA ANCHA.',
+  comp:['wakusei','katto']},
+ {id:'suko',  nm:'Tapado Suko',       sku:'ABRIGO.SUKO/022',     pr:970000, cat:'ABRIGOS',   kj:'コート', tl:'L', ts:8,  sellos:['一点物'],        img:IMG+'_dsc0126-fe7dcde43e1705c60c17830260611791-640-0.webp',
+  mat:'<span class="k">EXTERIOR ::</span> GABARDINA PESADA 100% ALGODÓN<br><span class="k">FORRERÍA ::</span> VISCOSA NEGRA',
+  med:'<span class="k">HOMBROS ::</span> 56 CM · <span class="k">PECHO ::</span> 130 CM · <span class="k">LARGO ::</span> 121 CM',
+  cui:'SE LAVA: SÍ — A MANO, EN FRÍO.<br>NO SECARROPAS · PLANCHA MEDIA DEL REVÉS.',
+  comp:['wakusei','fudo']},
+ {id:'purotto',nm:'Tapado Purotto',   sku:'ABRIGO.PUROTTO/025',  pr:970000, cat:'ABRIGOS',   kj:'コート', tl:'M', ts:10, sellos:['一点物','手描き'], img:IMG+'_dsc0331-c04b11d8ca48be376917835404772676-640-0.webp',
+  mat:'<span class="k">EXTERIOR ::</span> SARGA DE ALGODÓN INTERVENIDA<br><span class="k">PINTURA ::</span> A MANO, EN EL TALLER — TRAZO IRREPETIBLE',
+  med:'<span class="k">HOMBROS ::</span> 53 CM · <span class="k">PECHO ::</span> 124 CM · <span class="k">LARGO ::</span> 116 CM',
+  cui:'SE LAVA: SÍ — A MANO, EN FRÍO, DEL REVÉS.<br>LA PINTURA RESISTE EL LAVADO A MANO; EVITAR FROTAR EL TRAZO.',
+  comp:['katto','wakusei']},
+ {id:'firewall',nm:'Trench Firewall', sku:'TRENCH.FIREWALL/031', pr:590000, cat:'ABRIGOS',   kj:'コート', tl:'S', ts:7,  sellos:['一点物'],        img:IMG+'trench-firewall-black-satin-8-dd17ac45b7653231cd17183866984987-640-0.webp',
+  mat:'<span class="k">EXTERIOR ::</span> SATÉN NEGRO PESADO<br><span class="k">CIERRES ::</span> DOBLE VÍA',
+  med:'<span class="k">HOMBROS ::</span> 50 CM · <span class="k">PECHO ::</span> 118 CM · <span class="k">LARGO ::</span> 112 CM',
+  cui:'SE LAVA: SÍ — A MANO, EN FRÍO. SECADO A LA SOMBRA.',
+  comp:['wakusei','katto']},
+ {id:'kagyaku',nm:'Capa Kagyaku',     sku:'CAPA.KAGYAKU/047',    pr:465000, cat:'ABRIGOS',   kj:'コート', tl:'U', ts:6,  sellos:['一点物'],        img:IMG+'_dsc0628-16ec2f55db5cbe96a017835415963188-640-0.webp',
+  mat:'<span class="k">EXTERIOR ::</span> PAÑO DOBLE FAZ<br><span class="k">TALLE ::</span> ÚNICO — LA CAPA SE ADAPTA AL CUERPO',
+  med:'<span class="k">ANCHO TOTAL ::</span> 152 CM · <span class="k">LARGO ::</span> 98 CM',
+  cui:'SE LAVA: MEJOR NO — LIMPIEZA EN SECO O CEPILLADO.',
+  comp:['katto','wakusei']},
+ {id:'fudo',  nm:'Capa Camisa Fudo',  sku:'CAMISA.FUDO/038',     pr:293900, cat:'CAMISAS',   kj:'シャツ', tl:'M', ts:5,  sellos:['一点物'],        img:IMG+'capa-camisa-fudo-6-2d10df457879ca9b1417194235662614-640-0.webp',
+  mat:'<span class="k">TELA ::</span> POPLÍN DE ALGODÓN PESADO<br><span class="k">CONSTRUCCIÓN ::</span> CAPA-CAMISA, COSTURAS VISTAS',
+  med:'<span class="k">HOMBROS ::</span> CAÍDOS · <span class="k">PECHO ::</span> 128 CM · <span class="k">LARGO ::</span> 92 CM',
+  cui:'SE LAVA: SÍ — MÁQUINA, CICLO SUAVE, EN FRÍO. PLANCHA MEDIA.',
+  comp:['wakusei','purotto']},
+ {id:'katto', nm:'Camisa Katto',      sku:'CAMISA.KATTO/053',    pr:168000, cat:'CAMISAS',   kj:'シャツ', tl:'L', ts:4,  sellos:['一点物'], disc:true, img:IMG+'_dsc0629-c79357f21ac6666a0117835415972816-640-0.webp',
+  mat:'<span class="k">TELA ::</span> LINO LAVADO<br><span class="k">BOTONES ::</span> PASTA NEGRA',
+  med:'<span class="k">HOMBROS ::</span> 49 CM · <span class="k">PECHO ::</span> 116 CM · <span class="k">LARGO ::</span> 84 CM',
+  cui:'SE LAVA: SÍ — MÁQUINA, CICLO SUAVE. EL LINO SE PLANCHA HÚMEDO.',
+  comp:['wakusei','aka']},
+ {id:'wakusei',nm:'Pantalón Wakusei', sku:'PANTALON.WAKUSEI/044',pr:123900, cat:'PANTALONES',kj:'ズボン', tl:'M', ts:3,  sellos:['一点物'],        img:IMG+'pantalon-wakusei-2-b5a85660a588c09c0c17187383919344-640-0.webp',
+  mat:'<span class="k">TELA ::</span> GABARDINA ELASTIZADA<br><span class="k">CINTURA ::</span> REGULABLE POR CORDÓN INTERNO',
+  med:'<span class="k">CINTURA ::</span> 82 CM · <span class="k">TIRO ::</span> 34 CM · <span class="k">LARGO ::</span> 104 CM',
+  cui:'SE LAVA: SÍ — MÁQUINA, EN FRÍO, DEL REVÉS.',
+  comp:['katto','fudo']},
+ {id:'h001b', nm:'Manuk Hoodie 001',  sku:'MANUK.HOODIE/001.>>BLACK', pr:113900, cat:'MANUK', kj:'世界', tl:'L', ts:2, sellos:['MANUK'],        img:IMG+'manuk-hoodie_001-__black-bf3cc081a4157944f217187442991524-640-0.webp',
+  mat:'<span class="k">TELA ::</span> FRISA PESADA 100% ALGODÓN<br><span class="k">ESTAMPA ::</span> SERIGRAFÍA DE LA CASA',
+  med:'<span class="k">PECHO ::</span> 122 CM · <span class="k">LARGO ::</span> 72 CM',
+  cui:'SE LAVA: SÍ — MÁQUINA, DEL REVÉS, EN FRÍO. LA ESTAMPA NO SE PLANCHA.',
+  comp:['wakusei','h002w']},
+ {id:'h002w', nm:'Manuk Hoodie 002 PTW', sku:'MANUK.HOODIE/002.>>PTW WHITE', pr:139000, cat:'MANUK', kj:'世界', tl:'M', ts:1, sellos:['MANUK'], disc:true, img:IMG+'manuk-hoodie_002-__ptw-white-e65b88d66778f17a8617187445068760-640-0.webp',
+  mat:'<span class="k">TELA ::</span> FRISA PESADA 100% ALGODÓN<br><span class="k">ESTAMPA ::</span> PTW — SERIGRAFÍA DOBLE PASADA',
+  med:'<span class="k">PECHO ::</span> 118 CM · <span class="k">LARGO ::</span> 70 CM',
+  cui:'SE LAVA: SÍ — MÁQUINA, DEL REVÉS, EN FRÍO.',
+  comp:['wakusei','h001b']}
+];
+const ARCH=[
+ {nm:'Kimono Takai',  sku:'KIMONO.TAKAI/001 · 手描き', img:IMG+'tapado-kimono-brushed-takai-7-ad2c2f23976c6c883217194294041586-640-0.webp'},
+ {nm:'Remerón Besuto',sku:'REMERA.BESUTO/052',          img:IMG+'remeron-besuto-3-ba65fba7f8a0892d1617187352318677-640-0.webp'},
+ {nm:'Manuk Hoodie 001 Green',sku:'MANUK.HOODIE/001.>>GREEN', img:IMG+'manuk-hoodie_001-__green-b59b8392542aef38dd17187443458756-640-0.webp'},
+ {nm:'Manuk Jersey 78',sku:'MANUK.JERSEY78.>>PINK',     img:IMG+'manuk-jersey78-__pink-5cb2da7e4a5a4030ea17187445872360-640-0.webp'}
+];
+const byId=id=>P.find(p=>p.id===id);
+function fmt(n){try{return '$'+n.toLocaleString('es-AR')}catch(_){return '$'+String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.')}}
+
+/* ══ ROUTER — módulo negro / módulo blanco ══ */
+const VIEWS={home:'v-home',terr:'v-terr',shop:'v-shop',ficha:'v-ficha',archivo:'v-arch',casa:'v-casa'};
+const COM=new Set(['shop','ficha']); /* vistas del módulo de compra: motion mínimo, fondo claro */
+const vbMod=document.getElementById('vb-mod');
+let vista='home';
+function go(name,arg){
+  if(!VIEWS[name])name='home';
+  if(name==='ficha'&&(!arg||!byId(arg))){location.hash='#shop';return}
+  vista=name;
+  Object.values(VIEWS).forEach(id=>{document.getElementById(id).hidden=true});
+  if(name==='ficha'&&arg)pintarFicha(arg);
+  if(name==='shop')renderGrilla();
+  if(name==='terr')montarTerr();
+  if(name==='archivo')montarArch();
+  const el=document.getElementById(VIEWS[name]);
+  el.hidden=false;
+  document.body.classList.toggle('com',COM.has(name));
+  vbMod.textContent='MÓDULO :: '+(COM.has(name)?'COMPRA':'CONCEPTO');
+  document.querySelectorAll('nav.principal a[data-v]').forEach(a=>{
+    const on=a.dataset.v===name||(name==='terr'&&a.dataset.v==='home')||(name==='ficha'&&a.dataset.v==='shop');
+    if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
+  });
+  scrollTo(0,0);
+  el.focus({preventScroll:true});
+}
+function leerHash(){
+  const h=location.hash.replace(/^#/,'');
+  if(h==='main'||h==='secciones')return; /* anclas internas */
+  const [name,arg]=h.split('/');
+  go(name||'home',arg);
+}
+addEventListener('hashchange',leerHash);
+
+/* ══ HOME · piezas a la deriva en el hero ══ */
+(function(){
+  const z=document.getElementById('dvz');
+  const rnd=mulberry32(20260908);
+  const picks=[P[2],P[0],P[5],P[8]];
+  const pos=[[64,8],[80,52],[6,58],[38,72]];
+  picks.forEach((p,i)=>{
+    const b=document.createElement('button');
+    b.className='dv';
+    b.style.left=pos[i][0]+'%';b.style.top=pos[i][1]+'%';
+    b.style.setProperty('--dvt',(28+rnd()*14).toFixed(1)+'s');
+    b.style.setProperty('--dvd',(-rnd()*20).toFixed(1)+'s');
+    b.style.setProperty('--dvx',((rnd()-0.5)*56).toFixed(0)+'px');
+    b.style.setProperty('--dvy',((rnd()-0.5)*44).toFixed(0)+'px');
+    b.style.setProperty('--dvr',((rnd()-0.5)*4).toFixed(2)+'deg');
+    b.setAttribute('aria-label',p.nm+' — '+fmt(p.pr)+' — ver ficha');
+    b.innerHTML='<img loading="lazy" src="'+p.img+'" alt=""><span class="tag" aria-hidden="true">'+p.sku+'</span>';
+    b.addEventListener('click',()=>{location.hash='#ficha/'+p.id});
+    z.appendChild(b);
+  });
+})();
+
+/* ══ SECCIONES → territorio o grilla ══ */
+document.querySelectorAll('.sec').forEach(s=>{
+  s.addEventListener('click',()=>{
+    if(s.dataset.terr){location.hash='#terr';return}
+    const c=s.dataset.cat;
+    if(c==='KIMONOS'||c==='REMERAS'){location.hash='#archivo';return}
+    F.cat=(c==='DISCONTINOUS')?'DISCONTINOUS':c;
+    sincroChips();
+    location.hash='#shop';
+    if(vista==='shop')renderGrilla();
+  });
+});
+
+/* ══ TERRITORIO (deriva de ABRIGOS — demo del patrón por sección) ══ */
+let terrHecho=false;
+function montarTerr(){
+  if(terrHecho)return;terrHecho=true;
+  const m=document.getElementById('terr-mapa');
+  const rnd=mulberry32(20260901);
+  const abrigos=P.filter(p=>p.cat==='ABRIGOS');
+  const pos=[[8,12],[30,48],[52,10],[70,44],[86,16]];
+  abrigos.forEach((p,i)=>{
+    const b=document.createElement('button');
+    b.className='tz';
+    b.style.left=pos[i][0]+'%';b.style.top=pos[i][1]+'%';
+    b.style.setProperty('--dvt',(44+rnd()*18).toFixed(1)+'s');
+    b.style.setProperty('--dvd',(-rnd()*30).toFixed(1)+'s');
+    b.style.setProperty('--dvx',((rnd()-0.5)*44).toFixed(0)+'px');
+    b.style.setProperty('--dvy',((rnd()-0.5)*36).toFixed(0)+'px');
+    b.style.setProperty('--dvr',((rnd()-0.5)*3).toFixed(2)+'deg');
+    b.setAttribute('aria-label',p.nm+' — '+p.sku+' — '+fmt(p.pr)+' — ver ficha');
+    b.innerHTML='<img loading="lazy" src="'+p.img+'" alt=""><span class="tag" aria-hidden="true">'+p.sku+' :: '+fmt(p.pr)+'</span>';
+    b.addEventListener('click',()=>{location.hash='#ficha/'+p.id});
+    m.insertBefore(b,document.getElementById('terr-luz'));
+  });
+  if(FINE&&!RM){m.addEventListener('pointermove',e=>{
+    const r=m.getBoundingClientRect();
+    m.style.setProperty('--fx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+    document.getElementById('terr-luz').style.setProperty('--fx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+    document.getElementById('terr-luz').style.setProperty('--fy',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+  })}
+}
+document.getElementById('terr-shop').addEventListener('click',()=>{F.cat='ABRIGOS';sincroChips();location.hash='#shop'});
+document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{location.hash='#'+b.dataset.nav}));
+
+/* ══ ARCHIVO — deriva de lo vendido ══ */
+let archHecho=false;
+function montarArch(){
+  if(archHecho)return;archHecho=true;
+  const m=document.getElementById('arch-mapa');
+  const rnd=mulberry32(20261210);
+  const pos=[[10,14],[38,50],[62,10],[82,42]];
+  ARCH.forEach((p,i)=>{
+    const b=document.createElement('button');
+    b.className='tz';
+    b.style.left=pos[i][0]+'%';b.style.top=pos[i][1]+'%';
+    b.style.setProperty('--dvt',(52+rnd()*20).toFixed(1)+'s');
+    b.style.setProperty('--dvd',(-rnd()*36).toFixed(1)+'s');
+    b.style.setProperty('--dvx',((rnd()-0.5)*38).toFixed(0)+'px');
+    b.style.setProperty('--dvy',((rnd()-0.5)*30).toFixed(0)+'px');
+    b.style.setProperty('--dvr',((rnd()-0.5)*3).toFixed(2)+'deg');
+    b.setAttribute('aria-label',p.nm+' — vendida — pedir un remake');
+    b.innerHTML='<img loading="lazy" src="'+p.img+'" alt=""><span class="tag" aria-hidden="true">'+p.sku+' :: <span lang="ja">完売</span></span>';
+    b.addEventListener('click',()=>{
+      const t=document.getElementById('arch-msg');
+      t.value='>> VI '+p.nm.toUpperCase()+' ('+p.sku+') Y ME GUSTARÍA CONVERSAR UN REMAKE — ';
+      t.focus();
+    });
+    m.insertBefore(b,document.getElementById('terr-luz2'));
+  });
+}
+
+/* ══ SHOP · filtros vivos ══ */
+const F={cat:'TODO',sello:null,talle:'TODO',orden:'nuevo'};
+function sincroChips(){
+  document.querySelectorAll('.chip[data-fcat]').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.fcat===F.cat)));
+  document.querySelectorAll('.chip[data-fsello]').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.fsello===F.sello)));
+}
+document.querySelectorAll('.chip[data-fcat]').forEach(c=>c.addEventListener('click',()=>{F.cat=c.dataset.fcat;sincroChips();renderGrilla()}));
+document.querySelectorAll('.chip[data-fsello]').forEach(c=>c.addEventListener('click',()=>{F.sello=(F.sello===c.dataset.fsello)?null:c.dataset.fsello;sincroChips();renderGrilla()}));
+document.getElementById('f-talle').addEventListener('change',e=>{F.talle=e.target.value;renderGrilla()});
+document.getElementById('f-orden').addEventListener('change',e=>{F.orden=e.target.value;renderGrilla()});
+function filtrar(){
+  let r=P.slice();
+  if(F.cat==='DISCONTINOUS')r=r.filter(p=>p.disc);
+  else if(F.cat!=='TODO')r=r.filter(p=>p.cat===F.cat);
+  if(F.sello)r=r.filter(p=>p.sellos.includes(F.sello));
+  if(F.talle!=='TODO')r=r.filter(p=>p.tl===F.talle);
+  if(F.orden==='p-asc')r.sort((a,b)=>a.pr-b.pr);
+  else if(F.orden==='p-desc')r.sort((a,b)=>b.pr-a.pr);
+  else r.sort((a,b)=>b.ts-a.ts);
+  return r;
+}
+function cardHTML(p){
+  const sll=p.sellos.map(s=>'<span class="sello'+(s==='一点物'?' uno':'')+'">'+(s==='一点物'?'<span lang="ja">一点物</span> 1/1':s==='手描き'?'<span lang="ja">手描き</span> PINTADO A MANO':s)+'</span>').join('')
+    +(p.disc?'<span class="sello" lang="ja">不連続</span>':'');
+  return '<button class="pcard" data-id="'+p.id+'" aria-label="'+p.nm+' — '+fmt(p.pr)+' — talle '+p.tl+' — ver ficha">'
+    +'<img loading="lazy" src="'+p.img+'" alt="">'
+    +'<span class="tl" aria-hidden="true">'+(p.tl==='U'?'ÚNICO':p.tl)+'</span>'
+    +'<span class="inf"><span class="nm">'+p.nm+'</span><span class="sk">'+p.sku+'</span><span class="pr">'+fmt(p.pr)+'</span><span class="sll">'+sll+'</span></span></button>';
+}
+function renderGrilla(){
+  const r=filtrar();
+  const g=document.getElementById('grilla');
+  g.innerHTML=r.map(cardHTML).join('');
+  document.getElementById('sh-vacio').hidden=r.length>0;
+  document.getElementById('f-vivo').textContent=r.length+(r.length===1?' PIEZA':' PIEZAS');
+  document.getElementById('sh-t').textContent=(F.cat==='TODO')?'Shop':(F.cat.charAt(0)+F.cat.slice(1).toLowerCase());
+  g.querySelectorAll('.pcard').forEach(b=>b.addEventListener('click',()=>{location.hash='#ficha/'+b.dataset.id}));
+}
+
+/* ══ FICHA · data dura ══ */
+let fichaId=null;
+function pintarFicha(id){
+  const p=byId(id);if(!p)return;
+  fichaId=id;
+  const im=document.getElementById('fx-img');im.src=p.img;im.alt=p.nm;
+  document.getElementById('fx-cat').innerHTML=p.cat+' · <span lang="ja">'+p.kj+'</span>';
+  document.getElementById('fx-nm').textContent=p.nm;
+  document.getElementById('fx-sku').textContent=p.sku;
+  document.getElementById('fx-pr').textContent=fmt(p.pr);
+  document.getElementById('fx-tl').textContent=(p.tl==='U'?'ÚNICO':p.tl);
+  document.getElementById('fx-tl-n').textContent=(p.tl==='U')?'TALLE ÚNICO — SE AJUSTA AL CUERPO EN LA BOUTIQUE':'TALLE DE ESTA PIEZA — ES ÚNICA, NO HAY OTRO';
+  document.getElementById('fx-mat').innerHTML=p.mat;
+  document.getElementById('fx-med').innerHTML=p.med;
+  document.getElementById('fx-cui').innerHTML=p.cui;
+  document.getElementById('fx-sll').innerHTML=p.sellos.map(s=>'<span class="sello'+(s==='一点物'?' uno':'')+'">'+(s==='一点物'?'<span lang="ja">一点物</span> 1/1':s==='手描き'?'<span lang="ja">手描き</span> PINTADO A MANO':s)+'</span>').join('');
+  document.getElementById('fx-comp').innerHTML=(p.comp||[]).map(cid=>cardHTML(byId(cid))).join('');
+  document.querySelectorAll('#fx-comp .pcard').forEach(b=>b.addEventListener('click',()=>{location.hash='#ficha/'+b.dataset.id}));
+  actualizarAdd();
+}
+function actualizarAdd(){
+  const b=document.getElementById('f-add');
+  if(CART.includes(fichaId)){b.disabled=true;b.textContent='RESERVADA EN TU CARRITO — ES ÚNICA'}
+  else{b.disabled=false;b.innerHTML='AGREGAR AL CARRITO :: <span id="fx-pr2">'+fmt(byId(fichaId).pr)+'</span>'}
+}
+document.getElementById('f-add').addEventListener('click',()=>{
+  if(!fichaId||CART.includes(fichaId))return;
+  CART.push(fichaId);pintarCart();actualizarAdd();abrirCart();
+});
+
+/* ══ CARRITO ══ */
+const CART=[];
+const cart=document.getElementById('cart'),velo=document.getElementById('velo');
+const inertes=[document.getElementById('vbar'),document.querySelector('header'),document.getElementById('main'),document.querySelector('footer'),document.querySelector('.skip')];
+function fondo(on){inertes.forEach(el=>{if(on)el.setAttribute('inert','');else el.removeAttribute('inert')})}
+let volver=null;
+function abrirCart(){
+  volver=document.activeElement;
+  velo.hidden=false;cart.classList.add('open');
+  document.getElementById('btn-cart').setAttribute('aria-expanded','true');
+  fondo(true);document.getElementById('cart-cls').focus();
+}
+function cerrarCart(){
+  cart.classList.remove('open');velo.hidden=true;
+  document.getElementById('btn-cart').setAttribute('aria-expanded','false');
+  fondo(false);if(volver&&volver.focus)volver.focus();
+}
+document.getElementById('btn-cart').addEventListener('click',abrirCart);
+document.getElementById('cart-cls').addEventListener('click',cerrarCart);
+velo.addEventListener('click',cerrarCart);
+addEventListener('keydown',e=>{
+  if(e.key!=='Escape')return;
+  if(!document.getElementById('chk').hidden){cerrarChk();return}
+  if(cart.classList.contains('open'))cerrarCart();
+});
+function pintarCart(){
+  const l=document.getElementById('ct-list');
+  if(!CART.length){l.innerHTML='<div class="ct-vacio">EL CARRITO ESTÁ VACÍO<br><span lang="ja" aria-hidden="true">器は空です</span></div>'}
+  else{
+    l.innerHTML=CART.map(id=>{const p=byId(id);
+      return '<div class="ct-it"><img src="'+p.img+'" alt=""><div><div class="nm">'+p.nm+'</div><div class="sk">'+p.sku+' · TALLE '+(p.tl==='U'?'ÚNICO':p.tl)+'</div><div class="un">PIEZA ÚNICA <span lang="ja" aria-hidden="true">一点物</span> · RESERVADA</div></div><div style="text-align:right"><div class="pr">'+fmt(p.pr)+'</div><button class="qt" data-q="'+id+'">[ QUITAR ]</button></div></div>'}).join('');
+    l.querySelectorAll('[data-q]').forEach(b=>b.addEventListener('click',()=>{
+      const i=CART.indexOf(b.dataset.q);if(i>-1)CART.splice(i,1);
+      pintarCart();if(fichaId)actualizarAdd();
+    }));
+  }
+  const tot=CART.reduce((s,id)=>s+byId(id).pr,0);
+  document.getElementById('ct-tot').textContent=fmt(tot);
+  document.getElementById('cart-n').textContent=CART.length;
+  document.getElementById('ct-n2').textContent=CART.length;
+  document.getElementById('btn-cart').setAttribute('aria-label','Abrir carrito — '+CART.length+(CART.length===1?' pieza':' piezas'));
+}
+pintarCart();
+
+/* ══ CHECKOUT · boceto ══ */
+const chk=document.getElementById('chk');
+document.getElementById('ct-go').addEventListener('click',()=>{chk.hidden=false;cart.setAttribute('inert','');document.getElementById('chk-cls').focus()});
+function cerrarChk(){chk.hidden=true;cart.removeAttribute('inert');document.getElementById('ct-go').focus()}
+document.getElementById('chk-cls').addEventListener('click',cerrarChk);
+
+/* ══ LA CASA · reloj real de la boutique ══ */
+(function(){
+  const el=document.getElementById('reloj'),t=document.getElementById('reloj-t');
+  try{
+    const f=new Intl.DateTimeFormat('es-AR',{timeZone:'America/Argentina/Buenos_Aires',hour:'numeric',minute:'numeric',weekday:'short',hour12:false});
+    const parts=f.formatToParts(new Date());
+    const get=k=>{const x=parts.find(p=>p.type===k);return x?x.value:''};
+    const h=parseInt(get('hour'),10), wd=get('weekday').toLowerCase();
+    const dom=wd.startsWith('dom');
+    const sab=wd.startsWith('sáb')||wd.startsWith('sab');
+    const abierto=!dom&&h>=11&&h<19;
+    el.classList.toggle('abierto',abierto);
+    t.textContent=abierto?('ABIERTO AHORA — HASTA LAS 19:00'):((dom||(sab&&h>=19))?(dom?'HOY CERRADO — ABRE LUNES 11:00':'CERRADO AHORA — ABRE LUNES 11:00'):'CERRADO AHORA — ABRE 11:00');
+  }catch(_){t.textContent='LUN — SÁB · 11:00 — 19:00'}
+})();
+
+/* ══ FORMULARIOS DEMO ══ */
+document.getElementById('news').addEventListener('submit',e=>{
+  e.preventDefault();
+  const v=document.getElementById('news-i').value.trim();
+  document.getElementById('news-ok').textContent=v.includes('@')?'ANOTADO :: EN EL SITIO REAL, DOBLE OPT-IN (DEMO)':'FALTA UN EMAIL VÁLIDO';
+});
+document.getElementById('arch-form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const v=document.getElementById('arch-msg').value.trim();
+  document.getElementById('arch-ok').textContent=v?'RECIBIDO :: EL TALLER RESPONDE EN 48 H (DEMO)':'CONTANOS PRIMERO CUÁL PIEZA';
+});
+document.querySelectorAll('[data-demo]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const orig=b.textContent;
+    b.textContent='[ PÁGINA EN LA VERSIÓN REAL ]';
+    setTimeout(()=>{b.textContent=orig},1600);
+  });
+});
+
+/* arranque */
+leerHash();
+</script>
+
+<script id="pmgate-js">
+/* Cortina de acceso. Recuerda el ingreso por dispositivo. */
+(function(){
+  var H='d5600e28005cacbad0d820784e3f9f75220b38689e9c7e16bda6513d11c3443e', K='pm_gate_ok';
+  var g=document.getElementById('pmgate');
+  if(!g) return;
+  var root=document.documentElement;
+  var f=document.getElementById('pmgate-f'), i=document.getElementById('pmgate-i'), e=document.getElementById('pmgate-e');
+  var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  function abrir(){
+    root.classList.remove('pmgate-lock');
+    if(RM){ g.remove(); return; }
+    g.classList.add('pmgate--out');
+    setTimeout(function(){ g.remove(); }, 480);
+  }
+
+  try{ if(localStorage.getItem(K)===H){ abrir(); return; } }catch(err){}
+
+  root.classList.add('pmgate-lock');
+  setTimeout(function(){ try{ i.focus(); }catch(err){} }, 60);
+
+  async function sha(txt){
+    var b=new TextEncoder().encode(txt);
+    var d=await crypto.subtle.digest('SHA-256', b);
+    return Array.from(new Uint8Array(d)).map(function(x){return x.toString(16).padStart(2,'0');}).join('');
+  }
+
+  f.addEventListener('submit', async function(ev){
+    ev.preventDefault();
+    var v=i.value;
+    if(!v){ e.textContent=''; i.focus(); return; }
+    var h;
+    try{ h=await sha(v); }catch(err){ e.textContent='[ !! ] SIN CONEXIÓN SEGURA'; return; }
+    if(h===H){
+      try{ localStorage.setItem(K,H); }catch(err){}
+      e.textContent='[ OK ]';
+      abrir();
+    }else{
+      e.textContent='[ !! ] NO';
+      i.value=''; i.focus();
+    }
+  });
+
+  /* El foco no sale del portón mientras esté cerrado. */
+  g.addEventListener('keydown', function(ev){
+    if(ev.key!=='Tab') return;
+    var f2=g.querySelectorAll('input,button');
+    if(!f2.length) return;
+    var pri=f2[0], ult=f2[f2.length-1];
+    if(ev.shiftKey && document.activeElement===pri){ ev.preventDefault(); ult.focus(); }
+    else if(!ev.shiftKey && document.activeElement===ult){ ev.preventDefault(); pri.focus(); }
+  });
+})();
+</script>
+</body>
+</html>
