@@ -197,6 +197,10 @@ figure.f-doc figcaption{position:absolute;left:10px;bottom:10px;background:var(-
 }
 </style>
 
+
+
+
+
 <style id="pmgate-css">
 /* ═══ CORTINA DE ACCESO — estética de la casa, fail-closed ═══ */
 #pmgate{position:fixed;inset:0;z-index:99999;background:#000;color:#fff;
@@ -503,10 +507,10 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
       <p class="tag" style="margin-bottom:6px">HERRAMIENTA VIVA :: PARA USAR EN LA MESA DEL MAR 01 SEP</p>
       <h4 class="disp h-mid" style="margin-bottom:10px">TABLERO DE SELECCIÓN DE BLOQUES</h4>
       <p style="font-size:13px;line-height:1.7;color:var(--g-800);max-width:620px;margin-bottom:8px">
-        Los bloques favoritos de cada camino, para marcar en la reunión. La selección queda guardada
+        Los bloques favoritos de cada camino (incluido el noveno, PINCELADA · 筆, ya construido), para marcar en la reunión. La selección queda guardada
         en este dispositivo y se copia con un botón para pegarla en el acta.
       </p>
-      <p class="tag" style="margin-bottom:22px">SELECCIONADOS :: <b id="sel-count" style="color:var(--ink)">0</b> / 32</p>
+      <p class="tag" style="margin-bottom:22px">SELECCIONADOS :: <b id="sel-count" style="color:var(--ink)">0</b> / 36</p>
       <div id="sel-grid"></div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;align-items:center">
         <button id="sel-copy" class="btn-obra" type="button">[ COPIAR SELECCIÓN PARA EL ACTA ]</button>
@@ -1072,6 +1076,7 @@ var CAM = [
  ['F','VOLUMEN','立体',['Relieve por mapa de profundidad','Giro de prenda por scroll','Comparador derecho/revés','Tarjetas con peso (tilt)']],
  ['G','DERIVA','漂流',['Lienzo infinito arrastrable','Territorio de celdas irregulares','Foco de linterna en el mapa','Deriva sola en reposo']],
  ['H','VIDRIERA','硝子',['Monograma NN con video adentro','Día y noche con la hora real','Video tratado como las fotos','Sonido ambiente de Palermo']],
+ ['9','PINCELADA','筆',['El trazo que se revela al scroll','Replay del gesto del pintor','Personalizador de tres decisiones','La página EL PINTOR']],
 ];
 
 var $=function(s,c){return (c||document).querySelector(s)}, $$=function(s,c){return [].slice.call((c||document).querySelectorAll(s))};
@@ -1322,6 +1327,10 @@ $$('.count,.dseg').forEach(function(el){ if(!el.closest('#dash')) io.observe(el)
 setTimeout(function(){ $$('#dash .count,#d-launch').forEach(animCount); },150);
 })();
 </script>
+
+
+
+
 
 <script id="pmgate-js">
 /* Cortina de acceso. Recuerda el ingreso por dispositivo. */
