@@ -191,6 +191,8 @@ html[data-pasaporte="completo"] #grain{animation-play-state:paused;opacity:.03}
 }
 .pm-buscar input:focus{border-bottom-color:var(--cromo-fg);outline:none}
 .pm-buscar-tg{display:none}
+/* [ ≡ ] abre la nav como panel a pantalla (solo teléfono, ver §17); el pie del panel tampoco existe en desktop */
+.pm-menu-tg,.pm-nav-foot{display:none}
 .pm-carrito{
   display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 0 0 var(--s-2);
   font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.16em;text-transform:uppercase;color:var(--cromo-fg);
@@ -565,16 +567,55 @@ html.js .rv.in-view{opacity:1;transform:none}
   .pm-ft-firma{margin-top:var(--s-16)}
 }
 @media (max-width:767px){
-  :root{--hd:56px;--gut:16px;--drawer:100vw}
-  .pm-hd-row{grid-template-rows:var(--hd) 44px}
-  .pm-nav{height:44px}
-  .pm-nav{padding-inline:calc(var(--gut) - 8px)}
-  .pm-nav a,.pm-nav-off{height:44px;padding:0 8px;letter-spacing:.1em}
-  .pm-nav [lang="ja"]{display:none}
-  .pm-nav a::after{bottom:0}
+  :root{--hd:60px;--gut:16px;--drawer:100vw}
+  /* ── teléfono: UNA barra (lockup · [ ≡ ] · carrito); la nav es un panel a pantalla y el buscador vive adentro ── */
+  .pm-hd-row{height:var(--hd);grid-template-rows:var(--hd);grid-template-columns:auto 1fr;gap:var(--s-3)}
   .pm-lk svg{height:16px}
-  .pm-carrito{padding-left:0}
+  .pm-hd-r{gap:var(--s-1)}
+  .pm-carrito{padding-left:0;min-width:44px;justify-content:center}
   .pm-carrito .txt{display:none}
+  .pm-menu-tg{
+    display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:44px;padding:0 4px;
+    font-family:var(--f-mono);font-size:var(--t-2);letter-spacing:.06em;color:var(--cromo-fg);white-space:nowrap;
+  }
+  .pm-menu-tg .cerrar{display:none}
+  .pm-hd.menu-open .pm-menu-tg .abrir{display:none}
+  .pm-hd.menu-open .pm-menu-tg .cerrar{display:inline}
+  .pm-nav{
+    display:none;position:fixed;left:0;right:0;top:var(--hd);bottom:0;z-index:150;
+    flex-direction:column;align-items:stretch;justify-content:flex-start;gap:0;
+    height:auto;margin:0;padding:var(--s-2) var(--gut) calc(var(--s-12) + 120px);
+    overflow-y:auto;overscroll-behavior:contain;
+    background:var(--cromo-bg);border-top:1px solid var(--cromo-line);
+    -webkit-mask-image:none;mask-image:none;scroll-snap-type:none;
+  }
+  .pm-hd.menu-open .pm-nav{display:flex}
+  .pm-nav a,.pm-nav-off{
+    width:100%;height:auto;min-height:72px;padding:var(--s-4) 0;justify-content:space-between;gap:var(--s-4);
+    border-bottom:1px solid var(--cromo-line);
+    font-family:var(--f-display);font-size:clamp(34px,10.5vw,46px);letter-spacing:.01em;line-height:1;text-transform:uppercase;
+    scroll-snap-align:none;
+  }
+  .pm-nav a::after{display:none}
+  .pm-nav a[aria-current="page"]{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:8px}
+  .pm-nav [lang="ja"]{display:inline;font-size:var(--t-4);letter-spacing:.1em;color:var(--cromo-fg-2)}
+  .pm-nav-off{font-size:clamp(22px,6.4vw,28px);color:var(--cromo-fg-2);justify-content:flex-start}
+  .pm-nav-off>span:first-child{display:inline-flex;align-items:baseline;gap:8px}
+  .pm-nav-off .sello{align-self:center}
+  .pm-nav-foot{display:flex;flex-direction:column;gap:4px;margin-top:auto;padding-top:var(--s-8);
+    font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;line-height:1.7;color:var(--cromo-fg-2)}
+  .pm-nav-foot b{font-weight:400;color:var(--cromo-fg)}
+  .pm-buscar{
+    display:none;position:fixed;left:0;right:0;bottom:0;z-index:151;height:auto;
+    flex-direction:column;align-items:stretch;gap:4px;
+    padding:var(--s-4) var(--gut) max(var(--s-4),env(safe-area-inset-bottom));
+    background:var(--cromo-bg);border-top:1px solid var(--cromo-line);
+  }
+  .pm-hd.menu-open .pm-buscar{display:flex}
+  .pm-buscar-tg{display:none}
+  .pm-buscar label{position:static;width:auto;height:auto;overflow:visible;clip:auto}
+  .pm-buscar input{position:static;display:block;top:auto;right:auto;width:100%;height:48px;padding:0;border:0;border-bottom:1px solid var(--cromo-line);background:none}
+  .pm-buscar input:focus{border-bottom-color:var(--cromo-fg)}
   .pm-ft-grid{grid-template-columns:1fr;gap:var(--s-8)}
   .pgrid,.pgrid.c4,.pgrid.c2{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-6) var(--s-3)}
   .pcard-meta{flex-direction:column;gap:2px;font-size:var(--t-1)}

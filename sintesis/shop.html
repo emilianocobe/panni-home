@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Shop 店 — Panni Margot</title>
-<meta name="description" content="Piezas únicas hechas en Buenos Aires. Abrigos, camisas, pantalones, kimonos, remeras, vestidos, Manuk World y Discontinous.">
+<meta name="description" content="Piezas de a una, de a pocas — nunca en serie —, hechas en Buenos Aires. Abrigos, camisas, pantalones, kimonos, remeras, vestidos, Manuk World y Discontinous.">
 <link rel="icon" href="../favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,18 +26,20 @@
 .sh-head-r{display:flex;align-items:center;gap:var(--s-8);padding-bottom:6px;flex:0 0 auto}
 .sh-n{white-space:nowrap}
 .sh-n b{font-size:var(--t-6);font-family:var(--f-mono);letter-spacing:0;margin-right:6px;vertical-align:-.08em;font-variant-numeric:tabular-nums}
+/* el link al territorio es inline-flex (gap del .btn): los espacios interiores de los corchetes no se pintan en ningún ancho */
+#sh-terr .esp{display:none}
 .sh-q-chip{display:inline-flex;align-items:center;gap:8px}
 .sh-q-chip button{font:inherit;letter-spacing:inherit;text-decoration:underline;text-underline-offset:4px;color:var(--fg);min-height:24px}
 
 /* tres columnas: índice · grilla · orden/filtros */
 .sh-lay{
-  display:grid;grid-template-columns:max-content minmax(0,1fr) 208px;gap:var(--s-8) clamp(32px,3vw,48px);
+  display:grid;grid-template-columns:max-content minmax(0,1fr) 176px;gap:var(--s-8) clamp(32px,3vw,48px);
   padding-top:var(--s-8);align-items:start;
 }
 .sh-cats,.sh-tools{position:sticky;top:calc(var(--hd) + var(--s-6));max-height:calc(100dvh - var(--hd) - var(--s-12));overflow-y:auto;scrollbar-width:none}
 .sh-cats::-webkit-scrollbar,.sh-tools::-webkit-scrollbar{display:none}
 /* el índice tiene 9 ítems: no necesita scroll, y así el punto del activo (left:-14px) no queda recortado */
-.sh-cats{overflow:visible;max-height:none;width:max-content;max-width:200px}
+.sh-cats{overflow:visible;max-height:none;width:max-content;max-width:176px}
 .sh-tg{display:none}
 .sh-cats h2,.sh-tools h2,.sh-tools .lb{display:block;margin-bottom:var(--s-3)}
 .sh-cats ul{display:flex;flex-direction:column}
@@ -100,22 +102,38 @@
 .sh-main{min-width:0}
 #sh-grid{transition:opacity var(--dur-fast)}
 #sh-grid.dim{opacity:.35}
-.pcard-meta{flex-direction:column;align-items:flex-start;gap:4px;font-size:var(--t-2)}
-.pcard-nm{overflow-wrap:anywhere}
+/* bajo la foto, como Demobaza: nombre y precio chicos y quietos (10 px, peso normal, tracking corto), el precio un tono más bajo */
+.pcard-meta{flex-direction:column;align-items:flex-start;gap:2px;padding-top:var(--s-2);font-size:var(--t-1);letter-spacing:.06em;line-height:1.35}
+.pcard-nm{overflow-wrap:anywhere;font-weight:400}
+.pcard-pr{font-size:var(--t-1);letter-spacing:.02em;color:var(--fg-2)}
 /* sellos como parte de la ficha (el rojo de estado de Demobaza va pegado al nombre): en la misma línea que el nombre, nunca stickers sobre la foto */
-#sh-grid .pcard-nm .sellos{position:static;display:inline-flex;vertical-align:middle;margin-left:8px;gap:var(--s-1)}
-#sh-grid .sello{height:18px;padding:0 6px;font-size:var(--t-0);letter-spacing:.1em}
-#sh-grid .sello [lang="ja"]{font-size:var(--t-1)}
-/* la foto manda: la silueta flota sobre el blanco de la sala (sin tile), los fondos de estudio se llevan al blanco y nada se recorta */
+#sh-grid .pcard-ln{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px}
+#sh-grid .pcard-ln .sellos{position:static;display:inline-flex;margin:0;gap:var(--s-1)}
+/* en la grilla el sello es una palabra chiquita con borde (como el rojo de Demobaza: estado, no sticker); el invertido queda para ficha y carrito */
+#sh-grid .sello{height:14px;padding:0 4px;font-size:var(--t-0);letter-spacing:.08em;font-weight:400}
+#sh-grid .sello [lang="ja"]{font-size:var(--t-0)}
+#sh-grid .sello.uno{background:none;color:var(--fg);border:1px solid var(--fg)}
+/* separador de bloque (MANUK cierra TODAS) */
+#sh-grid .sh-sep{grid-column:1/-1;display:flex;align-items:center;gap:var(--s-4);margin-top:var(--s-8);padding-top:var(--s-6);border-top:1px solid var(--line)}
+#sh-grid .sh-sep [lang="ja"]{color:var(--fg-2)}
+#sh-grid .sh-sep .lnk{margin-left:auto}
+/* la foto manda. Fotos 2:3 en tarjeta 3:4: la toma entra ENTERA (contain: alto = alto de la tarjeta, centrada) y cada figura se lleva a UNA sola
+   escala (--sc) y posición (--tx --ty) calculadas por pieza desde la medida real de la toma (cabeza, pies, centro): cabeza al 4 %, pies al 96 %,
+   en todas. El fondo de cada toma se lleva al blanco por brillo (--br). Las de estudio gris (pared + piso) entran de cuerpo entero con su piso:
+   no se recortan; van al final de cada sala como bloque propio. */
 .shop .pcard-ph{background:var(--bg)}
-.shop .pcard-ph .pm-img{transform:scale(1.03);transform-origin:50% 38%;filter:grayscale(1) contrast(1.12) brightness(1.09)}
-/* sesión en estudio gris: la pared se lleva al blanco de la sala (brillo calibrado por pieza, --br) */
-.shop .pcard.gris .pm-img{transform:scale(var(--sc,1.03));filter:grayscale(1) contrast(1.3) brightness(var(--br,1.1))}
-/* con línea de piso en la foto: encuadre anclado arriba y escala calibrada (--sc) para que el piso quede FUERA del cuadro:
-   corte neto a la canilla o la rodilla, sin degradados ni niebla */
-.shop .pcard.gris.corte .pm-img{object-position:50% 0;transform-origin:50% 0}
+.shop .pcard-ph .pm-img{
+  object-fit:contain;object-position:50% 50%;background-size:contain;background-position:50% 50%;
+  transform-origin:50% 0;transform:translate(calc(var(--tx,0) * 100%),calc(var(--ty,0) * 100%)) scale(var(--sc,1));
+  filter:grayscale(1) contrast(var(--ct,1.15)) brightness(var(--br,1.14));
+}
+/* la foto B (hover) entra entera y sin calibrar: es otra toma, no hereda escala ni encuadre de la A */
+.shop .pcard-ph .pcard-b{transform:none;object-fit:contain;object-position:50% 50%;filter:grayscale(1) contrast(1.1)}
+/* MANUK va sobre negro a propósito: toma tal cual */
+.shop .pcard.manuk .pm-img{object-fit:cover;object-position:50% 20%;background-size:cover;transform:none;filter:grayscale(1) contrast(1.06)}
+.shop .pcard.manuk .pcard-b{object-fit:cover}
 @media (hover:hover) and (pointer:fine){
-  .shop .pcard:hover .pm-img,.shop .pcard:focus-visible .pm-img,.shop .pcard.gris:hover .pm-img,.shop .pcard.gris:focus-visible .pm-img{filter:grayscale(0) contrast(1)}
+  .shop .pcard:hover .pm-img,.shop .pcard:focus-visible .pm-img{filter:grayscale(0) contrast(1)}
 }
 /* aire quirúrgico entre filas; entre columnas lo justo para que la foto gane escala */
 @media (min-width:1280px){.shop .pgrid{gap:var(--s-16) var(--s-8)}}
@@ -133,22 +151,46 @@
 @media (max-width:1279px) and (min-width:1024px){
   .sh-lay{grid-template-columns:max-content minmax(0,1fr) 168px;gap:var(--s-8) var(--s-6)}
 }
-/* ─ tablet + teléfono: índice como chips sticky, herramientas en una tira ─ */
+/* ─ tablet + teléfono: UNA sola banda antes de la grilla: título de sala + contador + territorio en una línea, chips de secciones sticky ─ */
 @media (max-width:1023px){
-  .sh-head{flex-direction:column;align-items:flex-start;gap:var(--s-4);padding:var(--s-6) 0 var(--s-4);border-bottom:0}
-  .sh-head-r{gap:var(--s-4);padding-bottom:0;flex-wrap:wrap}
+  .sh-head{
+    flex-direction:row;flex-wrap:nowrap;align-items:baseline;justify-content:flex-start;gap:var(--s-3) var(--s-3);
+    padding:var(--s-4) 0 var(--s-3);border-bottom:0;
+  }
+  /* la miga «SHOP 店 / SALA» sobra: el título ya nombra la sala y el nav ya dice SHOP. Solo vuelve cuando hay una búsqueda activa (para poder quitarla) */
+  .sh-head .sh-mig{display:none}
+  .sh-head.has-q .sh-mig{display:flex;flex-basis:100%;order:3;margin-top:var(--s-1)}
+  .sh-head>div:first-child{display:contents}
+  .sh-head h1{margin:0;font-size:clamp(20px,5.2vw,32px);line-height:1;gap:.3em;flex:0 0 auto;flex-wrap:nowrap;white-space:nowrap}
+  .sh-head h1 .kj{font-size:.5em}
+  .sh-head-r{display:contents}
+  .sh-head .sh-n{flex:0 0 auto;order:1;white-space:nowrap;align-self:baseline;line-height:1;letter-spacing:.08em;display:inline-block}
+  .sh-head .sh-n b{font-size:var(--t-4);margin-right:4px;vertical-align:-.02em;white-space:nowrap}
+  .sh-head .sh-n .sala{display:none}
+  .sh-head-r .btn .entrar{display:none}
+  .sh-head-r .btn [lang="ja"]{margin:0 2px}
+  /* el territorio como link de texto en la misma línea (nunca un botón outline enorme): se alinea a la derecha */
+  .sh-head-r .btn{
+    order:2;flex:0 0 auto;margin-left:auto;min-height:0;padding:0;border:0;background:none;gap:4px;
+    font-size:var(--t-1);letter-spacing:.06em;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--fg-2);
+    align-self:baseline;line-height:1;
+  }
+  .sh-head-r .btn .esp{display:none}
+  .sh-head-r .btn::before,.sh-head-r .btn::after{display:none}
+  .sh-head-r .btn:active{transform:none}
   .sh-lay{display:flex;flex-direction:column;align-items:stretch;gap:0;padding-top:0}
   .sh-cats,.sh-tools,.sh-main{min-width:0;width:auto}
   .sh-cats{
     position:sticky;top:var(--hdh,calc(var(--hd) + 48px));z-index:50;order:1;
+    display:flex;align-items:center;gap:0;
     max-height:none;max-width:none;overflow:visible;background:var(--bg);
     margin-inline:calc(var(--gut) * -1);padding-inline:var(--gut);border-top:1px solid var(--line);border-bottom:1px solid var(--line);
   }
   .sh-cats h2{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);margin:0}
   .sh-cats ul{
-    flex-direction:row;align-items:center;gap:var(--s-4);height:48px;overflow-x:auto;scrollbar-width:none;
-    -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 40px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 40px),transparent);
-    padding-right:40px;
+    flex:1 1 auto;min-width:0;flex-direction:row;align-items:center;gap:var(--s-4);height:44px;overflow-x:auto;scrollbar-width:none;
+    -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 32px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 32px),transparent);
+    padding-right:32px;
   }
   .sh-cats ul::-webkit-scrollbar{display:none}
   .sh-cats li{flex:0 0 auto}
@@ -167,21 +209,20 @@
   .sort{flex-direction:row;flex-wrap:wrap;gap:var(--s-3)}
   .sort button,.tls button{min-height:44px;white-space:nowrap}
   .chip{min-height:36px;white-space:nowrap}
-  .sh-main{order:3;padding-top:var(--s-6)}
+  .sh-main{order:3;padding-top:var(--s-4)}
 }
 @media (max-width:767px){
-  .sh-head h1{margin-top:var(--s-2)}
-  .sh-head-r{width:100%;flex-direction:column;align-items:stretch;gap:var(--s-3)}
-  .sh-head-r .btn{width:100%;padding-inline:var(--s-4)}
-  /* teléfono: orden y filtros se pliegan detrás de un solo control */
+  #sh-grid .pcard-nm{min-height:calc(2 * 1.35em)}
+  /* teléfono: orden y filtros se pliegan detrás de un solo control, al final de la misma banda de chips */
   .sh-tg{
-    display:flex;align-items:center;justify-content:space-between;gap:var(--s-3);width:100%;min-height:48px;
-    font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.16em;text-transform:uppercase;color:var(--fg);text-align:left;
+    display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;min-height:44px;padding-left:var(--s-3);border-left:1px solid var(--line);
+    font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--fg);text-align:left;white-space:nowrap;
   }
-  .sh-tg .n{color:var(--fg-2);font-variant-numeric:tabular-nums}
-  .sh-tg .n:empty{display:none}
-  .sh-tools:not(.open) .sh-fs{display:none}
-  .sh-fs{flex-direction:column;align-items:stretch;gap:var(--s-4);padding:var(--s-2) 0 var(--s-6)}
+  .sh-tg .n{display:none}
+  .sh-tools{border-bottom:0}
+  .sh-tools:not(.open){display:none}
+  .sh-tools.open{border-bottom:1px solid var(--line)}
+  .sh-fs{flex-direction:column;align-items:stretch;gap:var(--s-4);padding:var(--s-3) 0 var(--s-6)}
 }
 @media (hover:none),(pointer:coarse){
   .sh-cats a,.sort button,.tls button{min-height:44px}
@@ -262,12 +303,12 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   <div class="wrap">
     <div class="sh-head">
       <div>
-        <p class="ey"><span>SHOP <span lang="ja" aria-hidden="true">店</span></span><span class="sep" aria-hidden="true">/</span><span id="sh-mig">TODAS LAS PIEZAS</span><span id="sh-q-chip" class="sh-q-chip" hidden></span></p>
+        <p class="ey sh-mig"><span>SHOP <span lang="ja" aria-hidden="true">店</span></span><span class="sep" aria-hidden="true">/</span><span id="sh-mig">TODAS LAS PIEZAS</span><span id="sh-q-chip" class="sh-q-chip" hidden></span></p>
         <h1 class="disp disp-l" id="sh-h1"><span id="sh-h1-t">SHOP</span><span class="kj" lang="ja" id="sh-h1-kj">店</span></h1>
       </div>
       <div class="sh-head-r">
-        <p class="sh-n ey" id="sh-status" role="status" aria-live="polite" aria-atomic="true"><b id="sh-n">0</b><span id="sh-n-t">PIEZAS EN SALA</span></p>
-        <a class="btn" id="sh-terr" href="./territorio.html" hidden>[ <span lang="ja" aria-hidden="true">漂流</span> ] ENTRAR AL TERRITORIO</a>
+        <p class="sh-n ey" id="sh-status" role="status" aria-live="polite" aria-atomic="true"><b id="sh-n">0</b><span id="sh-n-t">PIEZAS</span><span class="sala"> EN SALA</span></p>
+        <a class="btn" id="sh-terr" href="./territorio.html" hidden>[<span class="esp"> </span><span lang="ja" aria-hidden="true">漂流</span><span class="esp"> </span>] <span class="entrar">ENTRAR AL </span>TERRITORIO</a>
       </div>
     </div>
 
@@ -275,6 +316,8 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
       <nav class="sh-cats" aria-label="Secciones">
         <h2 class="ey">SECCIONES <span lang="ja" aria-hidden="true">店</span></h2>
         <ul id="sh-cats"></ul>
+        <!-- teléfono: el plegable de orden y filtros cierra la misma banda de chips (en desktop no se muestra) -->
+        <button type="button" class="sh-tg" id="sh-tg" aria-expanded="false" aria-controls="sh-fs"><span aria-hidden="true">[ + ]</span><span>FILTROS</span><span class="n" id="sh-tg-n"></span></button>
       </nav>
 
       <section class="sh-main" aria-labelledby="sh-h1">
@@ -285,13 +328,12 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
           <button type="button" class="btn" id="sh-clear">LIMPIAR FILTROS</button>
         </div>
         <div class="sh-fin ey" id="sh-fin" hidden>
-          <span><b id="sh-fin-n">0</b> PIEZAS · TODO LO PUBLICADO ESTÁ DISPONIBLE · CADA UNA ES ÚNICA</span>
-          <a class="lnk" href="./archivo.html">LO VENDIDO VIVE EN EL ARCHIVO <span lang="ja" aria-hidden="true">記憶</span></a>
+          <span><b id="sh-fin-n">0</b> <span id="sh-fin-t">PIEZAS</span><span id="sh-fin-x"> · TODO LO PUBLICADO ESTÁ DISPONIBLE</span></span>
+          <a class="lnk" href="./archivo.html">LO QUE YA NO ESTÁ VIVE EN EL ARCHIVO <span lang="ja" aria-hidden="true">記憶</span></a>
         </div>
       </section>
 
       <aside class="sh-tools" aria-label="Orden y filtros">
-        <button type="button" class="sh-tg" id="sh-tg" aria-expanded="false" aria-controls="sh-fs"><span><span aria-hidden="true">[ + ]</span> ORDENAR Y FILTRAR</span><span class="n" id="sh-tg-n"></span></button>
         <div class="sh-fs" id="sh-fs">
         <div class="sh-f">
           <h2 class="ey">ORDENAR</h2>
@@ -303,13 +345,8 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
         </div>
         <div class="sh-f">
           <h2 class="ey">MI TALLE</h2>
-          <div class="tls" id="sh-tl" role="group" aria-label="Filtrar por talle">
-            <button type="button" data-tl="S" aria-pressed="false">S</button>
-            <button type="button" data-tl="M" aria-pressed="false">M</button>
-            <button type="button" data-tl="L" aria-pressed="false">L</button>
-            <button type="button" data-tl="XL" aria-pressed="false">XL</button>
-            <button type="button" data-tl="U" aria-pressed="false">ÚNICO</button>
-          </div>
+          <!-- talles reales de la casa con stock (1 · 2 · 3 · 4 · XL · ÚNICO): los pinta el script desde el catálogo, nunca S/M/L -->
+          <div class="tls" id="sh-tl" role="group" aria-label="Filtrar por talle"></div>
         </div>
         <div class="sh-f">
           <h2 class="ey">SELLOS</h2>
@@ -346,7 +383,23 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   function nombre(c) { return String(c.nombre || c.key).toUpperCase(); }
 
   var SORTS = { nuevo: 'LO NUEVO', up: 'PRECIO ↑', down: 'PRECIO ↓' };
-  var TLS = ['S', 'M', 'L', 'XL', 'U'], SES = ['一点物', '手描き', '不連続'];
+  /* talles reales con stock en la sala (nomenclatura de la casa: 1/2/3/4, XL, U); orden numérico, letras, único al final */
+  function tallesDe(lista) {
+    var out = [];
+    lista.forEach(function (p) { PM.talles(p).forEach(function (t) { if (out.indexOf(t) < 0) out.push(t); }); });
+    out.sort(function (a, b) { var na = parseInt(a, 10), nb = parseInt(b, 10), L = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'U']; if (!isNaN(na) && !isNaN(nb)) return na - nb; if (!isNaN(na)) return -1; if (!isNaN(nb)) return 1; return L.indexOf(a) - L.indexOf(b); });
+    return out;
+  }
+  var TLS = tallesDe(PIEZAS);
+  /* MI TALLE se pinta con los talles que existen EN ESTA SALA (nunca un filtro que lleve al vacío); si la sala es toda ÚNICO, el bloque no aparece */
+  function pintarTalles() {
+    var base = st.cat ? PIEZAS.filter(function (p) { return p.cat === st.cat; }) : PIEZAS;
+    var tls = tallesDe(base), bloque = d.getElementById('sh-tl').closest('.sh-f');
+    for (var i = st.tl.length - 1; i >= 0; i--) if (tls.indexOf(st.tl[i]) < 0) st.tl.splice(i, 1);
+    d.getElementById('sh-tl').innerHTML = tls.map(function (t) { return '<button type="button" data-tl="' + PM.esc(t) + '" aria-pressed="' + (st.tl.indexOf(t) > -1 ? 'true' : 'false') + '">' + PM.esc(PM.talleTxt(t)) + '</button>'; }).join('');
+    bloque.hidden = tls.length <= 1 && tls[0] === 'U';
+  }
+  var SES = ['一点物', '手描き', '不連続'];
   var st = { cat: '', q: '', sort: 'nuevo', tl: [], se: [] };
   /* todo el estado vive en la URL: sección, búsqueda, orden, talles y sellos (compartible, vuelve intacto desde la ficha) */
   function leerURL() {
@@ -392,9 +445,12 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     $('#sh-h1-t').textContent = c ? nombre(c) : 'SHOP';
     $('#sh-h1-kj').textContent = c ? (c.kj || '') : '店';
     var t = $('#sh-terr');
-    if (c) { t.hidden = false; t.href = './territorio.html?cat=' + encodeURIComponent(c.key); t.setAttribute('aria-label', 'Entrar al territorio de ' + nombre(c)); }
+    /* MANUK tiene una sola puerta: su mundo (manuk.html), no un territorio genérico */
+    if (c && c.key === 'MANUK') { t.hidden = false; t.href = './manuk.html'; t.innerHTML = '[<span class="esp"> </span><span lang="ja" aria-hidden="true">世界</span><span class="esp"> </span>] <span class="entrar">ENTRAR AL </span>MUNDO'; t.setAttribute('aria-label', 'Entrar a Manuk World'); }
+    else if (c) { t.hidden = false; t.href = './territorio.html?cat=' + encodeURIComponent(c.key); t.innerHTML = '[<span class="esp"> </span><span lang="ja" aria-hidden="true">漂流</span><span class="esp"> </span>] <span class="entrar">ENTRAR AL </span>TERRITORIO'; t.setAttribute('aria-label', 'Entrar al territorio de ' + nombre(c)); }
     else t.hidden = true;
     var chip = $('#sh-q-chip');
+    $('.sh-head').classList.toggle('has-q', !!st.q);
     if (st.q) { chip.hidden = false; chip.innerHTML = '<span class="sep" aria-hidden="true">/</span><span>«' + PM.esc(st.q.toUpperCase()) + '»</span><button type="button" id="sh-q-out" aria-label="Quitar la búsqueda">[ × ]</button>'; }
     else { chip.hidden = true; chip.innerHTML = ''; }
     d.title = (c ? String(c.nombre || c.key) + ' ' + (c.kj || '') : 'Shop 店') + ' — Panni Margot';
@@ -408,7 +464,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     var q = st.q.toLowerCase();
     var out = PIEZAS.filter(function (p) {
       if (st.cat && p.cat !== st.cat) return false;
-      if (st.tl.length && !st.tl.some(function (t) { return p.tl === t || (p.tls || []).indexOf(t) > -1; })) return false;
+      if (st.tl.length && !st.tl.some(function (t) { return PM.talles(p).indexOf(t) > -1; })) return false;
       if (st.se.length && !st.se.some(function (s) { return (p.sellos || []).indexOf(s) > -1; })) return false;
       if (q) {
         var blob = [p.nm, p.cat, p.kj, p.sku, (p.mat || []).join(' '), p.desc || ''].join(' ').toLowerCase();
@@ -419,74 +475,140 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     if (st.sort === 'up') out.sort(function (a, b) { return (a.pr || 0) - (b.pr || 0); });
     else if (st.sort === 'down') out.sort(function (a, b) { return (b.pr || 0) - (a.pr || 0); });
     else out.sort(function (a, b) { return tsSala(b) - tsSala(a); });
+    /* en TODAS, MANUK (fotos sobre negro) cierra la sala como bloque propio: no se mezcla con la sala blanca */
+    if (!st.cat) out = out.filter(function (p) { return p.cat !== 'MANUK'; }).concat(out.filter(function (p) { return p.cat === 'MANUK'; }));
     return out;
   }
 
-  /* toma de sala: la primera foto de la grilla es siempre la frontal de cuerpo entero sobre el fondo más claro
-     (la toma original pasa a segunda: es la que aparece en hover). La ficha sigue usando el orden del catálogo. */
+  /* toma de sala + medida real de la figura (02/09, sobre los 640 px de cada foto): [toma, cabeza, pies, centro, pared, sesión].
+     toma = índice de la frontal de cuerpo entero (pasa a primera; la original queda para el hover; la ficha sigue el orden del catálogo) o
+     'local' = recorte sobre blanco puro en ./fotos/<id>-sala.webp (solo dos camisas de la sesión blanca, cuerpo entero).
+     cabeza/pies = fracción del alto de la foto donde empieza la cabeza y terminan los pies · centro = fracción del ancho del centro de la figura.
+     pared = luminancia de la pared (0–255) para llevarla al blanco de la sala; en la sesión blanca ya viene calibrada como brillo (>1).
+     sesión: 'b' = ciclorama blanco (primera en cada sala) · 'g' = estudio gris con piso (cierra la sala, cuerpo entero, sin recortes).
+     Con eso cada figura entra a UNA sola escala: cabeza al 4 %, pies al 96 % de la tarjeta. MANUK va sobre negro a propósito (sin calibrar). */
   var TOMA = {
-    /* ABRIGOS */
-    'blazer-nuime': 4, 'campera-kyappu': 1, 'poncho-nuno': 4, 'tapado-taika': 1, 'tapado-taika-brushed-mask': 1,
-    'buzo-kiji': 2, 'buzo-haori-brushed': 4, 'trench-shukai-organza-j35qv': 2, 'campera-gamu-jo-tca43': 9,
-    'trench-shukai-memory-ebqcb': 1, 'trench-shukai-silver-1usjo': 9, 'camisa-kurokk-190jt': 3, 'sweater-soshiki-161dt': 4,
-    /* CAMISAS */
-    'camisa-cropped-baikara-black-1': 6,
-    /* VESTIDOS */
-    'capa-vestido-so-1': 3, 'vestido-jedai': 5,
-    /* PANTALONES */
-    'pantalon-gamu-1': 3, 'pantalon-torihazushi-satinado': 2, 'pantalon-pinsetto-bvs6s': 1, 'pantalon-tateyama-1bnse': 4,
-    'bermuda-kinpu-16kza': 2, 'pantalon-musubime-vuwhp': 3,
-    /* DISCONTINOUS */
-    'buzo-vestido-naga-sa-1': 3
+    /* ── sesión blanca ── */
+    'campera-de-pano-oji':[0,.142,.810,.492,1.14,'b'],
+    'campera-deportiva-tartan-nn':[0,.094,.975,.520,1.14,'b'],
+    'campera-kyappu':[1,.156,.875,.503,1.14,'b'],
+    'capa-resversible-kagyaku':[0,.110,.850,.505,1.14,'b'],
+    'capa-vestido-so-1':[3,.087,.900,.487,1.26,'b'],
+    'poncho-nuno':[4,.117,.890,.539,1.14,'b'],
+    'tapado-taika':[6,.052,.944,.527,1.14,'b'],
+    'tapado-taika-brushed-mask':[1,.175,.898,.502,1.14,'b'],
+    'buzo-vestido-naga-sa-1':[3,.113,.863,.472,1.29,'b'],
+    'camisa-katto-blanca':[0,.071,.935,.473,1.14,'b'],
+    'camisa-katto-negra':[6,.035,.946,.497,1.14,'b'],
+    'camisa-ken':[0,.090,.871,.464,1.24,'b'],
+    'camisa-over-poketto-white-brushed-5':['local',.110,.910,.505,1.00,'b'],
+    'camisa-oversize-baikara-poplin-white-brushed':['local',.110,.890,.450,1.00,'b'],
+    'camisa-oversize-ginga-white-poplin':[0,.148,.894,.494,1.14,'b'],
+    'camisa-vestido-hansode-black':[0,.100,.871,.520,1.14,'b'],
+    'camisa-vestido-hansode-white':[0,.083,.885,.531,1.20,'b'],
+    'camisa-yuno-poplin-black':[0,.094,.892,.522,1.18,'b'],
+    'capa-camisa-fudo':[0,.131,.877,.483,1.14,'b'],
+    'falda-pantalon-puritsu':[0,.117,.875,.516,1.14,'b'],
+    'saco-kimono':[0,.108,.842,.463,1.21,'b'],
+    'tapado-kimono-brushed-kangae':[0,.104,.850,.456,1.28,'b'],
+    'tapado-kimono-brushed-takai':[0,.087,.838,.502,1.14,'b'],
+    'pantalon-gamu-1':[3,.073,.902,.487,1.14,'b'],
+    'pantalon-akemi-1':[0,.092,.869,.512,1.14,'b'],
+    'remera-waffuru':[0,.094,.890,.492,1.25,'b'],
+    'remeron-oversize-soft-black':[0,.065,.875,.511,1.14,'b'],
+    'pantalon-akemi-foil':[0,.106,.896,.467,1.14,'b'],
+    'remera-oversize-purasu-black':[0,.058,.933,.481,1.14,'b'],
+    'remera-vestido-hafu-white':[0,.042,.944,.486,1.14,'b'],
+    'mono-zentai':[0,.106,.858,.517,1.14,'b'],
+    'chaleco-vestido-ginga':[0,.117,.912,.505,1.14,'b'],
+    'jean-tsuru-blue':[0,.129,.938,.492,1.28,'b'],
+    'pantalon-deportivo-tartan-nn':[0,.115,.890,.442,1.25,'b'],
+    'pantalon-parattsuo':[0,.135,.958,.445,1.14,'b'],
+    'pantalon-torihazushi':[0,.102,.892,.508,1.28,'b'],
+    'pantalon-torihazushi-satinado':[2,.094,.890,.492,1.25,'b'],
+    'remera-ichi-faces':[0,.133,.865,.487,1.14,'b'],
+    'remeron-besuto':[0,.115,.827,.487,1.14,'b'],
+    'trench-firewall-1-4':[7,.013,.963,.533,1.14,'b'],
+    'trench-firewall-black':[0,.102,.856,.537,1.14,'b'],
+    'vestido-bitcoin-1':[7,.075,.883,.503,1.14,'b'],
+    'vestido-jedai':[5,.104,.890,.508,1.14,'b'],
+    'remera-vestido-uwa':[0,.117,.910,.514,1.14,'b'],
+    'buzo-kiji':[2,.146,.883,.492,1.14,'b'],
+    'pantalon-hotaru-gabardina':[0,.042,.948,.514,1.14,'b'],
+    /* ── estudio gris (pared + piso), cuerpo entero, cierra la sala ── */
+    'blazer-nuime':[0,.115,.900,.530,205,'g'],
+    'pantalon-hasu':[2,.105,.940,.505,205,'g'],
+    'buzo-haori-brushed':[4,.140,.870,.500,247,'g'],
+    'trench-shukai-organza-j35qv':[0,.100,.910,.500,211,'g'],
+    'remera-puritsu-z2liy':[3,.155,.925,.520,223,'g'],
+    'pantalon-pinsetto-bvs6s':[1,.115,.905,.500,221,'g'],
+    'falda-pantalon-suedo-hxz5f':[0,.205,.905,.500,218,'g'],
+    'campera-gamu-jo-tca43':[0,.135,.885,.515,220,'g'],
+    'trench-shukai-memory-ebqcb':[10,.170,.905,.510,232,'g'],
+    'remera-haku-b9q68':[10,.215,.880,.510,217,'g'],
+    'pantalon-tateyama-1bnse':[4,.125,.920,.510,233,'g'],
+    'bermuda-daisen-xcp0p':[0,.155,.885,.550,204,'g'],
+    'camisa-fuji-mt9um':[8,.185,.870,.510,212,'g'],
+    'camisa-mitake-7kf2x':[0,.085,.870,.500,205,'g'],
+    'bermuda-kinpu-16kza':[2,.135,.885,.535,220,'g'],
+    'camisa-mitake-1v1y9':[0,.130,.880,.535,235,'g'],
+    'trench-shukai-silver-1usjo':[10,.085,.925,.500,216,'g'],
+    'camisa-baikara-top-z00un':[0,.155,.870,.495,173,'g'],
+    'tapado-suko-1h339':[5,.115,.900,.530,234,'g'],
+    'tapado-purotto-1p6nz':[0,.220,.870,.530,216,'g'],
+    'camisa-kurokk-190jt':[0,.155,.890,.500,244,'g'],
+    'kimono-koto-1rpv5':[1,.185,.885,.520,241,'g'],
+    'sweater-soshiki-161dt':[0,.105,.920,.500,214,'g'],
+    'remera-pannito-8-bits-1ulsz':[0,.165,.905,.510,232,'g'],
+    'remera-samurai-white-sjb13':[0,.135,.910,.480,245,'g'],
+    'remera-samurai-black-1g7y1':[0,.150,.920,.530,216,'g'],
+    'pantalon-musubime-vuwhp':[7,.135,.905,.525,211,'g']
   };
-  /* sesiones en estudio gris: calibración por pieza medida sobre la toma de sala (02/09, luminancia de la pared y altura de la
-     línea del piso en la foto): [corte, escala, brillo]. corte=1 → el encuadre se ancla arriba y la escala deja la línea del piso
-     FUERA del cuadro (corte neto a la canilla/rodilla); brillo → la pared de esa sesión llega al blanco de la sala. MANUK va sobre negro a propósito. */
-  var CAL = {
-    /* ABRIGOS */
-    'blazer-nuime': [0, 1.03, 1.09], 'trench-firewall-1-4': [0, 1.03, 1.03], 'buzo-haori-brushed': [1, 1.21, 1.0], 'trench-shukai-organza-j35qv': [1, 1.03, 1.14], 'campera-gamu-jo-tca43': [1, 1.03, 1.26], 'trench-shukai-memory-ebqcb': [1, 1.15, 1.0], 'trench-shukai-silver-1usjo': [1, 1.19, 1.1], 'sweater-soshiki-161dt': [1, 1.33, 1.06],
-    /* VESTIDOS */
-    'capa-vestido-so-1': [0, 1.03, 1.17], 'vestido-bitcoin-1': [1, 1.24, 1.0], 'mono-yakushoku': [1, 1.24, 1.0],
-    /* DISCONTINOUS */
-    'buzo-vestido-naga-sa-1': [0, 1.03, 1.19], 'jean-tsuru-blue': [0, 1.03, 1.16], 'pantalon-deportivo-tartan-nn': [0, 1.03, 1.14],
-    /* CAMISAS */
-    'camisa-over-poketto-white-brushed-5': [0, 1.03, 1.06], 'camisa-oversize-baikara-poplin-white-brushed': [0, 1.03, 1.1], 'camisa-yuno-poplin-black': [0, 1.03, 1.09], 'camisa-mitake-7kf2x': [1, 1.36, 1.14], 'camisa-mitake-1v1y9': [1, 1.24, 1.0], 'camisa-baikara-top-z00un': [1, 1.19, 1.45],
-    /* KIMONOS */
-    'saco-kimono': [0, 1.03, 1.12], 'tapado-kimono-brushed-kangae': [0, 1.03, 1.17], 'tapado-aka-1mn5v': [1, 1.18, 1.14], 'tapado-suko-1h339': [1, 1.21, 1.1], 'tapado-purotto-1p6nz': [1, 1.18, 1.15], 'kimono-koto-1rpv5': [0, 1.03, 1.06],
-    /* REMERAS */
-    'remera-waffuru': [0, 1.03, 1.15], 'remera-oversize-purasu-black': [0, 1.03, 1.04], 'remera-puritsu-z2liy': [1, 1.03, 1.0], 'remera-haku-b9q68': [1, 1.08, 1.0], 'remera-pannito-8-bits-1ulsz': [1, 1.19, 1.11], 'remera-samurai-white-sjb13': [1, 1.23, 1.0], 'remera-samurai-black-1g7y1': [1, 1.16, 1.22],
-    /* PANTALONES */
-    'pantalon-torihazushi': [0, 1.03, 1.19], 'pantalon-torihazushi-satinado': [0, 1.03, 1.15], 'pantalon-hasu': [1, 1.29, 1.0], 'pantalon-pinsetto-bvs6s': [1, 1.24, 1.15], 'falda-pantalon-suedo-hxz5f': [1, 1.17, 1.02], 'pantalon-tateyama-1bnse': [1, 1.23, 1.01], 'bermuda-daisen-xcp0p': [1, 1.15, 1.17], 'bermuda-kinpu-16kza': [1, 1.3, 1.02], 'pantalon-musubime-vuwhp': [1, 1.38, 1.19]
-  };
-  var GRIS = CAL;
-  /* la primera tarjeta de una sala nunca es de estudio gris: el Blazer Nuime (la más nueva del dump, sin toma sobre blanco)
-     entra en LO NUEVO detrás de las tres primeras sobre blanco (ts de sala, no del catálogo) */
-  var TS_SALA = { 'blazer-nuime': 231 };
-  function tsSala(p) { return TS_SALA[p.id] != null ? TS_SALA[p.id] : (p.ts || 0); }
+  function sesion(p) { var t = TOMA[p.id]; return p.cat === 'MANUK' ? 'm' : (t && t[5] === 'g' ? 'g' : 'b'); }
+  /* en LO NUEVO la sesión blanca va primero y el estudio gris cierra la sala: lo que se ve a ciegas es una sola sesión */
+  function tsSala(p) { return (p.ts || 0) + (sesion(p) === 'g' ? 0 : 1e10); }   /* ts = lastmod real en segundos epoch: el salto tiene que superar cualquier fecha */
+  /* variables de la tarjeta: la foto entra por contain (alto = alto de la tarjeta; ancho = 0.889 del ancho); escala y traslado llevan cabeza al 4 % y pies al 96 % */
+  var HEAD = 0.04, FEET = 0.96, CONTAIN_W = (2 / 3) / (3 / 4);
+  function calibrar(card, p) {
+    var t = TOMA[p.id]; if (!t) return;
+    var sc = (FEET - HEAD) / (t[2] - t[1]);
+    var ty = HEAD - sc * t[1];
+    var tx = -sc * (t[3] - 0.5) * CONTAIN_W;
+    var br = t[4] > 2 ? Math.min(1.4, Math.max(1, 253 / ((t[4] - 128) * 1.15 + 128))) : t[4];
+    card.style.setProperty('--sc', sc.toFixed(4)); card.style.setProperty('--ty', ty.toFixed(4)); card.style.setProperty('--tx', tx.toFixed(4));
+    card.style.setProperty('--br', br.toFixed(3)); if (t[0] === 'local') card.style.setProperty('--ct', '1.04');
+  }
   function deSala(p) {
-    var i = TOMA[p.id]; if (!i || !p.imgs || !p.imgs[i]) return p;
+    var f = TOMA[p.id], i = f ? f[0] : 0, q;
+    if (i === 'local') { q = Object.create(p); q.imgs = ['./fotos/' + p.id + '-sala.webp'].concat(p.imgs || []); q.lq = q.imgs[0]; return q; }
+    if (!i || !p.imgs || !p.imgs[i]) return p;
     var imgs = p.imgs.slice(); imgs.splice(i, 1); imgs.unshift(p.imgs[i]);
-    var q = Object.create(p); q.imgs = imgs; q.lq = C.lo ? C.lo(imgs[0]) : imgs[0]; return q;
+    q = Object.create(p); q.imgs = imgs; q.lq = C.lo ? C.lo(imgs[0]) : imgs[0]; return q;
   }
   function pintarGrid() {
     var lista = filtrar(), n = lista.length;
     /* la primera fila (3 en desktop) con prioridad alta; el resto lazy con LQIP. La foto B (hover) solo con puntero fino: en touch nunca se muestra */
-    grid.innerHTML = lista.map(function (p, i) { var c = CAL[p.id]; return PM.pcardHTML(deSala(p), { eager: i < 3, hover: PM.FINE, cls: c ? 'gris' + (c[0] ? ' corte' : '') : '' }); }).join('');
-    /* calibración de cada sesión gris: escala y brillo como variables de la tarjeta (el hover del sistema sigue mandando sobre el filtro) */
-    $$('.pcard.gris', grid).forEach(function (c) { var k = CAL[c.getAttribute('data-id')]; if (k) { c.style.setProperty('--sc', k[1]); c.style.setProperty('--br', k[2]); } });
+    var sep = false;
+    grid.innerHTML = lista.map(function (p, i) {
+      var h = '';
+      if (!st.cat && p.cat === 'MANUK' && !sep) { sep = true; h += '<h2 class="sh-sep ey"><b>MANUK WORLD</b> <span lang="ja" aria-hidden="true">世界</span><a class="lnk" href="./manuk.html">ENTRAR AL MUNDO</a></h2>'; }
+      return h + PM.pcardHTML(deSala(p), { eager: i < 3, hover: PM.FINE, cls: p.cat === 'MANUK' ? 'manuk' : 'ses-' + sesion(p) });
+    }).join('');
+    /* calibración por pieza como variables de la tarjeta (el hover del sistema sigue mandando sobre el filtro) */
+    $$('.pcard', grid).forEach(function (c) { var p = PM.byId(c.getAttribute('data-id')); if (p) calibrar(c, p); });
     /* los sellos dejan la foto y se pegan al nombre (estado junto al nombre, como el rojo de Demobaza) */
-    $$('.pcard', grid).forEach(function (c) { var s = $('.pcard-ph > .sellos', c), nm = $('.pcard-nm', c); if (s && nm) nm.appendChild(s); });
+    $$('.pcard', grid).forEach(function (c) { var s = $('.pcard-ph > .sellos', c), pr = $('.pcard-pr', c); if (s && pr) { var ln = d.createElement('span'); ln.className = 'pcard-ln'; pr.parentNode.insertBefore(ln, pr); ln.appendChild(pr); ln.appendChild(s); } });
     /* plegable de teléfono: el orden activo siempre visible + cantidad de filtros */
     var act = st.tl.length + st.se.length;
     $('#sh-tg-n').textContent = '· ' + SORTS[st.sort] + (act ? ' · ' + act + (act === 1 ? ' FILTRO' : ' FILTROS') : '');
     /* variante grande para pantallas densas */
     $$('.pcard-a', grid).forEach(function (img) {
-      var src = img.getAttribute('src'); if (!src || !C.hi) return;
+      var src = img.getAttribute('src'); if (!src || !C.hi || src.indexOf('http') !== 0) return;
       img.setAttribute('srcset', src + ' 640w, ' + C.hi(src) + ' 1024w');
       img.setAttribute('sizes', '(min-width:1024px) 30vw, 50vw');
     });
     $('#sh-n').textContent = n;
-    $('#sh-n-t').textContent = n === 1 ? 'PIEZA EN SALA' : 'PIEZAS EN SALA';
+    $('#sh-n-t').textContent = n === 1 ? 'PIEZA' : 'PIEZAS';
     vacio.hidden = n > 0; fin.hidden = n === 0;
     if (!n) {
       var hayF = st.tl.length || st.se.length;
@@ -497,6 +619,17 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
       $('#sh-clear').textContent = st.q && !hayF ? 'QUITAR LA BÚSQUEDA' : 'LIMPIAR FILTROS';
     }
     $('#sh-fin-n').textContent = n;
+    $('#sh-fin-t').textContent = n === 1 ? 'PIEZA' : 'PIEZAS';
+    /* la línea de cierre se pinta desde los datos de la sala: únicas 1/1 declaradas por la casa y las que quedan una (nunca «ediciones de n»: el stock no es una tirada) */
+    var u = lista.filter(function (p) { return PM.esUnica(p); }).length;
+    var ul = lista.filter(function (p) { return PM.esUltima(p); }).length;
+    var txt = ' · TODO LO PUBLICADO ESTÁ DISPONIBLE';
+    if (u === n && n) txt += n === 1 ? ' · ÚNICA 1/1' : ' · LAS ' + n + ' SON ÚNICAS 1/1';
+    else {
+      if (u) txt += ' · ' + u + (u === 1 ? ' ÚNICA 1/1' : ' ÚNICAS 1/1');
+      if (ul) txt += ' · ' + (ul === 1 ? 'DE UNA QUEDA UNA' : 'DE ' + ul + ' QUEDA UNA');
+    }
+    $('#sh-fin-x').textContent = txt;
     grid.classList.remove('dim');
   }
 
@@ -510,7 +643,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     var u = location.pathname + (p.toString() ? '?' + p.toString() : '');
     try { history[push ? 'pushState' : 'replaceState']({ cat: st.cat, q: st.q, sort: st.sort, tl: st.tl.slice(), se: st.se.slice() }, '', u); } catch (e) {}
   }
-  function pintar() { pintarCats(); pintarHead(); pintarGrid(); }
+  function pintar() { pintarCats(); pintarHead(); pintarTalles(); pintarGrid(); }
 
   /* ── eventos ── */
   $('#sh-cats').addEventListener('click', function (e) {

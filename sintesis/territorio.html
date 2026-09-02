@@ -4,91 +4,122 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Territorio 漂流 — Panni Margot</title>
-<meta name="description" content="Deriva por una sección de la casa: las piezas reales flotando en un plano, para recorrer sin orden.">
+<meta name="description" content="Deriva por una sección de la casa: las piezas reales, de a una, a pantalla completa.">
 <link rel="icon" href="../favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://acdn-us.mitiendanube.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./base.css">
 <style>
-/* ═══ TERRITORIO · deriva de UNA sección · módulo negro ═══ */
-.terr{display:flex;flex-direction:column}
+/* ═══ TERRITORIO · deriva de UNA sección · módulo negro ═══
+   Se recorre pieza por pieza: cada pieza a sangre (la figura entera a la izquierda, el detalle de la prenda a la derecha),
+   nombre · precio · sello como coordenadas flotantes. La deriva es el tránsito: rueda, flechas, swipe o el mapa del costado
+   avanzan con un fundido lento (translate + opacity). El HUD se posa sobre la foto en diferencia: nunca la tapa. */
+:root{--hdh:72px;--S:calc(100dvh - var(--hdh))}
+html{scroll-padding-top:var(--hdh)}
+html.t-snap{scroll-snap-type:y mandatory}
+html.t-snap .pm-ft{scroll-snap-align:start}
+.terr{position:relative;display:block}
+.pm-ft{margin-top:0;position:relative;z-index:5}
 
-/* el plano ocupa el viewport bajo el header; el pie de la casa queda debajo */
-#mapa{
-  position:relative;height:calc(100dvh - var(--hdh,72px));min-height:520px;overflow:hidden; /* hidden (no clip): el propio #mapa absorbe el scroll-into-view del foco y el listener lo resetea */
-  touch-action:pinch-zoom;background:var(--bg);-webkit-user-select:none;user-select:none;
-  border-bottom:1px solid var(--line);outline-offset:-3px;
-}
-#mapa:focus-visible{outline:1px solid var(--fg)}
-#plano{position:absolute;top:0;left:0;will-change:transform;z-index:1}
-#voro{position:absolute;inset:0;pointer-events:none}
-#voro polygon{fill:none;stroke:var(--line);stroke-width:1}
-#voro circle{fill:var(--line)}
+/* ── el recorrido: un envoltorio alto (una pantalla por pieza) con la escena pegada arriba ── */
+.t-deriva{position:relative;height:calc(var(--n,1) * var(--S))}
+.t-escena{position:sticky;top:var(--hdh);height:var(--S);overflow:hidden;background:var(--bg);outline-offset:-3px}
+.t-escena:focus-visible{outline:1px solid var(--fg)}
+.t-snap-p{position:absolute;left:0;right:0;height:var(--S);pointer-events:none;scroll-snap-align:start}
 
-/* piezas */
-.pz{position:absolute;display:block;color:var(--fg);-webkit-tap-highlight-color:transparent}
-.pz .ph{display:block;background:var(--surface);box-shadow:0 0 0 1px rgba(255,255,255,.04)}
-.pz .pm-img{filter:grayscale(1) contrast(1.1)}
-/* la cinta del SKU entra entera: hasta dos líneas, sin elipsis */
-.pz .tag{display:block;max-width:100%;margin-top:7px;font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.12em;text-transform:uppercase;color:var(--fg-2);white-space:normal;overflow-wrap:anywhere;overflow:hidden;line-height:1.35;max-height:2.7em}
-.pz .tag [lang="ja"]{letter-spacing:0}
-.pz:focus-visible{outline:1px solid var(--fg);outline-offset:8px}
+/* ── cada pieza: capa foto → luz → HUD-enlace ── */
+.pz{position:absolute;inset:0;opacity:0;visibility:hidden;transform:translate3d(0,7%,0);z-index:1;
+  transition:opacity 1.05s var(--ease),transform 1.35s var(--ease),visibility 0s linear 1.35s}
+.pz.prev{transform:translate3d(0,-7%,0)}
+.pz.on{opacity:1;visibility:visible;transform:none;z-index:2;transition-delay:0s,0s,0s}
+/* la primera pieza aparece de golpe: la deriva empieza recién con el primer gesto */
+.t-escena.t-init .pz,.t-escena.t-init .co{transition:none}
+.pz-fig{position:absolute;inset:0;display:grid;grid-template-columns:38% minmax(0,1fr);grid-template-rows:minmax(0,1fr);background:var(--g-900)}
+.pz-cel{position:relative;overflow:hidden;min-width:0;min-height:0}
+.pz-fig img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;filter:grayscale(1) contrast(1.04);transition:filter 1s var(--ease)}
+/* el detalle: la misma prenda, más cerca (recorte del torso, nunca un macro inventado) */
+.pz-b{object-position:50% 46%;transform:scale(1.3);transform-origin:50% 46%}
 @media (hover:hover) and (pointer:fine){
-  .pz:hover .pm-img,.pz:focus-visible .pm-img{filter:grayscale(0) contrast(1)}
-  .pz:hover .tag,.pz:focus-visible .tag{color:var(--fg)}
+  .pz.on .pz-fig{animation:t-respira 22s ease-in-out infinite alternate}
+  .pz:hover .pz-fig img,.pz:focus-within .pz-fig img{filter:grayscale(0) contrast(1)}
 }
+@keyframes t-respira{from{transform:scale(1)}to{transform:scale(1.035)}}
+/* la linterna del sistema deja las coordenadas (--lx/--ly) en la escena; la luz se pinta por pieza, más suave que en el plano negro */
+.t-escena.linterna::after{display:none}
+.pz-luz{position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(circle var(--lr,560px) at var(--lx,50%) var(--ly,42%),transparent 0,rgba(0,0,0,.04) 55%,rgba(0,0,0,.12) 100%)}
+@media (hover:none),(pointer:coarse){.pz-luz{background:radial-gradient(ellipse 80% 70% at 50% 45%,transparent 0,rgba(0,0,0,.1) 100%)}}
 
-/* HUD: dato puro sobre el foco */
-.hud{position:absolute;z-index:7;pointer-events:none}
-.hud a,.hud button{pointer-events:auto}
-/* el título no se mezcla con el plano: lleva un velo negro radial detrás para leerse siempre */
-.hud-t{top:clamp(24px,5vh,56px);left:var(--gut);max-width:min(70vw,900px)}
-.hud-t::before{content:"";position:absolute;inset:-24px -72px -32px -40px;z-index:-1;background:radial-gradient(ellipse at 40% 50%,rgba(0,0,0,.86) 30%,rgba(0,0,0,0) 75%);pointer-events:none}
-.hud-t .ey{color:var(--fg-2)}
-.hud-t h1{margin-top:var(--s-3);display:flex;align-items:baseline;gap:.3em;flex-wrap:wrap}
-.hud-t h1 .kj{font-family:var(--f-ja);font-size:.38em;font-weight:400;letter-spacing:.1em;color:var(--fg-2);text-transform:none;line-height:1}
-.hud-t .kana{display:block;margin-top:var(--s-3);font-family:var(--f-ja);font-size:var(--t-3);letter-spacing:.5em;color:var(--fg-2)}
-.hud-ctl{top:clamp(24px,5vh,56px);right:var(--gut);display:flex;gap:var(--s-2);align-items:center}
-.hud-ctl .btn{background:var(--bg)}
-/* la línea de datos del pie lleva un velo negro degradado detrás (como el título): se lee siempre, sin pisar fotos en negativo */
-.hud-b{left:var(--gut);right:var(--gut);bottom:var(--s-4);display:flex;justify-content:space-between;align-items:flex-end;gap:var(--s-6)}
-.hud-b::before{content:"";position:absolute;z-index:-1;left:calc(var(--gut) * -1);right:calc(var(--gut) * -1);bottom:calc(var(--s-4) * -1);height:120px;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.88));pointer-events:none}
-.hud-b .ey{display:flex;flex-wrap:wrap;gap:6px var(--s-4);align-items:center;color:var(--fg-2)}
-.hud-b .ey b{color:var(--fg);font-variant-numeric:tabular-nums}
-.hud-b .dial{text-transform:none;letter-spacing:.06em;color:var(--fg)}
-.hud-b .der{text-align:right;justify-content:flex-end}
-.hud-pas i{display:inline-block;width:7px;height:7px;border:1px solid var(--fg-2);margin-right:2px}
-.hud-pas i.on{background:var(--fg);border-color:var(--fg)}
-.hud-pie{position:absolute;left:50%;bottom:var(--s-4);transform:translateX(-50%);z-index:7;display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.16em;color:var(--fg-2);mix-blend-mode:difference}
-.hud-pie:hover,.hud-pie:focus-visible{color:var(--fg)}
-.hud-pie .t-pie{display:none}
-.vert-kana{position:absolute;left:calc(var(--gut) - 2px);top:50%;transform:translateY(-50%);z-index:7;pointer-events:none;writing-mode:vertical-rl;font-family:var(--f-ja);font-size:var(--t-3);letter-spacing:.5em;color:var(--fg-2);mix-blend-mode:difference}
+/* coordenadas: el enlace cubre la escena; los datos flotan como etiquetas de la casa (negro sobre la foto, familia de los sellos) */
+.pz-link{position:absolute;inset:0;z-index:3;display:block;color:var(--white);-webkit-tap-highlight-color:transparent;outline:none}
+.pz-link:focus-visible .co.go{text-decoration:underline;text-underline-offset:5px}
+.tag,.co{display:inline-flex;align-items:center;gap:8px;height:26px;padding:0 10px;background:var(--black);color:var(--white);
+  font-family:var(--f-mono);font-weight:400;font-size:var(--t-1);letter-spacing:.16em;text-transform:uppercase;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
+.co{position:absolute;transform:translate(-50%,-50%);transition:opacity .9s var(--ease) .25s}
+.pz:not(.on) .co{opacity:0;transition-delay:0s}
+.co.i1,.co.i2{font-size:var(--t-2);padding:0 8px}
+.co.nm{font-family:var(--f-text);font-weight:600;font-size:var(--t-3);letter-spacing:.18em;height:32px;padding:0 14px;max-width:min(60vw,640px);overflow:hidden;text-overflow:ellipsis;display:block;line-height:32px}
+.co.sk{letter-spacing:.2em;color:var(--g-300)}
+.co.pr{font-size:var(--t-2);font-weight:500}
+.co.se{padding:0;background:none;height:auto}
+.co.se .sellos{display:inline-flex;gap:var(--s-1)}
+.co .sello{background:var(--black);color:var(--white);border-color:var(--white)}
+.co .sello.uno{background:var(--white);color:var(--black);border-color:var(--white)}
+.co.go{letter-spacing:.22em}
+.co.go::after{content:"";position:absolute;left:10px;right:10px;bottom:6px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform var(--dur-fast) var(--ease)}
+.pz:hover .co.go::after,.pz-link:focus-visible .co.go::after{transform:scaleX(1)}
+/* desktop: cuadrícula de tres columnas y dos filas, como coordenadas */
+.co.i1{left:8%;top:34%}  .co.nm{left:56%;top:34%}  .co.i2{left:92%;top:34%}
+.co.sk{left:56%;top:48%}
+.co.ln{left:8%;top:64%}  .co.pr{left:56%;top:64%}  .co.se{left:92%;top:64%}
+.co.go{left:56%;top:78%}
 
-/* rizo al soltar el arrastre */
-.rip{position:fixed;z-index:940;width:16px;height:16px;margin:-8px 0 0 -8px;border:1px solid var(--fg);border-radius:50%;pointer-events:none;mix-blend-mode:difference;animation:t-rip .6s ease-out forwards}
-@keyframes t-rip{0%{transform:scale(1);opacity:.9}100%{transform:scale(9);opacity:0}}
+/* ── HUD fijo: título arriba, controles abajo, mapa al costado — todo como etiquetas negras sobre la foto ── */
+.t-hud{position:fixed;z-index:30;color:var(--white);pointer-events:none;transition:opacity .5s var(--ease),visibility 0s linear 0s}
+.t-hud a,.t-hud button{pointer-events:auto}
+.t-hud.off,.t-mapa.off{opacity:0;visibility:hidden;transition:opacity .35s var(--ease),visibility 0s linear .35s}
+.t-top{top:calc(var(--hdh) + 20px);left:var(--gut);max-width:min(48vw,560px);display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.t-top .ey{color:var(--g-300);height:24px;padding:0 10px;display:inline-flex;align-items:center;gap:6px;background:var(--black);line-height:1}
+.t-top h1{display:inline-flex;align-items:baseline;gap:.45em;padding:0 12px;height:44px;background:var(--black);font-family:var(--f-display);font-size:clamp(22px,2.2vw,30px);line-height:44px;text-transform:uppercase;letter-spacing:.01em}
+.t-top h1 .kj{font-family:var(--f-ja);font-size:.46em;font-weight:400;letter-spacing:.12em;color:var(--g-300);text-transform:none}
+.t-top .kata{height:22px;padding:0 10px;display:inline-flex;align-items:center;background:var(--black);font-family:var(--f-ja);font-size:var(--t-1);letter-spacing:.4em;color:var(--g-300);white-space:nowrap}
+.t-bot{left:var(--gut);right:var(--gut);bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:var(--s-4)}
+.t-vistas{display:flex;align-items:center;gap:2px;white-space:nowrap}
+.t-hud .lnk{display:inline-flex;align-items:center;height:28px;padding:0 10px;background:var(--black);color:var(--white);border:0;cursor:pointer;font:inherit;font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.16em;text-transform:uppercase;text-decoration:none;white-space:pre}
+.t-hud .lnk:hover,.t-hud .lnk:focus-visible{text-decoration:underline;text-underline-offset:5px}
+.t-pas{display:inline-flex;align-items:center;height:28px;padding:0 10px;background:var(--black);font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;color:var(--g-300)}
+.t-pas .hud-pas{display:inline-flex;align-items:center;gap:0 var(--s-2)}
+.t-pas .hud-pas b{font-weight:500;color:var(--white)}
+.t-pas .hud-pas i{display:inline-block;width:6px;height:6px;border:1px solid var(--g-300);margin-right:3px;vertical-align:middle}
+.t-pas .hud-pas i.on{background:var(--white);border-color:var(--white)}
+.t-flechas{display:flex;align-items:center;gap:2px}
+.t-flechas button{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:28px;padding:0 6px;background:var(--black);color:var(--white);font-family:var(--f-mono);font-size:var(--t-2);letter-spacing:.1em;white-space:pre;cursor:pointer;transition:opacity var(--dur-fast)}
+.t-flechas button:hover,.t-flechas button:focus-visible{text-decoration:underline;text-underline-offset:5px}
+.t-flechas button[aria-disabled="true"]{color:var(--g-300);opacity:.55;cursor:default;text-decoration:none}
 
-/* revelado circular hacia la ficha (sala blanca) */
-/* (solo transform: un disco blanco que crece desde el punto del click) */
-.t-circ{position:fixed;left:var(--cx,50%);top:var(--cy,50%);z-index:300;width:300vmax;height:300vmax;margin:-150vmax 0 0 -150vmax;border-radius:50%;background:var(--white);pointer-events:none;transform:scale(0);will-change:transform;transition:transform .55s var(--ease)}
-.t-circ.on{transform:scale(1)}
+/* mapa: puntos numerados al costado; el actual lleva número, el resto lo muestra al pasar; miniatura al pasar */
+.t-mapa{position:fixed;z-index:30;right:calc(var(--gut) - 4px);top:50%;transform:translateY(-50%);color:var(--white);transition:opacity .5s var(--ease),visibility 0s linear 0s}
+.t-mapa ol{display:flex;flex-direction:column;gap:0}
+.t-mapa button{position:relative;display:flex;align-items:center;justify-content:flex-end;gap:8px;height:24px;padding:0 4px;color:inherit;font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;font-variant-numeric:tabular-nums;cursor:pointer}
+.t-mapa button .n{display:inline-flex;align-items:center;height:18px;padding:0 6px;background:var(--black);opacity:0;transition:opacity var(--dur-fast)}
+.t-mapa button i{display:block;width:8px;height:8px;background:var(--black);box-shadow:inset 0 0 0 1px var(--white);flex:0 0 auto;transition:transform var(--dur-fast)}
+.t-mapa button:hover .n,.t-mapa button:focus-visible .n,.t-mapa button[aria-current="true"] .n{opacity:1}
+.t-mapa button[aria-current="true"] i{background:var(--white)}
+.t-mapa button:hover i,.t-mapa button:focus-visible i{transform:scale(1.4)}
+.t-mapa button:focus-visible{outline:1px solid var(--white);outline-offset:-1px}
+.t-mapa .th{position:absolute;right:calc(100% + 10px);top:50%;transform:translateY(-50%);width:64px;aspect-ratio:2/3;object-fit:cover;object-position:50% 20%;background:var(--g-900);border:1px solid var(--black);opacity:0;pointer-events:none;transition:opacity var(--dur-fast);filter:grayscale(1)}
+.t-mapa button:hover .th,.t-mapa button:focus-visible .th{opacity:1}
 
-/* vista lista: la renuncia hecha sistema */
-.t-lista{
-  position:fixed;inset:0;z-index:210;background:var(--cromo-bg);color:var(--cromo-fg);
-  display:flex;flex-direction:column;opacity:0;transition:opacity var(--dur-fast);
-}
+/* ── vista lista: la renuncia hecha sistema ── */
+.t-lista{position:fixed;inset:0;z-index:210;background:var(--cromo-bg);color:var(--cromo-fg);display:flex;flex-direction:column;opacity:0;transition:opacity var(--dur-fast)}
 .t-lista.on{opacity:1}
 .t-lista .pm-dlg-h{padding-inline:var(--gut)}
 .t-lista .pm-dlg-b{padding:var(--s-8) var(--gut)}
 .t-lista ol{max-width:1100px;margin-inline:auto;border-top:1px solid var(--cromo-line)}
-.li-row{
-  display:grid;grid-template-columns:40px minmax(0,1fr) 320px 90px 120px;gap:var(--s-4);align-items:baseline;
-  min-height:52px;padding:var(--s-4) var(--s-1);border-bottom:1px solid var(--cromo-line);
-  font-family:var(--f-mono);font-size:var(--t-2);letter-spacing:.1em;text-transform:uppercase;color:var(--cromo-fg);
-  transition:background var(--dur-fast);
-}
+.li-row{display:grid;grid-template-columns:40px minmax(0,1fr) 320px 90px 120px;gap:var(--s-4);align-items:baseline;min-height:52px;padding:var(--s-4) var(--s-1);border-bottom:1px solid var(--cromo-line);
+  font-family:var(--f-mono);font-size:var(--t-2);letter-spacing:.1em;text-transform:uppercase;color:var(--cromo-fg);transition:background var(--dur-fast)}
 .li-row:hover,.li-row:focus-visible{background:var(--cromo-surface)}
 .li-row .ix{color:var(--cromo-fg-2);font-variant-numeric:tabular-nums}
 .li-row .nm{font-family:var(--f-text);font-weight:500;letter-spacing:.08em}
@@ -99,7 +130,7 @@
 .t-lista .pm-dlg-f{display:flex;gap:var(--s-3);flex-wrap:wrap;justify-content:space-between;align-items:center;padding-inline:var(--gut)}
 .t-lista .pm-dlg-f .ey{color:var(--cromo-fg-2)}
 
-/* sin sección válida: índice de territorios */
+/* ── sin sección válida: índice de territorios ── */
 .t-idx{padding-block:var(--s-16) var(--s-24)}
 .t-idx a>span:first-child{display:inline-flex;align-items:baseline;gap:.4em;min-width:0}
 .t-idx h1{margin:var(--s-3) 0 var(--s-8)}
@@ -110,35 +141,41 @@
 .t-idx a .n{font-family:var(--f-mono);font-size:var(--t-2);letter-spacing:.14em;color:var(--fg-2)}
 .t-idx a:hover .n,.t-idx a:focus-visible .n{color:var(--fg)}
 
+/* ── tablet y teléfono: una sola foto (la figura entera), coordenadas apiladas al centro, HUD compacto ── */
 @media (max-width:1023px){
+  .pz-fig{grid-template-columns:1fr}
+  .pz-cel-b{display:none}
+  .pz-fig img{object-position:50% 22%}
+  .t-mapa{display:none}
+  .t-pas{display:none}
+  .co.i1{left:10%;top:30%}  .co.i2{left:90%;top:30%}
+  .co.nm{left:50%;top:60%;max-width:84vw}
+  .co.sk{left:50%;top:65%}
+  .co.pr{left:50%;top:70%}
+  .co.ln{left:50%;top:75%}
+  .co.se{left:50%;top:80%}
+  .co.go{left:50%;top:88%}
   .t-lista .pm-dlg-b{padding:var(--s-6) var(--gut)}
   .li-row{grid-template-columns:32px minmax(0,1fr) 110px;gap:var(--s-3)}
   .li-row .sk,.li-row .tl{display:none}
 }
 @media (max-width:767px){
-  #mapa{min-height:480px}
-  .vert-kana{display:none}
-  .hud-t{top:var(--s-4);max-width:calc(100vw - var(--gut) * 2)}
-  .hud-t::before{inset:-16px -40px -24px -24px}
-  .hud-t h1 .kj{font-size:.32em}
-  .hud-t .kana{display:none}
-  .hud-ctl{top:auto;bottom:var(--s-4);left:var(--gut);right:var(--gut);justify-content:space-between}
-  .hud-ctl .btn{flex:1 1 0;padding-inline:var(--s-3);font-size:var(--t-1)}
+  .t-top{top:calc(var(--hdh) + 12px);max-width:70vw}
+  .t-top h1{font-size:22px;height:36px;line-height:36px}
+  .t-top .kata{display:none}
+  .t-bot{bottom:12px;gap:var(--s-3)}
   .t-vis{display:none}
-  /* teléfono: una sola línea de datos (piezas · pasaporte · pie de la casa) sobre los dos botones: el HUD ocupa lo mínimo */
-  .hud-b{bottom:calc(var(--s-4) + 52px);flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:var(--s-1) var(--s-4)}
-  .hud-b::before{height:150px}
-  .hud-b .ey{gap:4px var(--s-3)}
-  .hud-b .der{text-align:left;justify-content:flex-start}
-  .hud-b .dial,.hud-b .coords{display:none}
-  /* en touch no hay rueda que ceda el scroll: el atajo al pie vive como texto en la línea de datos (el arrastre en el borde inferior también baja) */
-  .hud-pie{position:static;transform:none;mix-blend-mode:normal;min-height:0;min-width:0;padding:0;color:var(--fg-2);letter-spacing:.14em;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--fg-3)}
-  .hud-pie .t-pie{display:inline;margin-left:6px}
-  .hud-pie:hover,.hud-pie:focus-visible{color:var(--fg);text-decoration-color:currentColor}
+  .co.nm{font-size:var(--t-2);height:28px;line-height:28px;padding:0 10px}
+  .co.nm{top:61%}
+  .co.i1{left:11%;top:28%}  .co.i2{left:89%;top:28%}
+  .co.go{top:87%}
   .t-idx a{font-size:var(--t-6)}
 }
+/* touch: la etiqueta se ve de 32px pero el blanco de toque es de 44px */
 @media (hover:none),(pointer:coarse){
-  .pz .tag{font-size:var(--t-1)}
+  .t-hud .lnk,.t-flechas button{position:relative;height:32px}
+  .t-hud .lnk::after,.t-flechas button::after{content:"";position:absolute;left:0;right:0;top:-6px;bottom:-6px}
+  .t-vistas,.t-flechas{gap:var(--s-2)}
 }
 </style>
 
@@ -207,37 +244,39 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   </div>
 </div>
 <main id="contenido" class="terr">
-  <section id="mapa" tabindex="0" role="region" aria-label="Territorio" aria-describedby="mapa-ayuda">
-    <p id="mapa-ayuda" class="sr">Plano de piezas para recorrer. Con el teclado: flechas para desplazar el plano, Tab para pasar de pieza en pieza, Enter para abrir la pieza.</p>
-    <!-- el HUD va antes del plano en el DOM: con teclado, los controles de salida llegan antes que las 16+ piezas -->
-    <div class="hud hud-t">
-      <p class="ey"><span>SHOP <span lang="ja" aria-hidden="true">店</span></span> <span aria-hidden="true">/</span> <span>TERRITORIO <span lang="ja" aria-hidden="true">漂流</span></span></p>
-      <h1 class="disp disp-l"><span id="t-h1">TERRITORIO</span><span class="kj" lang="ja" id="t-kj">漂流</span></h1>
-      <span class="kana" lang="ja" aria-hidden="true" id="t-kana"></span>
-    </div>
+  <div class="t-hud t-top">
+    <p class="ey"><span>SHOP <span lang="ja" aria-hidden="true">店</span></span> <span aria-hidden="true">/</span> <span>TERRITORIO <span lang="ja" aria-hidden="true">漂流</span></span></p>
+    <h1><span id="t-h1">TERRITORIO</span><span class="kj" lang="ja" id="t-kj">漂流</span></h1>
+    <p class="kata" lang="ja" aria-hidden="true">バーニ　マーゴット</p>
+  </div>
 
-    <div class="hud hud-ctl">
-      <a class="btn sm" id="t-shop" href="./shop.html" aria-label="Vista compra">[ ≡ ] <span class="t-vis">VISTA </span>COMPRA</a>
-      <button type="button" class="btn sm" id="t-lista-tg" aria-haspopup="dialog" aria-controls="lista" aria-expanded="false" aria-label="Vista lista">[ ⋮ ] <span class="t-vis">VISTA </span>LISTA</button>
-    </div>
+  <div id="deriva" class="t-deriva">
+    <section id="escena" class="t-escena" tabindex="0" role="region" aria-label="Territorio" aria-describedby="escena-ayuda">
+      <p id="escena-ayuda" class="sr">Recorrido pieza por pieza. Con el teclado: flechas arriba y abajo para pasar de pieza, Tab para llegar a la pieza, Enter para abrirla.</p>
+      <p id="t-live" class="sr" aria-live="polite"></p>
+    </section>
+  </div>
 
-    <div class="hud hud-b">
-      <p class="ey"><span class="coords num" id="t-coords" aria-hidden="true">X:+0000 :: Y:+0000</span><span><b id="t-n">0</b> PIEZAS EN PLANO</span><span class="dial" aria-hidden="true">&gt;&gt;HONDURAS4940##</span></p>
-      <p class="ey der" id="t-pas"></p>
-    </div>
-    <a class="hud-pie" href="#pm-term" aria-label="Ir al pie de la casa">[ ↓ ]<span class="t-pie" aria-hidden="true">PIE DE LA CASA</span></a>
+  <nav class="t-mapa" aria-label="Mapa del territorio"><ol id="t-mapa-ol"></ol></nav>
 
-    <div id="plano"></div>
-    <div class="vert-kana" lang="ja" aria-hidden="true">バーニ　マーゴット</div>
-  </section>
+  <div class="t-hud t-bot">
+    <div class="t-vistas">
+      <a class="lnk" id="t-shop" href="./shop.html" aria-label="Vista compra">[ ≡ ] <span class="t-vis">VISTA </span>COMPRA</a>
+      <button type="button" class="lnk" id="t-lista-tg" aria-haspopup="dialog" aria-controls="lista" aria-expanded="false" aria-label="Vista lista">[ ⋮ ] <span class="t-vis">VISTA </span>LISTA</button>
+    </div>
+    <p class="t-pas" id="t-pas"></p>
+    <div class="t-flechas">
+      <button type="button" id="t-prev" aria-label="Pieza anterior">[ ↑ ]</button>
+      <button type="button" id="t-next" aria-label="Pieza siguiente">[ ↓ ]</button>
+    </div>
+  </div>
 </main>
 
 <div id="lista" class="t-lista" role="dialog" aria-modal="true" aria-labelledby="li-t" hidden>
   <div class="pm-dlg-h"><h2 id="li-t">VISTA LISTA <span class="n" id="li-n"></span> <span lang="ja" aria-hidden="true">店</span></h2><button type="button" class="pm-x" data-cerrar="lista" aria-label="Cerrar la vista lista" data-foco>[ × ] CERRAR</button></div>
   <div class="pm-dlg-b"><ol id="li-ol" aria-label="Piezas del territorio"></ol></div>
-  <div class="pm-dlg-f"><span class="ey">MISMAS PIEZAS, EN ORDEN · <span lang="ja" aria-hidden="true">一点物</span> CADA UNA ES ÚNICA</span><a class="btn" id="li-shop" href="./shop.html">[ ≡ ] VISTA COMPRA</a></div>
+  <div class="pm-dlg-f"><span class="ey">MISMAS PIEZAS, EN ORDEN · DE A UNA, DE A POCAS — NUNCA EN SERIE</span><a class="btn" id="li-shop" href="./shop.html">[ ≡ ] VISTA COMPRA</a></div>
 </div>
-<div id="t-circ" class="t-circ" aria-hidden="true" hidden></div>
 
 <script src="./catalogo.js"></script>
 <script src="./base.js"></script>
@@ -248,6 +287,11 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   var CATS = C.categorias || [];
   var KEYS = CATS.map(function (c) { return c.key; });
   var raw = String(PM.qs('cat') || '').toUpperCase().replace(/ WORLD$/, '');
+  /* MANUK tiene una sola puerta: su mundo. ?cat=MANUK no abre un territorio genérico, va a manuk.html (antes del primer render) */
+  if (raw === 'MANUK') {
+    try { var vt0 = d.createElement('style'); vt0.textContent = '@view-transition{navigation:none}'; d.head.appendChild(vt0); void d.documentElement.offsetWidth; } catch (e) {}
+    location.replace('./manuk.html'); return;
+  }
   var KEY = KEYS.indexOf(raw) > -1 ? raw : '';
   var CAT = null; for (var i = 0; i < CATS.length; i++) if (CATS[i].key === KEY) CAT = CATS[i];
   var NOMBRE = CAT ? String(CAT.nombre || CAT.key).toUpperCase() : '';
@@ -256,11 +300,14 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
 
   var $ = function (s, r) { return (r || d).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || d).querySelectorAll(s)); };
-  var RM = PM.RM, FINE = PM.FINE;
-  var mapa = $('#mapa'), plano = $('#plano'), main = $('#contenido');
+  var RM = PM.RM, FINE = PM.FINE, H = d.documentElement;
+  var main = $('#contenido'), deriva = $('#deriva'), escena = $('#escena');
 
-  function medirHd() { var h = $('.pm-hd'); if (h) d.documentElement.style.setProperty('--hdh', h.offsetHeight + 'px'); }
-  medirHd(); addEventListener('resize', medirHd);
+  /* alto real del cromo superior (una o dos filas según el ancho): se mide al montar, al cargar y cada vez que cambia */
+  function medirHd() { var h = $('.pm-hd'); if (h) H.style.setProperty('--hdh', Math.round(h.getBoundingClientRect().height) + 'px'); }
+  medirHd();
+  addEventListener('load', medirHd);
+  if ('ResizeObserver' in window) { var hd0 = $('.pm-hd'); if (hd0) new ResizeObserver(function () { medirHd(); }).observe(hd0); }
 
   /* ── sin sección válida: índice de territorios ── */
   if (!CAT) {
@@ -269,7 +316,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
       '<h1 class="disp disp-l">Elegí un territorio<span class="kj" lang="ja" aria-hidden="true">漂流</span></h1><ul>' +
       CATS.map(function (c) {
         var n = (C.piezas || []).filter(function (p) { return p.cat === c.key; }).length;
-        return '<li><a href="./territorio.html?cat=' + encodeURIComponent(c.key) + '"><span>' + PM.esc(String(c.nombre || c.key).toUpperCase()) +
+        return '<li><a href="' + (c.key === 'MANUK' ? './manuk.html' : './territorio.html?cat=' + encodeURIComponent(c.key)) + '"><span>' + PM.esc(String(c.nombre || c.key).toUpperCase()) +
           '<span class="kj" lang="ja" aria-hidden="true">' + PM.esc(c.kj || '') + '</span></span><span class="n">' + n + (n === 1 ? ' PIEZA' : ' PIEZAS') + ' <span aria-hidden="true">&gt;&gt;</span></span></a></li>';
       }).join('') + '</ul></div>';
     return;
@@ -279,331 +326,207 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   var PZ = (C.porCat ? C.porCat(KEY) : (C.piezas || []).filter(function (p) { return p.cat === KEY; })).slice()
     .sort(function (a, b) { return (b.ts || 0) - (a.ts || 0); });
   var N = PZ.length;
+  var nn = function (i) { return (i < 9 ? '0' : '') + (i + 1); };
   d.title = String(CAT.nombre || CAT.key) + ' · Territorio 漂流 — Panni Margot';
   $('#t-h1').textContent = NOMBRE;
   $('#t-kj').textContent = CAT.kj || '';
-  /* solo dialecto literal de la casa: katakana de la marca + kanji de la sección */
-  $('#t-kana').textContent = 'バーニ　マーゴット · ' + (CAT.kj || '');
-  $('#t-n').textContent = N;
   $('#t-shop').href = './shop.html?cat=' + encodeURIComponent(KEY);
   $('#li-shop').href = './shop.html?cat=' + encodeURIComponent(KEY);
-  mapa.setAttribute('aria-label', 'Territorio de ' + NOMBRE + ': ' + N + ' piezas en el plano');
+  escena.setAttribute('aria-label', 'Territorio de ' + NOMBRE + ': ' + N + ' piezas, de a una');
+  deriva.style.setProperty('--n', N);
   function pintarPas() { $('#t-pas').innerHTML = PM.pasaporte.html('hud-pas'); }
-  /* teléfono: la caja [ ↓ ] PIE DE LA CASA deja el plano y pasa a la línea de datos (una sola fila: piezas · pasaporte · pie) */
-  if (innerWidth < 768) { var pie = $('.hud-pie'), hb0 = $('.hud-b'); if (pie && hb0) hb0.appendChild(pie); }
   pintarPas(); d.addEventListener('pm:pasaporte', pintarPas);
 
-  /* ── seed determinista por sección ── */
-  function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-  var seed = 20260812; for (var k = 0; k < KEY.length; k++) seed = (seed * 31 + KEY.charCodeAt(k)) | 0;
-  var rnd = mulberry32(seed);
+  var hi = function (src) { return C.hi ? C.hi(src) : src; };
+  var DIP = matchMedia('(min-width:1024px)');   /* díptico figura + detalle */
 
-  var PHONE = innerWidth < 768;
-  var view = { w: mapa.clientWidth, h: mapa.clientHeight };
-  /* radio de la espiral: crece con el viewport para que el plano respire en pantallas grandes */
-  /* piezas grandes (fotos que mandan) y radio en proporción, para que el plano no se sienta ralo */
-  /* la foto es el único contenido: piezas más grandes que una tarjeta del shop y radio más corto, 6–8 enteras por pantalla */
-  /* desktop compacto (1024–1279, notebooks): piezas y radio en proporción al ancho, para que el primer cuadro tenga aire y nada quede detrás del título */
-  var K = PHONE ? 1 : Math.max(0.7, Math.min(1, view.w / 1440));
-  var GA = 2.39996322, R = PHONE ? 120 : Math.max(260 * K, Math.min(340, Math.min(view.w, view.h) / 2.9));
-  var W0 = PHONE ? 150 : Math.round(250 * K), WR = PHONE ? 26 : Math.round(130 * K); /* ancho de pieza: W0 + rnd()*WR (teléfono: 2–3 enteras por pantalla) */
-  /* anisotropía de la espiral: apaisada en desktop, vertical en teléfono (el viewport es alto y angosto) */
-  var AX = PHONE ? 1.0 : 1.3, AY = PHONE ? 1.25 : 1.0;
-  var rmax = R * Math.sqrt(N + 0.7);
-  var PW = Math.max(view.w + 400, Math.round(2 * (rmax * AX + W0 + WR)));
-  var PH = Math.max(view.h + 300, Math.round(2 * (rmax * AY + (W0 + WR) * 1.4)));
-  /* teléfono: el plano es una columna doble escalonada del ancho del viewport (se recorre hacia abajo, 2–3 piezas enteras
-     por pantalla, ninguna detrás del título); el ancho y el alto se cierran después de ubicar las piezas */
-  if (PHONE) PW = view.w;
-  plano.style.width = PW + 'px'; plano.style.height = PH + 'px';
-
-  /* arranque del plano (mismo cálculo que abajo): sirve para reservar la zona del título */
-  var TX0 = PHONE ? 0 : view.w / 2 - PW / 2, TY0 = PHONE ? 0 : view.h / 2 - PH / 2 + 90;
-  /* zona del título medida en el DOM (incluye la línea de katakana); fallback si aún no hay layout */
-  var TIT_W = PHONE ? view.w : 660, TIT_H = PHONE ? 120 : 250;
-  function medirTit() {
-    var t = $('.hud-t'), m = mapa.getBoundingClientRect(), r = t && t.getBoundingClientRect();
-    if (r && r.width > 0 && r.height > 0) { TIT_W = Math.ceil(r.right - m.left); TIT_H = Math.ceil(r.bottom - m.top); }
-  }
-  medirTit();
-  var TAG_H = 40; /* alto de la cinta del SKU (hasta dos líneas) */
-
-  /* ── piezas en espiral áurea ── */
-  var POS = [], html = '';
-  var GAPM = 16, SLM = 12, COLW = (view.w - SLM * 2 - GAPM) / 2, colY = [TIT_H + 28, TIT_H + 28 + Math.round((W0 * 1.33 + TAG_H) / 2)];
+  /* ── escena: una capa por pieza ── */
+  var html = '';
   PZ.forEach(function (p, i) {
-    var w = W0 + rnd() * WR, x, y;
-    if (PHONE) {
-      var c = i % 2;
-      x = SLM + c * (COLW + GAPM) + COLW / 2 + (rnd() - 0.5) * 10;
-      y = colY[c] + w * 0.66;
-      colY[c] += w * 1.33 + TAG_H + GAPM + Math.round(rnd() * 12);
-    } else {
-      var r = R * Math.sqrt(i + 0.7), th = i * GA + (rnd() - 0.5) * 0.5;
-      x = PW / 2 + Math.cos(th) * r * AX + (rnd() - 0.5) * 60;
-      y = PH / 2 + Math.sin(th) * r * AY + (rnd() - 0.5) * 40;
-    }
-    var rot = (rnd() * 5 - 2.5).toFixed(2);
-    POS.push({ x: x, y: y, w: w, rot: rot, p: p, i: i });
+    /* detalle: la última toma del set (otra vista real de la prenda; la segunda suele ser la guía de medidas) */
+    var a = (p.imgs && p.imgs[0]) || '', b = (p.imgs && p.imgs.length > 1) ? p.imgs[p.imgs.length - 1] : a, first = i === 0;
+    var lq = p.lq || '';
+    var linea = PM.lineaTxt(p);
+    var sellos = (p.sellos || []).slice(0, 2);
+    html += '<div class="pz" id="pz-' + i + '" data-i="' + i + '">' +
+      '<div class="pz-fig">' +
+        '<span class="pz-cel"><img class="pz-a" alt="' + PM.esc(p.nm) + '" ' + (first ? 'src="' + PM.esc(hi(a)) + '" loading="eager" fetchpriority="high"' : 'data-src="' + PM.esc(hi(a)) + '"') + ' decoding="async"' +
+          (lq ? ' style="background:url(&quot;' + PM.esc(lq) + '&quot;) center/cover no-repeat"' : '') + '></span>' +
+        '<span class="pz-cel pz-cel-b"><img class="pz-b" alt="" aria-hidden="true" data-src="' + PM.esc(hi(b)) + '" decoding="async"></span>' +
+      '</div>' +
+      '<div class="pz-luz" aria-hidden="true"></div>' +
+      '<a class="pz-link" href="./ficha.html?id=' + encodeURIComponent(p.id) + '" data-id="' + PM.esc(p.id) + '">' +
+        '<span class="co i1" aria-hidden="true">' + nn(i) + '</span>' +
+        '<span class="co nm">' + PM.esc(p.nm) + '</span>' +
+        '<span class="co i2" aria-hidden="true">' + N + '</span>' +
+        '<span class="sr">Pieza ' + (i + 1) + ' de ' + N + '. </span>' +
+        '<span class="co sk" aria-hidden="true">' + PM.esc(p.sku || '') + '</span>' +
+        '<span class="co ln">' + PM.esc(linea) + '</span>' +
+        '<span class="co pr">' + PM.esc(PM.fmt(p.pr)) + '</span>' +
+        (sellos.length ? '<span class="co se">' + PM.sellosHTML(sellos) + '</span>' : '') +
+        '<span class="co go">VER LA PIEZA <span aria-hidden="true">&gt;&gt;</span></span>' +
+      '</a></div>';
   });
-  if (PHONE) { PH = Math.max(view.h, Math.max(colY[0], colY[1]) + 220); plano.style.height = PH + 'px'; }
-  /* relajación: las piezas se empujan entre sí hasta no pisarse (con aire), y ninguna queda detrás del título del HUD.
-     El título es un obstáculo fijo en coordenadas del plano; la espiral áurea da el orden, la relajación el aire. */
-  (function relajar() {
-    var BM = PHONE ? 8 : 24, GAP = PHONE ? 16 : 28, TIT = { l: -TX0 - GAP, t: -TY0 - GAP, r: -TX0 + TIT_W + GAP, b: -TY0 + TIT_H + GAP };
-    function caja(q) { return { l: q.x - q.w / 2, t: q.y - q.w * 0.66, r: q.x + q.w / 2, b: q.y + q.w * 0.67 + TAG_H }; }
-    for (var it = 0; it < 60; it++) {
-      var mov = 0, a, b, A, B, ox, oy, i, j;
-      for (i = 0; i < POS.length; i++) {
-        a = POS[i]; A = caja(a);
-        /* título: solo se empuja la pieza, hacia el lado de menor penetración */
-        ox = Math.min(A.r - TIT.l, TIT.r - A.l); oy = Math.min(A.b - TIT.t, TIT.b - A.t);
-        if (ox > 0 && oy > 0) { if (oy < ox) a.y += (A.t + A.b < TIT.t + TIT.b ? -oy : oy); else a.x += (A.l + A.r < TIT.l + TIT.r ? -ox : ox); mov++; A = caja(a); }
-        for (j = i + 1; j < POS.length; j++) {
-          b = POS[j]; B = caja(b);
-          ox = Math.min(A.r - B.l, B.r - A.l) + GAP; oy = Math.min(A.b - B.t, B.b - A.t) + GAP;
-          if (ox <= 0 || oy <= 0) continue;
-          if (ox < oy) { var sx = (a.x < b.x ? -1 : 1) * ox / 2; a.x += sx; b.x -= sx; }
-          else { var sy = (a.y < b.y ? -1 : 1) * oy / 2; a.y += sy; b.y -= sy; }
-          mov++; A = caja(a);
-        }
-        /* dentro del plano */
-        a.x = Math.max(a.w / 2 + BM, Math.min(PW - a.w / 2 - BM, a.x));
-        a.y = Math.max(a.w * 0.66 + BM, Math.min(PH - a.w * 0.67 - TAG_H - BM, a.y));
-      }
-      if (!mov) break;
-    }
-  })();
-  POS.forEach(function (q) {
-    var p = q.p, w = q.w, i = q.i;
-    html += '<a class="pz" href="./ficha.html?id=' + encodeURIComponent(p.id) + '" data-id="' + PM.esc(p.id) + '" data-sku="' + PM.esc(p.sku || '') + '"' +
-      ' aria-label="' + PM.esc(p.nm) + ' — ' + PM.esc(PM.fmt(p.pr)) + (p.tl ? ' — talle ' + PM.esc(p.tl === 'U' ? 'único' : p.tl) : '') + '"' +
-      ' style="width:' + Math.round(w) + 'px;left:' + Math.round(q.x - w / 2) + 'px;top:' + Math.round(q.y - w * 0.66) + 'px;transform:rotate(' + q.rot + 'deg)">' +
-      '<span class="ph">' + PM.pic(p, 0, { alt: p.nm, eager: i < 4, vt: true, sizes: Math.round(w) + 'px' }) + '</span>' +
-      '<span class="tag" aria-hidden="true">' + PM.esc(p.sku || p.nm) + '</span></a>';
-  });
+  for (var s = 0; s < N; s++) html += '<div class="t-snap-p" aria-hidden="true" style="top:calc(' + s + ' * var(--S))"></div>';
+  escena.insertAdjacentHTML('beforeend', html);
+  /* los puntos de anclaje viven en el envoltorio, no en la escena pegada */
+  $$('.t-snap-p', escena).forEach(function (el) { deriva.appendChild(el); });
+  var capas = $$('.pz', escena);
+  PM.linterna(escena);
 
-  /* ── Voronoi por recorte de semiplanos (sitios = piezas + algunos puntos fantasma) ── */
-  var sites = POS.slice();
-  for (var f = 0; f < Math.max(3, Math.round(N / 2)); f++) sites.push({ x: rnd() * PW, y: rnd() * PH });
-  function clip(poly, mx, my, nx, ny) {
-    var out = [], n = poly.length;
-    function inside(p) { return (p[0] - mx) * nx + (p[1] - my) * ny <= 0; }
-    for (var i = 0; i < n; i++) {
-      var a = poly[i], b = poly[(i + 1) % n], ia = inside(a), ib = inside(b);
-      if (ia !== ib) {
-        var den = (b[0] - a[0]) * nx + (b[1] - a[1]) * ny;
-        var t = den ? ((mx - a[0]) * nx + (my - a[1]) * ny) / den : 0;
-        out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
-      }
-      if (ib) out.push(b);
-    }
-    return out;
-  }
-  var svg = '<svg id="voro" viewBox="0 0 ' + PW + ' ' + PH + '" width="' + PW + '" height="' + PH + '" aria-hidden="true" focusable="false">';
-  sites.forEach(function (s, i) {
-    var poly = [[0, 0], [PW, 0], [PW, PH], [0, PH]];
-    sites.forEach(function (o, j) { if (i !== j && poly.length) poly = clip(poly, (s.x + o.x) / 2, (s.y + o.y) / 2, o.x - s.x, o.y - s.y); });
-    if (poly.length) svg += '<polygon points="' + poly.map(function (p) { return Math.round(p[0]) + ',' + Math.round(p[1]); }).join(' ') + '"/>';
-    svg += '<circle cx="' + Math.round(s.x) + '" cy="' + Math.round(s.y) + '" r="2"/>';
-  });
-  svg += '</svg>';
-  plano.innerHTML = svg + html;
-  var piezas = $$('.pz', plano);
-  /* variante grande para pantallas densas (mismo patrón que el shop) */
-  $$('.pz .pm-img', plano).forEach(function (img) {
-    var src = img.getAttribute('src'); if (!src || !C.hi) return;
-    img.setAttribute('srcset', src + ' 640w, ' + C.hi(src) + ' 1024w');
-  });
-
-  /* foco de linterna del sistema */
-  PM.linterna(mapa);
-
-  /* SKU en scramble: llegada escalonada + hover */
-  piezas.forEach(function (a, i) {
-    var tag = $('.tag', a), sku = a.getAttribute('data-sku') || '';
-    if (!RM) setTimeout(function () { PM.scramble(tag, sku, { dur: 520 }); }, 120 + i * 60);
-    a.addEventListener('pointerenter', function () { if (FINE && !RM) PM.scramble(tag, sku, { dur: 420 }); });
-  });
-
-  /* ── paneo con inercia + límites elásticos ── */
-  function medir() { view.w = mapa.clientWidth; view.h = mapa.clientHeight; }
-  /* al cruzar el breakpoint de teléfono (rotación) el plano se recalcula entero: recarga con debounce */
-  var tRs = 0;
-  addEventListener('resize', function () {
-    medir(); clearTimeout(tRs);
-    /* con la vista lista abierta no se recarga: nadie pierde la lectura por girar el teléfono */
-    tRs = setTimeout(function () { if ((innerWidth < 768) !== PHONE && !$('#lista').classList.contains('on')) location.reload(); }, 400);
-  });
-  mapa.addEventListener('scroll', function () { mapa.scrollLeft = 0; mapa.scrollTop = 0; });
-  /* barra del navegador que se pliega, panel lateral, rotación dentro del mismo rango: si el plano cambia más de un 15 % se vuelve a encuadrar (sin recargar) */
-  if ('ResizeObserver' in window) {
-    var encW = view.w, encH = view.h, tRo = 0;
-    new ResizeObserver(function () {
-      clearTimeout(tRo);
-      tRo = setTimeout(function () {
-        medir();
-        if (Math.abs(view.w - encW) / encW < 0.15 && Math.abs(view.h - encH) / encH < 0.15) return;
-        if ((innerWidth < 768) !== PHONE) return; /* eso lo resuelve la recarga de arriba */
-        encW = view.w; encH = view.h; medirTit();
-        var E = encuadre(); tx = E.x; ty = E.y; vx = vy = 0; marca();
-      }, 150);
-    }).observe(mapa);
-  }
-  /* arranque: se busca, alrededor del centro de la espiral, el encuadre que deja MÁS piezas enteras dentro del
-     viewport y NINGUNA pisada por el título, los toggles, la katakana vertical o la línea de datos del pie */
-  function encuadre() {
-    /* SB: alto real del HUD inferior medido en el DOM (línea de datos + botones) + aire; nunca un número fijo */
-    var SB = 96;
-    if (PHONE) { var hb = $('.hud-b'), hc = $('.hud-ctl'), mr = mapa.getBoundingClientRect(), top = Infinity;
-      [hb, hc].forEach(function (n) { var r = n && n.getBoundingClientRect(); if (r && r.height) top = Math.min(top, r.top - mr.top); });
-      SB = isFinite(top) ? Math.max(96, Math.ceil(view.h - top) + 16) : 200; }
-    var SL = PHONE ? 10 : 96, SR = PHONE ? 10 : 40, CTL_W = PHONE ? 0 : 380, CTL_H = PHONE ? 0 : 120, GAP = 24;
-    function score(ox, oy) {
-      var sc = 0, i, p, l, t, r, b, vis, cut, tapa;
-      for (i = 0; i < POS.length; i++) {
-        p = POS[i]; l = p.x - p.w / 2 + ox; t = p.y - p.w * 0.66 + oy; r = l + p.w; b = t + p.w * 1.33 + TAG_H;
-        /* fracción visible (área dentro del viewport útil) */
-        vis = Math.max(0, Math.min(r, view.w - SR) - Math.max(l, SL)) * Math.max(0, Math.min(b, view.h - SB) - Math.max(t, 0)) / ((r - l) * (b - t));
-        if (vis <= 0) continue;
-        cut = l < SL || r > view.w - SR || t < 0 || b > view.h - SB;
-        /* tapa: detrás del título (con aire de GAP), o en teléfono demasiado pegada a su base */
-        tapa = (l < TIT_W + GAP && t < TIT_H + GAP) || (r > view.w - CTL_W && t < CTL_H) || (PHONE && t < TIT_H + 12) || (t > view.h - SB);
-        /* una pieza asomando apenas por un borde (un pie bajo el header) resta más que una cortada a la mitad */
-        if (tapa) sc -= 50; else if (!cut) sc += 3; else if (vis >= 0.6) sc += 1; else if (vis < 0.35) sc -= 4; else sc -= 1;
-      }
-      return sc;
-    }
-    var best = { s: -1e9, x: TX0, y: TY0 }, ox, oy, s, dist;
-    for (oy = -400; oy <= 400; oy += 40) for (ox = -480; ox <= 480; ox += 40) {
-      var kx = clampX(TX0 + ox), ky = clampY(TY0 + oy);
-      s = score(kx, ky); dist = (Math.abs(ox) + Math.abs(oy)) / 400;
-      if (s - dist > best.s) best = { s: s - dist, x: kx, y: ky };
-    }
-    return best;
-  }
-  var E0 = encuadre();
-  var tx = E0.x, ty = E0.y, cx = tx, cy = ty, vx = 0, vy = 0;
-  var down = false, moved = 0, sx0 = 0, sy0 = 0, bx0 = 0, by0 = 0, lx = 0, ly = 0, pid = null, cap = false;
-  var lastInput = performance.now(), drift = 0.7;
-  function clampX(v) { return Math.min(0, Math.max(view.w - PW, v)); }
-  function clampY(v) { return Math.min(0, Math.max(view.h - PH, v)); }
-  function marca() { lastInput = performance.now(); }
-
-  mapa.addEventListener('pointerdown', function (e) {
-    if (down || e.button > 0) return;
-    if (e.target.closest && e.target.closest('.hud, .hud-pie')) return;
-    down = true; cap = false; pid = e.pointerId; moved = 0; sx0 = lx = e.clientX; sy0 = ly = e.clientY; bx0 = tx; by0 = ty; vx = vy = 0; marca();
-  });
-  addEventListener('pointermove', function (e) {
-    if (!down || e.pointerId !== pid) return;
-    if (e.pointerType === 'mouse' && e.buttons === 0) { down = false; return; }
-    var dx = e.clientX - sx0, dy = e.clientY - sy0;
-    moved = Math.max(moved, Math.hypot(dx, dy));
-    if (moved > 6 && !cap) { cap = true; try { mapa.setPointerCapture(pid); } catch (_) {} }
-    var nx = bx0 + dx, ny = by0 + dy, kx = clampX(nx), ky = clampY(ny);
-    tx = kx + (nx - kx) * 0.32; ty = ky + (ny - ky) * 0.32;
-    vx = e.clientX - lx; vy = e.clientY - ly; lx = e.clientX; ly = e.clientY; marca();
-  }, { passive: true });
-  function soltar(e) {
-    if (!down) return;
-    if (e && e.pointerId != null && e.pointerId !== pid) return;
-    down = false; marca();
-    if (cap) { cap = false; try { mapa.releasePointerCapture(pid); } catch (_) {} }
-    setTimeout(function () { moved = 0; }, 0);
-    /* touch: ya en el borde inferior del plano, un arrastre decidido hacia arriba baja al pie de la casa */
-    if (e && e.pointerType === 'touch' && moved > 6 && (vy < -3 || (sy0 - ly) > 120) && ty <= clampY(-1e9) + 2 && scrollY < 4) {
-      vx = vy = 0; ty = clampY(ty);
-      scrollTo({ top: mapa.offsetTop + mapa.offsetHeight - 40, behavior: RM ? 'auto' : 'smooth' });
-    }
-    if (!RM && moved > 6 && e && e.clientX != null) {
-      var r = d.createElement('div'); r.className = 'rip'; r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px';
-      d.body.appendChild(r); r.addEventListener('animationend', function () { r.remove(); });
-    }
-  }
-  addEventListener('pointerup', soltar); addEventListener('pointercancel', soltar);
-  addEventListener('blur', function () { down = false; cap = false; });
-  /* la rueda recorre el plano; en el borde inferior deja pasar el scroll hacia el pie de la casa */
-  mapa.addEventListener('wheel', function (e) {
-    var abajo = ty <= clampY(-1e9) + 0.5, arriba = ty >= -0.5;
-    if (e.deltaY > 0 && abajo && Math.abs(e.deltaX) < 2) return;
-    if (e.deltaY < 0 && scrollY > 0) return;
-    if (e.deltaY < 0 && arriba && Math.abs(e.deltaX) < 2 && scrollY === 0) return;
-    e.preventDefault(); marca(); tx -= e.deltaX; ty -= e.deltaY;
-  }, { passive: false });
-
-  /* teclado: flechas recorren el plano (con el foco dentro del territorio) */
-  mapa.addEventListener('keydown', function (e) {
-    var paso = e.shiftKey ? 260 : 90, ok = true;
-    if (e.key === 'ArrowLeft') tx += paso; else if (e.key === 'ArrowRight') tx -= paso;
-    else if (e.key === 'ArrowUp') ty += paso; else if (e.key === 'ArrowDown') ty -= paso; else ok = false;
-    if (ok) { e.preventDefault(); marca(); tx = clampX(tx); ty = clampY(ty); }
-  });
-  /* foco por teclado: el plano trae la pieza al centro */
-  plano.addEventListener('focusin', function (e) {
-    var a = e.target.closest('.pz'); if (!a) return;
-    var i = piezas.indexOf(a); if (i < 0) return; marca();
-    tx = clampX(view.w / 2 - POS[i].x); ty = clampY(view.h / 2 - POS[i].y + 40);
-    mapa.style.setProperty('--lx', (view.w / 2) + 'px'); mapa.style.setProperty('--ly', (view.h / 2) + 'px');
-  });
-
-  /* ── click → ficha con revelado circular hacia la sala blanca ── */
-  var circ = $('#t-circ'), yendo = false;
-  function irA(href, x, y) {
-    if (yendo) return; yendo = true;
-    /* con view transitions del navegador la foto ya viaja sola (base.css): un solo efecto, no dos encadenados */
-    if (RM || 'startViewTransition' in d) { location.href = href; return; }
-    circ.style.setProperty('--cx', x + 'px'); circ.style.setProperty('--cy', y + 'px');
-    circ.hidden = false;
-    requestAnimationFrame(function () { circ.classList.add('on'); });
-    setTimeout(function () { location.href = href; }, 520);
-  }
-  plano.addEventListener('click', function (e) {
-    var a = e.target.closest('.pz'); if (!a) return;
-    if (moved > 6 && e.detail > 0) { e.preventDefault(); e.stopPropagation(); return; }
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button) return;
-    e.preventDefault();
-    PM.vistas.marcar(a.getAttribute('data-id'));
-    var rc = a.getBoundingClientRect();
-    irA(a.href, e.clientX > 0 ? e.clientX : rc.left + rc.width / 2, e.clientY > 0 ? e.clientY : rc.top + rc.height / 2);
-  });
-  addEventListener('pageshow', function () { yendo = false; circ.classList.remove('on'); circ.hidden = true; });
+  /* ── mapa del costado ── */
+  var mapaOl = $('#t-mapa-ol');
+  mapaOl.innerHTML = PZ.map(function (p, i) {
+    return '<li><button type="button" data-ir="' + i + '" aria-label="Ir a la pieza ' + (i + 1) + ': ' + PM.esc(p.nm) + '"><span class="n" aria-hidden="true">' + nn(i) + '</span><i aria-hidden="true"></i>' +
+      '<img class="th" alt="" aria-hidden="true" data-src="' + PM.esc(p.lq || (p.imgs && p.imgs[0]) || '') + '" decoding="async"></button></li>';
+  }).join('');
+  var mapaBtns = $$('button', mapaOl);
+  mapaOl.addEventListener('mouseover', function (e) { var b = e.target.closest('button'); if (!b) return; var th = $('.th', b); if (th && !th.src && th.dataset.src) th.src = th.dataset.src; });
+  mapaOl.addEventListener('focusin', function (e) { var b = e.target.closest('button'); if (!b) return; var th = $('.th', b); if (th && !th.src && th.dataset.src) th.src = th.dataset.src; });
 
   /* ── vista lista ── */
-  var tg = $('#t-lista-tg');
+  var tg = $('#t-lista-tg'), lista = $('#lista');
   $('#li-n').textContent = ':: ' + N + (N === 1 ? ' PIEZA' : ' PIEZAS');
   $('#li-ol').innerHTML = PZ.map(function (p, i) {
     return '<li><a class="li-row" href="./ficha.html?id=' + encodeURIComponent(p.id) + '" data-id="' + PM.esc(p.id) + '">' +
-      '<span class="ix">' + (i < 9 ? '0' : '') + (i + 1) + '</span>' +
+      '<span class="ix">' + nn(i) + '</span>' +
       '<span class="nm">' + PM.esc(p.nm) + PM.sellosHTML((p.sellos || []).slice(0, 2)) + '</span>' +
       '<span class="sk">' + PM.esc(p.sku || '') + '</span>' +
-      '<span class="tl">TALLE ' + PM.esc(p.tl === 'U' ? 'ÚNICO' : (p.tl || '—')) + '</span>' +
+      '<span class="tl">' + PM.esc(PM.talles(p).length > 1 ? 'TALLES ' + PM.talles(p).join(' · ') : 'TALLE ' + PM.talleTxt(PM.talles(p)[0])) + '</span>' +
       '<span class="pr">' + PM.fmt(p.pr) + '</span></a></li>';
   }).join('');
   tg.addEventListener('click', function () { PM.abrir('lista'); tg.setAttribute('aria-expanded', 'true'); });
   d.addEventListener('pm:dialogo', function (e) { if (e.detail && e.detail.id === 'lista' && !e.detail.abierto) tg.setAttribute('aria-expanded', 'false'); });
   $('#li-ol').addEventListener('click', function (e) { var a = e.target.closest('a[data-id]'); if (a) PM.vistas.marcar(a.getAttribute('data-id')); });
+  escena.addEventListener('click', function (e) { var a = e.target.closest('a[data-id]'); if (a) PM.vistas.marcar(a.getAttribute('data-id')); });
 
-  /* ── bucle maestro: inercia, rebote, deriva en reposo, coordenadas ── */
-  var coords = $('#t-coords'), cootxt = '';
-  function pad(v) { var s = Math.abs(Math.round(v)).toString(); while (s.length < 4) s = '0' + s; return (v < 0 ? '-' : '+') + s; }
-  var LERP = RM ? 1 : 0.14;
-  function frame() {
-    requestAnimationFrame(frame);
-    if (d.hidden) return;
-    if (!down) {
-      if (!RM) {
-        tx += vx; ty += vy; vx *= 0.94; vy *= 0.94;
-        tx += (clampX(tx) - tx) * 0.12; ty += (clampY(ty) - ty) * 0.12;
-        if (performance.now() - lastInput > 6000) { drift += 0.0011; tx = clampX(tx + Math.cos(drift) * 0.2); ty = clampY(ty + Math.sin(drift) * 0.2); }
-      } else { tx = clampX(tx); ty = clampY(ty); }
+  /* ── geometría del recorrido ── */
+  var S = escena.clientHeight, Y0 = 0, cur = -1, lock = false, tLock = 0;
+  function medir() { medirHd(); S = escena.clientHeight || 1; Y0 = deriva.offsetTop - (parseFloat(getComputedStyle(H).getPropertyValue('--hdh')) || 0); }
+  function yDe(i) { return Y0 + i * S; }
+  function idxDe(y) { return Math.max(0, Math.min(N - 1, Math.round((y - Y0) / S))); }
+  medir();
+
+  /* fotos: se cargan de a poco, alrededor de la pieza actual (nunca las 16 juntas) */
+  function cargar(i) {
+    for (var j = i - 1; j <= i + 2; j++) {
+      var c = capas[j]; if (!c) continue;
+      var a = $('.pz-a', c); if (a && !a.src && a.dataset.src) a.src = a.dataset.src;
+      var b = $('.pz-b', c); if (b && DIP.matches && !b.src && b.dataset.src) b.src = b.dataset.src;
     }
-    cx += (tx - cx) * LERP; cy += (ty - cy) * LERP;
-    plano.style.transform = 'translate3d(' + cx.toFixed(1) + 'px,' + cy.toFixed(1) + 'px,0)';
-    var t = 'X:' + pad(-(cx - (view.w - PW) / 2)) + ' :: Y:' + pad(-(cy - (view.h - PH) / 2));
-    if (t !== cootxt) { cootxt = t; coords.textContent = t; }
   }
-  requestAnimationFrame(frame);
+  try { DIP.addEventListener('change', function () { cargar(cur); }); } catch (e) {}
+
+  var live = $('#t-live'), prevB = $('#t-prev'), nextB = $('#t-next');
+  function pintar(i, quieto) {
+    if (i === cur) return;
+    var ant = cur; cur = i;
+    capas.forEach(function (c, k) {
+      c.classList.toggle('on', k === i);
+      c.classList.toggle('prev', k < i);
+      var a = $('.pz-a', c); if (a) a.style.viewTransitionName = k === i ? 'pz-' + String(PZ[k].id).replace(/[^a-z0-9_-]/gi, '') : '';
+    });
+    mapaBtns.forEach(function (b, k) { if (k === i) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current'); });
+    prevB.setAttribute('aria-disabled', i === 0 ? 'true' : 'false');
+    nextB.setAttribute('aria-disabled', i === N - 1 ? 'true' : 'false');
+    cargar(i);
+    var p = PZ[i];
+    live.textContent = 'Pieza ' + (i + 1) + ' de ' + N + ': ' + p.nm + ', ' + PM.fmt(p.pr);
+    /* si el foco estaba en la pieza que se va, pasa a la que llega (sin mover el scroll) */
+    if (ant >= 0 && d.activeElement && capas[ant].contains(d.activeElement)) { var l = $('.pz-link', capas[i]); if (l) try { l.focus({ preventScroll: true }); } catch (e) { l.focus(); } }
+  }
+
+  /* ── ir a una pieza: deriva lenta con puntero fino; scroll nativo (con anclaje) en touch ── */
+  var anim = 0;
+  function irA(i, inmediato) {
+    i = Math.max(0, Math.min(N - 1, i));
+    var y = yDe(i), y0 = scrollY;
+    pintar(i);
+    cancelAnimationFrame(anim); clearTimeout(tLock);
+    if (RM || inmediato) { scrollTo({ top: y, behavior: 'instant' }); return; }
+    if (!FINE) { scrollTo({ top: y, behavior: 'smooth' }); return; }
+    lock = true;
+    var t0 = performance.now(), dur = Math.min(1200, 700 + Math.abs(i - idxDe(y0)) * 120);
+    (function paso(now) {
+      var t = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - t, 3);
+      scrollTo({ top: y0 + (y - y0) * e, behavior: 'instant' });
+      if (t < 1) anim = requestAnimationFrame(paso);
+      else tLock = setTimeout(function () { lock = false; }, 320);
+    })(t0);
+  }
+
+  /* estado inicial: la pieza que corresponde al scroll (vuelta atrás del navegador) o la pedida en ?n= (enlace directo), sin fundido */
+  escena.classList.add('t-init');
+  var nQ = 0; try { nQ = parseInt(new URLSearchParams(location.search).get('n'), 10) || 0; } catch (e) {}
+  if (nQ >= 1 && nQ <= N && scrollY < 2) { pintar(nQ - 1); scrollTo({ top: yDe(nQ - 1), behavior: 'instant' }); }
+  else pintar(idxDe(scrollY));
+  void escena.offsetWidth;
+  requestAnimationFrame(function () { requestAnimationFrame(function () { escena.classList.remove('t-init'); }); });
+  /* la URL recuerda la pieza (compartir, volver): sin recargar, sin historial nuevo */
+  var tUrl = 0;
+  d.addEventListener('scrollend', function () { clearTimeout(tUrl); tUrl = setTimeout(function () {
+    try { var u = new URL(location.href); if (cur > 0) u.searchParams.set('n', cur + 1); else u.searchParams.delete('n'); history.replaceState(history.state, '', u); } catch (e) {}
+  }, 80); });
+  if (!FINE || RM) H.classList.add('t-snap');
+
+  /* scroll nativo (barra, swipe, anclaje): la pieza sigue a la posición; el HUD se retira cuando entra el pie de la casa */
+  var huds = $$('.t-hud, .t-mapa');
+  function onScroll() {
+    if (!lock) { var i = idxDe(scrollY); if (i !== cur) pintar(i); }
+    var fuera = scrollY > yDe(N - 1) + S * 0.45;
+    huds.forEach(function (h) { h.classList.toggle('off', fuera); });
+  }
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* rueda: una pieza por gesto; en la última deja pasar hacia el pie de la casa */
+  if (FINE && !RM) {
+    addEventListener('wheel', function (e) {
+      if (lista.classList.contains('on') || e.ctrlKey) return;
+      if (e.target.closest && e.target.closest('.pm-cart, .pm-chk, .pm-legal, #lista')) return;
+      var dv = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (lock) { if (scrollY < yDe(N - 1) + 2) e.preventDefault(); return; }
+      if (Math.abs(dv) < 4) return;
+      var enPie = scrollY > yDe(N - 1) + 2;
+      if (dv > 0) {
+        if (cur >= N - 1) return;                       /* después de la última, el scroll sigue solo al pie */
+        e.preventDefault(); irA(cur + 1);
+      } else {
+        if (enPie) { if (scrollY - yDe(N - 1) < S * 0.9) { e.preventDefault(); irA(N - 1); } return; }
+        if (cur <= 0) return;
+        e.preventDefault(); irA(cur - 1);
+      }
+    }, { passive: false });
+  }
+
+  /* teclado: flechas y avance de página recorren las piezas */
+  addEventListener('keydown', function (e) {
+    if (e.defaultPrevented || e.altKey || e.metaKey || e.ctrlKey) return;
+    var t = e.target;
+    if (t && (t.closest('input, textarea, select, [contenteditable="true"], #lista, .pm-cart, .pm-chk, .pm-legal'))) return;
+    var enPie = scrollY > yDe(N - 1) + 2;
+    if (e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey && !(t && t.closest('button, a')))) {
+      if (cur >= N - 1) return;
+      e.preventDefault(); irA(cur + 1);
+    } else if (e.key === 'ArrowUp' || e.key === 'PageUp' || (e.key === ' ' && e.shiftKey)) {
+      if (enPie) { e.preventDefault(); irA(N - 1); return; }
+      if (cur <= 0) return;
+      e.preventDefault(); irA(cur - 1);
+    } else if (e.key === 'Home') { e.preventDefault(); irA(0); }
+    else if (e.key === 'End') { e.preventDefault(); irA(N - 1); }
+  });
+
+  prevB.addEventListener('click', function () { if (cur > 0) irA(cur - 1); });
+  nextB.addEventListener('click', function () { if (cur < N - 1) irA(cur + 1); });
+  mapaOl.addEventListener('click', function (e) { var b = e.target.closest('button[data-ir]'); if (b) irA(+b.getAttribute('data-ir')); });
+
+  /* al cambiar el alto (barra del navegador, rotación) la pieza actual se queda donde está */
+  var tRs = 0;
+  addEventListener('resize', function () {
+    clearTimeout(tRs);
+    tRs = setTimeout(function () { medir(); if (!lista.classList.contains('on')) scrollTo({ top: yDe(cur), behavior: 'instant' }); }, 200);
+  });
+  addEventListener('pageshow', function (e) { if (e.persisted) { medir(); pintar(idxDe(scrollY)); } });
 })();
 </script>
 

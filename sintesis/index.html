@@ -223,8 +223,16 @@ html.js .bq-milim.viva .ring{animation-play-state:running}
 @media (max-width:767px){
   .sec-h{flex-direction:column;align-items:flex-start;gap:var(--s-4)}
   .sec-h .der{align-items:flex-start;text-align:left}
-  .hero h1{font-size:clamp(52px,16vw,96px)}
-  .hero-ph{aspect-ratio:4/5;max-height:54svh}
+  /* primera pantalla del teléfono (390×844 − header 60): foto ≈ 48svh + dialecto en UNA línea + titular entero + el lead completo.
+     El botón asoma al pie: invita a seguir sin cortar nada */
+  .hero{gap:var(--s-4)}
+  .hero-ph{aspect-ratio:4/5;max-height:48svh}
+  .hero-txt{padding-bottom:var(--s-6);gap:var(--s-6)}
+  .hero-dial{white-space:nowrap;overflow:hidden;letter-spacing:.08em}
+  .hero h1{font-size:clamp(48px,14.5vw,84px);margin-top:var(--s-3)}
+  .hero h1 .ja{margin-top:var(--s-3);letter-spacing:.3em}
+  .hero .lead{margin-top:var(--s-4);font-size:var(--t-5);max-width:34ch}
+  .hero-cta{margin-top:var(--s-6)}
   .arc-h{grid-template-columns:1fr;gap:var(--s-4)}
   .arc-h .lnk{justify-self:start}
   .mk .ph{aspect-ratio:3/4}
@@ -351,9 +359,9 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   <section class="sec" aria-labelledby="t-nuevo">
     <div class="wrap">
       <div class="sec-h">
-        <h2 id="t-nuevo" class="rv">Lo nuevo <span lang="ja" aria-hidden="true">一点物</span></h2>
+        <h2 id="t-nuevo" class="rv">Lo nuevo <span lang="ja" aria-hidden="true">店</span></h2>
         <div class="der rv rv-d1">
-          <p class="ey">LAS ÚLTIMAS OCHO QUE SALIERON DEL TALLER</p>
+          <p class="ey">LAS OCHO MÁS RECIENTES DE LA TIENDA</p>
           <a class="lnk" href="./shop.html">TODAS LAS PIEZAS</a>
         </div>
       </div>
@@ -401,7 +409,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
       <div class="arc-h">
         <div class="rv">
           <h2 id="t-arc">Archivo <span lang="ja" aria-hidden="true">記憶</span></h2>
-          <p class="txt">Lo que ya se fue con alguien. <b>Si viste algo que ya no está, contanos:</b> en otro textil, se vuelve a hacer.</p>
+          <p class="txt">Lo que ya no está en la tienda. <b>Si viste algo que ya no está, contanos:</b> en otro textil, se vuelve a hacer.</p>
         </div>
         <a class="lnk rv rv-d1" href="./archivo.html">ENTRAR AL ARCHIVO</a>
       </div>
@@ -495,7 +503,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   var mk = piezas.filter(function(p){ return p.cat === 'MANUK'; }).sort(function(a,b){ return b.ts - a.ts; });
   var mkA = byId('manuk-hoodie-001-black') || mk[0], mkB = byId('manuk-tshirt-004') || mk[1];
 
-  /* ── LO NUEVO: las últimas 8 que salieron del taller.
+  /* ── LO NUEVO: las 8 de lastmod más reciente en la tienda (ts = lastmod real del sitemap).
        Nunca la del hero ni la de MUNDO (una prenda, una sola vez en la home), nunca 不連続 (lo discontinuado no es novedad),
        máximo 2 por categoría y sin hermanas del mismo tallo (Capa Vestido So / So Brushed 2 cuentan una vez). ── */
   function tallo(nm){
@@ -606,8 +614,8 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     return '<div><span>' + f + '</span><span class="sr"> · </span><span>' + fams[f] + (fams[f] === 1 ? ' PIEZA' : ' PIEZAS') + '</span></div>';
   }).join('') + '<a href="./manuk.html"><span>TODO MANUK WORLD</span><span class="sr"> · </span><span>' + mk.length + ' PIEZAS</span></a>');
 
-  /* ── ARCHIVO teaser: 3 piezas vendidas ── */
-  /* tres vendidas distintas entre sí y de lo que ya está arriba (la Kagyaku es la cara de ABRIGOS): trench-camisa negra, kimono pintado, espalda pintada */
+  /* ── ARCHIVO teaser: 3 piezas que ya no están en la tienda ── */
+  /* tres distintas entre sí y de lo que ya está arriba (la Kagyaku es la cara de ABRIGOS): trench-camisa negra, kimono pintado, espalda pintada */
   var arcIds = ['camisa-trench-shukai-1','kimono-shiruku-black-brushed-3','remeron-oversize-burokku-brushed-4'];
   var arc = arcIds.map(byId).filter(Boolean);
   if (arc.length < 3) arc = (C.archivo || []).slice(0, 3);

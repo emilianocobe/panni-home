@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Archivo — Panni Margot</title>
-<meta name="description" content="Archivo 記憶: las piezas que ya tienen dueño. Cada una fue única; el taller sigue ahí para rehacerla en otro textil.">
+<meta name="description" content="Archivo 記憶: las piezas que ya no están en la tienda. Salieron de a una, de a pocas; el taller sigue ahí para rehacerlas en otro textil.">
 <link rel="icon" href="../favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,7 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./base.css">
 <style>
-/* ═══ ARCHIVO 記憶 · una foto manda, lo vendido orbita debajo ═══ */
+/* ═══ ARCHIVO 記憶 · una foto manda, lo que salió de la tienda orbita debajo ═══ */
 :root{--hdtot:var(--hd)}                                  /* header solo, sin marquesina; el script lo mide de verdad */
 @media (max-width:1023px){:root{--hdtot:calc(var(--hd) + 48px + 17px)}}
 @media (max-width:767px){:root{--hdtot:calc(var(--hd) + 44px + 17px)}}
@@ -42,7 +42,7 @@ main .pm-img,#ar-ficha .pm-img{filter:grayscale(1) contrast(1.04)}
 .ar-hero-t .ey.l{grid-column:1;grid-row:1;margin-bottom:var(--s-3)}
 .ar-hero-t h1{grid-column:1;grid-row:2;align-self:start;margin:0 0 0 -.02em;font-size:clamp(52px,6.4vw,96px);line-height:.9}
 .ar-hero-t h1 [lang="ja"]{display:block;font-family:var(--f-ja);font-weight:400;font-size:.3em;letter-spacing:.3em;margin:.35em 0 0 .06em;text-transform:none;opacity:.78;line-height:1}
-/* pies de foto fuera de la foto: franja de datos · nombre + 完売 año, siempre en el mismo lugar */
+/* pies de foto fuera de la foto: franja de datos · nombre + 終了, siempre en el mismo lugar */
 .ar-hero-c{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line)}
 .ar-hero-c button{display:flex;align-items:center;justify-content:space-between;gap:var(--s-4);min-height:56px;padding:var(--s-3) var(--gut);width:100%;
   font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.16em;text-transform:uppercase;color:var(--fg-2);text-align:left}
@@ -293,24 +293,24 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     <button type="button" class="ar-hf a" id="hf-a" data-id=""></button>
     <button type="button" class="ar-hf b" id="hf-b" data-id=""></button>
     <div class="ar-hero-t">
-      <p class="ey l">01 :: LO QUE YA TIENE DUEÑO</p>
-      <p class="ey r num"><b id="ar-n">16 PIEZAS</b><span class="anos-w"> · <span id="ar-anos">2024 — 2025</span></span></p>
+      <p class="ey l">01 :: LO QUE YA NO ESTÁ EN LA TIENDA</p>
+      <p class="ey r num"><b id="ar-n">16 PIEZAS</b></p>
       <h1 class="disp" id="ar-h1">ARCHIVO<span lang="ja" aria-hidden="true">記憶</span></h1>
     </div>
   </section>
   <div class="ar-hero-c" id="hero-c"></div>
 
-  <!-- 2 · PLANO · lo vendido orbita -->
+  <!-- 2 · PLANO · lo que salió orbita -->
   <section aria-labelledby="pl-t">
     <div class="ar-pl-h">
-      <p class="ey" id="pl-t">02 :: LO VENDIDO ORBITA · <b id="pl-n">16 PIEZAS</b></p>
+      <p class="ey" id="pl-t">02 :: LO QUE SALIÓ ORBITA · <b id="pl-n">16 PIEZAS</b></p>
       <div class="ar-pl-r">
         <span class="ar-coords" id="coords" aria-hidden="true">X:+0000 :: Y:+0000 :: <span lang="ja">漂流</span></span>
         <span class="ar-hint" aria-hidden="true">ARRASTRÁ<span class="k"> · ← → ↑ ↓</span></span>
         <a class="btn sm" href="#indice">ÍNDICE · VISTA LISTA <span class="arr" aria-hidden="true">&gt;&gt;</span></a>
       </div>
     </div>
-    <div class="ar-mapa" id="mapa" role="region" aria-label="Plano del archivo: las piezas vendidas orbitan. Recorrelo con las flechas o arrastrando." tabindex="0" data-cur>
+    <div class="ar-mapa" id="mapa" role="region" aria-label="Plano del archivo: las piezas que ya no están en la tienda orbitan. Recorrelo con las flechas o arrastrando." tabindex="0" data-cur>
       <div class="ar-plano" id="plano"></div>
     </div>
   </section>
@@ -324,8 +324,8 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
       </div>
       <div class="rv rv-d1">
         <div class="txt">
-          <p><b>Cada pieza fue única y ya tiene dueño.</b> Acá quedan las que salieron del taller y no vuelven: se cortaron, se pegaron, se pintaron y salieron una sola vez.</p>
-          <p>El taller sigue ahí. Si viste algo que ya no está, se puede rehacer: <b>remake en otro textil</b>, con el mismo molde y otra piel. Nunca igual — cada una es la primera.</p>
+          <p><b>Ya no están en la tienda.</b> Acá quedan las que salieron del taller de a una, de a pocas — nunca en serie — y no vuelven iguales: se cortaron, se pegaron, se pintaron y salieron.</p>
+          <p>El taller sigue ahí. Si viste algo que ya no está, se puede rehacer: <b>remake en otro textil</b>, con el mismo molde y otra piel. Nunca igual — cada remake es el primero.</p>
         </div>
         <div class="acc">
           <a class="btn" href="#indice" id="btn-pedido-libre">ELEGÍ LA PIEZA · ÍNDICE <span class="arr" aria-hidden="true">&gt;&gt;</span></a>
@@ -335,11 +335,11 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     </div>
   </section>
 
-  <!-- 4 · ÍNDICE · vista lista por año -->
+  <!-- 4 · ÍNDICE · vista lista (sin fechas: una baja de la tienda no es una venta fechada) -->
   <section class="ar-ix wrap" id="indice" aria-labelledby="ix-t">
     <div class="ar-ix-h rv">
       <h2 id="ix-t">Índice</h2>
-      <p class="ey"><b id="ix-n">16</b> PIEZAS · <span lang="ja" aria-hidden="true">完売</span> VENDIDAS · POR AÑO</p>
+      <p class="ey"><b id="ix-n">16</b> PIEZAS · <span lang="ja" aria-hidden="true">終了</span> YA NO ESTÁN EN LA TIENDA</p>
     </div>
     <div id="ix-list"></div>
   </section>
@@ -356,14 +356,14 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     </div>
     <div class="fi-data">
       <div class="in">
-        <p class="ey"><span id="fi-sku" class="mono"></span><span>·</span><span id="fi-ano" class="num"></span></p>
+        <p class="ey"><span id="fi-sku" class="mono"></span></p>
         <h2 id="fi-nm"></h2>
         <div class="fila" id="fi-fila"></div>
         <p class="txt" id="fi-desc"></p>
-        <p class="fi-relato"><span>FUE UNA SOLA Y YA TIENE DUEÑO.</span><span id="fi-relato2">SI EL TEXTIL YA NO EXISTE, EL TALLER LA REHACE EN OTRO.</span></p>
+        <p class="fi-relato"><span>SALIÓ DE LA TIENDA.</span><span id="fi-relato2">SI EL TEXTIL YA NO EXISTE, EL TALLER LA REHACE EN OTRO.</span></p>
         <ul class="fi-mat" id="fi-mat" aria-label="Materiales"></ul>
         <div class="fi-cta"><button type="button" class="btn fill lg block" id="fi-pedir" aria-expanded="false" aria-controls="fi-form">¿ME LA PODÉS HACER? <span class="arr" aria-hidden="true">&gt;&gt;</span></button>
-          <p class="fi-nota">SIN PRECIO: EL REMAKE SE COTIZA EN EL TALLER SEGÚN EL TEXTIL · RESPUESTA EN 48 H · <span lang="ja" aria-hidden="true">工房</span></p></div>
+          <p class="fi-nota">SIN PRECIO: EL REMAKE SE COTIZA EN EL TALLER SEGÚN EL TEXTIL · <span lang="ja" aria-hidden="true">工房</span></p></div>
         <form class="fi-form" id="fi-form" novalidate hidden>
           <p class="nota">PEDIDO ESPECIAL :: REMAKE EN OTRO TEXTIL · EL TALLER TE RESPONDE POR EMAIL</p>
           <label class="pm-campo"><span>TU EMAIL</span><input type="email" name="email" id="fi-email" autocomplete="email" required placeholder="vos@correo.com"></label>
@@ -390,16 +390,12 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   medirHd();
 
   var ARCH=(window.CATALOGO&&CATALOGO.archivo)||[];
-  // orden: más reciente primero, estable
-  ARCH=ARCH.slice().sort(function(a,b){return (b.ano||0)-(a.ano||0)||(b.ts||0)-(a.ts||0);});
+  // orden: lastmod real más reciente primero (ts), estable — el archivo no publica fechas
+  ARCH=ARCH.slice().sort(function(a,b){return (b.ts||0)-(a.ts||0);});
   var byId={}; ARCH.forEach(function(p){byId[p.id]=p;});
-  var anos=ARCH.map(function(p){return p.ano;}).filter(Boolean);
-  var aMin=anos.length?Math.min.apply(null,anos):0, aMax=anos.length?Math.max.apply(null,anos):0;
   var nTxt=ARCH.length+(ARCH.length===1?' PIEZA':' PIEZAS');
   d.getElementById('ar-n').textContent=nTxt;
   d.getElementById('pl-n').textContent=nTxt;
-  d.getElementById('ar-anos').textContent=anos.length?(aMin===aMax?aMin:(aMin+' — '+aMax)):'';
-  d.getElementById('ar-anos').closest('.anos-w').hidden=!anos.length;
   d.getElementById('ix-n').textContent=ARCH.length;
 
   var mapa=d.getElementById('mapa'), plano=d.getElementById('plano'), hero=d.getElementById('ar-hero');
@@ -428,13 +424,13 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   /* ─── HERO: dos piezas, gigantes, mismo gris ────────────────────────── */
   function heroDe(p){return {id:p.id,nm:p.nm,imgs:[p.hero||p.imgs[0]],lq:p.lq};}
   var dA=byId['capa-reversible-kagyaku']||ARCH[0], dB=byId['hoodie-kitsutsuki-white-brushed-8']||ARCH[1]||ARCH[0];
-  hfA.setAttribute('data-id',dA.id); hfA.setAttribute('aria-label',dA.nm+' · vendida. Abrir la ficha');
+  hfA.setAttribute('data-id',dA.id); hfA.setAttribute('aria-label',dA.nm+' · ya no está en la tienda. Abrir la ficha');
   hfA.innerHTML=PM.pic(heroDe(dA),0,{alt:'',eager:true,ariaHidden:true});
-  hfB.setAttribute('data-id',dB.id); hfB.setAttribute('aria-label',dB.nm+' · vendida. Abrir la ficha');
+  hfB.setAttribute('data-id',dB.id); hfB.setAttribute('aria-label',dB.nm+' · ya no está en la tienda. Abrir la ficha');
   hfB.innerHTML=PM.pic(heroDe(dB),0,{alt:'',eager:!PHONE,ariaHidden:true}).replace(' fetchpriority="high"','');   // la foto A es la única high
   function capHTML(p,cls,i){
     return '<button type="button" class="'+cls+'" data-id="'+esc(p.id)+'"><span><span class="ix num">0'+i+' · </span><b>'+esc(p.nm)+'</b></span>'+
-      '<span class="num"><span lang="ja" aria-hidden="true">完売</span><span class="sr">Vendida · </span>'+esc(p.ano||'')+'</span></button>';
+      '<span class="num"><span lang="ja" aria-hidden="true">終了</span><span class="sr">Ya no está en la tienda</span></span></button>';
   }
   var heroC=d.getElementById('hero-c');
   heroC.innerHTML=capHTML(dA,'a',1)+capHTML(dB,'b',2);
@@ -488,9 +484,9 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
       var p=t.p, x=t.x+offX, y=t.y+offY; POS.push({x:x,y:y});
       // las 8 centrales cargan enseguida (sin prioridad alta: la hero es la única high); el resto lazy
       var img=PM.pic(p,0,{alt:'',eager:i<8,ariaHidden:true}).replace(' fetchpriority="high"','');
-      return '<button type="button" class="pz" data-id="'+esc(p.id)+'" style="width:'+t.w+'px;left:'+Math.round(x-t.w/2)+'px;top:'+Math.round(y-t.h/2)+'px" aria-label="'+esc(p.nm)+' · '+esc(p.cat)+' · '+esc(p.ano||'')+' · vendida. Abrir la ficha">'+
+      return '<button type="button" class="pz" data-id="'+esc(p.id)+'" style="width:'+t.w+'px;left:'+Math.round(x-t.w/2)+'px;top:'+Math.round(y-t.h/2)+'px" aria-label="'+esc(p.nm)+' · '+esc(p.cat)+' · ya no está en la tienda. Abrir la ficha">'+
         '<span class="ph">'+img+'</span>'+
-        '<span class="pz-tag" aria-hidden="true"><b>'+esc(p.nm)+'</b><span><span lang="ja">完売</span>\''+String(p.ano||'').slice(-2)+'</span></span></button>';
+        '<span class="pz-tag" aria-hidden="true"><b>'+esc(p.nm)+'</b><span><span lang="ja">終了</span></span></span></button>';
     }).join('');
     nodos=Array.prototype.slice.call(plano.children);
     mapa.style.setProperty('--lr', PHONE?'320px':'640px');   // la linterna se mide con el plano, también al cruzar breakpoint
@@ -613,23 +609,18 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     requestAnimationFrame(frame);
   })();
 
-  /* ─── ÍNDICE: vista lista accesible, agrupada por año ──────────────── */
-  var ix=d.getElementById('ix-list'), grupos=[], gk={};
-  ARCH.forEach(function(p){var a=p.ano||'—';if(!gk[a]){gk[a]=[];grupos.push(a);}gk[a].push(p);});
-  var idx=0;
-  ix.innerHTML=grupos.map(function(a){
-    var ps=gk[a];
-    return '<h3 class="ar-ano"><span class="num">'+esc(a)+'</span><small>'+ps.length+(ps.length===1?' PIEZA':' PIEZAS')+' · <span lang="ja" aria-hidden="true">完売</span></small></h3>'+
-      '<ol aria-label="Piezas de '+esc(a)+'">'+ps.map(function(p){
-        idx++;
-        return '<li><button type="button" class="ar-row" data-id="'+esc(p.id)+'">'+
-          '<span class="ix num" aria-hidden="true">'+(idx<10?'0':'')+idx+'</span>'+
-          '<span class="ph">'+PM.pic(p,0,{alt:'',ariaHidden:true})+'</span>'+
-          '<span class="nm">'+esc(p.nm)+'<small>'+esc(p.cat)+'</small></span>'+
-          '<span class="go" aria-hidden="true">&gt;&gt;</span>'+
-          '</button></li>';
-      }).join('')+'</ol>';
-  }).join('');
+  /* ─── ÍNDICE: vista lista accesible, una sola lista sin fechas (el archivo guarda bajas de la tienda, no ventas fechadas) ─ */
+  var ix=d.getElementById('ix-list');
+  ix.innerHTML='<h3 class="ar-ano"><span class="num">'+ARCH.length+(ARCH.length===1?' PIEZA':' PIEZAS')+'</span><small>YA NO ESTÁN EN LA TIENDA · <span lang="ja" aria-hidden="true">終了</span></small></h3>'+
+    '<ol aria-label="Piezas del archivo">'+ARCH.map(function(p,i){
+      var idx=i+1;
+      return '<li><button type="button" class="ar-row" data-id="'+esc(p.id)+'">'+
+        '<span class="ix num" aria-hidden="true">'+(idx<10?'0':'')+idx+'</span>'+
+        '<span class="ph">'+PM.pic(p,0,{alt:'',ariaHidden:true})+'</span>'+
+        '<span class="nm">'+esc(p.nm)+'<small>'+esc(p.cat)+'</small></span>'+
+        '<span class="go" aria-hidden="true">&gt;&gt;</span>'+
+        '</button></li>';
+    }).join('')+'</ol>';
   ix.addEventListener('click',clickFicha);
   PM.revelar(d.getElementById('indice'));
 
@@ -637,7 +628,6 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   var fi=d.getElementById('ar-ficha'), fotos=d.getElementById('fi-fotos'), col=d.getElementById('fi-col'), fhero=d.getElementById('fi-hero'), body=fi.querySelector('.fi-body'), form=d.getElementById('fi-form'), st=d.getElementById('fi-st'), pedir=d.getElementById('fi-pedir'), cont=d.getElementById('fi-cont');
   var actual=null;
   focoEnsayo();
-  var FALLBACK={ABRIGOS:'Abrigo de la casa. Corte y textil de una sola vez.',CAMISAS:'Camisa de la casa. Corte y textil de una sola vez.',PANTALONES:'Pantalón de la casa. Corte y textil de una sola vez.',KIMONOS:'Kimono de la casa. Corte y textil de una sola vez.',REMERAS:'Remera de la casa. Corte y textil de una sola vez.',VESTIDOS:'Vestido de la casa. Corte y textil de una sola vez.',MANUK:'Pieza del mundo MANUK. Edición de una sola vez.',DISCONTINOUS:'Pieza discontinua. Corte y textil de una sola vez.'};
   function pintarFicha(p){
     actual=p;
     var imgs=(p.imgs||[]).slice(0,TAB?8:10);
@@ -648,12 +638,12 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     col.scrollTop=0; body.scrollTop=0;
     cont.textContent='01 \\ '+(imgs.length<10?'0':'')+imgs.length;
     PM.scramble(d.getElementById('fi-sku'),p.sku||p.id);
-    d.getElementById('fi-ano').textContent=p.ano||'';
     d.getElementById('fi-nm').textContent=p.nm;
-    d.getElementById('fi-fila').innerHTML=PM.selloHTML('完売')+'<span>VENDIDA</span><span>·</span><span>'+esc(p.cat)+' <span lang="ja" aria-hidden="true">'+esc(p.kj||'')+'</span></span>';
-    d.getElementById('fi-desc').textContent=p.desc||FALLBACK[p.cat]||'Pieza de la casa. Corte y textil de una sola vez.';
-    // el textil no se repite acá: lo dice la lista de materiales de abajo
-    d.getElementById('fi-relato2').textContent=(p.ano?'SALIÓ DEL TALLER EN '+p.ano+'. ':'')+'SI EL TEXTIL YA NO EXISTE, SE REHACE EN OTRO.';
+    d.getElementById('fi-fila').innerHTML=PM.selloHTML('終了')+'<span>YA NO ESTÁ EN LA TIENDA</span><span>·</span><span>'+esc(p.cat)+' <span lang="ja" aria-hidden="true">'+esc(p.kj||'')+'</span></span>';
+    // descripción SOLO si es de esta pieza (el catálogo no publica la de una hermana); si no hay, la ficha muestra nombre, categoría y fotos
+    var fd=d.getElementById('fi-desc'); fd.textContent=p.desc||''; fd.hidden=!p.desc;
+    // sin fechas: una baja de la tienda no fecha una venta
+    d.getElementById('fi-relato2').textContent='SI EL TEXTIL YA NO EXISTE, SE REHACE EN OTRO.';
     var mat=d.getElementById('fi-mat'); mat.innerHTML=(p.mat&&p.mat.length)?p.mat.map(function(m){return '<li>'+esc(m)+'</li>';}).join(''):''; mat.hidden=!(p.mat&&p.mat.length);
     // formulario prefijado con la pieza
     form.hidden=true; pedir.hidden=false; pedir.setAttribute('aria-expanded','false');
@@ -684,7 +674,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   form.addEventListener('submit',function(e){
     e.preventDefault();
     var bad=form.querySelector(':invalid'); if(bad){bad.focus();bad.reportValidity&&bad.reportValidity();return;}
-    st.textContent='RECIBIDO :: EL TALLER RESPONDE EN 48 H';
+    st.textContent='RECIBIDO :: EL TALLER TE RESPONDE POR EMAIL';
     Array.prototype.forEach.call(form.querySelectorAll('input,textarea,button'),function(x){x.disabled=true;});
     st.focus&&st.setAttribute('tabindex','-1'); st.focus();
   });

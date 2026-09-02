@@ -79,7 +79,9 @@
     'ÚLTIMA': { cls: 'ultima', ja: '', txt: 'ÚLTIMA', sr: '' },
     '不連続': { cls: 'disc', ja: '不連続', txt: '', sr: 'Discontinous' },
     'MANUK': { cls: 'manuk', ja: '世界', txt: 'MANUK', sr: '' },
-    '完売': { cls: 'vendido', ja: '完売', txt: '', sr: 'Vendida' }
+    /* 終了 = ya no está en la tienda (el archivo guarda bajas de la tienda, no ventas confirmadas); 完売 = agotada, solo si consta */
+    '終了': { cls: 'vendido', ja: '終了', txt: '', sr: 'Ya no está en la tienda' },
+    '完売': { cls: 'vendido', ja: '完売', txt: '', sr: 'Agotada' }
   };
   function selloHTML(k) {
     var s = SELLOS[k] || { cls: '', ja: '', txt: k, sr: '' };
@@ -112,7 +114,7 @@
   function pcardHTML(p, o) {
     o = o || {};
     var href = o.href || ('./ficha.html?id=' + encodeURIComponent(p.id));
-    var vend = o.vendida || (p.sellos && p.sellos.indexOf('完売') > -1);
+    var vend = o.vendida || (p.sellos && (p.sellos.indexOf('終了') > -1 || p.sellos.indexOf('完売') > -1));
     var sellos = o.sellos === false ? [] : (p.sellos || []);
     var h = '<a class="pcard' + (vend ? ' vendida' : '') + (o.cls ? ' ' + esc(o.cls) : '') + '" href="' + esc(href) + '" data-id="' + esc(p.id) + '" data-cat="' + esc(p.cat || '') + '">';
     h += '<div class="pcard-ph">';
@@ -121,7 +123,7 @@
     h += sellosHTML(sellos);
     h += '</div>';
     h += '<div class="pcard-meta"><span class="pcard-nm">' + esc(p.nm) + '</span>';
-    if (vend || o.sinPrecio) h += '<span class="pcard-pr"><span lang="ja" aria-hidden="true">完売</span><span class="sr">Vendida</span></span>';
+    if (vend || o.sinPrecio) h += '<span class="pcard-pr"><span lang="ja" aria-hidden="true">終了</span><span class="sr">Ya no está en la tienda</span></span>';
     else h += '<span class="pcard-pr">' + fmt(p.pr) + '</span>';
     h += '</div>';
     if (o.cat) h += '<span class="pcard-cat">' + esc(p.cat) + (p.kj ? ' <span lang="ja" aria-hidden="true">' + esc(p.kj) + '</span>' : '') + '</span>';
@@ -240,49 +242,92 @@
     if (pasaporte.completo()) H.setAttribute('data-pasaporte', 'completo'); else H.removeAttribute('data-pasaporte');
   }
 
-  /* ─── carrito (pieza única: sin cantidades, sin duplicados) ───────── */
+  /* ─── talles y unicidad (verdad de stock del catálogo) ────────────── */
+  /* tls: talles con stock en la nomenclatura real de la casa (1/2/3/4, XL, U; nunca XS).
+     unica: SOLO si el catálogo la trae declarada por la casa (`unica:true` = «pieza única» en su descripción y queda una) — el
+     sistema no la infiere del stock. ultima: queda una sin declaración («QUEDA UNA», sello ÚLTIMA). No existe «edición de n». */
+  function tallesDe(p) { var t = p && p.tls && p.tls.length ? p.tls : (p && p.tl ? [p.tl] : ['U']); return t.map(String).filter(function (x) { return !/^xs$/i.test(x); }); }
+  function talleTxt(t) { return t === 'U' ? 'ÚNICO' : String(t); }
+  function esUnica(p) { return !!(p && p.unica === true); }
+  function esUltima(p) { return !!(p && !esUnica(p) && (p.ultima === true || (p.ultima == null && p.stock === 1))); }
+  /* línea veraz de la pieza: «PIEZA ÚNICA · 1/1» (declarada) · «QUEDA UNA · TALLE n» · «TALLES 1 · 2 · 3» (sin cifra de edición) */
+  function lineaTxt(p) {
+    var t = tallesDe(p), tt = t.length > 1 ? 'TALLES ' + t.map(talleTxt).join(' · ') : 'TALLE ' + talleTxt(t[0]);
+    if (esUnica(p)) return 'PIEZA ÚNICA · 1/1';
+    if (esUltima(p)) return 'QUEDA UNA · ' + tt;
+    return tt;
+  }
+
+  /* ─── carrito (cantidad siempre 1; clave = pieza + talle) ─────────── */
+  function claveDe(id, tl) { return String(id) + '|' + String(tl == null ? '' : tl); }
   var cart = {
-    _ids: function () { var a = store('pm_cart'); return Array.isArray(a) ? a : []; },
-    items: function () { return this._ids().map(byId).filter(Boolean); },
-    has: function (id) { return this._ids().indexOf(id) > -1; },
-    n: function () { return this._ids().length; },
+    /* entradas {id, tl}; se aceptan también ids sueltos guardados por versiones anteriores (talle = el primero con stock) */
+    _list: function () {
+      var a = store('pm_cart'); if (!Array.isArray(a)) return [];
+      var out = [], vistos = {};
+      a.forEach(function (x) {
+        var id = typeof x === 'string' ? x : (x && x.id), tl = typeof x === 'string' ? null : (x && x.tl);
+        if (!id) return;
+        if (tl == null) { var p = byId(id); tl = p ? tallesDe(p)[0] : 'U'; }
+        var k = claveDe(id, tl); if (vistos[k]) return; vistos[k] = 1;
+        out.push({ id: id, tl: String(tl) });
+      });
+      return out;
+    },
+    _ids: function () { return this._list().map(function (x) { return x.id; }); },
+    /* entradas del carrito con su pieza: [{id, tl, key, p}] */
+    entradas: function () { return this._list().map(function (x) { var p = byId(x.id); return p ? { id: x.id, tl: x.tl, key: claveDe(x.id, x.tl), p: p } : null; }).filter(Boolean); },
+    items: function () { return this.entradas().map(function (e) { return e.p; }); },
+    has: function (id, tl) { return this._list().some(function (x) { return x.id === id && (tl == null || x.tl === String(tl)); }); },
+    talleDe: function (id) { var e = this._list().filter(function (x) { return x.id === id; })[0]; return e ? e.tl : null; },
+    n: function () { return this._list().length; },
     total: function () { return this.items().reduce(function (s, p) { return s + (Number(p.pr) || 0); }, 0); },
+    /* add(id, 'talle') · add(id, {talle, abrir}) → {ok} | {ok:false, motivo:'inexistente'|'talle'|'duplicado'|'sin-stock'} */
     add: function (id, o) {
+      if (typeof o === 'string') o = { talle: o };
       o = o || {};
-      var ids = this._ids(), p = byId(id);
+      var list = this._list(), p = byId(id);
       if (!p) return { ok: false, motivo: 'inexistente' };
-      if (ids.indexOf(id) > -1) { if (o.abrir !== false) this.open(); return { ok: false, motivo: 'duplicado' }; }
-      ids.push(id); store('pm_cart', ids);
-      this.render(); emit('pm:cart', { ids: ids.slice(), accion: 'add', id: id });
+      var tls = tallesDe(p), tl = o.talle != null ? String(o.talle) : (tls.length === 1 ? tls[0] : null);
+      if (tl == null) return { ok: false, motivo: 'talle', tls: tls };
+      if (tls.indexOf(tl) < 0) return { ok: false, motivo: 'sin-stock', tls: tls };
+      var k = claveDe(id, tl);
+      if (list.some(function (x) { return claveDe(x.id, x.tl) === k; })) { if (o.abrir !== false) this.open(); return { ok: false, motivo: 'duplicado', talle: tl }; }
+      list.push({ id: id, tl: tl }); store('pm_cart', list);
+      this.render(); emit('pm:cart', { ids: this._ids(), keys: list.map(function (x) { return claveDe(x.id, x.tl); }), accion: 'add', id: id, talle: tl });
       var b = $('.pm-carrito'); if (b) { b.classList.remove('pulse'); void b.offsetWidth; b.classList.add('pulse'); }
       if (o.abrir !== false) this.open();
-      return { ok: true };
+      return { ok: true, talle: tl };
     },
-    remove: function (id) {
-      var ids = this._ids().filter(function (x) { return x !== id; });
-      store('pm_cart', ids); this.render(); emit('pm:cart', { ids: ids.slice(), accion: 'remove', id: id });
+    /* remove(id) quita la pieza (todos sus talles); remove(id, tl) o remove('id|tl') solo esa entrada */
+    remove: function (id, tl) {
+      if (tl == null && String(id).indexOf('|') > -1) { var s = String(id).split('|'); id = s[0]; tl = s[1]; }
+      var list = this._list().filter(function (x) { return !(x.id === id && (tl == null || x.tl === String(tl))); });
+      store('pm_cart', list); this.render(); emit('pm:cart', { ids: this._ids(), keys: list.map(function (x) { return claveDe(x.id, x.tl); }), accion: 'remove', id: id, talle: tl == null ? null : String(tl) });
       var st = $('#pm-cart .st'); if (st) st.textContent = 'PIEZA LIBERADA :: VUELVE A LA SALA';
     },
-    clear: function () { store('pm_cart', []); this.render(); emit('pm:cart', { ids: [], accion: 'clear' }); },
+    clear: function () { store('pm_cart', []); this.render(); emit('pm:cart', { ids: [], keys: [], accion: 'clear' }); },
     render: function () {
-      var ids = this._ids(), items = this.items(), n = ids.length;
+      var entradas = this.entradas(), n = this._list().length;
       $$('.pm-carrito').forEach(function (b) { b.setAttribute('data-n', n); var s = $('.n', b); if (s) s.textContent = n; b.setAttribute('aria-label', 'Carrito: ' + n + (n === 1 ? ' pieza' : ' piezas')); });
       var box = $('#pm-cart'); if (!box) return;
       $('#pm-cart-n').textContent = n ? '(' + n + ')' : '';
       var list = $('#pm-cart-list'), vacio = $('#pm-cart-vacio'), f = $('#pm-cart-f');
-      if (!items.length) {
+      if (!entradas.length) {
         list.innerHTML = ''; vacio.hidden = false; f.hidden = true;
       } else {
         vacio.hidden = true; f.hidden = false;
-        list.innerHTML = items.map(function (p) {
-          return '<li class="pm-ci" data-id="' + esc(p.id) + '">' +
+        list.innerHTML = entradas.map(function (e) {
+          var p = e.p, unica = esUnica(p);
+          var linea = unica ? 'RESERVADA — ES ÚNICA' + (e.tl !== 'U' ? ' · TALLE ' + esc(e.tl) : '') : (esUltima(p) ? 'RESERVADA — QUEDA UNA' : 'EN TU CARRITO') + ' · TALLE ' + esc(talleTxt(e.tl));
+          return '<li class="pm-ci" data-id="' + esc(p.id) + '" data-tl="' + esc(e.tl) + '">' +
             '<a class="ph" href="./ficha.html?id=' + encodeURIComponent(p.id) + '" tabindex="-1" aria-hidden="true">' + pic(p, 0, { alt: '', cls: '' }) + '</a>' +
             '<div><a class="nm" href="./ficha.html?id=' + encodeURIComponent(p.id) + '">' + esc(p.nm) + '</a>' +
             '<span class="sku">' + esc(p.sku || p.cat || '') + '</span>' +
-            (p.tl ? '<span class="tl">TALLE ' + esc(p.tl) + ' · ES ÚNICA</span>' : '') +
+            '<span class="tl">' + linea + '</span>' +
             sellosHTML(p.sellos) + '</div>' +
             '<div class="der"><span class="pr">' + fmt(p.pr) + '</span>' +
-            '<button type="button" class="quitar" data-quitar="' + esc(p.id) + '" aria-label="Quitar ' + esc(p.nm) + ' del carrito">QUITAR</button></div></li>';
+            '<button type="button" class="quitar" data-quitar="' + esc(e.key) + '" aria-label="Quitar ' + esc(p.nm) + (e.tl !== 'U' ? ' talle ' + esc(e.tl) : '') + ' del carrito">QUITAR</button></div></li>';
         }).join('');
         $('#pm-cart-tot').textContent = fmt(this.total());
       }
@@ -361,7 +406,7 @@
       '<label class="pm-campo"><span>TELÉFONO</span><input type="tel" name="tel" autocomplete="tel" inputmode="tel" placeholder="+54 9 11 …"></label>' +
       '<p class="pm-nota">SIN REGISTRO: EL SEGUIMIENTO DEL PEDIDO TE LLEGA POR LINK AL EMAIL.</p></section>' +
       '<section class="pm-paso" data-paso="2"><h3>Envío o retiro</h3>' +
-      '<label class="pm-opt"><input type="radio" name="envio" value="envio" checked><span class="t">ENVÍO A DOMICILIO<span class="d">A todo el país por correo, con seguimiento. Despacho dentro de las 48 h hábiles.</span></span><span class="pr">SE CALCULA</span></label>' +
+      '<label class="pm-opt"><input type="radio" name="envio" value="envio" checked><span class="t">ENVÍO A DOMICILIO<span class="d">A todo el país por correo, con seguimiento. El plazo de despacho se informa al confirmar el pedido.</span></span><span class="pr">SE CALCULA</span></label>' +
       '<label class="pm-opt"><input type="radio" name="envio" value="retiro"><span class="t">RETIRO EN HONDURAS 4940<span class="d">Palermo Soho · lunes a sábado de 11 a 19. Te avisamos cuando está lista.</span></span><span class="pr">SIN CARGO</span></label>' +
       '<div id="pm-chk-dir" style="margin-top:var(--s-6)">' +
       '<label class="pm-campo"><span>CALLE Y NÚMERO</span><input type="text" name="calle" autocomplete="address-line1"></label>' +
@@ -395,9 +440,9 @@
     vol.hidden = n === 1 || n === 4;
     sig.innerHTML = n === 3 ? 'RESERVAR Y PAGAR &gt;&gt;' : n === 4 ? 'VOLVER A LA SALA &gt;&gt;' : 'SIGUIENTE &gt;&gt;';
     if (n === 3) {
-      var items = cart.items(), envio = $('input[name=envio]:checked', dlg).value, pago = $('input[name=pago]:checked', dlg).value;
+      var entradas = cart.entradas(), envio = $('input[name=envio]:checked', dlg).value, pago = $('input[name=pago]:checked', dlg).value;
       $('#pm-chk-res').innerHTML =
-        items.map(function (p) { return '<div><span>' + esc(p.nm) + '</span><b>' + fmt(p.pr) + '</b></div>'; }).join('') +
+        entradas.map(function (e) { return '<div><span>' + esc(e.p.nm) + (e.tl !== 'U' ? ' · TALLE ' + esc(e.tl) : '') + '</span><b>' + fmt(e.p.pr) + '</b></div>'; }).join('') +
         '<div><span>ENVÍO</span><b>' + (envio === 'retiro' ? 'RETIRO · SIN CARGO' : 'A COTIZAR') + '</b></div>' +
         '<div class="tot"><span>TOTAL</span><b>' + fmt(cart.total()) + '</b></div>';
     }
@@ -437,11 +482,12 @@
 
   /* ─── legal (footer) ──────────────────────────────────────────────── */
   var LEGAL = {
-    envios: { t: 'Envíos', ja: '配送', p: ['<b>A todo el país</b> por correo, con seguimiento por link. Despachamos dentro de las 48 h hábiles de acreditado el pago.', 'También podés <b>retirar sin cargo en Honduras 4940</b>, Palermo Soho, de lunes a sábado de 11 a 19. Te avisamos cuando la pieza está lista.'] },
-    cambios: { t: 'Cambios y devoluciones', ja: '交換', p: ['Tenés <b>30 días</b> desde que recibís la pieza para cambiarla. Como cada prenda es única, el cambio es por otra pieza o por crédito en la casa; si el textil lo permite, también <b>se ajusta al cuerpo</b> en el taller.', 'Tiene que volver sin uso, con su etiqueta y en el mismo estado en que salió.'] },
-    arrepentimiento: { t: 'Botón de arrepentimiento', ja: '撤回', p: ['Si compraste online, podés <b>revocar la compra dentro de los 10 días corridos</b> desde que la recibiste, sin dar motivos y sin costo. Te devolvemos el importe por el mismo medio de pago.', 'Completá el formulario y te respondemos por email con las instrucciones para la devolución.'], ley: 'LEY 24.240 · ART. 34 · RES. 424/2020', form: true },
-    terminos: { t: 'Términos y condiciones', ja: '規約', p: ['Los precios están en <b>pesos argentinos</b> e incluyen IVA. Cada pieza publicada está disponible y es única: al sumarla al carrito <b>queda reservada mientras completás la compra</b>.', 'Pagás con Mercado Pago o Nave, hasta 6 cuotas. Las fotos son de la pieza real; el color puede variar según la pantalla.'] },
-    talles: { t: 'Guía de talles y cuidados', ja: '寸法', p: ['<b>No hay XS: la prenda se ajusta al cuerpo que la lleva.</b> Cada ficha trae las medidas reales de esa pieza (hombros, pecho, largo). Compará con una prenda tuya que te quede bien.', 'Cuidados: la mayoría se <b>lava a mano en frío</b> y se seca a la sombra. Lo pintado a mano no se plancha sobre la pintura. Si tenés dudas, escribinos por Instagram <b>@pannimargot</b>.'] }
+    /* sin cifras que la casa no aprobó (plazos de despacho o de cambio): se informan al confirmar el pedido. El botón de arrepentimiento sí es ley */
+    envios: { t: 'Envíos', ja: '配送', p: ['<b>A todo el país</b> por correo, con seguimiento por link. El plazo de despacho se informa al confirmar el pedido.', 'También podés <b>retirar sin cargo en Honduras 4940</b>, Palermo Soho, de lunes a sábado de 11 a 19. Te avisamos cuando la pieza está lista.'] },
+    cambios: { t: 'Cambios y devoluciones', ja: '交換', p: ['El plazo de cambio se informa al confirmar el pedido. Las piezas salen de a una, de a pocas — nunca en serie: el cambio es por otro talle si queda, por otra pieza o por crédito en la casa; si el textil lo permite, también <b>se ajusta al cuerpo</b> en el taller.', 'Tiene que volver sin uso, con su etiqueta y en el mismo estado en que salió.'] },
+    arrepentimiento: { t: 'Botón de arrepentimiento', ja: '撤回', p: ['Si compraste online, podés <b>revocar la compra dentro de los 10 días corridos de recibida la pieza</b>, sin dar motivos y sin costo. Te devolvemos el importe por el mismo medio de pago.', 'Completá el formulario y te respondemos por email con las instrucciones para la devolución.'], ley: 'LEY 24.240 · ART. 34 · RES. 424/2020', form: true },
+    terminos: { t: 'Términos y condiciones', ja: '規約', p: ['Los precios están en <b>pesos argentinos</b> e incluyen IVA. Cada pieza publicada está disponible en los talles que ves; salen de a una, de a pocas — nunca en serie. Al sumarla al carrito <b>queda reservada mientras completás la compra</b>.', 'Pagás con Mercado Pago o Nave, hasta 6 cuotas. Las fotos son de la pieza real; el color puede variar según la pantalla.'] },
+    talles: { t: 'Guía de talles y cuidados', ja: '寸法', p: ['<b>No hay XS: la prenda se ajusta al cuerpo que la lleva.</b> La mayoría de las fichas trae las medidas reales de esa pieza (hombros, pecho, largo); si falta, pedilas por Instagram o en la boutique. Compará con una prenda tuya que te quede bien.', 'Cuidados: van en la <b>etiqueta interna</b> de cada pieza. Cualquier duda, te la respondemos por Instagram <b>@pannimargot</b>.'] }
   };
   function legalHTML() {
     return '<div id="pm-legal" class="pm-legal" role="dialog" aria-modal="true" aria-labelledby="pm-legal-t" hidden><div class="in">' +
@@ -461,7 +507,7 @@
     if (f) f.addEventListener('submit', function (e) {
       e.preventDefault();
       var bad = $('input:invalid', f); if (bad) { bad.focus(); bad.reportValidity && bad.reportValidity(); return; }
-      $('.st', f).textContent = 'RECIBIDO :: TE ESCRIBIMOS DENTRO DE LAS 48 H HÁBILES.';
+      $('.st', f).textContent = 'RECIBIDO :: TE ESCRIBIMOS POR EMAIL CON LOS PASOS.';
       $$('input,button', f).forEach(function (i) { i.disabled = true; });
     });
     abrirDialogo('pm-legal');
@@ -480,16 +526,20 @@
     activa = ALIAS[activa] || activa;
     return '<header class="pm-hd"><div class="pm-hd-row">' +
       '<a class="pm-lk" href="./index.html" aria-label="Panni Margot — inicio">' + lockupSVG('pm-lockup-hd') + '</a>' +
-      '<nav class="pm-nav" aria-label="Principal">' +
+      '<nav class="pm-nav" id="pm-nav" aria-label="Principal">' +
       NAV.map(function (n) {
         return '<a href="' + n.href + '"' + (n.k === activa ? ' aria-current="page"' : '') + '>' + n.t + (n.ja ? ' <span lang="ja" aria-hidden="true">' + n.ja + '</span>' : '') + '</a>';
       }).join('') +
       '<span class="pm-nav-off" aria-disabled="true"><span>PERSONALIZAR <span lang="ja" aria-hidden="true">誂え</span></span><span class="sello sm">PRONTO</span></span>' +
+      /* pie del panel (solo teléfono): la boutique, sin más */
+      '<div class="pm-nav-foot"><span><b>HONDURAS 4940</b> · PALERMO SOHO</span><span>LUN — SÁB · 11:00 — 19:00</span><span aria-hidden="true">&gt;&gt;HONDURAS4940##</span></div>' +
       '</nav>' +
       '<div class="pm-hd-r">' +
       '<form class="pm-buscar" role="search" action="./shop.html" method="get">' +
       '<button type="button" class="pm-buscar-tg" aria-expanded="false" aria-controls="pm-q">BUSCAR</button>' +
       '<label for="pm-q">BUSCAR</label><input id="pm-q" type="search" name="q" autocomplete="off" placeholder="PIEZA, CATEGORÍA…" aria-label="Buscar piezas"></form>' +
+      /* teléfono: [ ≡ ] abre la nav como panel a pantalla (base.css §17); en desktop no se pinta */
+      '<button type="button" class="pm-menu-tg" aria-expanded="false" aria-controls="pm-nav" aria-label="Abrir el menú"><span class="abrir" aria-hidden="true">[ &#8801; ]</span><span class="cerrar" aria-hidden="true">[ &times; ]</span></button>' +
       '<button type="button" class="pm-carrito" data-n="0" aria-haspopup="dialog" aria-controls="pm-cart" aria-label="Carrito: 0 piezas"><span class="txt">CARRITO</span><span class="n" aria-hidden="true">0</span></button>' +
       '</div></div></header>';
   }
@@ -497,7 +547,7 @@
     return '<aside id="pm-cart" class="pm-cart" role="dialog" aria-modal="true" aria-labelledby="pm-cart-t" hidden>' +
       '<div class="pm-dlg-h"><h2 id="pm-cart-t">CARRITO <span id="pm-cart-n" class="n"></span> <span lang="ja" aria-hidden="true">器</span></h2><button type="button" class="pm-x" data-cerrar="pm-cart" aria-label="Cerrar carrito" data-foco>[ × ] CERRAR</button></div>' +
       '<div class="pm-dlg-b">' +
-      '<div id="pm-cart-vacio" class="pm-cart-vacio">TODAVÍA NADA.<br><b>CADA PIEZA ES ÚNICA</b>: CUANDO LA SUMÁS, QUEDA RESERVADA MIENTRAS COMPRÁS.<br><a class="btn" href="./shop.html">IR AL SHOP <span lang="ja" aria-hidden="true">店</span></a></div>' +
+      '<div id="pm-cart-vacio" class="pm-cart-vacio">TODAVÍA NADA.<br><b>PIEZAS DE A UNA, DE A POCAS — NUNCA EN SERIE.</b> CUANDO SUMÁS UNA, QUEDA RESERVADA MIENTRAS COMPRÁS.<br><a class="btn" href="./shop.html">IR AL SHOP <span lang="ja" aria-hidden="true">店</span></a></div>' +
       '<ul id="pm-cart-list" class="pm-cart-list" aria-label="Piezas en el carrito"></ul>' +
       '<div id="pm-cart-pas"></div>' +
       '<span class="st" role="status" aria-live="polite"></span></div>' +
@@ -643,10 +693,39 @@
       if ((b = t.closest('[data-cerrar]'))) { cerrarDialogo(b.getAttribute('data-cerrar')); return; }
       if ((b = t.closest('[data-quitar]'))) { cart.remove(b.getAttribute('data-quitar')); return; }
       if ((b = t.closest('[data-legal]'))) { legal(b.getAttribute('data-legal')); return; }
-      if ((b = t.closest('[data-add]'))) { e.preventDefault(); var r = cart.add(b.getAttribute('data-add')); if (!r.ok && r.motivo === 'duplicado') { var st = $('#pm-cart .st'); if (st) st.textContent = 'YA ESTÁ EN TU CARRITO :: ES UNA SOLA'; } return; }
+      if ((b = t.closest('[data-add]'))) {
+        e.preventDefault();
+        var idAdd = b.getAttribute('data-add'), tlAdd = b.getAttribute('data-talle');
+        var r = cart.add(idAdd, { talle: tlAdd || undefined });
+        if (!r.ok && r.motivo === 'duplicado') { var st = $('#pm-cart .st'); if (st) st.textContent = esUnica(byId(idAdd)) ? 'YA ESTÁ EN TU CARRITO :: ES UNA SOLA' : 'YA ESTÁ EN TU CARRITO :: TALLE ' + talleTxt(r.talle); }
+        /* sin talle elegido: la página lo resuelve (evento pm:talle); el sistema no adivina */
+        if (!r.ok && (r.motivo === 'talle' || r.motivo === 'sin-stock')) emit('pm:talle', { id: idAdd, motivo: r.motivo, tls: r.tls, boton: b });
+        return;
+      }
       if (t.id === 'pm-velo') { if (abiertos.length) cerrarDialogo(abiertos[abiertos.length - 1]); return; }
       if ((b = t.closest('.pm-buscar-tg'))) { var f = b.closest('.pm-buscar'); var open = f.classList.toggle('open'); b.setAttribute('aria-expanded', open); if (open) $('input', f).focus(); return; }
+      if ((b = t.closest('.pm-menu-tg'))) { menu(!hd.classList.contains('menu-open')); return; }
     });
+
+    // menú a pantalla (teléfono): [ ≡ ] abre, [ × ] / Esc / ensanchar la ventana cierran; el scroll de la página queda trabado mientras está abierto
+    function menu(on) {
+      var tg = $('.pm-menu-tg', hd); if (!tg) return;
+      if (on === hd.classList.contains('menu-open')) return;
+      hd.classList.toggle('menu-open', on);
+      tg.setAttribute('aria-expanded', on ? 'true' : 'false');
+      tg.setAttribute('aria-label', on ? 'Cerrar el menú' : 'Abrir el menú');
+      if (!abiertos.length) H.style.overflow = on ? 'hidden' : '';
+      if (on) { var a = $('.pm-nav a[aria-current="page"]', hd) || $('.pm-nav a', hd); if (a) setTimeout(function () { a.focus({ preventScroll: true }); }, 30); }
+      else if (d.activeElement && hd.contains(d.activeElement)) tg.focus();
+    }
+    d.addEventListener('keydown', function (e) { if (e.key === 'Escape' && hd.classList.contains('menu-open') && !abiertos.length) { e.preventDefault(); menu(false); } });
+    try {
+      var mqTel = w.matchMedia('(max-width: 767px)');
+      var cerrarSiAncho = function () { if (!mqTel.matches) menu(false); };
+      if (mqTel.addEventListener) mqTel.addEventListener('change', cerrarSiAncho); else if (mqTel.addListener) mqTel.addListener(cerrarSiAncho);
+    } catch (e) {}
+    /* al abrir un diálogo (carrito) el menú se cierra: no conviven dos capas */
+    d.addEventListener('pm:dialogo', function (e) { if (e.detail && e.detail.abierto) menu(false); });
     $('#pm-cart-go').addEventListener('click', function () { if (!cart.n()) return; chkPaso(1); abrirDialogo('pm-chk'); });
     chkBind();
     $('#pm-news').addEventListener('submit', function (e) {
@@ -676,10 +755,14 @@
     reloj($('#pm-term-reloj')); reloj($('#pm-ft-reloj'));
     pintarTerminal();
     scramble($('#pm-term-dial'), 'BUENOS AIRES//デザイナー ..DESIGNER >>HONDURAS4940##');
+    /* «BIENVENIDO DE VUELTA» solo en la primera página de una sesión nueva, y solo si ya había pasaporte de una visita anterior
+       (se evalúa antes de sellar esta página; dentro de la misma pestaña no se repite) */
     try {
-      var ses = sessionStorage.getItem('pm_ses');
-      if (!ses) { sessionStorage.setItem('pm_ses', '1'); var p = store('pm_pasaporte'); if (p && p.sellos && p.sellos.length) { $('#pm-term-hola').hidden = false; } }
-      else { var p2 = store('pm_pasaporte'); if (p2 && p2.sellos && p2.sellos.length) $('#pm-term-hola').hidden = false; }
+      if (!sessionStorage.getItem('pm_ses')) {
+        sessionStorage.setItem('pm_ses', '1');
+        var pPrev = store('pm_pasaporte');
+        if (pPrev && pPrev.sellos && pPrev.sellos.length) $('#pm-term-hola').hidden = false;
+      }
     } catch (e) {}
     if (o.sello) pasaporte.sellar(o.sello);
     montarCursor();
@@ -697,6 +780,7 @@
     linterna: linterna, revelar: revelar, marquesina: marquesina, legal: legal,
     abrir: abrirDialogo, cerrar: cerrarDialogo,
     qs: qs, byId: byId, esc: esc, el: el,
+    talles: tallesDe, talleTxt: talleTxt, esUnica: esUnica, esUltima: esUltima, lineaTxt: lineaTxt, clave: claveDe,
     RM: RM, FINE: FINE, SD: SD, KJ: KJ
   };
 })();

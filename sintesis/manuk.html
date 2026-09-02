@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Manuk World 世界 — Panni Margot</title>
-<meta name="description" content="MANUK WORLD: hoodies, jerseys y remeras en edición numerada. Cozysize para cualquier cuerpo. El mundo del hermano de Panni, hecho en Buenos Aires.">
+<meta name="description" content="MANUK WORLD: hoodies, jerseys y remeras cozysize para cualquier cuerpo. La sub-marca del hermano de Panni, hecha en Buenos Aires.">
 <link rel="icon" href="../favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,53 +14,60 @@
 <style>
 /* ═══ MANUK WORLD 世界 · takeover dentro del sistema ═══ */
 
-/* ─── hero · columna tipográfica + UNA pieza enorme flotando en el negro ─── */
+/* ─── hero · díptico a sangre: dos cuerpos con el hoodie puesto (noche · día) y el titular cruzando la costura ───
+   distinto del molde de la home (texto | foto): acá LA FOTO ES EL FONDO y la tipografía va a sangre encima; 世界 como marca de agua */
+.mk-top{position:relative}
 .mk-hero{
-  position:relative;
-  height:calc(100svh - var(--hd));min-height:600px;max-height:1100px;
-  display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);
-  background:var(--bg);overflow:hidden;
+  position:relative;height:calc(100svh - var(--hd));min-height:640px;max-height:1000px;
+  overflow:hidden;background:var(--bg);color:var(--fg);
 }
-.mk-hero-txt{
-  position:relative;z-index:2;display:flex;flex-direction:column;justify-content:space-between;gap:var(--s-8);
-  padding:var(--s-6) var(--gut) var(--s-8);border-right:1px solid var(--line-2);min-width:0;
-}
+.mk-hero-dip{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:2px;background:var(--bg)}
+.mk-hero-dip .ph{position:relative;aspect-ratio:auto;height:100%;overflow:hidden;background:var(--surface)}
+.mk-hero-dip .ph .pm-img{position:absolute;inset:0;object-position:50% var(--oy,28%);filter:grayscale(1) contrast(1.08) brightness(.9);transition:filter var(--dur) var(--ease)}
+/* velo al pie: el titular se lee sobre cualquiera de las dos fotos sin apagarlas arriba */
+.mk-hero::after{content:"";position:absolute;inset:auto 0 0 0;height:62%;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.5) 50%,rgba(0,0,0,.9))}
+/* 世界 como marca de agua: vertical, pegado al borde derecho (la katakana vertical del sistema), sobre la baranda y no sobre las caras */
+.mk-kj{position:absolute;right:var(--gut);top:var(--s-12);z-index:1;pointer-events:none;user-select:none;
+  writing-mode:vertical-rl;text-orientation:upright;
+  font-family:var(--f-ja);font-weight:500;font-size:clamp(140px,13vw,220px);line-height:1;letter-spacing:.06em;color:var(--fg);opacity:.16}
+.mk-hero-txt{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:space-between;padding:var(--s-6) var(--gut) var(--s-8);min-width:0}
 .mk-coord{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--s-4);
   font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.18em;text-transform:uppercase;color:var(--fg-2);line-height:1.6}
 .mk-coord span{display:inline-flex;align-items:center;gap:8px;padding:4px 0}
 .mk-coord [lang="ja"]{letter-spacing:0;font-size:var(--t-3);color:var(--fg)}
+.mk-hero-b{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:var(--s-6) var(--s-12)}
 .mk-h1{
   font-family:var(--f-display);font-weight:400;text-transform:uppercase;
-  font-size:clamp(64px,10.6vw,176px);line-height:.86;letter-spacing:-.005em;color:var(--fg);
+  font-size:clamp(88px,15.4vw,224px);line-height:.8;letter-spacing:-.015em;color:var(--fg);
+  margin-left:calc(var(--gut) * -1 + 3px);margin-bottom:-.06em;   /* a sangre: la M toca el borde, el pie de la W pisa el marco */
 }
 .mk-h1 .pt{display:inline-block;transform:translateY(-.02em)}
-.mk-hero-mid{display:flex;flex-direction:column;gap:var(--s-8);justify-content:center;flex:1 1 auto;min-height:0}
+.mk-hero-mid{display:flex;flex-direction:column;gap:var(--s-6);max-width:34ch;padding-bottom:var(--s-2)}
 .mk-hero-mid .lead{font-size:var(--t-6);max-width:30ch;color:var(--fg-2)}
 .mk-hero-mid .lead b{font-weight:400;color:var(--fg)}
 .mk-hero-cta{display:flex;flex-wrap:wrap;gap:var(--s-3) var(--s-6);align-items:center}
-.mk-hero-foot{font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.18em;text-transform:uppercase;color:var(--fg-2);line-height:1.6}
-.mk-hero-ph{position:relative;display:block;overflow:hidden;background:var(--bg);color:var(--fg);min-width:0}
-/* la foto de Tienda Nube trae un rótulo quemado en su borde inferior y el platillo del hermano arriba:
-   la img se extiende 6% por arriba y por abajo del marco (overflow:hidden recorta ambos) y un velo corto asienta el caption
-   sin apagar el ruedo: la pieza entera, puños y bajo incluidos, se ve */
-.mk-hero-ph .ph{position:absolute;inset:0;aspect-ratio:auto;overflow:hidden;background:var(--bg)}
-.mk-hero-ph .ph .pm-img{position:absolute;inset:-6% 0 auto 0;height:112%;object-position:50% 40%}
-.mk-hero-ph .ph::after{content:"";position:absolute;inset:auto 0 0 0;height:16%;z-index:1;pointer-events:none;
-  background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.75))}
-.mk-hero-ph .cap{
-  position:absolute;left:var(--gut);bottom:var(--s-6);z-index:2;display:inline-flex;align-items:center;gap:var(--s-3);
-  padding:6px 10px;background:rgba(0,0,0,.78);
-  font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.16em;text-transform:uppercase;color:var(--fg-2);line-height:1.6;
-}
-.mk-hero-ph .cap b{color:var(--fg);font-weight:400;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:4px;transition:text-decoration-color var(--dur-fast)}
-.mk-hero-ph:hover .cap b,.mk-hero-ph:focus-visible .cap b{text-decoration-color:currentColor}
-/* el kanji va arriba a la derecha, donde el negro está vacío (abajo pelearía con la etiqueta tejida de la manga) */
-.mk-kj{position:absolute;right:var(--gut);top:var(--s-6);z-index:2;font-family:var(--f-ja);font-weight:500;font-size:clamp(48px,6.5vw,104px);line-height:.9;color:var(--fg);user-select:none;opacity:.92}
+/* tira de las piezas de la foto (patrón Demobaza: la foto manda, la data debajo): una celda por cuerpo → ficha */
+.mk-hero-pz{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border-bottom:1px solid var(--line)}
+.mk-hero-pz a{display:flex;justify-content:space-between;align-items:center;gap:var(--s-4);min-height:52px;padding:var(--s-2) var(--gut);min-width:0;
+  font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--fg-2);line-height:1.6}
+.mk-hero-pz a + a{border-left:1px solid var(--line)}
+.mk-hero-pz a .l{display:flex;align-items:center;gap:var(--s-3);min-width:0}
+.mk-hero-pz a .l b{color:var(--fg);font-weight:400;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mk-hero-pz a .l .n{color:var(--fg);letter-spacing:0;font-variant-numeric:tabular-nums}
+.mk-hero-pz a .r{display:flex;align-items:center;gap:var(--s-4);white-space:nowrap}
+.mk-hero-pz a .r .num{color:var(--fg);font-variant-numeric:tabular-nums}
+.mk-hero-pz a .ver{color:var(--fg);text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--fg-2);transition:text-decoration-color var(--dur-fast)}
+.mk-hero-pz a .ver::after{content:" >>"}
+.mk-hero-pz a:hover .ver,.mk-hero-pz a:focus-visible .ver{text-decoration-color:currentColor}
+.mk-hero-pz a:focus-visible{outline-offset:-4px}
 @media (hover:hover) and (pointer:fine){
-  .mk-hero-ph:hover .pm-img,.mk-hero-ph:focus-visible .pm-img{filter:grayscale(0) contrast(1)}
+  /* el cuerpo de la fila que se toca vuelve a color */
+  .mk-top:has(.mk-hero-pz a:nth-child(1):hover) .mk-hero-dip .ph:nth-child(1) .pm-img,
+  .mk-top:has(.mk-hero-pz a:nth-child(2):hover) .mk-hero-dip .ph:nth-child(2) .pm-img{filter:grayscale(0) contrast(1)}
 }
 /* las celdas a sangre tocan los bordes del viewport o de un overflow:hidden: el anillo de foco va hacia adentro para no perderse */
-.mk-hero-ph:focus-visible,.mk-calle a:focus-visible,.mk-det a:focus-visible{outline-offset:-4px}
+.mk-calle a:focus-visible,.mk-det a:focus-visible{outline-offset:-4px}
 
 /* ─── marquesina propia (dialecto MANUK, cuatro frases) ─── */
 .mk-marq{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
@@ -180,14 +187,13 @@ html[data-grano="off"] #grain{opacity:0;transition:opacity var(--dur)}
 
 /* ─── responsive ─── */
 @media (max-width:1023px){
-  /* tablet: el alto lo manda la foto (nada flotando en la columna de texto) */
-  .mk-hero{height:auto;min-height:0;max-height:none;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-  .mk-hero-ph{min-height:min(720px, calc(100svh - var(--hd-real, var(--hd))))}
+  /* tablet: el díptico se mantiene; titular y lead apilados */
+  .mk-hero{height:calc(100svh - var(--hd-real, var(--hd)));min-height:600px;max-height:900px}
   .mk-hero-txt{padding-bottom:var(--s-6)}
-  .mk-h1{font-size:clamp(72px,12.5vw,120px)}
-  .mk-kj{display:none}
+  .mk-hero-b{grid-template-columns:minmax(0,1fr);gap:var(--s-4)}
+  .mk-h1{font-size:clamp(80px,15vw,140px)}
+  .mk-kj{font-size:clamp(120px,16vw,160px)}
   .mk-coord{flex-wrap:wrap}
-  .mk-hero-ph .cap{flex-direction:column;align-items:flex-start;gap:2px;padding:8px 10px;max-width:calc(100% - var(--gut) * 2)}
   /* tres etiquetas completas (GREEN / BLACK / PINK): nombre y precio en dos filas, nada cortado */
   .mk-calle .cap{flex-direction:column;align-items:flex-start;gap:2px;padding:8px 10px}
   .mk-calle .cap b{white-space:normal;overflow-wrap:anywhere;text-overflow:clip}
@@ -201,25 +207,24 @@ html[data-grano="off"] #grain{opacity:0;transition:opacity var(--dur)}
   .mk-cierre{padding-block:var(--s-16)}
 }
 @media (max-width:767px){
-  /* teléfono: la foto entera primero, el texto después (como Demobaza): nada tapa a la pieza */
-  .mk-hero{height:auto;min-height:0;max-height:none;grid-template-columns:1fr;grid-template-rows:auto auto}
-  /* el caption sale de la foto y pasa a ser fila meta debajo (como .pcard-meta): nada se pinta sobre el ruedo */
-  .mk-hero-ph{position:relative;inset:auto;order:-1;display:flex;flex-direction:column;min-height:0;overflow:visible}
-  .mk-hero-ph .ph{position:relative;inset:auto;aspect-ratio:4/5}
-  .mk-hero-ph .ph .pm-img{inset:0;height:100%;object-position:50% 42%}
-  .mk-hero-ph .ph::after{display:none}
-  .mk-kj{display:none}
-  .mk-hero-ph .cap{position:static;display:flex;flex-direction:row;justify-content:space-between;align-items:baseline;gap:var(--s-3);
-    padding:var(--s-3) var(--gut) 0;background:none;max-width:none}
-  .mk-hero-ph .cap b{min-width:0;overflow-wrap:anywhere}
-  .mk-hero-ph .cap span{white-space:nowrap}
-  .mk-hero-txt{justify-content:flex-start;gap:var(--s-6);border-right:0;padding:var(--s-6) var(--gut) var(--s-8)}
-  .mk-coord{font-size:var(--t-0)}
-  .mk-h1{font-size:clamp(64px,19vw,104px)}
-  .mk-hero-mid{flex:0 0 auto;gap:var(--s-6)}
-  .mk-hero-mid .lead{font-size:var(--t-5)}
+  /* teléfono: UNA foto (la noche) a pantalla, el titular entero y una línea encima: la primera pantalla cierra sola */
+  .mk-hero{height:calc(100svh - var(--hd-real, var(--hd)));min-height:560px;max-height:none}
+  .mk-hero-dip{grid-template-columns:1fr;gap:0}
+  .mk-hero-dip .ph:nth-child(2){display:none}
+  .mk-hero-dip .ph .pm-img{object-position:50% 30%}
+  .mk-hero::after{height:70%}
+  .mk-kj{font-size:clamp(88px,24vw,110px);top:var(--s-12);right:var(--s-3);opacity:.18}
+  .mk-hero-txt{padding:var(--s-4) var(--gut) var(--s-6)}
+  .mk-coord{font-size:var(--t-0);letter-spacing:.14em}
+  .mk-coord span{padding:0}
+  .mk-hero-b{grid-template-columns:1fr;gap:var(--s-4)}
+  .mk-h1{font-size:clamp(64px,18vw,96px);margin-bottom:0}
+  .mk-hero-mid{gap:var(--s-4);max-width:none}
+  .mk-hero-mid .lead{font-size:var(--t-5);max-width:30ch}
   .mk-hero-cta .btn{flex:1 1 auto}
-  .mk-hero-foot{display:none}
+  .mk-hero-pz{grid-template-columns:1fr}
+  .mk-hero-pz a:nth-child(2){display:none}
+  .mk-hero-pz a .l .n{display:none}
   /* campaña: tira horizontal con snap, un look por pantalla */
   .mk-calle{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;gap:var(--s-1)}
   .mk-calle::-webkit-scrollbar{display:none}
@@ -306,24 +311,29 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
 </div>
 <main id="contenido">
 
-  <!-- ─── HERO ─── -->
-  <section class="mk-hero" aria-labelledby="mk-t">
-    <div class="mk-hero-txt">
-      <div class="mk-coord">
-        <span><span lang="ja" aria-hidden="true">世界</span> MANUK WORLD · EDICIÓN NUMERADA</span>
-      </div>
-      <div class="mk-hero-mid">
-        <h1 class="mk-h1" id="mk-t">MANUK<span class="pt">.</span><br>WORLD<span class="sr"> — Manuk World, el mundo del hermano de Panni</span></h1>
-        <p class="lead"><b>Cozysize para cualquier cuerpo.</b> Hoodies, jerseys y remeras en edición numerada, hechos en Buenos Aires.</p>
-        <div class="mk-hero-cta">
-          <a class="btn fill" href="#piezas">VER LAS PIEZAS <span class="arr">&gt;&gt;</span></a>
-          <a class="lnk" href="./shop.html?cat=MANUK">SHOP :: MANUK</a>
+  <!-- ─── HERO · díptico a sangre ─── -->
+  <div class="mk-top">
+    <section class="mk-hero" aria-labelledby="mk-t">
+      <div class="mk-hero-dip" id="mk-dip-hero" aria-hidden="true"></div>
+      <span class="mk-kj" lang="ja" aria-hidden="true">世界</span>
+      <div class="mk-hero-txt">
+        <div class="mk-coord">
+          <span><span lang="ja" aria-hidden="true">世界</span> MANUK WORLD · LA SUB-MARCA DEL HERMANO DE PANNI</span>
+        </div>
+        <div class="mk-hero-b">
+          <h1 class="mk-h1" id="mk-t">MANUK<span class="pt">.</span><br>WORLD<span class="sr"> — Manuk World, el mundo del hermano de Panni</span></h1>
+          <div class="mk-hero-mid">
+            <p class="lead"><b>Cozysize para cualquier cuerpo.</b> Hoodies, jerseys y remeras hechos en Buenos Aires, de a pocos.</p>
+            <div class="mk-hero-cta">
+              <a class="btn fill" href="#piezas">VER LAS PIEZAS <span class="arr">&gt;&gt;</span></a>
+              <a class="lnk" href="./shop.html?cat=MANUK">SHOP :: MANUK</a>
+            </div>
+          </div>
         </div>
       </div>
-      <p class="mk-hero-foot">MADE IN BUENOS AIRES</p>
-    </div>
-    <a class="mk-hero-ph" id="mk-ph" href="#piezas" aria-label="Ver las piezas de Manuk World"></a>
-  </section>
+    </section>
+    <nav class="mk-hero-pz" id="mk-hero-pz" aria-label="Las piezas de la foto"></nav>
+  </div>
 
   <div class="mk-marq" id="mk-marq"></div>
 
@@ -335,7 +345,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
           <p class="ey">LOOKS COMPLETOS · <span lang="ja" aria-hidden="true">世界</span></p>
           <h2 id="mk-calle-t">En la calle</h2>
         </div>
-        <p class="ey">HOODIE/001 · TRES EDICIONES</p>
+        <p class="ey">HOODIE/001 · TRES COLORES</p>
       </div>
     </div>
     <div class="mk-calle bleed rv" id="mk-calle"></div>
@@ -380,7 +390,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
       <div class="rv">
         <p class="ey">YA NO ESTÁN</p>
         <h2 class="disp" id="mk-arch-t">En el archivo <span lang="ja" aria-hidden="true">記憶</span></h2>
-        <p class="txt"><b>Cada edición sale, se numera y no vuelve.</b> Lo que ya se fue queda acá, con su año y su número.</p>
+        <p class="txt"><b>Cada tanda sale y no vuelve igual.</b> Lo que ya no está en la tienda queda acá.</p>
         <a class="lnk" href="./archivo.html">TODO EL ARCHIVO <span class="arr">&gt;&gt;</span></a>
       </div>
       <div class="pgrid c2 rv rv-d1" id="mk-grid-archivo"></div>
@@ -396,8 +406,8 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
           <p class="ey"><b id="mk-dial">&gt;&gt;MANUK.WORLD##</b> · EL HERMANO DE PANNI</p>
           <h2 class="disp" id="mk-mani-t">Cozysize para un mundo incómodo</h2>
           <div class="txt">
-            <p><b>MANUK es la casa del hoodie.</b> Streetwear crudo, cortado y numerado en Buenos Aires: gráfica de calle, capucha, cozysize.</p>
-            <p>Un solo talle que abraza cualquier cuerpo. Sin género, sin temporada: <b>cada edición sale, se numera y no vuelve.</b> Lo que ya no está vive en el Archivo.</p>
+            <p><b>MANUK es la casa del hoodie.</b> Streetwear crudo, cortado y cosido en Buenos Aires: gráfica de calle, capucha, cozysize.</p>
+            <p>Un solo talle que abraza cualquier cuerpo. Sin género, sin temporada: <b>cada tanda sale y no vuelve igual.</b> Lo que ya no está vive en el Archivo.</p>
             <p>Prove them wrong.</p>
           </div>
           <div class="mk-datos" id="mk-datos"></div>
@@ -442,7 +452,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
         <h2 class="disp" id="mk-cierre-t">Volver al shop <span lang="ja" aria-hidden="true">店</span></h2>
       </div>
       <div class="acc rv rv-d1">
-        <a class="lnk" href="./territorio.html?cat=MANUK">DERIVAR POR MANUK <span lang="ja" aria-hidden="true">漂流</span></a>
+        <a class="lnk" href="./shop.html?cat=MANUK">DERIVAR POR MANUK <span lang="ja" aria-hidden="true">漂流</span></a>
         <a class="btn lg" href="./shop.html?cat=MANUK">SHOP :: MANUK <span class="arr">&gt;&gt;</span></a>
       </div>
     </div>
@@ -476,7 +486,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     return PM.pic(p, i, Object.assign({ lq: lq || null }, o || {}));
   }
 
-  /* ─── piezas MANUK por tipo (novedad primero) + archivo MANUK (vendidas) ─── */
+  /* ─── piezas MANUK por tipo (novedad primero) + archivo MANUK (ya no están en la tienda) ─── */
   function tipo(p) {
     var n = String(p.nm || p.id).toUpperCase();
     if (/HOODIE/.test(n)) return 'HOODIES';
@@ -500,19 +510,24 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   /* solo piezas vivas (con precio) para hero, campaña y detalle: si una pasa al archivo, cae al fallback */
   function viva(id) { var p = byId(id); return p && piezas.indexOf(p) > -1 ? p : null; }
 
-  /* ─── HERO · una pieza real enorme: PTW WHITE flotando en el negro ─── */
-  var hW = viva('manuk-hoodie-002-ptw-white') || piezas[0];
-  var hB = viva('manuk-hoodie-002-ptw-black') || piezas[1] || piezas[0];
-  var ph = document.getElementById('mk-ph');
-  if (hW) {
-    ph.href = './ficha.html?id=' + encodeURIComponent(hW.id);
-    ph.setAttribute('aria-label', hW.nm + ' — ' + PM.fmt(hW.pr) + ' — ver la pieza');
-    ph.innerHTML = '<span class="ph"><img class="pm-img" src="' + esc(HI(hW.imgs[0])) + '" alt="" loading="eager" fetchpriority="high" decoding="async" style="background-image:url(&quot;' + esc(hW.lq || hW.imgs[0]) + '&quot;)"></span>' +
-      '<span class="cap" aria-hidden="true"><b>' + esc(hW.nm) + '</b><span>' + PM.fmt(hW.pr) + '</span></span>' +
-      '<span class="mk-kj" lang="ja" aria-hidden="true">世界</span>';
-  } else {
-    ph.remove();
-  }
+  /* ─── HERO · díptico: dos cuerpos con el HOODIE/001 puesto — la noche (GREEN, gradas, toma 16) y el día (BLACK, capucha, toma 12).
+       Las dos en -1024-1024 (la variante grande que responde) con su -480-0 como placeholder. En teléfono queda solo la noche. ─── */
+  function grande(u) { return String(u || '').replace(/-640-0(\.\w+)$/, '-1024-1024$1'); }
+  var HERO = [
+    { id: 'manuk-hoodie-001-green', i: 16, oy: '30%' },
+    { id: 'manuk-hoodie-001-black', i: 12, oy: '24%' }
+  ].map(function (x) { var p = viva(x.id); return p && p.imgs[x.i] ? { p: p, i: x.i, oy: x.oy } : null; }).filter(Boolean);
+  if (HERO.length < 2) piezas.forEach(function (p) { if (HERO.length < 2 && !HERO.some(function (h) { return h.p === p; })) HERO.push({ p: p, i: 0, oy: '30%' }); });
+  var hW = HERO[0] ? HERO[0].p : null, hB = HERO[1] ? HERO[1].p : null;
+  document.getElementById('mk-dip-hero').innerHTML = HERO.map(function (h, k) {
+    var src = grande(h.p.imgs[h.i]);
+    return '<span class="ph"><img class="pm-img" src="' + esc(src) + '" alt="" loading="eager"' + (k === 0 ? ' fetchpriority="high"' : '') + ' decoding="async" style="--oy:' + esc(h.oy) + ';background-image:url(&quot;' + esc(src.replace(/-1024-1024(\.\w+)$/, '-480-0$1')) + '&quot;)"></span>';
+  }).join('');
+  document.getElementById('mk-hero-pz').innerHTML = HERO.map(function (h, k) {
+    return '<a href="./ficha.html?id=' + encodeURIComponent(h.p.id) + '">' +
+      '<span class="l"><span class="n">0' + (k + 1) + '</span><b>' + esc(h.p.nm) + '</b></span>' +
+      '<span class="r"><span class="num">' + PM.fmt(h.p.pr) + '</span><span class="ver">Ver la pieza</span></span></a>';
+  }).join('');
 
   /* ─── marquesina de dialecto MANUK (cuatro frases, nada más; MADE IN BUENOS AIRES ya está en el pie del hero) ─── */
   PM.marquesina(document.getElementById('mk-marq'), [
@@ -523,8 +538,9 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   ]);
 
   /* ─── CAMPAÑA · tres looks del HOODIE/001, los tres frontales y a la misma distancia (contact sheet del dump) ─── */
+  /* (la toma 16 del GREEN es la del hero: acá va la 15, mismo encuadre frontal, cuerpo entero) */
   var calle = [
-    { id: 'manuk-hoodie-001-green', i: 16, oy: '30%' },
+    { id: 'manuk-hoodie-001-green', i: 15, oy: '30%' },
     { id: 'manuk-hoodie-001-black', i: 14, oy: '15%' },
     { id: 'manuk-hoodie-001-pink', i: 13, oy: '8%' }
   ].map(function (x) { var p = viva(x.id); return p ? { p: p, i: Math.min(x.i, p.imgs.length - 1), oy: x.oy } : null; }).filter(Boolean);
@@ -544,7 +560,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   gR.innerHTML = jerseys.concat(remeras).map(itemHTML).join('');
   gA.innerHTML = archivo.map(function (a) {
     return PM.pcardHTML(a, { vendida: true, href: './archivo.html?id=' + encodeURIComponent(a.id), vt: false, sellos: false, cls: 'mk-item' })
-      .replace(/<\/a>$/, '<span class="pcard-ano">' + (a.ano ? esc(String(a.ano)) + ' · ' : '') + 'EN EL ARCHIVO</span></a>');
+      .replace(/<\/a>$/, '<span class="pcard-ano">EN EL ARCHIVO</span></a>');
   }).join('');
   /* (las tarjetas no llevan .rv: el reveal lo hacen los contenedores, ya observados por montarCromo) */
   [gH, gR, gA].forEach(function (g) { g.addEventListener('click', function (e) { var a = e.target.closest('.pcard'); if (a) PM.vistas.marcar(a.getAttribute('data-id')); }); });
@@ -569,7 +585,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   /* dialecto de terminal del manifiesto: >>MANUK.WORLD## scrambleado (deja .sr con el texto final) */
   PM.scramble(document.getElementById('mk-dial'), '>>MANUK.WORLD##', { dur: 620 });
 
-  /* ─── MANIFIESTO · díptico: dos looks que ya se fueron (viven en el archivo) ─── */
+  /* ─── MANIFIESTO · díptico: dos looks que ya no están en la tienda (viven en el archivo) ─── */
   var dip = [
     { id: 'manuk-jersey78-black', i: 13 },
     { id: 'manuk-hoodie-002-ptw', i: 11 }
@@ -579,7 +595,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     var arch = archivo.indexOf(x.p) > -1;
     return '<a href="' + (arch ? './archivo.html?id=' : './ficha.html?id=') + encodeURIComponent(x.p.id) + '">' +
       '<div class="ph">' + foto(x.p, x.i, { alt: '' }) + '</div>' +
-      '<span class="cap"><b>' + esc(x.p.nm) + '</b><span>' + (arch ? '<span lang="ja" aria-hidden="true">完売</span> ' + (x.p.ano ? esc(String(x.p.ano)) : 'ARCHIVO') + '<span class="sr">Vendida</span>' : PM.fmt(x.p.pr)) + '</span></span></a>';
+      '<span class="cap"><b>' + esc(x.p.nm) + '</b><span>' + (arch ? '<span lang="ja" aria-hidden="true">終了</span> ARCHIVO<span class="sr">Ya no está en la tienda</span>' : PM.fmt(x.p.pr)) + '</span></span></a>';
   }).join('');
 
   /* datos duros del mundo · solo lo que el catálogo sostiene */
@@ -588,7 +604,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   var cuiReal = piezas.filter(function (p) { return p.cui && !p.cuiEstimado; });
   var filaCui = (piezas.length && cuiReal.length === piezas.length && cuiReal.every(function (p) { return p.cui === cuiReal[0].cui; }))
     ? '<div><span>CUIDADO</span><b>' + esc(String(cuiReal[0].cui).replace(/\.$/, '')) + '</b></div>'
-    : '<div><span>EDICIÓN</span><b>NUMERADA</b></div>';
+    : '<div><span>HECHO EN</span><b>BUENOS AIRES</b></div>';
   document.getElementById('mk-datos').innerHTML =
     '<div><span>PIEZAS EN LA SALA</span><b>' + piezas.length + '</b></div>' +
     '<div><span>MODELOS</span><b>' + Object.keys(modelos).length + '</b></div>' +
