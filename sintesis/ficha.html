@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ficha — Panni Margot</title>
+<link rel="icon" href="../favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://acdn-us.mitiendanube.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./base.css">
+<style>
+/* ═══ FICHA · patrón Demobaza sobre blanco: la foto manda, la data se corre al costado ═══ */
+
+/* migas */
+.migas{padding:var(--s-4) 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:var(--s-2) var(--s-3);
+  font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.16em;text-transform:uppercase;color:var(--fg-2);line-height:1.6;min-height:44px}
+.migas a{display:inline-flex;align-items:center;min-height:32px;color:var(--fg-2);text-decoration:underline;text-decoration-color:transparent;text-underline-offset:4px;transition:color var(--dur-fast),text-decoration-color var(--dur-fast)}
+.migas a:hover,.migas a:focus-visible{color:var(--fg);text-decoration-color:currentColor}
+.migas [lang="ja"]{letter-spacing:0;margin-left:4px}
+.migas .sep{color:var(--fg-3)}
+.migas [aria-current]{color:var(--fg)}
+
+/* estructura: ensayo (2 col) + data sticky */
+.ficha{display:grid;grid-template-columns:minmax(0,1fr) clamp(300px,25vw,380px);gap:0 var(--s-16);align-items:start;padding:var(--s-2) 0 var(--s-16)}
+/* DOM: data → ensayo → envío (orden de lectura y de foco: nombre, precio, talle, CTA, fotos, servicio);
+   en pantalla el ensayo va a la izquierda y la banda de servicio debajo, en su misma columna */
+@media (min-width:1024px){
+  .data{grid-column:2;grid-row:1 / 3}
+  .izq{grid-column:1;grid-row:1}
+  .envio{grid-column:1;grid-row:2}
+}
+
+/* ── ENSAYO FOTOGRÁFICO ── */
+.ensayo{position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-3);min-width:0}
+/* marco 3/4 uniforme (doctrina del brief §8: la consistencia fotográfica es el diseño); las fotos de TN son 2:3,
+   el object-fit:cover recorta un poco de piso por abajo y el 12% ancla la cabeza */
+.foto{position:relative;margin:0;aspect-ratio:3/4;overflow:hidden;background:var(--surface-2)}
+.foto .pm-img{position:absolute;inset:0;object-position:50% 12%}
+/* el ensayo va siempre de a pares desde la primera toma; la única toma sola es la última cuando sobra:
+   queda centrada, mismo 3/4 (nunca una toma apaisada que recorte el cuerpo, nunca un hueco) */
+.foto.sola{grid-column:1 / -1;width:calc(50% - var(--s-3) / 2);justify-self:center}
+.foto .n{position:absolute;right:var(--s-3);bottom:var(--s-2);z-index:2;font-family:var(--f-mono);font-size:var(--t-0);letter-spacing:.16em;color:var(--fg-2);opacity:0;transition:opacity var(--dur-fast)}
+@media (hover:hover) and (pointer:fine){
+  .foto:hover .pm-img{filter:grayscale(0) contrast(1)}
+  .foto:hover .n{opacity:1}
+}
+/* papel de calco: lupa esmerilada que sigue al puntero sobre el ensayo */
+.calco{position:absolute;top:0;left:0;z-index:5;width:240px;height:170px;pointer-events:none;opacity:0;
+  border:1px solid var(--fg);background:rgba(255,255,255,.22);
+  -webkit-backdrop-filter:blur(2px) grayscale(0);backdrop-filter:blur(2px) grayscale(0);
+  transition:opacity var(--dur-fast);will-change:transform;
+  font-family:var(--f-mono);font-size:var(--t-0);letter-spacing:.18em;text-transform:uppercase;color:var(--fg)}
+.calco.on{opacity:1}
+.calco i{position:absolute;top:6px;right:8px;font-style:normal}
+.calco span{position:absolute;bottom:6px;left:8px;right:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.calco::before,.calco::after{content:"";position:absolute;background:var(--fg);opacity:.5}
+.calco::before{left:50%;top:0;bottom:0;width:1px}
+.calco::after{top:50%;left:0;right:0;height:1px}
+@supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){.calco{background:rgba(255,255,255,.7)}}
+@media (hover:none),(pointer:coarse){.calco{display:none}}
+
+/* botón de las tomas restantes: al pie del ensayo, alineado a la derecha como el contador */
+.ens-mas{display:flex;justify-content:flex-end;padding-top:var(--s-4)}
+.ens-mas .lnk{display:inline-flex;align-items:center;min-height:44px}
+
+/* ── DATA DURA · apilada, sin tabs ── */
+/* la columna ocupa el alto del ensayo; el bloque sticky termina en el CTA (como Demobaza termina en ADD TO BAG):
+   el primer pantallazo cierra limpio en 1440×900. Envío/retiro es la banda de servicio al pie del ensayo. */
+.izq{min-width:0}
+.data{display:flex;flex-direction:column;align-self:stretch;min-width:0}
+.d-stick{position:sticky;top:calc(var(--hd) + var(--s-4));display:flex;flex-direction:column;min-width:0}
+/* más alto que la ventana (notebooks bajas): la columna corre con la página y solo el CTA se pega
+   al pie de la ventana hasta llegar a su lugar (el botón siempre a mano sin scrollear) */
+.d-stick.alta{position:static}
+.data>.cta.pie{position:sticky;bottom:0;z-index:3;margin-top:0;padding:var(--s-3) 0 var(--s-6);background:var(--bg)}
+/* velo corto arriba del botón flotante: se lee que la data sigue por debajo, no que se corta */
+.data>.cta.pie::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:var(--s-6);pointer-events:none;background:linear-gradient(to top,var(--bg),rgba(255,255,255,0))}
+.d-cab .ey{display:flex;align-items:center;gap:var(--s-2);flex-wrap:wrap}
+.d-cab .ey [lang="ja"]{letter-spacing:0}
+/* la nota del pintor va en renglón propio: nunca un separador colgando al principio de una línea */
+.d-cab .ey .pint{flex-basis:100%;white-space:nowrap}
+.d-cab .ey a{display:inline-flex;align-items:center;min-height:24px;margin-block:-4px;color:inherit;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:4px;transition:text-decoration-color var(--dur-fast)}
+.d-cab .ey a:hover,.d-cab .ey a:focus-visible{text-decoration-color:currentColor}
+.d-cab h1{font-family:var(--f-display);font-size:clamp(30px,2.4vw,36px);line-height:.92;text-transform:uppercase;letter-spacing:.005em;margin-top:var(--s-2);overflow-wrap:anywhere;text-wrap:balance}
+.d-cab .sellos{margin-top:var(--s-2)}
+.d-desc{margin-top:var(--s-3);font-size:var(--t-5);line-height:1.5;color:var(--fg);max-width:38ch}
+.d-precio{margin-top:var(--s-3);display:flex;flex-direction:column;gap:var(--s-1)}
+.d-precio .top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:var(--s-1) var(--s-3)}
+.d-precio .pr{font-family:var(--f-mono);font-size:clamp(24px,1.9vw,28px);letter-spacing:-.01em;line-height:1;font-variant-numeric:tabular-nums;color:var(--fg)}
+.d-precio .cuotas{font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--fg-2);line-height:1.6;margin-top:var(--s-1)}
+.d-precio .sku{font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--fg-2);line-height:1.6;min-height:1.6em;min-width:0;max-width:100%}
+/* SKUs largos cortan dentro de la columna (también con los glifos katakana del scramble): la página nunca gana scroll horizontal */
+.d-precio .sku [aria-hidden]{white-space:pre-wrap;overflow-wrap:anywhere}
+
+/* filas de sistema (patrón Heliot Emil 01–04): número · rótulo · contenido */
+.filas{margin-top:var(--s-3);border-top:1px solid var(--line)}
+.fila{display:grid;grid-template-columns:28px minmax(0,1fr);gap:var(--s-1) var(--s-3);padding:var(--s-2) 0;border-bottom:1px solid var(--line)}
+.fila .no{font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.12em;color:var(--fg-2);line-height:1.6;padding-top:1px}
+.fila h2{font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.18em;text-transform:uppercase;color:var(--fg);line-height:1.6}
+.fila h2 [lang="ja"]{letter-spacing:0;color:var(--fg-2);margin-left:6px}
+.fila .cu{grid-column:2;min-width:0;font-size:var(--t-4);line-height:1.6;color:var(--fg)}
+.fila .cu p+p{margin-top:var(--s-2)}
+.fila .cu .nota{color:var(--fg-2)}
+.fila .cu .lnk{display:inline-flex;align-items:center;min-height:24px;margin:-4px 0}
+.talle{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--s-2) var(--s-3)}
+.talle .lnk{margin-left:auto}
+.talle b{font-family:var(--f-mono);font-size:var(--t-5);font-weight:400;letter-spacing:.06em;color:var(--fg)}
+.talle span{font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--fg-2);white-space:nowrap}
+.mats{display:flex;flex-direction:column;gap:var(--s-1)}
+.mats li{display:flex;gap:var(--s-2);align-items:baseline}
+.mats li::before{content:"";flex:0 0 5px;width:5px;height:5px;background:var(--fg);transform:translateY(-2px)}
+.med{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.med th,.med td{padding:var(--s-1) 0;border-bottom:1px solid var(--line);text-align:left;font-weight:400;vertical-align:baseline}
+.med tr:last-child th,.med tr:last-child td{border-bottom:0}
+.med td{text-align:right;font-family:var(--f-mono);font-size:var(--t-4);letter-spacing:.04em;white-space:nowrap}
+.med caption{text-align:left;font-family:var(--f-mono);font-size:var(--t-0);letter-spacing:.16em;text-transform:uppercase;color:var(--fg-2);padding-bottom:var(--s-1)}
+.lava b{font-weight:500}
+
+/* CTA único */
+.cta{margin-top:var(--s-3)}
+.cta .btn{gap:var(--s-3);justify-content:space-between;padding-inline:var(--s-6)}
+.cta .btn .pr{font-variant-numeric:tabular-nums;letter-spacing:.06em}
+/* reservada: aria-disabled (no disabled) para que el foco pueda volver al botón al cerrar el carrito */
+.cta .btn[aria-disabled="true"]{justify-content:center;border-style:dashed;cursor:default}
+.cta .btn[aria-disabled="true"]:hover,.cta .btn[aria-disabled="true"]:focus-visible{box-shadow:none}
+.cta .btn[aria-disabled="true"]:active{transform:none}
+/* región viva: siempre en el árbol (si nace display:none, varios lectores no anuncian el primer cambio) */
+.cta .st{display:block;min-height:0;line-height:1.6;font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--fg-2)}
+.cta .st:not(:empty){margin-top:var(--s-2)}
+.cta-pr{display:none}
+
+/* envío / retiro */
+/* banda de servicio: tres celdas bajo el ensayo (envío · retiro · legales), una sola regla arriba */
+/* la celda de links es corta y cede ancho a las dos de texto: ninguna línea se parte a mitad de frase */
+.envio{margin-top:var(--s-6);display:grid;grid-template-columns:1.1fr 1.3fr auto;gap:0 var(--s-6);border-top:1px solid var(--line)}
+.envio>div{display:grid;grid-template-columns:28px minmax(0,1fr);gap:var(--s-3);padding:var(--s-4) 0;font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;line-height:1.7;color:var(--fg-2)}
+.envio>div.lk{align-items:start}
+.envio>div>span:last-child{min-width:0;white-space:nowrap}
+.envio b{color:var(--fg);font-weight:400}
+.envio .ic{color:var(--fg);letter-spacing:0}
+.envio .reloj{display:inline-flex;align-items:center;gap:var(--s-2);vertical-align:baseline}
+.envio .reloj .dot{width:6px;height:6px;border:1px solid var(--fg);display:inline-block}
+.envio .reloj[data-estado="abierto"] .dot{background:var(--fg)}
+/* puntero fino: los links arrancan en la misma línea base que las celdas vecinas (el bloque touch les da 44px) */
+.envio button{display:inline;min-height:0;padding:0;line-height:inherit;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--fg-3);color:var(--fg-2);letter-spacing:inherit;text-transform:inherit;font:inherit;transition:color var(--dur-fast),text-decoration-color var(--dur-fast)}
+.envio button:hover,.envio button:focus-visible{color:var(--fg);text-decoration-color:currentColor}
+.envio .links{display:flex;flex-wrap:wrap;gap:0 var(--s-3)}
+
+/* ── COMPLETÁ EL CONJUNTO ── */
+.conj{padding:var(--s-12) 0 var(--s-24);border-top:1px solid var(--line)}
+.conj-h{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--s-6);margin-bottom:var(--s-8)}
+.conj-h h2{font-family:var(--f-display);font-size:var(--t-7);line-height:.95;text-transform:uppercase}
+.conj-h .ey{text-align:right}
+.conj .pgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.volver{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--s-4);margin-top:var(--s-16);padding-top:var(--s-8);border-top:1px solid var(--line)}
+.volver .btn [lang="ja"]{letter-spacing:0;color:inherit}
+
+/* estado: pieza inexistente */
+.nada{padding:var(--s-24) 0}
+.nada h1{font-family:var(--f-display);font-size:var(--t-8);line-height:.9;text-transform:uppercase;max-width:14ch}
+.nada p{margin-top:var(--s-6);max-width:44ch}
+.nada .acc{display:flex;flex-wrap:wrap;gap:var(--s-3);margin-top:var(--s-8)}
+
+/* ── RESPONSIVE ── */
+@media (max-width:1279px) and (min-width:1024px){
+  .ficha{gap:0 var(--s-12)}
+  /* columna izquierda de ~570–850px: envío y retiro a la par, los links en su propia fila */
+  .envio{grid-template-columns:1fr 1fr}
+  .envio>div.lk{grid-column:1 / -1;border-top:1px solid var(--line);padding-top:var(--s-3);padding-bottom:var(--s-3)}
+}
+/* pantallas bajas (notebooks 768–820px de alto): la columna se compacta para que cabecera → CTA entre en el primer pantallazo */
+@media (min-width:1024px) and (max-height:820px){
+  .migas{min-height:32px;padding-top:var(--s-3)}
+  .d-cab h1{font-size:clamp(28px,2.1vw,32px)}
+  .d-desc{margin-top:var(--s-2);font-size:var(--t-4)}
+  .d-precio,.filas,.cta{margin-top:var(--s-2)}
+  .fila{padding:var(--s-1) 0}
+  .fila .cu{line-height:1.5}
+  .fila .cu p+p{margin-top:var(--s-1)}
+  .mats{gap:0}
+  .med th,.med td{line-height:1.4}
+  .d-cab .sellos{margin-top:var(--s-1)}
+  .d-precio .cuotas{margin-top:0}
+}
+/* touch: targets ≥44px en todos los controles propios de la página */
+@media (hover:none),(pointer:coarse){
+  .migas{padding-top:var(--s-2)}
+  .migas a{min-height:44px}
+  .d-cab .ey a{min-height:44px;margin-block:-14px}
+  .envio button{display:inline-flex;align-items:center;min-height:44px}
+  .envio>div.lk{padding:var(--s-1) 0}
+  .fila .cu .lnk{min-height:44px;margin:-8px 0 -10px;flex-basis:100%;justify-content:flex-start}
+}
+@media (max-width:1023px){
+  /* ritmo parejo de 24 entre cabecera → descripción → precio → ensayo; 32 recién antes de la data y del servicio */
+  .ficha{grid-template-columns:1fr;gap:var(--s-6)}
+  .izq,.data,.d-stick{display:contents}
+  /* orden del brief: categoría → nombre → sellos → descripción → precio; recién después el ensayo,
+     y talle/materiales/medidas/cuidados al pie de las fotos. La data dura no queda a 20 pantallas del nombre. */
+  .d-cab{order:1}
+  .d-desc{order:2;margin-top:0}
+  .d-precio{order:3;margin-top:0}
+  .ensayo{order:4;margin-top:0}
+  .ens-mas{order:4;margin-top:calc(var(--s-6) * -1)}
+  .filas{order:5;margin-top:var(--s-2)}
+  .cta{order:6}
+  .envio{order:7;margin-top:var(--s-2);grid-template-columns:1fr;gap:0}
+  .envio>div{padding:var(--s-3) 0;border-bottom:1px solid var(--line);line-height:1.6}
+  .envio>div>span:last-child{white-space:normal}
+  .envio>div.lk{align-items:center;padding:var(--s-2) 0}
+  /* en tablet la data que sigue a las fotos se acomoda en dos columnas */
+  .ficha{display:grid}
+  .d-desc,.d-precio,.filas,.envio{max-width:640px}
+  /* CTA fijo abajo (patrón Diesel): un solo botón, siempre a mano; el colchón se mide en JS (--cta-h)
+     para que la barra no tape el pie del footer cuando aparece el mensaje de estado */
+  html.con-cta body{padding-bottom:calc(var(--cta-h,88px) + var(--s-2))}
+  .cta{position:fixed;left:0;right:0;bottom:0;z-index:90;margin:0;padding:var(--s-3) var(--gut);background:var(--bg);border-top:1px solid var(--line);
+    display:grid;grid-template-columns:auto minmax(0,1fr);gap:var(--s-4);align-items:center}
+  .cta .btn{min-height:52px;justify-content:center;padding-inline:var(--s-4)}
+  .cta .btn .pr{display:none}
+  .cta-pr{display:block;font-family:var(--f-mono);font-size:var(--t-5);font-variant-numeric:tabular-nums;letter-spacing:-.01em;line-height:1;color:var(--fg)}
+  .cta-pr small{display:block;font-size:var(--t-0);letter-spacing:.14em;text-transform:uppercase;color:var(--fg-2);margin-top:4px;line-height:1.3}
+  .cta{row-gap:0}
+  .cta .st{grid-column:1 / -1;margin:0}
+  .cta .st:not(:empty){margin:0;padding-top:var(--s-2)}
+}
+@media (max-width:1023px) and (min-width:768px){
+  /* el botón ocupa todo el resto de la barra (no queda media barra vacía a la derecha) */
+  .cta{grid-template-columns:auto minmax(0,1fr)}
+  /* tarjetas de ~225px: nombre y precio apilados para que el precio no se descuelgue */
+  .conj .pcard-meta{flex-direction:column;gap:2px}
+}
+@media (max-width:767px){
+  .migas{min-height:40px;padding-top:var(--s-3)}
+  .ficha{gap:var(--s-6);padding-bottom:var(--s-16)}
+  /* teléfono: la primera toma a sangre, el resto a dos columnas (el ensayo dura la mitad);
+     la toma sobrante se calcula aparte (.sola-m) porque la primera ocupa fila propia */
+  .ensayo{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-2)}
+  .foto:first-child{grid-column:1 / -1}
+  .foto.sola{grid-column:auto;width:auto;justify-self:auto}
+  .foto.sola-m{grid-column:1 / -1;width:calc(50% - var(--s-1));justify-self:center}
+  /* blindaje: la hero nunca queda a media caña, pase lo que pase con las clases */
+  .foto.sola:first-child,.foto.sola-m:first-child{grid-column:1 / -1;width:auto;justify-self:auto}
+  .d-cab h1{font-size:clamp(30px,9vw,40px)}
+  /* la data dura respira más en teléfono */
+  .fila{padding:var(--s-3) 0}
+  .conj .pgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  /* grilla sin huecos: en teléfono van dos complementos, no tres (el eyebrow concuerda por JS) */
+  .conj .pgrid .pcard:nth-child(3){display:none}
+  .conj{padding:var(--s-12) 0 var(--s-16)}
+  .conj-h{flex-direction:column;align-items:flex-start;gap:var(--s-2)}
+  .conj-h .ey{text-align:left}
+  .volver{flex-direction:column;align-items:stretch}
+  .volver .btn{width:100%}
+}
+@media print{.calco,.cta{display:none}}
+</style>
+
+<style id="pmgate-css">
+/* ═══ CORTINA DE ACCESO — estética de la casa, fail-closed ═══ */
+#pmgate{position:fixed;inset:0;z-index:99999;background:#000;color:#fff;
+  display:grid;place-items:center;padding:24px;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  opacity:1;transition:opacity .45s ease}
+#pmgate.pmgate--out{opacity:0;pointer-events:none}
+#pmgate::after{content:"";position:absolute;inset:-25%;pointer-events:none;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:pmgate-grain 1s steps(6) infinite}
+@keyframes pmgate-grain{0%{transform:translate(0,0)}25%{transform:translate(-3%,-4%)}50%{transform:translate(-6%,2%)}75%{transform:translate(3%,-5%)}100%{transform:translate(2%,-2%)}}
+.pmgate-in{position:relative;z-index:2;width:min(420px,100%);display:grid;gap:26px;justify-items:center;text-align:center}
+.pmgate-mark{width:clamp(56px,14vw,76px);height:auto;fill:#fff}
+.pmgate-kana{font-family:"Noto Sans JP",sans-serif;font-size:clamp(11px,3vw,13px);letter-spacing:.5em;color:#a8a8a8;margin-right:-.5em}
+.pmgate-t{font-size:clamp(10px,2.6vw,11px);letter-spacing:.34em;text-transform:uppercase}
+.pmgate-f{width:100%;display:grid;gap:14px;justify-items:center}
+.pmgate-row{width:100%;display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid #5c5c5c;padding-bottom:10px;transition:border-color .2s}
+.pmgate-row:focus-within{border-bottom-color:#fff}
+.pmgate-cue{font-size:11px;color:#5c5c5c;flex:none}
+#pmgate-i{flex:1;min-width:0;background:none;border:0;color:#fff;
+  font:inherit;font-size:clamp(13px,3.4vw,15px);letter-spacing:.24em;
+  padding:8px 0;min-height:44px;caret-color:#fff}
+#pmgate-i:focus{outline:none}
+#pmgate-i::placeholder{color:#242424;letter-spacing:.3em}
+.pmgate-go{background:none;border:1px solid #5c5c5c;color:#fff;font:inherit;
+  font-size:11px;letter-spacing:.16em;padding:0 14px;min-height:44px;cursor:pointer;
+  transition:background .15s,color .15s,border-color .15s}
+.pmgate-go:hover,.pmgate-go:focus-visible{background:#fff;color:#000;border-color:#fff}
+.pmgate-go:focus-visible{outline:2px solid #fff;outline-offset:3px}
+#pmgate-i:focus-visible{outline:none}
+.pmgate-err{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#a8a8a8;min-height:1.2em}
+.pmgate-foot{font-size:9px;letter-spacing:.2em;color:#5c5c5c;text-transform:uppercase;line-height:2}
+.pmgate-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
+@media (prefers-reduced-motion:reduce){
+  #pmgate{transition:none}
+  #pmgate::after{animation:none}
+}
+</style>
+</head>
+<body>
+<div id="pmgate" role="dialog" aria-modal="true" aria-labelledby="pmgate-t">
+  <div class="pmgate-in">
+    <svg class="pmgate-mark" viewBox="0 0 104 103" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667Z"/></svg>
+    <p class="pmgate-kana" lang="ja" aria-hidden="true">バーニ　マーゴット</p>
+    <p class="pmgate-t" id="pmgate-t">ACCESO PRIVADO</p>
+    <form class="pmgate-f" id="pmgate-f" autocomplete="off" novalidate>
+      <label class="pmgate-sr" for="pmgate-i">Frase de acceso</label>
+      <div class="pmgate-row">
+        <span class="pmgate-cue" aria-hidden="true">&gt;&gt;</span>
+        <input id="pmgate-i" type="password" autocomplete="current-password"
+               spellcheck="false" placeholder="········" aria-describedby="pmgate-e">
+        <button class="pmgate-go" type="submit">[ OK ]</button>
+      </div>
+      <p class="pmgate-err" id="pmgate-e" role="status" aria-live="polite"></p>
+    </form>
+    <p class="pmgate-foot" aria-hidden="true">
+      &lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()&gt;&gt;<br>
+      &gt;&gt;HONDURAS4940##
+    </p>
+  </div>
+</div>
+<main id="contenido">
+  <div class="wrap">
+    <nav class="migas" id="migas" aria-label="Estás en"></nav>
+    <article class="ficha" id="ficha" hidden>
+      <div class="data">
+        <div class="d-stick" id="data">
+        <header class="d-cab">
+          <p class="ey" id="d-cat"></p>
+          <h1 id="d-nm"></h1>
+          <div id="d-sellos"></div>
+        </header>
+        <p class="d-desc" id="d-desc"></p>
+        <div class="d-precio">
+          <div class="top"><span class="pr num" id="d-pr"></span><span class="sku" id="d-sku"></span></div>
+          <span class="cuotas">HASTA 6 CUOTAS · MERCADO PAGO / NAVE</span>
+        </div>
+        <div class="filas" id="filas"></div>
+        <div class="cta" id="cta">
+          <span class="cta-pr" id="cta-pr"></span>
+          <button type="button" class="btn fill lg block" id="add"></button>
+          <span class="st" id="cta-st" role="status" aria-live="polite"></span>
+        </div>
+        </div>
+      </div>
+      <div class="izq">
+        <section class="ensayo" id="ensayo" aria-label="Fotos de la pieza"></section>
+      </div>
+      <div class="envio" id="envio"></div>
+    </article>
+    <section class="conj" id="conj" hidden aria-labelledby="conj-t">
+      <div class="conj-h"><h2 id="conj-t">Completá el conjunto</h2><p class="ey" id="conj-ey"></p></div>
+      <div class="pgrid" id="conj-grid"></div>
+      <div class="volver" id="volver"></div>
+    </section>
+    <section class="nada" id="nada" hidden></section>
+  </div>
+</main>
+<script src="./catalogo.js"></script>
+<script src="./base.js"></script>
+<script>
+(function () {
+  'use strict';
+  var d = document, $ = function (s) { return d.getElementById(s); };
+  var C = window.CATALOGO || { piezas: [], archivo: [], categorias: [] };
+  var id = PM.qs('id');
+
+  /* doctrina: una pieza vendida no da 404 → su ficha de Archivo (antes de montar el cromo: sin flash) */
+  var enArchivo = (C.archivo || []).some(function (a) { return a.id === id; });
+  if (id && enArchivo) {
+    /* redirección antes del primer render: sin view transition entre documentos (si no, el navegador la saltea y lo anota en consola) */
+    try { var vt = d.createElement('style'); vt.textContent = '@view-transition{navigation:none}'; d.head.appendChild(vt); void d.documentElement.offsetWidth; } catch (e) {}
+    location.replace('./archivo.html#' + encodeURIComponent(id)); return;
+  }
+
+  PM.montarCromo({ activa: 'ficha', modulo: 'blanco' });
+  var esc = PM.esc;
+
+  var p = id ? (C.piezas || []).filter(function (x) { return x.id === id; })[0] : null;
+  var TERR = function (cat) { return './territorio.html?cat=' + encodeURIComponent(cat); };
+  var CATNM = function (key) { var c = (C.categorias || []).filter(function (x) { return x.key === key; })[0]; return c ? c.nombre.toUpperCase() : key; };
+
+  /* ── estado: no encontrada ── */
+  if (!p) {
+    d.title = 'Pieza no encontrada — Panni Margot';
+    $('migas').innerHTML = '<a href="./shop.html">SHOP <span lang="ja" aria-hidden="true">店</span></a><span class="sep" aria-hidden="true">/</span><span aria-current="page">PIEZA</span>';
+    var ult = (C.piezas || []).slice().sort(function (a, b) { return b.ts - a.ts; }).slice(0, 3);
+    $('ficha').remove(); $('conj').remove();   /* un solo <h1> en el DOM */
+    var n = $('nada'); n.hidden = false;
+    n.innerHTML = '<h1>Esa pieza no está en la sala</h1>' +
+      '<p class="txt">Puede que ya se haya vendido o que el link venga con un cambio. Lo que se vendió vive en el Archivo; lo que está disponible, en el Shop.</p>' +
+      '<div class="acc"><a class="btn fill" href="./shop.html">IR AL SHOP <span lang="ja" aria-hidden="true">店</span></a><a class="btn" href="./archivo.html">VER EL ARCHIVO <span lang="ja" aria-hidden="true">記憶</span></a></div>' +
+      (ult.length ? '<div class="conj-h" style="margin-top:var(--s-16)"><h2 class="disp disp-m">Recién llegadas</h2></div><div class="pgrid">' + ult.map(function (x) { return PM.pcardHTML(x, { cat: true }); }).join('') + '</div>' : '');
+    return;
+  }
+
+  /* ── pieza encontrada ── */
+  d.title = p.nm + ' — Panni Margot';
+  d.documentElement.classList.add('con-cta');
+  PM.vistas.marcar(p.id);
+  var fotos = (p.imgs && p.imgs.length ? p.imgs : [p.lq]).slice();
+  var N = fotos.length;
+  var hi = typeof C.hi === 'function' ? C.hi : function (u) { return u; };
+
+  $('migas').innerHTML =
+    '<a href="./shop.html">SHOP <span lang="ja" aria-hidden="true">店</span></a><span class="sep" aria-hidden="true">/</span>' +
+    '<a href="' + TERR(p.cat) + '">' + esc(CATNM(p.cat)) + (p.kj ? ' <span lang="ja" aria-hidden="true">' + esc(p.kj) + '</span>' : '') + '</a><span class="sep" aria-hidden="true">/</span>' +
+    '<span aria-current="page">' + esc(p.nm.toUpperCase()) + '</span>';
+
+  /* ensayo fotográfico: todas las tomas, apiladas, sin carrusel — siempre de a pares desde la primera
+     (en teléfono la primera a sangre y pares desde la segunda); la única toma sola es la última cuando sobra.
+     La consistencia fotográfica es el diseño: el ORDEN agrupa por sesión de cámara (número de cuadro del archivo:
+     _v8a1097 → 1097; un salto ≥60 es otra luz/otro fondo), la hero queda fija primera con su sesión,
+     las tomas sin número quedan en el orden del dump y la infografía de medidas cierra el ensayo. */
+  var SIZES = '(min-width:1024px) 30vw, 50vw', SIZES0 = '(min-width:1024px) 30vw, (min-width:768px) 50vw, 100vw';
+  var esGraf = function (u) { return /chatgpt-image|detalle-de-medidas/i.test(String(u)); };
+  function cuadro(u) { var m = String(u).match(/products\/[^/]*?(\d{3,5})-[0-9a-f]{20,}/i); return m ? parseInt(m[1], 10) : null; }
+  if (N > 2) {
+    var grupos = [], grafs = [], gHero = null;
+    for (var k = 0; k < N; k++) {
+      var u = fotos[k];
+      if (k > 0 && esGraf(u)) { grafs.push(u); continue; }
+      var n = cuadro(u), g = null;
+      for (var j = 0; j < grupos.length && !g; j++) {
+        var G = grupos[j];
+        if (n === null ? G.ns === null : (G.ns !== null && G.ns.some(function (x) { return Math.abs(x - n) < 60; }))) g = G;
+      }
+      if (!g) { g = { ns: n === null ? null : [], fotos: [] }; grupos.push(g); }
+      if (n !== null) g.ns.push(n);
+      g.fotos.push(u);
+      if (k === 0) gHero = g;
+    }
+    var orden = [fotos[0]];
+    grupos.forEach(function (G) { if (G === gHero) orden = orden.concat(G.fotos.slice(1)); });
+    grupos.forEach(function (G) { if (G !== gHero) orden = orden.concat(G.fotos); });
+    fotos = orden.concat(grafs);
+  }
+  /* tope del ensayo (Demobaza cierra en 5; el brief §4 pide 6–10 de la misma sesión): hero + su sesión + detalles y, si existe,
+     la infografía de medidas cerrando. Las tomas restantes (sesiones secundarias) quedan detrás de un solo botón, sin carrusel. */
+  var TOPE = 10, todas = fotos.slice(), ocultas = [], grafsN = (typeof grafs !== 'undefined' && grafs) ? grafs.length : 0;
+  if (todas.length > TOPE) {
+    fotos = todas.slice(0, TOPE - grafsN).concat(todas.slice(todas.length - grafsN));
+    ocultas = todas.slice(TOPE - grafsN, todas.length - grafsN);
+  }
+  N = fotos.length;
+  /* solas: la última toma a ≥768 si N es impar; solasM: lo mismo en teléfono, donde la hero ocupa fila propia */
+  var solas = [], solasM = [];
+  if (N > 1) { if (N % 2 === 1) solas[N - 1] = true; if ((N - 1) % 2 === 1) solasM[N - 1] = true; }
+  var h = '';
+  for (var i = 0; i < N; i++) {
+    var sola = !!solas[i];
+    var lqi = i === 0 && p.lq ? p.lq : fotos[i].replace(/-\d+-\d+\.(webp|jpg|png)$/, '-480-0.$1');
+    var img = PM.pic({ id: p.id, imgs: fotos, lq: lqi, nm: p.nm }, i, {
+      /* la infografía de medidas es imagen de texto: alt que diga qué es (1.1.1) */
+      alt: i === 0 ? p.nm : esGraf(fotos[i]) ? p.nm + ' — gráfico con el detalle de medidas' + (p.medTalle ? ' del talle ' + p.medTalle : '') : p.nm + ' — toma ' + (i + 1) + ' de ' + N,
+      eager: i === 0, vt: i === 0, sizes: i === 0 ? SIZES0 : SIZES
+    });
+    // srcset en el string (antes de insertar: una sola petición); la variante -1024-1024 de TN mide 800×1200 (2:3)
+    var big = hi(fotos[i]);
+    img = img.replace('<img ', '<img ' + (big && big !== fotos[i] ? 'srcset="' + esc(fotos[i]) + ' 640w, ' + esc(big) + ' 800w" ' : '') + (i === 1 ? 'loading="eager" ' : ''));
+    if (i === 1) img = img.replace(' loading="lazy"', '');
+    h += '<figure class="foto' + (sola ? ' sola' : '') + (solasM[i] ? ' sola-m' : '') + '" data-i="' + (i + 1) + '">' + img +
+      '<span class="n" aria-hidden="true">' + (i < 9 ? '0' : '') + (i + 1) + ' / ' + (N < 10 ? '0' : '') + N + '</span></figure>';
+  }
+  h += '<div class="calco" id="calco" aria-hidden="true"><i id="calco-n"></i><span>' + esc(p.sku) + ' :: <span lang="ja">一点物</span></span></div>';
+  var ens = $('ensayo'); ens.innerHTML = h;
+  /* las tomas que sobran entran con un solo gesto, al pie del ensayo */
+  if (ocultas.length) {
+    var mas = PM.el('<div class="ens-mas"><button type="button" class="lnk" id="ens-mas">VER LAS ' + todas.length + ' TOMAS ::</button></div>');
+    ens.parentNode.insertBefore(mas, ens.nextSibling);
+    $('ens-mas').addEventListener('click', function () {
+      var T = todas.length, k = N, hh = '';
+      ocultas.forEach(function (u) {
+        var lq = u.replace(/-\d+-\d+\.(webp|jpg|png)$/, '-480-0.$1'), big = hi(u);
+        var im = PM.pic({ id: p.id, imgs: [u], lq: lq, nm: p.nm }, 0, { alt: p.nm + ' — toma ' + (k + 1) + ' de ' + T, sizes: SIZES });
+        if (big && big !== u) im = im.replace('<img ', '<img srcset="' + esc(u) + ' 640w, ' + esc(big) + ' 800w" ');
+        hh += '<figure class="foto rv" data-i="' + (k + 1) + '">' + im + '<span class="n" aria-hidden="true">' + (k < 9 ? '0' : '') + (k + 1) + ' / ' + T + '</span></figure>';
+        k++;
+      });
+      $('calco').insertAdjacentHTML('beforebegin', hh);
+      /* contadores y la toma suelta se recalculan sobre el total; la infografía sigue cerrando */
+      N = T;
+      Array.prototype.forEach.call(ens.querySelectorAll('.foto'), function (f, i) {
+        f.classList.remove('sola', 'sola-m');
+        var n = f.querySelector('.n'); if (n) n.textContent = (i < 9 ? '0' : '') + (i + 1) + ' / ' + T;
+        if (i === T - 1) { if (T % 2 === 1) f.classList.add('sola'); if ((T - 1) % 2 === 1) f.classList.add('sola-m'); }
+      });
+      if (grafsN) { var gs = ens.querySelectorAll('.foto'); for (var g = 0; g < grafsN; g++) ens.insertBefore(gs[TOPE - grafsN + g], $('calco')); }
+      mas.remove();
+      PM.revelar(ens);
+      var f1 = ens.querySelectorAll('.foto')[TOPE - grafsN]; if (f1) { f1.setAttribute('tabindex', '-1'); f1.focus({ preventScroll: true }); }
+    });
+  }
+
+  /* cabecera */
+  $('d-cat').innerHTML = '<a href="' + TERR(p.cat) + '"><b>' + esc(CATNM(p.cat)) + '</b></a>' + (p.kj ? '<span lang="ja" aria-hidden="true">' + esc(p.kj) + '</span>' : '') +
+    (p.sellos && p.sellos.indexOf('手描き') > -1 ? '<span class="pint">PINTADA POR EL PINTOR DE LA CASA</span>' : '');
+  $('d-nm').textContent = p.nm;
+  $('d-sellos').innerHTML = PM.sellosHTML(p.sellos);
+  $('d-desc').textContent = p.desc || '';
+  if (!p.desc) $('d-desc').hidden = true;
+  $('d-pr').textContent = PM.fmt(p.pr);
+  $('cta-pr').innerHTML = esc(PM.fmt(p.pr)) + '<small>HASTA 6 CUOTAS</small>';
+  var sku = $('d-sku');
+  PM.scramble(sku, p.sku);
+  if (PM.FINE) sku.addEventListener('pointerenter', function () { PM.scramble(sku, p.sku, { dur: 480 }); });
+
+  /* talle de ESTA pieza */
+  var unico = p.tl === 'U';
+  var talleTxt = unico
+    ? '<b>ÚNICO</b><span>SE AJUSTA AL CUERPO</span>'
+    /* talle numérico de la casa: alcanza con la equivalencia (el 1/1 ya dice que no hay otro) */
+    : '<b>' + esc(p.tlReal || p.tl) + '</b><span>' + (p.tlReal && p.tl && p.tlReal !== p.tl ? 'EQUIVALE A ' + esc(p.tl) : 'ES ÚNICA, NO HAY OTRO') + '</span>';
+  var talleNota = unico ? '' : 'No hay XS: la prenda se ajusta al cuerpo que la lleva. Compará las medidas con una prenda tuya.';
+
+  /* materiales */
+  var matHTML = (p.mat && p.mat.length)
+    ? '<ul class="mats">' + p.mat.map(function (m) { return '<li>' + esc(m) + '</li>'; }).join('') + '</ul>'
+    : '<p class="nota">Textil de la casa. La composición exacta va en la etiqueta interna de la pieza.</p>';
+
+  /* medidas */
+  var medHTML;
+  if (p.med && p.med.length) {
+    medHTML = '<table class="med">' + (p.medTalle ? '<caption class="sr">Tomadas sobre el talle ' + esc(p.medTalle) + ', en plano</caption>' : '<caption class="sr">Tomadas sobre esta pieza, en plano</caption>') + '<tbody>' +
+      p.med.map(function (r) { return '<tr><th scope="row">' + esc(r[0]) + '</th><td>' + esc(r[1]) + '</td></tr>'; }).join('') + '</tbody></table>';
+  } else {
+    medHTML = '<p class="nota">Esta pieza se mide en el taller antes de salir. Pedinos las medidas por Instagram <b>@pannimargot</b> o en Honduras 4940 y te las pasamos en el día.</p>';
+  }
+
+  /* cuidados: ¿se lava? */
+  var cui = p.cui || 'Lavado a mano en frío. Secado a la sombra.';
+  var lava, resto = cui;
+  /* la primera oración del cui («Lavado a mano en frío con jabón neutro.») se funde en la respuesta y no se repite abajo */
+  var mL = cui.match(/^lavado\s+a\s+(mano|máquina|maquina)\s*([^.]*)\.?\s*/i);
+  if (/seco/i.test(cui)) { lava = 'No: solo tintorería.'; resto = cui.replace(/^(solo\s+)?(lavado|limpieza)\s+(en\s+)?seco\.?\s*/i, ''); }
+  else if (mL) {
+    var extra = mL[2].replace(/^en\s+fr[ií]o\s*,?\s*/i, '').trim();
+    lava = 'Sí, a ' + (/mano/i.test(mL[1]) ? 'mano' : 'máquina') + ' y en frío' + (extra ? ', ' + extra : '') + '.';
+    resto = cui.slice(mL[0].length);
+  }
+  else if (/máquina|maquina/i.test(cui)) { lava = 'Sí, a máquina y en frío.'; }
+  else if (/mano/i.test(cui)) { lava = 'Sí, a mano y en frío.'; }
+  else { lava = 'Sí, con cuidado.'; }
+  var cuiHTML = '<p class="lava"><b>¿Se lava? ' + esc(lava) + '</b></p>' + (resto ? '<p>' + esc(resto) + '</p>' : '') +
+    (p.sellos && p.sellos.indexOf('手描き') > -1 ? '<p class="nota">La pintura es a mano y única: no se plancha sobre el diseño.</p>' : '');
+
+  $('filas').innerHTML =
+    '<section class="fila"><span class="no" aria-hidden="true">01</span><h2>TALLE DE ESTA PIEZA</h2><div class="cu"><p class="talle">' + talleTxt + '<button type="button" class="lnk" data-legal="talles">GUÍA DE TALLES</button></p>' + (talleNota ? '<p class="nota">' + talleNota + '</p>' : '') + '</div></section>' +
+    '<section class="fila"><span class="no" aria-hidden="true">02</span><h2>MATERIALES</h2><div class="cu">' + matHTML + '</div></section>' +
+    '<section class="fila"><span class="no" aria-hidden="true">03</span><h2>MEDIDAS DE ESTA PIEZA</h2><div class="cu">' + medHTML + '</div></section>' +
+    '<section class="fila"><span class="no" aria-hidden="true">04</span><h2>CUIDADOS</h2><div class="cu">' + cuiHTML + '</div></section>';
+
+  /* colchón del CTA fijo (≤1023): se mide para que la barra no tape el pie del footer al aparecer el estado */
+  function colchon() { d.documentElement.style.setProperty('--cta-h', (innerWidth < 1024 ? $('cta').offsetHeight : 0) + 'px'); }
+  /* CTA único: agregar · reservada */
+  var b = $('add'), st = $('cta-st');
+  b.dataset.add = p.id;
+  function pintar(ev) {
+    var en = PM.cart.has(p.id);
+    /* aria-disabled (no disabled): el botón sigue siendo focusable y el foco vuelve a él al cerrar el carrito;
+       reservada → el click abre el carrito (la pieza ya está ahí; el listener de abajo lo resuelve) */
+    b.setAttribute('aria-disabled', en ? 'true' : 'false');
+    /* reservada: sin data-add el delegado de base.js no la captura → estado y comportamiento coinciden (4.1.2) */
+    if (en) b.removeAttribute('data-add'); else b.setAttribute('data-add', p.id);
+    /* el nombre accesible contiene el texto visible (2.5.3); el nombre de la pieza va en .sr */
+    b.innerHTML = en
+      ? '<span>RESERVADA — ES ÚNICA<span class="sr"> · ' + esc(p.nm) + ' ya está en tu carrito</span></span>'
+      : '<span>AGREGAR AL CARRITO<span class="sr"> ' + esc(p.nm) + '</span></span><span class="pr">:: ' + esc(PM.fmt(p.pr)) + '</span>';
+    if (ev && ev.detail && ev.detail.id === p.id) {
+      var msg = ev.detail.accion === 'add' ? 'QUEDÓ RESERVADA MIENTRAS COMPRÁS' : ev.detail.accion === 'remove' ? 'LIBERADA :: VUELVE A LA SALA' : '';
+      st.textContent = msg;
+      /* con el drawer abierto <main> queda inert: se anuncia también en la región viva del carrito */
+      if (ev.detail.accion === 'add') { var ds = d.querySelector('#pm-cart .st'); if (ds) ds.textContent = msg; }
+    }
+    if (ev && ev.detail && ev.detail.accion === 'clear') st.textContent = '';
+    colchon();
+  }
+  pintar(); d.addEventListener('pm:cart', pintar);
+  /* RESERVADA: sin data-add el delegado de base.js no responde; el click muestra dónde está la pieza */
+  b.addEventListener('click', function () {
+    if (b.getAttribute('aria-disabled') !== 'true') return;
+    var msg = 'YA ESTÁ EN TU CARRITO :: ES UNA SOLA';
+    st.textContent = msg;
+    /* el carrito abierto deja <main> inert: se anuncia también en la región viva del drawer */
+    var ds = d.querySelector('#pm-cart .st'); if (ds) ds.textContent = msg;
+    colchon();
+    PM.cart.open();
+  });
+  /* otra pestaña agregó/quitó la pieza: el header ya se actualiza vía storage; el CTA también */
+  try { addEventListener('storage', function (e) { if (e.key === 'pm_cart') pintar(); }); } catch (e) {}
+
+  /* envío / retiro */
+  $('envio').innerHTML =
+    /* quiebres explícitos, sin separadores colgantes; el plazo de despacho no está en el brief: no se promete */
+    '<div><span class="ic" aria-hidden="true">&gt;&gt;</span><span><b>ENVÍO A TODO EL PAÍS</b><br>CON SEGUIMIENTO<br>SALE DESDE LA BOUTIQUE</span></div>' +
+    '<div><span class="ic" aria-hidden="true">##</span><span><b>RETIRO SIN CARGO · HONDURAS 4940</b><br>LUN — SÁB · 11:00 — 19:00<br><span class="reloj" id="f-reloj"></span></span></div>' +
+    '<div class="lk"><span class="ic" aria-hidden="true">::</span><span class="links"><button type="button" data-legal="envios">ENVÍOS</button><button type="button" data-legal="cambios">CAMBIOS</button><button type="button" data-legal="arrepentimiento">ARREPENTIMIENTO</button></span></div>';
+  PM.reloj($('f-reloj'));
+
+  $('ficha').hidden = false;
+
+  /* bloque sticky (cabecera → CTA): si es más alto que la ventana (notebooks bajas), la columna corre con la
+     página y el CTA sale del bloque para pegarse solo al pie de la ventana (siempre a mano, sin scrollear).
+     El orden de lectura no cambia: el CTA sigue después de cuidados. */
+  var data = $('data'), cta = $('cta'), col = data.parentNode;
+  function medir() {
+    if (innerWidth < 1024) {
+      data.classList.remove('alta');
+      if (cta.parentNode !== data) { cta.classList.remove('pie'); data.appendChild(cta); }
+      colchon(); return;
+    }
+    var hd = parseFloat(getComputedStyle(d.documentElement).getPropertyValue('--hd')) || 72;
+    var alto = data.offsetHeight + (cta.parentNode === data ? 0 : cta.offsetHeight);
+    var alta = alto > innerHeight - hd - 48;
+    data.classList.toggle('alta', alta);
+    if (alta && cta.parentNode !== col) { cta.classList.add('pie'); col.appendChild(cta); }
+    else if (!alta && cta.parentNode !== data) { cta.classList.remove('pie'); data.appendChild(cta); }
+    colchon();
+  }
+  medir(); addEventListener('resize', medir, { passive: true });
+  if (d.fonts && d.fonts.ready) d.fonts.ready.then(medir);
+
+  /* papel de calco: sigue al puntero sobre el ensayo (solo puntero fino, sin RM) */
+  var cal = $('calco'), calN = $('calco-n');
+  if (PM.FINE && !PM.RM && cal) {
+    var mx = 0, my = 0, cx = 0, cy = 0, run = false, over = null;
+    function loop() {
+      cx += (mx - cx) * .22; cy += (my - cy) * .22;
+      cal.style.transform = 'translate3d(' + (cx - 120) + 'px,' + (cy - 85) + 'px,0)';
+      if (Math.abs(mx - cx) + Math.abs(my - cy) > .3) requestAnimationFrame(loop); else run = false;
+    }
+    ens.addEventListener('pointermove', function (e) {
+      var r = ens.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top;
+      var f = e.target.closest ? e.target.closest('.foto') : null;
+      if (f !== over) { over = f; if (f) calN.textContent = (f.dataset.i < 10 ? '0' : '') + f.dataset.i + ' / ' + (N < 10 ? '0' : '') + N; }
+      cal.classList.toggle('on', !!f);
+      if (!run) { run = true; requestAnimationFrame(loop); }
+    }, { passive: true });
+    ens.addEventListener('pointerleave', function () { cal.classList.remove('on'); over = null; });
+  }
+
+  /* completá el conjunto */
+  var comp = (p.comp || []).map(PM.byId).filter(function (x) {
+    return x && x.id !== p.id && !(C.archivo || []).some(function (a) { return a.id === x.id; });
+  }).slice(0, 3);
+  if (comp.length) {
+    /* en teléfono la grilla es de 2 y la tercera tarjeta no se pinta (CSS): el eyebrow cuenta lo que se ve */
+    var mqTel = window.matchMedia ? matchMedia('(max-width:767px)') : null;
+    var pintarEy = function () {
+      var n = mqTel && mqTel.matches ? Math.min(comp.length, 2) : comp.length;
+      $('conj-ey').innerHTML = n + (n === 1 ? ' PIEZA · OTRA CATEGORÍA · ' : ' PIEZAS · OTRAS CATEGORÍAS · ') + '<b>CADA UNA, ÚNICA</b>';
+    };
+    pintarEy();
+    if (mqTel) { if (mqTel.addEventListener) mqTel.addEventListener('change', pintarEy); else if (mqTel.addListener) mqTel.addListener(pintarEy); }
+    $('conj-grid').innerHTML = comp.map(function (x) { return PM.pcardHTML(x, { cat: false }); }).join('');
+  } else {
+    /* sin complementos en venta: queda solo el «volver» (nada de h2 con grilla vacía) */
+    $('conj-t').closest('.conj-h').hidden = true; $('conj-grid').hidden = true;
+    $('conj').removeAttribute('aria-labelledby'); $('conj').setAttribute('aria-label', 'Seguir mirando');
+    $('volver').style.cssText = 'margin-top:0;padding-top:0;border-top:0';
+  }
+  $('volver').innerHTML =
+    '<a class="btn" href="' + TERR(p.cat) + '">&lt;&lt; VOLVER A ' + esc(CATNM(p.cat)) + (p.kj ? ' <span lang="ja" aria-hidden="true">' + esc(p.kj) + '</span>' : '') + '</a>' +
+    '<a class="lnk" href="./shop.html">TODO EL SHOP <span lang="ja" aria-hidden="true">店</span></a>';
+  $('conj').hidden = false;
+})();
+</script>
+
+<script id="pmgate-js">
+/* Cortina de acceso. Recuerda el ingreso por dispositivo. */
+(function(){
+  var H='d5600e28005cacbad0d820784e3f9f75220b38689e9c7e16bda6513d11c3443e', K='pm_gate_ok';
+  var g=document.getElementById('pmgate');
+  if(!g) return;
+  var root=document.documentElement;
+  var f=document.getElementById('pmgate-f'), i=document.getElementById('pmgate-i'), e=document.getElementById('pmgate-e');
+  var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  function abrir(){
+    root.classList.remove('pmgate-lock');
+    if(RM){ g.remove(); return; }
+    g.classList.add('pmgate--out');
+    setTimeout(function(){ g.remove(); }, 480);
+  }
+
+  try{ if(localStorage.getItem(K)===H){ abrir(); return; } }catch(err){}
+
+  root.classList.add('pmgate-lock');
+  setTimeout(function(){ try{ i.focus(); }catch(err){} }, 60);
+
+  async function sha(txt){
+    var b=new TextEncoder().encode(txt);
+    var d=await crypto.subtle.digest('SHA-256', b);
+    return Array.from(new Uint8Array(d)).map(function(x){return x.toString(16).padStart(2,'0');}).join('');
+  }
+
+  f.addEventListener('submit', async function(ev){
+    ev.preventDefault();
+    var v=i.value;
+    if(!v){ e.textContent=''; i.focus(); return; }
+    var h;
+    try{ h=await sha(v); }catch(err){ e.textContent='[ !! ] SIN CONEXIÓN SEGURA'; return; }
+    if(h===H){
+      try{ localStorage.setItem(K,H); }catch(err){}
+      e.textContent='[ OK ]';
+      abrir();
+    }else{
+      e.textContent='[ !! ] NO';
+      i.value=''; i.focus();
+    }
+  });
+
+  /* El foco no sale del portón mientras esté cerrado. */
+  g.addEventListener('keydown', function(ev){
+    if(ev.key!=='Tab') return;
+    var f2=g.querySelectorAll('input,button');
+    if(!f2.length) return;
+    var pri=f2[0], ult=f2[f2.length-1];
+    if(ev.shiftKey && document.activeElement===pri){ ev.preventDefault(); ult.focus(); }
+    else if(!ev.shiftKey && document.activeElement===ult){ ev.preventDefault(); pri.focus(); }
+  });
+})();
+</script>
+</body>
+</html>

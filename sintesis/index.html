@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Panni Margot — Inicio</title>
+<meta name="description" content="Panni Margot. Piezas únicas, sin género, hechas en Buenos Aires. Honduras 4940, Palermo Soho.">
+<link rel="icon" href="../favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://acdn-us.mitiendanube.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./base.css">
+<style>
+/* ═══ INDEX · home conceptual · módulo negro ═══ */
+.sec{padding-block:var(--s-24)}
+.sec + .sec{padding-top:0}
+.sec-h{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--s-6);margin-bottom:var(--s-12)}
+.sec-h h2,.arc-h h2{font-family:var(--f-display);font-size:var(--t-8);text-transform:uppercase;line-height:.9;letter-spacing:.005em}
+.sec-h h2 [lang="ja"],.arc-h h2 [lang="ja"]{font-family:var(--f-ja);font-size:.32em;color:var(--fg-2);margin-left:.4em;vertical-align:.55em;letter-spacing:0}
+.sec-h .der{display:flex;flex-direction:column;align-items:flex-end;gap:var(--s-3);text-align:right;padding-bottom:6px}
+
+/* ── 1 · HERO foto-céntrico: la foto a sangre por la derecha ─────────── */
+.hero{position:relative;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);align-items:stretch;gap:var(--gut);
+  padding:0 0 0 var(--gut);min-height:min(calc(100svh - var(--hd)),1000px)}
+.hero-txt{display:flex;flex-direction:column;justify-content:space-between;gap:var(--s-12);padding:var(--s-8) 0 var(--s-6)}
+/* el bloque titular+CTA se centra contra la foto; la fila de la pieza queda anclada al pie */
+.hero-txt>div:first-child{margin-block:auto}
+.hero-dial{font-size:var(--t-1);letter-spacing:.14em}
+.hero h1{font-family:var(--f-display);font-size:clamp(64px,9.8vw,176px);line-height:.9;text-transform:uppercase;letter-spacing:-.01em;text-wrap:balance;margin-top:var(--s-6)}
+.hero h1 span{display:block}
+.hero h1 .ja{display:block;font-family:var(--f-ja);font-size:.17em;line-height:1;letter-spacing:.35em;color:var(--fg-2);margin-top:var(--s-4);font-weight:400}
+.hero .lead{margin-top:var(--s-8);color:var(--fg);max-width:30ch}
+.hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s-6);margin-top:var(--s-8)}
+/* la fila de la pieza es un enlace a la ficha: nombre · categoría · sello · precio · VER LA PIEZA >> */
+.hero-pz{display:grid;grid-template-columns:auto auto 1fr auto;align-items:center;gap:var(--s-4);min-height:44px;padding-top:var(--s-4);border-top:1px solid var(--line);
+  font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--fg-2)}
+.hero-pz:empty{display:none}
+.hero-pz b{font-weight:400;color:var(--fg);text-underline-offset:5px;text-decoration-thickness:1px}
+.hero-pz .num,.hero-pz .pz-nm{white-space:nowrap}
+.hero-pz .num{color:var(--fg);justify-self:end}
+/* desktop compacto (columna de ~430px): la fila de la pieza pasa a dos renglones, nada se parte */
+@media (max-width:1279px){
+  .hero-pz{grid-template-columns:auto 1fr auto;row-gap:var(--s-2)}
+  .hero-pz .ver{grid-column:1/-1;justify-self:start}
+}
+.hero-pz .ver{color:var(--fg);white-space:nowrap;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--fg-2);transition:text-decoration-color var(--dur-fast)}
+.hero-pz .ver::after{content:" >>"}
+.hero-pz:hover .ver,.hero-pz:focus-visible .ver{text-decoration-color:currentColor}
+.hero-pz:hover b,.hero-pz:focus-visible b{text-decoration:underline}
+.hero-ph{position:relative;display:block;overflow:hidden;background:var(--surface);width:100%;height:min(calc(100svh - var(--hd)),1000px)}
+/* la pared del estudio se lleva a blanco pleno (como las tiles de abajo): el hero es negro | blanco, afiche, no gris */
+.hero-ph .pm-img{position:absolute;inset:0;object-position:50% 62%;transform:scale(1.02);filter:grayscale(1) contrast(1.08) brightness(1.06)}
+/* el cuerpo ocupa el afiche: la toma se acerca para que no quede pared muerta a los lados */
+@media (min-width:1024px){.hero-ph .pm-img{object-position:48% 70%;transform:scale(1.14)}}
+@media (hover:hover) and (pointer:fine){
+  .hero-ph:hover .pm-img,.hero-ph:focus-visible .pm-img,
+  .hero:has(.hero-pz:hover) .hero-ph .pm-img,.hero:has(.hero-pz:focus-visible) .hero-ph .pm-img{filter:grayscale(0) contrast(1)}
+}
+/* deriva leve: la foto respira (solo transform) */
+@keyframes pm-deriva{0%,100%{transform:translate3d(0,0,0) scale(1.02)}50%{transform:translate3d(0,-1.2%,0) scale(1.045)}}
+@keyframes pm-deriva-d{0%,100%{transform:translate3d(0,0,0) scale(1.14)}50%{transform:translate3d(0,-1%,0) scale(1.165)}}
+html.js .hero-ph .pm-img{animation:pm-deriva 14s var(--ease) infinite}
+@media (min-width:1024px){html.js .hero-ph .pm-img{animation-name:pm-deriva-d}}
+@supports (animation-timeline: scroll()){
+  html.js .hero-txt{animation:pm-hero-out linear both;animation-timeline:scroll();animation-range:0 60vh}
+}
+@keyframes pm-hero-out{to{opacity:.35;transform:translateY(-24px)}}
+
+/* ── 2 · marquesina de dialecto: banda de sistema pegada a la foto ──── */
+.mq{margin-top:0}
+
+/* ── 3 · LAS SECCIONES: 8 territorios ───────────────────────────────── */
+.secs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s-16) var(--s-6)}
+.ter{position:relative;display:block;color:var(--fg)}
+.ter .ph,.mk .ph{display:block}
+.ter .ph{background:var(--surface)}
+/* las ocho tiles al mismo tono: la pared del estudio nivelada a blanco, como en el hero */
+.ter .pm-img{filter:grayscale(1) contrast(1.06) brightness(1.05)}
+.ter .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.55));opacity:0;transition:opacity var(--dur) var(--ease)}
+.ter-meta{display:grid;grid-template-columns:1fr auto;align-items:end;gap:var(--s-3);padding:var(--s-3) 0}
+.ter-nm{display:block;font-family:var(--f-display);font-size:var(--t-7);line-height:.95;text-transform:uppercase;letter-spacing:.005em}
+.ter-nm .nm{display:inline-block;text-underline-offset:6px;text-decoration-thickness:2px}
+.ter-nm [lang="ja"]{display:block;font-family:var(--f-ja);font-size:var(--t-3);letter-spacing:.2em;color:var(--fg-2);margin-top:6px}
+.ter-n{font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--fg-2);text-align:right;line-height:1.7;white-space:nowrap}
+.ter-n b{display:block;font-weight:400;color:var(--fg);font-size:var(--t-6);letter-spacing:0;font-variant-numeric:tabular-nums}
+.ter .sellos{position:absolute;top:var(--s-2);left:var(--s-2);z-index:2}
+.ter .ir{position:absolute;right:var(--s-3);bottom:var(--s-3);z-index:2;font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;color:var(--white);opacity:0;transform:translateX(-6px);transition:opacity var(--dur-fast),transform var(--dur-fast) var(--ease)}
+@media (hover:hover) and (pointer:fine){
+  .ter:hover .pm-img,.ter:focus-visible .pm-img{filter:grayscale(0) contrast(1)}
+  .ter:hover .ph::after,.ter:focus-visible .ph::after{opacity:1}
+  .ter:hover .ir,.ter:focus-visible .ir{opacity:1;transform:none}
+  .ter:hover .ter-nm .nm{text-decoration:underline}
+}
+.ter:focus-visible{outline-offset:6px}
+/* MANUK: misma ley que sus vecinas (sin placa invertida); lo que la distingue es el sello 世界 MANUK sobre la foto y MUNDO PROPIO >> en el hover */
+
+/* ── 5 · MUNDO: dialecto + manifiesto + trama + pieza 手描き ─────────── */
+.mundo{position:relative;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:
+    radial-gradient(circle at 50% 50%,var(--g-800) 0 .9px,transparent 1.1px) 0 0/7px 7px,
+    var(--bg)}
+.mundo .in{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,6fr);gap:var(--gut);align-items:center;max-width:var(--max);margin-inline:auto;padding:var(--s-24) var(--gut)}
+.mundo-txt{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s-8)}
+.mundo-txt .txt{max-width:40ch}
+/* la voz de Panni: geo, no display — contraste deliberado con los títulos Anton */
+.mundo-q{font-family:var(--f-text);font-weight:500;font-size:clamp(32px,4.2vw,64px);line-height:1.04;letter-spacing:-.02em;text-transform:none;text-wrap:pretty}
+.mundo-q em{font-style:normal;color:var(--fg-2)}
+.mundo-atoms{display:flex;flex-wrap:wrap;gap:var(--s-2)}
+.mundo-atoms span{display:inline-flex;align-items:center;height:26px;padding:0 10px;border:1px solid var(--line);font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.16em;color:var(--fg-2)}
+.mundo-atoms span b{color:var(--fg);font-weight:400;margin-right:6px}
+.mundo-ph{position:relative;display:block;aspect-ratio:3/4;overflow:hidden;background:var(--surface)}
+.mundo-ph .pm-img{position:absolute;inset:0;object-position:50% 30%}
+.mundo-ph .cap{position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:var(--s-4);padding:var(--s-4);
+  background:linear-gradient(0deg,rgba(0,0,0,.82),transparent);font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--white)}
+.mundo-ph .cap .nm{font-family:var(--f-text);font-size:var(--t-3);font-weight:500;letter-spacing:.1em}
+.mundo-ph .cap .sellos{position:static}
+@media (hover:hover) and (pointer:fine){.mundo-ph:hover .pm-img,.mundo-ph:focus-visible .pm-img{filter:grayscale(0) contrast(1)}}
+/* sin pincelada sintética: la espalda pintada real (手描き) es el gesto del pintor; nada encima de la prenda */
+
+/* ── 6 · MANUK WORLD teaser ─────────────────────────────────────────── */
+.mk{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gut);align-items:end}
+.mk-a{grid-column:1/6}.mk-b{grid-column:6/9}.mk-c{grid-column:9/13;align-self:stretch;display:flex;flex-direction:column;justify-content:space-between;gap:var(--s-8);padding-bottom:var(--s-2)}
+.mk .ph{background:var(--black)}
+.mk .ph .pm-img{object-position:50% 50%}
+.mk-a .ph{aspect-ratio:4/5}
+.mk-a .ph .pm-img{object-position:50% 20%}
+.mk-t{font-family:var(--f-display);font-size:var(--t-8);line-height:.9;text-transform:uppercase}
+.mk-t [lang="ja"]{display:block;font-family:var(--f-ja);font-size:.28em;letter-spacing:.35em;color:var(--fg-2);margin-top:var(--s-3)}
+.mk-c .txt{color:var(--fg-2);max-width:36ch}
+.mk-c .txt b{color:var(--fg);font-weight:400}
+.mk-list{display:grid;gap:0;border-top:1px solid var(--line)}
+.mk-list>*{display:grid;grid-template-columns:1fr auto;gap:var(--s-4);align-items:center;min-height:44px;padding:var(--s-2) 0;border-bottom:1px solid var(--line);
+  font-family:var(--f-text);font-size:var(--t-2);letter-spacing:.1em;text-transform:uppercase;font-weight:500;color:var(--fg)}
+.mk-list>div{color:var(--fg-2)}
+.mk-list>* span:last-child{font-family:var(--f-mono);font-weight:400;font-variant-numeric:tabular-nums;color:var(--fg-2)}
+.mk-list a:hover span:first-child,.mk-list a:focus-visible span:first-child{text-decoration:underline;text-underline-offset:4px}
+.mk-a,.mk-b{display:block;color:var(--fg)}
+@media (hover:hover) and (pointer:fine){.mk-a:hover .pm-img,.mk-b:hover .pm-img,.mk-a:focus-visible .pm-img,.mk-b:focus-visible .pm-img{filter:grayscale(0) contrast(1)}}
+.mk .pcard-meta{display:flex;padding-top:var(--s-3)}
+
+/* ── 7 · ARCHIVO teaser: 3 piezas 完売 en deriva suave ─────────────── */
+.arc{position:relative;border-top:1px solid var(--line)}
+.sec.arc{padding-top:var(--s-24)}
+.arc-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gut);align-items:start}
+.arc-grid .pcard:nth-child(1){grid-column:1/5;margin-top:var(--s-16)}
+.arc-grid .pcard:nth-child(2){grid-column:5/9;margin-top:0}
+.arc-grid .pcard:nth-child(3){grid-column:9/13;margin-top:var(--s-24)}
+/* la foto manda: el negro del archivo se lee como negro; 完売 es el único indicador de vendida */
+.arc .pcard .pm-img{filter:grayscale(1) contrast(1.05) brightness(.92)}
+@media (hover:hover) and (pointer:fine){
+  .arc .pcard:hover .pm-img,.arc .pcard:focus-visible .pm-img{filter:grayscale(0) contrast(1)}
+}
+@keyframes pm-flota{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-10px,0)}}
+/* la deriva va sobre la foto (no sobre la tarjeta) para no pisar el reveal .rv */
+html.js .arc-grid .pcard .pcard-ph{animation:pm-flota 9s var(--ease) infinite;animation-play-state:paused}
+html.js .arc-grid .pcard.viva .pcard-ph{animation-play-state:running}
+html.js .arc-grid .pcard:nth-child(2) .pcard-ph{animation-duration:11s;animation-delay:-3s}
+html.js .arc-grid .pcard:nth-child(3) .pcard-ph{animation-duration:13s;animation-delay:-6s}
+.arc-h{display:grid;grid-template-columns:1fr auto;align-items:end;gap:var(--s-6);margin-bottom:var(--s-8)}
+.arc-h .txt{color:var(--fg-2);max-width:40ch;margin-top:var(--s-4)}
+.arc-h .txt b{color:var(--fg);font-weight:400}
+
+/* ── 8 · LA BOUTIQUE: reloj real ────────────────────────────────────── */
+.bq{border-top:1px solid var(--line)}
+.bq .in{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:var(--gut);align-items:end;max-width:var(--max);margin-inline:auto;padding:var(--s-24) var(--gut)}
+.bq-t{font-family:var(--f-display);font-size:var(--t-9);line-height:.86;text-transform:uppercase;letter-spacing:-.005em}
+.bq-t small{display:block;font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.18em;color:var(--fg-2);margin-bottom:var(--s-4);text-transform:uppercase}
+.bq-data{display:grid;gap:0;border-top:1px solid var(--line)}
+.bq-data>div{display:grid;grid-template-columns:minmax(120px,.5fr) 1fr;gap:var(--s-4);padding:var(--s-3) 0;border-bottom:1px solid var(--line);
+  font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--fg-2);line-height:1.7}
+.bq-data>div b{color:var(--fg);font-weight:400}
+.bq-data .reloj{display:flex;align-items:center;gap:8px;color:var(--fg)}
+.bq-data .reloj .dot{width:8px;height:8px;border:1px solid var(--fg);display:inline-block}
+.bq-data .reloj[data-estado="abierto"] .dot{background:var(--fg);animation:pm-lat 2.4s ease-in-out infinite}
+.bq-data .reloj[data-estado="cerrado"] b{color:var(--fg-2)}
+@keyframes pm-lat{0%,100%{opacity:1}50%{opacity:.35}}
+.bq-cta{display:flex;flex-wrap:wrap;gap:var(--s-4);margin-top:var(--s-8)}
+/* plano de mesa de corte: cruz de mira sobre milimetrado, sin radios */
+.bq-milim{position:relative;aspect-ratio:16/9;overflow:hidden;border:1px solid var(--line);display:flex;align-items:flex-end;padding:var(--s-4)}
+.bq-milim .cv,.bq-milim .ch{position:absolute;background:var(--line-2)}
+.bq-milim .cv{left:62%;top:0;bottom:0;width:1px}
+.bq-milim .ch{top:44%;left:0;right:0;height:1px}
+.bq-milim .marker{position:absolute;left:62%;top:44%;width:12px;height:12px;border:1px solid var(--fg);transform:translate(-50%,-50%)}
+.bq-milim .marker::after{content:"";position:absolute;inset:3px;background:var(--fg)}
+.bq-milim .ring{position:absolute;left:62%;top:44%;width:120px;height:120px;border:1px solid var(--fg-2);transform:translate(-50%,-50%);opacity:.5}
+html.js .bq-milim .ring{animation:pm-ring 4s var(--ease) infinite;animation-play-state:paused}
+html.js .bq-milim.viva .ring{animation-play-state:running}
+@keyframes pm-ring{0%{transform:translate(-50%,-50%) scale(.2);opacity:.7}100%{transform:translate(-50%,-50%) scale(1.4);opacity:0}}
+.bq-milim .lbl{position:relative;z-index:1;font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.16em;text-transform:uppercase;color:var(--fg-2);line-height:1.8}
+.bq-milim .lbl b{color:var(--fg);font-weight:400}
+
+/* ── responsive ─────────────────────────────────────────────────────── */
+@media (max-width:1023px){
+  .sec{padding-block:var(--s-16)}
+  .sec.arc{padding-top:var(--s-16)}
+  /* la foto arriba, a sangre, y el titular entra en el primer viewport */
+  .hero{grid-template-columns:1fr;min-height:0;padding:0;gap:var(--s-6)}
+  .hero-ph{order:-1;height:auto;aspect-ratio:3/4;max-height:56svh;justify-self:stretch}
+  .hero-ph .pm-img{object-position:50% 55%}
+  .hero-txt{padding:0 var(--gut) var(--s-8);gap:var(--s-8)}
+  .hero h1{font-size:clamp(56px,13vw,112px);margin-top:var(--s-4)}
+  .hero .lead{margin-top:var(--s-6)}
+  html.js .hero-txt{animation:none}
+  .secs{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-12) var(--s-4)}
+  /* nombres largos a dos renglones: se reserva el alto para que los precios de cada fila queden alineados */
+  #nuevo .pcard-nm{min-height:2.4em}
+  .ter-nm{font-size:var(--t-6)}
+  .mundo .in{grid-template-columns:1fr;padding-block:var(--s-16)}
+  .mundo-ph{order:-1;max-width:640px}
+  .mk{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-8) var(--s-4)}
+  .mk-a{grid-column:1/2}.mk-b{grid-column:2/3;align-self:end}.mk-c{grid-column:1/-1;padding-bottom:0}
+  .arc-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-4)}
+  .arc-grid .pcard:nth-child(1){grid-column:auto;margin-top:var(--s-8)}
+  .arc-grid .pcard:nth-child(2){grid-column:auto}
+  .arc-grid .pcard:nth-child(3){grid-column:auto;margin-top:var(--s-12)}
+  .bq .in{grid-template-columns:1fr;padding-block:var(--s-16)}
+  .bq-milim{max-width:520px}
+}
+/* buscador del cromo a 1024–1200 (input de 120px): el placeholder no se corta a mitad de palabra */
+.pm-buscar input{text-overflow:ellipsis}
+.pm-buscar input::placeholder{text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+@media (max-width:767px){
+  .sec-h{flex-direction:column;align-items:flex-start;gap:var(--s-4)}
+  .sec-h .der{align-items:flex-start;text-align:left}
+  .hero h1{font-size:clamp(52px,16vw,96px)}
+  .hero-ph{aspect-ratio:4/5;max-height:54svh}
+  .arc-h{grid-template-columns:1fr;gap:var(--s-4)}
+  .arc-h .lnk{justify-self:start}
+  .mk .ph{aspect-ratio:3/4}
+  .mk-a .ph{aspect-ratio:3/4}
+  .arc-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-3)}
+  .arc-grid .pcard:nth-child(3){grid-column:1/-1;max-width:60%;margin:var(--s-6) auto 0}
+  .mundo-ph .cap{flex-wrap:wrap;align-items:flex-start;gap:var(--s-2)}
+  .bq-t{font-size:clamp(48px,15vw,88px)}
+  .bq-data>div{grid-template-columns:1fr}
+}
+@media (hover:none),(pointer:coarse){
+  /* targets reales de 44px: .lnk es inline en el sistema y min-height no le aplica; el carrito del cromo queda en 26px de ancho */
+  .lnk{display:inline-flex;align-items:center;min-height:44px}
+  .pm-carrito{min-width:44px;justify-content:center}
+}
+/* sellos con un poco más de aire (el sistema los dibuja a 22px) */
+main .sello{height:24px;padding:0 10px;gap:6px}
+@media (prefers-reduced-motion:reduce){
+  .hero-ph .pm-img{transform:none}
+}
+</style>
+
+<style id="pmgate-css">
+/* ═══ CORTINA DE ACCESO — estética de la casa, fail-closed ═══ */
+#pmgate{position:fixed;inset:0;z-index:99999;background:#000;color:#fff;
+  display:grid;place-items:center;padding:24px;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  opacity:1;transition:opacity .45s ease}
+#pmgate.pmgate--out{opacity:0;pointer-events:none}
+#pmgate::after{content:"";position:absolute;inset:-25%;pointer-events:none;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:pmgate-grain 1s steps(6) infinite}
+@keyframes pmgate-grain{0%{transform:translate(0,0)}25%{transform:translate(-3%,-4%)}50%{transform:translate(-6%,2%)}75%{transform:translate(3%,-5%)}100%{transform:translate(2%,-2%)}}
+.pmgate-in{position:relative;z-index:2;width:min(420px,100%);display:grid;gap:26px;justify-items:center;text-align:center}
+.pmgate-mark{width:clamp(56px,14vw,76px);height:auto;fill:#fff}
+.pmgate-kana{font-family:"Noto Sans JP",sans-serif;font-size:clamp(11px,3vw,13px);letter-spacing:.5em;color:#a8a8a8;margin-right:-.5em}
+.pmgate-t{font-size:clamp(10px,2.6vw,11px);letter-spacing:.34em;text-transform:uppercase}
+.pmgate-f{width:100%;display:grid;gap:14px;justify-items:center}
+.pmgate-row{width:100%;display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid #5c5c5c;padding-bottom:10px;transition:border-color .2s}
+.pmgate-row:focus-within{border-bottom-color:#fff}
+.pmgate-cue{font-size:11px;color:#5c5c5c;flex:none}
+#pmgate-i{flex:1;min-width:0;background:none;border:0;color:#fff;
+  font:inherit;font-size:clamp(13px,3.4vw,15px);letter-spacing:.24em;
+  padding:8px 0;min-height:44px;caret-color:#fff}
+#pmgate-i:focus{outline:none}
+#pmgate-i::placeholder{color:#242424;letter-spacing:.3em}
+.pmgate-go{background:none;border:1px solid #5c5c5c;color:#fff;font:inherit;
+  font-size:11px;letter-spacing:.16em;padding:0 14px;min-height:44px;cursor:pointer;
+  transition:background .15s,color .15s,border-color .15s}
+.pmgate-go:hover,.pmgate-go:focus-visible{background:#fff;color:#000;border-color:#fff}
+.pmgate-go:focus-visible{outline:2px solid #fff;outline-offset:3px}
+#pmgate-i:focus-visible{outline:none}
+.pmgate-err{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#a8a8a8;min-height:1.2em}
+.pmgate-foot{font-size:9px;letter-spacing:.2em;color:#5c5c5c;text-transform:uppercase;line-height:2}
+.pmgate-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
+@media (prefers-reduced-motion:reduce){
+  #pmgate{transition:none}
+  #pmgate::after{animation:none}
+}
+</style>
+</head>
+<body>
+<div id="pmgate" role="dialog" aria-modal="true" aria-labelledby="pmgate-t">
+  <div class="pmgate-in">
+    <svg class="pmgate-mark" viewBox="0 0 104 103" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667Z"/></svg>
+    <p class="pmgate-kana" lang="ja" aria-hidden="true">バーニ　マーゴット</p>
+    <p class="pmgate-t" id="pmgate-t">ACCESO PRIVADO</p>
+    <form class="pmgate-f" id="pmgate-f" autocomplete="off" novalidate>
+      <label class="pmgate-sr" for="pmgate-i">Frase de acceso</label>
+      <div class="pmgate-row">
+        <span class="pmgate-cue" aria-hidden="true">&gt;&gt;</span>
+        <input id="pmgate-i" type="password" autocomplete="current-password"
+               spellcheck="false" placeholder="········" aria-describedby="pmgate-e">
+        <button class="pmgate-go" type="submit">[ OK ]</button>
+      </div>
+      <p class="pmgate-err" id="pmgate-e" role="status" aria-live="polite"></p>
+    </form>
+    <p class="pmgate-foot" aria-hidden="true">
+      &lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()&gt;&gt;<br>
+      &gt;&gt;HONDURAS4940##
+    </p>
+  </div>
+</div>
+<main id="contenido">
+
+  <!-- 1 · HERO -->
+  <section class="hero" aria-labelledby="h1">
+    <div class="hero-txt">
+      <div>
+        <p class="ey hero-dial" id="hero-dial" aria-hidden="true">BUENOS AIRES//<span lang="ja">デザイナー</span> ..DESIGNER &gt;&gt;HONDURAS4940##</p>
+        <h1 id="h1"><span>He visto</span><span>personas</span><span class="ja" lang="ja" aria-hidden="true">ジェンダーレス</span></h1>
+        <p class="lead rv rv-d1">Un futuro donde la lucha por la igualdad ya terminó. Piezas de a una, sin género, hechas en Buenos Aires.</p>
+        <div class="hero-cta rv rv-d2">
+          <a class="btn fill lg" href="./shop.html">ENTRAR AL SHOP <span lang="ja" aria-hidden="true">店</span></a>
+          <a class="lnk" href="./casa.html">EL MANIFIESTO <span lang="ja" aria-hidden="true">家</span></a>
+        </div>
+      </div>
+      <a class="hero-pz" id="hero-pz" href="./shop.html"></a>
+    </div>
+    <a class="hero-ph" id="hero-ph" href="./shop.html" aria-label="Ver el shop"></a>
+  </section>
+
+  <!-- 2 · MARQUESINA -->
+  <div class="mq" id="mq"></div>
+
+  <!-- 3 · LAS SECCIONES -->
+  <section class="sec" aria-labelledby="t-secs">
+    <div class="wrap">
+      <div class="sec-h">
+        <h2 id="t-secs" class="rv">Las secciones <span lang="ja" aria-hidden="true">漂流</span></h2>
+        <div class="der rv rv-d1">
+          <p class="ey">OCHO SECCIONES · <b id="secs-n">0</b> PIEZAS DISPONIBLES</p>
+          <a class="lnk" href="./shop.html">VER TODO EL SHOP</a>
+        </div>
+      </div>
+      <div class="secs" id="secs"></div>
+    </div>
+  </section>
+
+  <!-- 4 · LO NUEVO -->
+  <section class="sec" aria-labelledby="t-nuevo">
+    <div class="wrap">
+      <div class="sec-h">
+        <h2 id="t-nuevo" class="rv">Lo nuevo <span lang="ja" aria-hidden="true">一点物</span></h2>
+        <div class="der rv rv-d1">
+          <p class="ey">LAS ÚLTIMAS OCHO QUE SALIERON DEL TALLER</p>
+          <a class="lnk" href="./shop.html">TODAS LAS PIEZAS</a>
+        </div>
+      </div>
+      <div class="pgrid c4" id="nuevo"></div>
+    </div>
+  </section>
+
+  <!-- 5 · MUNDO -->
+  <section class="mundo" aria-labelledby="t-mundo">
+    <div class="in">
+      <div class="mundo-txt">
+        <p class="ey">MANIFIESTO <span lang="ja" aria-hidden="true">家</span></p>
+        <h2 id="t-mundo" class="mundo-q rv">Somos todos <em>carbono, hidrógeno, oxígeno, nitrógeno.</em></h2>
+        <div class="mundo-atoms rv rv-d1" aria-hidden="true"><span><b>C</b>6</span><span><b>H</b>1</span><span><b>O</b>8</span><span><b>N</b>7</span></div>
+        <p class="txt rv rv-d2" style="color:var(--fg-2)">Se corta, se pega, se pinta y sale. Cada pieza pasa por el taller una sola vez; lo pintado a mano lo firma el pintor de la casa.</p>
+        <div class="rv rv-d3"><a class="btn" href="./casa.html">LA CASA <span lang="ja" aria-hidden="true">家</span> <span class="arr">&gt;&gt;</span></a></div>
+      </div>
+      <a class="mundo-ph rv rv-scale" id="mundo-ph" href="./shop.html" aria-label="Ver el shop"></a>
+    </div>
+  </section>
+
+  <!-- 6 · MANUK WORLD -->
+  <section class="sec" aria-labelledby="t-mk">
+    <div class="wrap">
+      <div class="mk">
+        <a class="mk-a rv" id="mk-a" href="./manuk.html"></a>
+        <a class="mk-b rv rv-d1" id="mk-b" href="./manuk.html"></a>
+        <div class="mk-c">
+          <div class="rv rv-d1">
+            <h2 id="t-mk" class="mk-t">Manuk<br>World <span lang="ja" aria-hidden="true">世界</span></h2>
+            <p class="txt" style="margin-top:var(--s-6)">El mundo de hoodies, buzos y remeras de la casa: <b>tiradas cortas, estampas propias</b>, la puerta de entrada al universo Panni.</p>
+          </div>
+          <div class="rv rv-d2">
+            <div class="mk-list" id="mk-list"></div>
+            <div style="margin-top:var(--s-6)"><a class="btn" href="./manuk.html">ENTRAR A MANUK WORLD <span class="arr">&gt;&gt;</span></a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · ARCHIVO -->
+  <section class="sec arc" aria-labelledby="t-arc">
+    <div class="wrap">
+      <div class="arc-h">
+        <div class="rv">
+          <h2 id="t-arc">Archivo <span lang="ja" aria-hidden="true">記憶</span></h2>
+          <p class="txt">Lo que ya se fue con alguien. <b>Si viste algo que ya no está, contanos:</b> en otro textil, se vuelve a hacer.</p>
+        </div>
+        <a class="lnk rv rv-d1" href="./archivo.html">ENTRAR AL ARCHIVO</a>
+      </div>
+      <div class="arc-grid" id="arc"></div>
+    </div>
+  </section>
+
+  <!-- 8 · LA BOUTIQUE -->
+  <section class="bq" aria-labelledby="t-bq">
+    <div class="in">
+      <div class="rv">
+        <h2 id="t-bq" class="bq-t"><small>LA BOUTIQUE <span lang="ja" aria-hidden="true">店</span> · PALERMO SOHO</small>Honduras<br>4940</h2>
+        <div class="bq-cta">
+          <a class="btn" href="./casa.html">LA CASA · TALLER · BOUTIQUE <span class="arr">&gt;&gt;</span></a>
+        </div>
+      </div>
+      <div class="rv rv-d1">
+        <!-- dirección, horario e Instagram viven en el footer del sistema: acá solo lo que el footer no dice -->
+        <div class="bq-data">
+          <div><span>AHORA</span><span class="reloj" id="bq-reloj"></span></div>
+          <div><span>CÓMO</span><b>SE PRUEBA, SE AJUSTA AL CUERPO, SE RETIRA SIN CARGO</b></div>
+        </div>
+        <div class="bq-milim milim" style="margin-top:var(--s-6)" aria-hidden="true">
+          <span class="cv"></span><span class="ch"></span>
+          <span class="ring"></span><span class="marker"></span>
+          <p class="lbl">34°35'S · 58°25'O<br><b>HONDURAS 4940</b></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="./catalogo.js"></script>
+<script src="./base.js"></script>
+<script>
+(function(){
+  'use strict';
+  PM.montarCromo({ activa:'inicio', modulo:'negro' });
+
+
+  var C = window.CATALOGO || {piezas:[],archivo:[],categorias:[]};
+  var piezas = C.piezas.slice(), byId = PM.byId, esc = PM.esc;
+  var $ = function(s){ return document.getElementById(s); };
+  var setHTML = function(id, h){ var n = $(id); if (n) n.innerHTML = h; };
+
+  /* ── HERO: la pieza con más presencia (cuerpo entero, capucha, 14 tomas) ── */
+  var hero = byId('poncho-nuno') || piezas[0];
+  var HERO_ID = hero ? hero.id : null;
+  var heroPh = $('hero-ph'), heroPz = $('hero-pz');
+  if (hero && heroPh) {
+    var fichaHero = './ficha.html?id=' + encodeURIComponent(hero.id);
+    heroPh.href = fichaHero;
+    heroPh.setAttribute('aria-label', hero.nm + ' — ver la pieza');
+    /* nada escrito encima de la foto: ni SKU ni sellos; la foto es la foto.
+       Toma del hero: la 10 del Poncho Nuno (en cuclillas, capucha, pared blanca y piso): la más editorial de la serie.
+       Se pide en 1024 (el catálogo trae 640 salvo la primera toma). */
+    var HERO_TOMA = { 'poncho-nuno': 10 };
+    var ti = HERO_TOMA[hero.id];
+    var heroSrc = (ti && hero.imgs[ti]) ? hero.imgs[ti].replace(/-640-0(\.\w+)$/, '-1024-1024$1') : (hero.hero || hero.imgs[0]);
+    var hp = Object.assign({}, hero, { imgs: [heroSrc], lq: heroSrc.replace(/-1024-1024(\.\w+)$/, '-480-0$1') });
+    heroPh.innerHTML = PM.pic(hp, 0, { alt: hero.nm, eager: true, vt: true });
+    if (heroPz) {
+      heroPz.href = fichaHero;
+      heroPz.innerHTML =
+        '<span class="pz-nm"><b>' + esc(hero.nm) + '</b> · ' + esc(hero.cat) + '</span>' +
+        (hero.sellos && hero.sellos.length ? PM.sellosHTML(hero.sellos) : '<span></span>') +
+        '<span class="num">' + PM.fmt(hero.pr) + '</span>' +
+        '<span class="ver">Ver la pieza</span>';
+    }
+  } else if (heroPh) {
+    heroPh.hidden = true; if (heroPz) heroPz.hidden = true;
+  }
+  /* el dialecto del hero queda estático (markup con lang="ja"); el scramble ya vive en el terminal del cromo */
+
+  /* ── MARQUESINA de dialecto ── */
+  PM.marquesina($('mq'), [
+    '<b>&lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()&gt;&gt;</b>',
+    'PIEZA ÚNICA <span lang="ja">一点物</span>',
+    '&gt;&gt;HONDURAS4940##',
+    'PINTADO A MANO <span lang="ja">手描き</span>',
+    'MADE IN BUENOS AIRES <span lang="ja">ブエノスアイレスで作られた</span>',
+    '<b><span lang="ja">バーニ　マーゴット</span></b>',
+    '".        SHOP((<span lang="ja">ショップ</span>$<span lang="ja">ディスカウント</span>NN@!!!))""'
+  ]);
+
+  /* ── MUNDO: la pieza 手描き se elige antes que LO NUEVO para no repetirla ── */
+  var mano = byId('tapado-taika-brushed-mask') || piezas.filter(function(p){ return (p.sellos||[]).indexOf('手描き') > -1; })[0];
+
+  /* ── MANUK WORLD teaser: se eligen antes para no repetirlas como cara de la sección ── */
+  var mk = piezas.filter(function(p){ return p.cat === 'MANUK'; }).sort(function(a,b){ return b.ts - a.ts; });
+  var mkA = byId('manuk-hoodie-001-black') || mk[0], mkB = byId('manuk-tshirt-004') || mk[1];
+
+  /* ── LO NUEVO: las últimas 8 que salieron del taller.
+       Nunca la del hero ni la de MUNDO (una prenda, una sola vez en la home), nunca 不連続 (lo discontinuado no es novedad),
+       máximo 2 por categoría y sin hermanas del mismo tallo (Capa Vestido So / So Brushed 2 cuentan una vez). ── */
+  function tallo(nm){
+    return String(nm || '').toLowerCase()
+      .replace(/\b(brushed|black|negra|negro|white|blanca|blanco|grey|gray|gris|blue|red|pink|green|mask|satin|foil|poplin)\b/g, ' ')
+      .replace(/[^a-záéíóúñ ]/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+  /* tomas que no cierran con el set de estudio blanco (fondo oscuro, plano corto): no van en la tira */
+  /* la Kagyaku además es la cara de ABRIGOS en LAS SECCIONES: una capa, una sola vez en la home */
+  var FUERA_NUEVO = ['camisa-cropped-baikara-black-1','blazer-nuime','capa-vestido-so-1','capa-vestido-so-brushed-2','camisa-vestido-hansode-black','capa-resversible-kagyaku'];
+  /* piezas cuya primera toma es de estudio gris con línea de piso: en la tira se muestran desde otra toma (sobre blanco, cuerpo entero) */
+  var TOMA_NUEVO = { 'campera-kyappu': 1, 'pantalon-gamu-1': 3 };
+  /* la LQIP acompaña siempre a la toma que se muestra (si no, mientras carga se ve otra foto detrás) */
+  function lqDe(src){ return String(src || '').replace(/-640-0(\.\w+)$/, '-480-0$1'); }
+  function conToma(p){
+    var i = TOMA_NUEVO[p.id];
+    return (i && p.imgs[i]) ? Object.assign({}, p, { imgs: p.imgs.slice(i).concat(p.imgs.slice(0, i)), lq: lqDe(p.imgs[i]) }) : p;
+  }
+  /* el sufijo numérico de desambiguación del catálogo ("… Brushed 5") no es nombre de pieza: se limpia al pintar (queda en el SKU) */
+  function limpio(p){ return Object.assign({}, p, { nm: String(p.nm || '').replace(/\s+\d+$/, '') }); }
+  var excluir = [HERO_ID, mano ? mano.id : null].filter(Boolean);
+  var tallos = {}, porCat = {}, nuevas = [];
+  excluir.forEach(function(id){ var p = byId(id); if (p) tallos[tallo(p.nm)] = 1; });
+  piezas.slice().sort(function(a,b){ return b.ts - a.ts; }).forEach(function(p){
+    if (nuevas.length >= 8) return;
+    if (excluir.indexOf(p.id) > -1 || FUERA_NUEVO.indexOf(p.id) > -1) return;
+    if (p.cat === 'DISCONTINOUS' || (p.sellos || []).indexOf('不連続') > -1) return;
+    var t = tallo(p.nm);
+    if (tallos[t] || (porCat[p.cat] || 0) >= 2) return;
+    tallos[t] = 1; porCat[p.cat] = (porCat[p.cat] || 0) + 1; nuevas.push(p);
+  });
+  var nuevasIds = nuevas.map(function(p){ return p.id; });
+  var usadas = nuevasIds.concat(excluir, mkA ? [mkA.id] : [], mkB ? [mkB.id] : []);
+
+  /* ── LAS SECCIONES: 8 categorías reales, conteo real, → territorio ── */
+  var ORDEN = ['ABRIGOS','KIMONOS','CAMISAS','MANUK','VESTIDOS','PANTALONES','REMERAS','DISCONTINOUS'];
+  /* caras elegidas a mano: las ocho sobre estudio blanco, cuerpo entero centrado (la consistencia fotográfica ES el diseño).
+     Tienen prioridad sobre el filtro de "usadas": una pieza puede repetirse solo con OTRA toma.
+     MANUK: el hoodie sobre percha en estudio blanco — la única tira sin cuerpo, deliberada: es otro mundo. */
+  var CARA = {
+    ABRIGOS:      { id: 'capa-resversible-kagyaku', idx: 0 },
+    KIMONOS:      { id: 'kimono-koto-1rpv5', idx: 0 },
+    CAMISAS:      { id: 'capa-camisa-fudo', idx: 0 },
+    MANUK:        { id: 'manuk-hoodie-002-ptw-white', idx: 0 },
+    VESTIDOS:     { id: 'chaleco-vestido-ginga', idx: 2 },
+    PANTALONES:   { id: 'pantalon-torihazushi', idx: 0 },
+    REMERAS:      { id: 'remeron-oversize-soft-black', idx: 0 },
+    DISCONTINOUS: { id: 'pantalon-parattsuo', idx: 0 }
+  };
+  var cats = C.categorias.slice().sort(function(a,b){ return ORDEN.indexOf(a.key) - ORDEN.indexOf(b.key); });
+  var total = 0;
+  setHTML('secs', cats.map(function(c){
+    var p = null, idx = 0, cara = CARA[c.key], cp = cara ? byId(cara.id) : null;
+    if (cp && cp.cat === c.key && cp.imgs[cara.idx]) {
+      p = cp; idx = cara.idx;
+      /* si esa pieza ya está en el hero / LO NUEVO / MUNDO / MANUK con la misma toma, se usa la siguiente */
+      if (usadas.indexOf(p.id) > -1 && idx === 0 && p.imgs[1]) idx = 1;
+    } else {
+      /* fallback: la pieza con más tomas que no esté ya en el hero, LO NUEVO, MUNDO o el teaser MANUK */
+      var lista = piezas.filter(function(q){ return q.cat === c.key && usadas.indexOf(q.id) < 0; })
+        .sort(function(a,b){ return (b.imgs.length - a.imgs.length) || (b.ts - a.ts); });
+      if (!lista.length) lista = piezas.filter(function(q){ return q.cat === c.key; });
+      p = lista[0];
+    }
+    if (!p) return '';
+    var n = c.n != null ? c.n : piezas.filter(function(q){ return q.cat === c.key; }).length; total += n;
+    var manuk = c.key === 'MANUK';
+    /* MANUK es un mundo propio: su tile lleva a manuk.html, no a la deriva genérica */
+    var href = manuk ? './manuk.html' : './territorio.html?cat=' + encodeURIComponent(c.key);
+    var pp = idx ? Object.assign({}, p, { lq: lqDe(p.imgs[idx]) }) : p;
+    return '<a class="ter' + (manuk ? ' manuk' : '') + '" href="' + href + '" data-cat="' + esc(c.key) + '">' +
+      '<span class="ph rv rv-scale">' + PM.pic(pp, idx, { alt: '', ariaHidden: true, eager: false, vt: false }) +
+        (manuk ? PM.sellosHTML(['MANUK']) : '') +
+        '<span class="ir" aria-hidden="true">' + (manuk ? 'MUNDO PROPIO' : 'ENTRAR') + ' &gt;&gt;</span></span>' +
+      '<span class="ter-meta"><span class="ter-nm"><span class="nm">' + esc(c.nombre) + '</span><span lang="ja" aria-hidden="true">' + esc(c.kj) + '</span></span>' +
+      '<span class="ter-n"><b>' + n + '</b><span class="sr"> </span>' + (n === 1 ? 'PIEZA' : 'PIEZAS') + '</span></span></a>';
+  }).join(''));
+  var sn = $('secs-n'); if (sn) sn.textContent = total;
+
+  setHTML('nuevo', nuevas.map(function(p, i){
+    return PM.pcardHTML(limpio(conToma(p)), { eager: false, vt: true, cls: 'rv' + (i % 4 ? ' rv-d' + (i % 4) : '') });
+  }).join(''));
+
+  /* ── MUNDO: pieza 手描き real (espalda pintada) ── */
+  var mph = $('mundo-ph');
+  if (mano && mph) {
+    mph.href = './ficha.html?id=' + encodeURIComponent(mano.id);
+    mph.setAttribute('aria-label', mano.nm + ' — pintado a mano, ver la pieza');
+    mph.insertAdjacentHTML('afterbegin', PM.pic(Object.assign({}, mano, { imgs: [mano.hero || mano.imgs[0]] }), 0, { alt: '', ariaHidden: true, vt: false }));
+    mph.insertAdjacentHTML('beforeend', '<span class="cap" aria-hidden="true"><span class="nm">' + esc(mano.nm) + '</span>' + PM.sellosHTML(mano.sellos) + '</span>');
+  } else if (mph) {
+    mph.hidden = true;
+  }
+
+  /* ── MANUK WORLD teaser: las dos prendas colgadas sobre estudio NEGRO (toma 0 de cada una).
+       Decisión explícita: el set de MANUK es negro (otro mundo), el de la línea principal es blanco; en la home no se mezcla estudio con locación. ── */
+  /* el nombre accesible del enlace es su contenido visible (nombre + precio): sin aria-label que lo pise */
+  if (mkA) { setHTML('mk-a', '<span class="ph">' + PM.pic(mkA, 0, { alt: '', ariaHidden: true, vt: false }) + '</span>' +
+    '<span class="pcard-meta"><span class="pcard-nm">' + esc(mkA.nm) + '</span><span class="pcard-pr">' + PM.fmt(mkA.pr) + '</span></span>'); }
+  else if ($('mk-a')) { $('mk-a').hidden = true; }
+  if (mkB) { setHTML('mk-b', '<span class="ph">' + PM.pic(mkB, 0, { alt: '', ariaHidden: true, vt: false }) + '</span>' +
+    '<span class="pcard-meta"><span class="pcard-nm">' + esc(mkB.nm) + '</span><span class="pcard-pr">' + PM.fmt(mkB.pr) + '</span></span>'); }
+  else if ($('mk-b')) { $('mk-b').hidden = true; }
+  var fams = {};
+  mk.forEach(function(p){ var f = /hoodie/i.test(p.nm) ? 'HOODIES' : /sw?ear?shirt|buzo/i.test(p.nm) ? 'BUZOS' : /t-?shirt|remera/i.test(p.nm) ? 'REMERAS' : 'OTRAS'; fams[f] = (fams[f] || 0) + 1; });
+  /* las familias son dato (manuk.html no filtra por familia); el único enlace es la fila total */
+  setHTML('mk-list', Object.keys(fams).map(function(f){
+    return '<div><span>' + f + '</span><span class="sr"> · </span><span>' + fams[f] + (fams[f] === 1 ? ' PIEZA' : ' PIEZAS') + '</span></div>';
+  }).join('') + '<a href="./manuk.html"><span>TODO MANUK WORLD</span><span class="sr"> · </span><span>' + mk.length + ' PIEZAS</span></a>');
+
+  /* ── ARCHIVO teaser: 3 piezas vendidas ── */
+  /* tres vendidas distintas entre sí y de lo que ya está arriba (la Kagyaku es la cara de ABRIGOS): trench-camisa negra, kimono pintado, espalda pintada */
+  var arcIds = ['camisa-trench-shukai-1','kimono-shiruku-black-brushed-3','remeron-oversize-burokku-brushed-4'];
+  var arc = arcIds.map(byId).filter(Boolean);
+  if (arc.length < 3) arc = (C.archivo || []).slice(0, 3);
+  setHTML('arc', arc.map(function(p, i){
+    return PM.pcardHTML(limpio(p), { vendida: true, hover: true, vt: false, href: './archivo.html?id=' + encodeURIComponent(p.id), cls: 'rv' + (i ? ' rv-d' + i : ''), sellos: false });
+  }).join(''));
+
+  /* las derivas infinitas (archivo, anillo del plano) solo corren mientras se ven: fuera del viewport quedan en pausa */
+  (function(){
+    var nodos = Array.prototype.slice.call(document.querySelectorAll('.arc-grid .pcard, .bq-milim'));
+    if (!nodos.length) return;
+    if (!('IntersectionObserver' in window)) { nodos.forEach(function(n){ n.classList.add('viva'); }); return; }
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ e.target.classList.toggle('viva', e.isIntersecting); }); }, { rootMargin: '10% 0px' });
+    nodos.forEach(function(n){ io.observe(n); });
+  })();
+
+  /* ── BOUTIQUE: reloj real ── */
+  PM.reloj($('bq-reloj'));
+
+  /* reveals para lo insertado */
+  PM.revelar(document.getElementById('contenido'));
+
+})();
+</script>
+
+<script id="pmgate-js">
+/* Cortina de acceso. Recuerda el ingreso por dispositivo. */
+(function(){
+  var H='d5600e28005cacbad0d820784e3f9f75220b38689e9c7e16bda6513d11c3443e', K='pm_gate_ok';
+  var g=document.getElementById('pmgate');
+  if(!g) return;
+  var root=document.documentElement;
+  var f=document.getElementById('pmgate-f'), i=document.getElementById('pmgate-i'), e=document.getElementById('pmgate-e');
+  var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  function abrir(){
+    root.classList.remove('pmgate-lock');
+    if(RM){ g.remove(); return; }
+    g.classList.add('pmgate--out');
+    setTimeout(function(){ g.remove(); }, 480);
+  }
+
+  try{ if(localStorage.getItem(K)===H){ abrir(); return; } }catch(err){}
+
+  root.classList.add('pmgate-lock');
+  setTimeout(function(){ try{ i.focus(); }catch(err){} }, 60);
+
+  async function sha(txt){
+    var b=new TextEncoder().encode(txt);
+    var d=await crypto.subtle.digest('SHA-256', b);
+    return Array.from(new Uint8Array(d)).map(function(x){return x.toString(16).padStart(2,'0');}).join('');
+  }
+
+  f.addEventListener('submit', async function(ev){
+    ev.preventDefault();
+    var v=i.value;
+    if(!v){ e.textContent=''; i.focus(); return; }
+    var h;
+    try{ h=await sha(v); }catch(err){ e.textContent='[ !! ] SIN CONEXIÓN SEGURA'; return; }
+    if(h===H){
+      try{ localStorage.setItem(K,H); }catch(err){}
+      e.textContent='[ OK ]';
+      abrir();
+    }else{
+      e.textContent='[ !! ] NO';
+      i.value=''; i.focus();
+    }
+  });
+
+  /* El foco no sale del portón mientras esté cerrado. */
+  g.addEventListener('keydown', function(ev){
+    if(ev.key!=='Tab') return;
+    var f2=g.querySelectorAll('input,button');
+    if(!f2.length) return;
+    var pri=f2[0], ult=f2[f2.length-1];
+    if(ev.shiftKey && document.activeElement===pri){ ev.preventDefault(); ult.focus(); }
+    else if(!ev.shiftKey && document.activeElement===ult){ ev.preventDefault(); pri.focus(); }
+  });
+})();
+</script>
+</body>
+</html>

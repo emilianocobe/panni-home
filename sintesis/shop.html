@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shop 店 — Panni Margot</title>
+<meta name="description" content="Piezas únicas hechas en Buenos Aires. Abrigos, camisas, pantalones, kimonos, remeras, vestidos, Manuk World y Discontinous.">
+<link rel="icon" href="../favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./base.css">
+<style>
+/* ═══ SHOP · módulo compra · patrón Demobaza sobre blanco ═══ */
+.shop{padding-bottom:var(--s-24)}
+
+/* cabecera de sala */
+.sh-head{
+  display:flex;justify-content:space-between;align-items:flex-end;gap:var(--s-6);
+  padding:var(--s-8) 0 var(--s-6);border-bottom:1px solid var(--line);
+}
+.sh-head .ey{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sh-head .ey .sep{color:var(--fg-3)}
+.sh-head h1{margin-top:var(--s-3);display:flex;align-items:baseline;gap:.3em;flex-wrap:wrap}
+.sh-head h1 .kj{font-family:var(--f-ja);font-size:.4em;font-weight:400;color:var(--fg-2);letter-spacing:.08em;text-transform:none;line-height:1}
+.sh-head-r{display:flex;align-items:center;gap:var(--s-8);padding-bottom:6px;flex:0 0 auto}
+.sh-n{white-space:nowrap}
+.sh-n b{font-size:var(--t-6);font-family:var(--f-mono);letter-spacing:0;margin-right:6px;vertical-align:-.08em;font-variant-numeric:tabular-nums}
+.sh-q-chip{display:inline-flex;align-items:center;gap:8px}
+.sh-q-chip button{font:inherit;letter-spacing:inherit;text-decoration:underline;text-underline-offset:4px;color:var(--fg);min-height:24px}
+
+/* tres columnas: índice · grilla · orden/filtros */
+.sh-lay{
+  display:grid;grid-template-columns:max-content minmax(0,1fr) 208px;gap:var(--s-8) clamp(32px,3vw,48px);
+  padding-top:var(--s-8);align-items:start;
+}
+.sh-cats,.sh-tools{position:sticky;top:calc(var(--hd) + var(--s-6));max-height:calc(100dvh - var(--hd) - var(--s-12));overflow-y:auto;scrollbar-width:none}
+.sh-cats::-webkit-scrollbar,.sh-tools::-webkit-scrollbar{display:none}
+/* el índice tiene 9 ítems: no necesita scroll, y así el punto del activo (left:-14px) no queda recortado */
+.sh-cats{overflow:visible;max-height:none;width:max-content;max-width:200px}
+.sh-tg{display:none}
+.sh-cats h2,.sh-tools h2,.sh-tools .lb{display:block;margin-bottom:var(--s-3)}
+.sh-cats ul{display:flex;flex-direction:column}
+.sh-cats a{
+  position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:32px;
+  font-family:var(--f-mono);font-size:var(--t-2);letter-spacing:.12em;text-transform:uppercase;color:var(--fg-2);
+  transition:color var(--dur-fast);
+}
+.sh-cats a>span:first-child{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.sh-cats a [lang="ja"]{font-size:var(--t-1);color:var(--fg-3);letter-spacing:0;white-space:nowrap}
+.sh-cats a .n{font-variant-numeric:tabular-nums;color:var(--fg-2);font-size:var(--t-1)}
+.sh-cats a:hover,.sh-cats a:focus-visible{color:var(--fg)}
+.sh-cats a[aria-current]{color:var(--fg)}
+.sh-cats a[aria-current]::before{content:"";position:absolute;left:-14px;top:50%;width:6px;height:6px;margin-top:-3px;background:var(--fg)}
+.sh-cats a[aria-current] [lang="ja"]{color:var(--fg-2)}
+.sh-cats li.todas{margin-bottom:var(--s-2);padding-bottom:var(--s-2);border-bottom:1px solid var(--line)}
+
+.sh-tools .sh-f{margin-bottom:var(--s-8)}
+.sh-tools .sh-f:last-child{margin-bottom:0}
+.sort{display:flex;flex-direction:column}
+.sort button{
+  display:inline-flex;align-items:center;gap:8px;min-height:32px;
+  font-family:var(--f-mono);font-size:var(--t-2);letter-spacing:.12em;text-transform:uppercase;color:var(--fg-2);
+  text-decoration:underline;text-decoration-color:transparent;text-underline-offset:5px;transition:color var(--dur-fast),text-decoration-color var(--dur-fast);
+}
+.sort button:hover,.sort button:focus-visible{color:var(--fg)}
+.sort button[aria-pressed="true"]{color:var(--fg);text-decoration-color:currentColor}
+.sort .arr{letter-spacing:0}
+.chips{display:flex;flex-wrap:wrap;gap:var(--s-2)}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 10px;border:1px solid var(--line);
+  font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--fg);background:var(--bg);
+  transition:border-color var(--dur-fast),background var(--dur-fast),color var(--dur-fast);
+}
+.chip [lang="ja"]{font-size:var(--t-1);letter-spacing:0}
+.chip:hover,.chip:focus-visible{border-color:var(--fg)}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.chip.mano{border-style:dashed}
+.chip.disc>span:last-child{text-decoration:line-through}
+/* talles como lista tipográfica (igual que ORDENAR): sin cajas, más Demobaza */
+.tls{display:flex;flex-wrap:wrap;gap:0 var(--s-4)}
+.tls button{
+  display:inline-flex;align-items:center;justify-content:center;min-height:32px;min-width:24px;
+  font-family:var(--f-mono);font-size:var(--t-2);letter-spacing:.12em;text-transform:uppercase;color:var(--fg-2);
+  text-decoration:underline;text-decoration-color:transparent;text-underline-offset:5px;transition:color var(--dur-fast),text-decoration-color var(--dur-fast);
+}
+.tls button:hover,.tls button:focus-visible{color:var(--fg)}
+.tls button[aria-pressed="true"]{color:var(--fg);text-decoration-color:currentColor}
+.sh-q{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line);transition:border-color var(--dur-fast)}
+.sh-q:focus-within{border-bottom-color:var(--fg)}
+.sh-q input{flex:1 1 auto;min-width:0;height:36px;font-family:var(--f-mono);font-size:var(--t-2);letter-spacing:.06em;text-transform:uppercase;color:var(--fg)}
+.sh-q input::-webkit-search-cancel-button{-webkit-appearance:none}
+.sh-q .x{flex:0 0 auto;min-width:24px;height:36px;padding:0 4px;white-space:nowrap;font-family:var(--f-mono);font-size:var(--t-1);color:var(--fg-2)}
+.sh-q .x:hover{color:var(--fg)}
+.sh-clear{margin-top:var(--s-8)}
+/* un solo buscador en la página: el del header (alimenta la sala vía ?q=); el local queda en el DOM pero no se muestra en ningún ancho */
+.sh-tools .sh-f.q{display:none}
+
+/* grilla: la consistencia fotográfica ES el diseño */
+.sh-main{min-width:0}
+#sh-grid{transition:opacity var(--dur-fast)}
+#sh-grid.dim{opacity:.35}
+.pcard-meta{flex-direction:column;align-items:flex-start;gap:4px;font-size:var(--t-2)}
+.pcard-nm{overflow-wrap:anywhere}
+/* sellos como parte de la ficha (el rojo de estado de Demobaza va pegado al nombre): en la misma línea que el nombre, nunca stickers sobre la foto */
+#sh-grid .pcard-nm .sellos{position:static;display:inline-flex;vertical-align:middle;margin-left:8px;gap:var(--s-1)}
+#sh-grid .sello{height:18px;padding:0 6px;font-size:var(--t-0);letter-spacing:.1em}
+#sh-grid .sello [lang="ja"]{font-size:var(--t-1)}
+/* la foto manda: la silueta flota sobre el blanco de la sala (sin tile), los fondos de estudio se llevan al blanco y nada se recorta */
+.shop .pcard-ph{background:var(--bg)}
+.shop .pcard-ph .pm-img{transform:scale(1.03);transform-origin:50% 38%;filter:grayscale(1) contrast(1.12) brightness(1.09)}
+/* sesión en estudio gris: la pared se lleva al blanco de la sala (brillo calibrado por pieza, --br) */
+.shop .pcard.gris .pm-img{transform:scale(var(--sc,1.03));filter:grayscale(1) contrast(1.3) brightness(var(--br,1.1))}
+/* con línea de piso en la foto: encuadre anclado arriba y escala calibrada (--sc) para que el piso quede FUERA del cuadro:
+   corte neto a la canilla o la rodilla, sin degradados ni niebla */
+.shop .pcard.gris.corte .pm-img{object-position:50% 0;transform-origin:50% 0}
+@media (hover:hover) and (pointer:fine){
+  .shop .pcard:hover .pm-img,.shop .pcard:focus-visible .pm-img,.shop .pcard.gris:hover .pm-img,.shop .pcard.gris:focus-visible .pm-img{filter:grayscale(0) contrast(1)}
+}
+/* aire quirúrgico entre filas; entre columnas lo justo para que la foto gane escala */
+@media (min-width:1280px){.shop .pgrid{gap:var(--s-16) var(--s-8)}}
+@media (min-width:1024px) and (max-width:1279px){.shop .pgrid{gap:var(--s-12) var(--s-6)}}
+.sh-fin{margin-top:var(--s-16);padding-top:var(--s-6);border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:var(--s-4);flex-wrap:wrap}
+
+/* vacío elegante */
+.sh-vacio{padding:var(--s-16) 0 var(--s-8);max-width:52ch}
+.sh-vacio h2{margin-bottom:var(--s-4)}
+.sh-vacio h2 [lang="ja"]{font-family:var(--f-ja);font-size:.42em;color:var(--fg-2);margin-left:.3em;vertical-align:.15em;font-weight:400}
+.sh-vacio .txt{color:var(--fg-2)}
+.sh-vacio .btn{margin-top:var(--s-6)}
+
+/* ─ desktop compacto ─ */
+@media (max-width:1279px) and (min-width:1024px){
+  .sh-lay{grid-template-columns:max-content minmax(0,1fr) 168px;gap:var(--s-8) var(--s-6)}
+}
+/* ─ tablet + teléfono: índice como chips sticky, herramientas en una tira ─ */
+@media (max-width:1023px){
+  .sh-head{flex-direction:column;align-items:flex-start;gap:var(--s-4);padding:var(--s-6) 0 var(--s-4);border-bottom:0}
+  .sh-head-r{gap:var(--s-4);padding-bottom:0;flex-wrap:wrap}
+  .sh-lay{display:flex;flex-direction:column;align-items:stretch;gap:0;padding-top:0}
+  .sh-cats,.sh-tools,.sh-main{min-width:0;width:auto}
+  .sh-cats{
+    position:sticky;top:var(--hdh,calc(var(--hd) + 48px));z-index:50;order:1;
+    max-height:none;max-width:none;overflow:visible;background:var(--bg);
+    margin-inline:calc(var(--gut) * -1);padding-inline:var(--gut);border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .sh-cats h2{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);margin:0}
+  .sh-cats ul{
+    flex-direction:row;align-items:center;gap:var(--s-4);height:48px;overflow-x:auto;scrollbar-width:none;
+    -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 40px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 40px),transparent);
+    padding-right:40px;
+  }
+  .sh-cats ul::-webkit-scrollbar{display:none}
+  .sh-cats li{flex:0 0 auto}
+  .sh-cats li.todas{margin:0;padding:0 var(--s-4) 0 0;border-bottom:0;border-right:1px solid var(--line)}
+  .sh-cats a{min-height:44px;white-space:nowrap;gap:6px}
+  .sh-cats a .n{display:none}
+  .sh-cats a[aria-current]::before{left:0;right:0;top:auto;bottom:0;width:auto;height:1px;margin:0}
+  /* herramientas: filas que envuelven (nada se corta, nada desborda el documento) */
+  .sh-tools{
+    position:relative;top:auto;order:2;max-height:none;display:block;overflow:visible;
+    margin-inline:calc(var(--gut) * -1);padding:0 var(--gut);border-bottom:1px solid var(--line);
+  }
+  .sh-fs{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s-3) var(--s-8);padding:var(--s-3) 0}
+  .sh-tools .sh-f{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s-2);margin:0;flex:0 1 auto}
+  .sh-tools h2,.sh-tools .lb{margin:0 6px 0 0;white-space:nowrap}
+  .sort{flex-direction:row;flex-wrap:wrap;gap:var(--s-3)}
+  .sort button,.tls button{min-height:44px;white-space:nowrap}
+  .chip{min-height:36px;white-space:nowrap}
+  .sh-main{order:3;padding-top:var(--s-6)}
+}
+@media (max-width:767px){
+  .sh-head h1{margin-top:var(--s-2)}
+  .sh-head-r{width:100%;flex-direction:column;align-items:stretch;gap:var(--s-3)}
+  .sh-head-r .btn{width:100%;padding-inline:var(--s-4)}
+  /* teléfono: orden y filtros se pliegan detrás de un solo control */
+  .sh-tg{
+    display:flex;align-items:center;justify-content:space-between;gap:var(--s-3);width:100%;min-height:48px;
+    font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.16em;text-transform:uppercase;color:var(--fg);text-align:left;
+  }
+  .sh-tg .n{color:var(--fg-2);font-variant-numeric:tabular-nums}
+  .sh-tg .n:empty{display:none}
+  .sh-tools:not(.open) .sh-fs{display:none}
+  .sh-fs{flex-direction:column;align-items:stretch;gap:var(--s-4);padding:var(--s-2) 0 var(--s-6)}
+}
+@media (hover:none),(pointer:coarse){
+  .sh-cats a,.sort button,.tls button{min-height:44px}
+  .sh-cats a{min-width:44px;justify-content:center}
+  .tls button{min-width:44px;justify-content:center}
+  .chip{min-height:44px}
+  .sh-q input,.sh-q .x{height:44px}
+  .sh-q .x{min-width:44px}
+  .sh-q-chip button{display:inline-flex;align-items:center;min-height:44px;min-width:44px;margin-block:-14px;justify-content:center}
+}
+</style>
+
+<style id="pmgate-css">
+/* ═══ CORTINA DE ACCESO — estética de la casa, fail-closed ═══ */
+#pmgate{position:fixed;inset:0;z-index:99999;background:#000;color:#fff;
+  display:grid;place-items:center;padding:24px;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  opacity:1;transition:opacity .45s ease}
+#pmgate.pmgate--out{opacity:0;pointer-events:none}
+#pmgate::after{content:"";position:absolute;inset:-25%;pointer-events:none;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:pmgate-grain 1s steps(6) infinite}
+@keyframes pmgate-grain{0%{transform:translate(0,0)}25%{transform:translate(-3%,-4%)}50%{transform:translate(-6%,2%)}75%{transform:translate(3%,-5%)}100%{transform:translate(2%,-2%)}}
+.pmgate-in{position:relative;z-index:2;width:min(420px,100%);display:grid;gap:26px;justify-items:center;text-align:center}
+.pmgate-mark{width:clamp(56px,14vw,76px);height:auto;fill:#fff}
+.pmgate-kana{font-family:"Noto Sans JP",sans-serif;font-size:clamp(11px,3vw,13px);letter-spacing:.5em;color:#a8a8a8;margin-right:-.5em}
+.pmgate-t{font-size:clamp(10px,2.6vw,11px);letter-spacing:.34em;text-transform:uppercase}
+.pmgate-f{width:100%;display:grid;gap:14px;justify-items:center}
+.pmgate-row{width:100%;display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid #5c5c5c;padding-bottom:10px;transition:border-color .2s}
+.pmgate-row:focus-within{border-bottom-color:#fff}
+.pmgate-cue{font-size:11px;color:#5c5c5c;flex:none}
+#pmgate-i{flex:1;min-width:0;background:none;border:0;color:#fff;
+  font:inherit;font-size:clamp(13px,3.4vw,15px);letter-spacing:.24em;
+  padding:8px 0;min-height:44px;caret-color:#fff}
+#pmgate-i:focus{outline:none}
+#pmgate-i::placeholder{color:#242424;letter-spacing:.3em}
+.pmgate-go{background:none;border:1px solid #5c5c5c;color:#fff;font:inherit;
+  font-size:11px;letter-spacing:.16em;padding:0 14px;min-height:44px;cursor:pointer;
+  transition:background .15s,color .15s,border-color .15s}
+.pmgate-go:hover,.pmgate-go:focus-visible{background:#fff;color:#000;border-color:#fff}
+.pmgate-go:focus-visible{outline:2px solid #fff;outline-offset:3px}
+#pmgate-i:focus-visible{outline:none}
+.pmgate-err{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#a8a8a8;min-height:1.2em}
+.pmgate-foot{font-size:9px;letter-spacing:.2em;color:#5c5c5c;text-transform:uppercase;line-height:2}
+.pmgate-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
+@media (prefers-reduced-motion:reduce){
+  #pmgate{transition:none}
+  #pmgate::after{animation:none}
+}
+</style>
+</head>
+<body>
+<div id="pmgate" role="dialog" aria-modal="true" aria-labelledby="pmgate-t">
+  <div class="pmgate-in">
+    <svg class="pmgate-mark" viewBox="0 0 104 103" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667Z"/></svg>
+    <p class="pmgate-kana" lang="ja" aria-hidden="true">バーニ　マーゴット</p>
+    <p class="pmgate-t" id="pmgate-t">ACCESO PRIVADO</p>
+    <form class="pmgate-f" id="pmgate-f" autocomplete="off" novalidate>
+      <label class="pmgate-sr" for="pmgate-i">Frase de acceso</label>
+      <div class="pmgate-row">
+        <span class="pmgate-cue" aria-hidden="true">&gt;&gt;</span>
+        <input id="pmgate-i" type="password" autocomplete="current-password"
+               spellcheck="false" placeholder="········" aria-describedby="pmgate-e">
+        <button class="pmgate-go" type="submit">[ OK ]</button>
+      </div>
+      <p class="pmgate-err" id="pmgate-e" role="status" aria-live="polite"></p>
+    </form>
+    <p class="pmgate-foot" aria-hidden="true">
+      &lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()&gt;&gt;<br>
+      &gt;&gt;HONDURAS4940##
+    </p>
+  </div>
+</div>
+<main id="contenido" class="shop">
+  <div class="wrap">
+    <div class="sh-head">
+      <div>
+        <p class="ey"><span>SHOP <span lang="ja" aria-hidden="true">店</span></span><span class="sep" aria-hidden="true">/</span><span id="sh-mig">TODAS LAS PIEZAS</span><span id="sh-q-chip" class="sh-q-chip" hidden></span></p>
+        <h1 class="disp disp-l" id="sh-h1"><span id="sh-h1-t">SHOP</span><span class="kj" lang="ja" id="sh-h1-kj">店</span></h1>
+      </div>
+      <div class="sh-head-r">
+        <p class="sh-n ey" id="sh-status" role="status" aria-live="polite" aria-atomic="true"><b id="sh-n">0</b><span id="sh-n-t">PIEZAS EN SALA</span></p>
+        <a class="btn" id="sh-terr" href="./territorio.html" hidden>[ <span lang="ja" aria-hidden="true">漂流</span> ] ENTRAR AL TERRITORIO</a>
+      </div>
+    </div>
+
+    <div class="sh-lay">
+      <nav class="sh-cats" aria-label="Secciones">
+        <h2 class="ey">SECCIONES <span lang="ja" aria-hidden="true">店</span></h2>
+        <ul id="sh-cats"></ul>
+      </nav>
+
+      <section class="sh-main" aria-labelledby="sh-h1">
+        <div class="pgrid" id="sh-grid"></div>
+        <div class="sh-vacio" id="sh-vacio" hidden>
+          <h2 class="disp disp-m">Nada por acá<span lang="ja" aria-hidden="true">店</span></h2>
+          <p class="txt" id="sh-vacio-t">Con esa combinación no queda ninguna pieza en sala. Probá con otro talle, sacá un sello o cambiá de sección.</p>
+          <button type="button" class="btn" id="sh-clear">LIMPIAR FILTROS</button>
+        </div>
+        <div class="sh-fin ey" id="sh-fin" hidden>
+          <span><b id="sh-fin-n">0</b> PIEZAS · TODO LO PUBLICADO ESTÁ DISPONIBLE · CADA UNA ES ÚNICA</span>
+          <a class="lnk" href="./archivo.html">LO VENDIDO VIVE EN EL ARCHIVO <span lang="ja" aria-hidden="true">記憶</span></a>
+        </div>
+      </section>
+
+      <aside class="sh-tools" aria-label="Orden y filtros">
+        <button type="button" class="sh-tg" id="sh-tg" aria-expanded="false" aria-controls="sh-fs"><span><span aria-hidden="true">[ + ]</span> ORDENAR Y FILTRAR</span><span class="n" id="sh-tg-n"></span></button>
+        <div class="sh-fs" id="sh-fs">
+        <div class="sh-f">
+          <h2 class="ey">ORDENAR</h2>
+          <div class="sort" id="sh-sort" role="group" aria-label="Ordenar">
+            <button type="button" data-sort="nuevo" aria-pressed="true">LO NUEVO</button>
+            <button type="button" data-sort="up" aria-pressed="false">PRECIO <span class="arr" aria-hidden="true">↑</span><span class="sr">de menor a mayor</span></button>
+            <button type="button" data-sort="down" aria-pressed="false">PRECIO <span class="arr" aria-hidden="true">↓</span><span class="sr">de mayor a menor</span></button>
+          </div>
+        </div>
+        <div class="sh-f">
+          <h2 class="ey">MI TALLE</h2>
+          <div class="tls" id="sh-tl" role="group" aria-label="Filtrar por talle">
+            <button type="button" data-tl="S" aria-pressed="false">S</button>
+            <button type="button" data-tl="M" aria-pressed="false">M</button>
+            <button type="button" data-tl="L" aria-pressed="false">L</button>
+            <button type="button" data-tl="XL" aria-pressed="false">XL</button>
+            <button type="button" data-tl="U" aria-pressed="false">ÚNICO</button>
+          </div>
+        </div>
+        <div class="sh-f">
+          <h2 class="ey">SELLOS</h2>
+          <div class="chips" id="sh-se" role="group" aria-label="Filtrar por sello">
+            <button type="button" class="chip uno" data-se="一点物" aria-pressed="false"><span lang="ja" aria-hidden="true">一点物</span><span>1/1</span><span class="sr">Pieza única</span></button>
+            <button type="button" class="chip mano" data-se="手描き" aria-pressed="false"><span lang="ja" aria-hidden="true">手描き</span><span>A MANO</span><span class="sr">Pintado a mano</span></button>
+            <button type="button" class="chip disc" data-se="不連続" aria-pressed="false"><span lang="ja" aria-hidden="true">不連続</span><span>DISCONTINOUS</span></button>
+          </div>
+        </div>
+        <div class="sh-f q">
+          <label class="ey lb" for="sh-q">BUSCAR</label>
+          <div class="sh-q">
+            <input id="sh-q" type="search" autocomplete="off" placeholder="PIEZA, TEXTIL, SECCIÓN…">
+            <button type="button" class="x" id="sh-q-x" aria-label="Borrar búsqueda" hidden>[ × ]</button>
+          </div>
+        </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+<script src="./catalogo.js"></script>
+<script src="./base.js"></script>
+<script>
+(function () {
+  'use strict';
+  PM.montarCromo({ activa: 'shop', modulo: 'blanco' });
+
+  var d = document, C = window.CATALOGO || { piezas: [], categorias: [] };
+  var CATS = C.categorias || [], PIEZAS = (C.piezas || []).slice();
+  var KEYS = CATS.map(function (c) { return c.key; });
+  function catValida(k) { k = String(k || '').toUpperCase().replace(/ WORLD$/, ''); return KEYS.indexOf(k) > -1 ? k : ''; }
+  function catDe(k) { for (var i = 0; i < CATS.length; i++) if (CATS[i].key === k) return CATS[i]; return null; }
+  function nombre(c) { return String(c.nombre || c.key).toUpperCase(); }
+
+  var SORTS = { nuevo: 'LO NUEVO', up: 'PRECIO ↑', down: 'PRECIO ↓' };
+  var TLS = ['S', 'M', 'L', 'XL', 'U'], SES = ['一点物', '手描き', '不連続'];
+  var st = { cat: '', q: '', sort: 'nuevo', tl: [], se: [] };
+  /* todo el estado vive en la URL: sección, búsqueda, orden, talles y sellos (compartible, vuelve intacto desde la ficha) */
+  function leerURL() {
+    var u = new URLSearchParams(location.search);
+    st.cat = catValida(u.get('cat')); st.q = (u.get('q') || '').trim();
+    var s = u.get('sort'); st.sort = Object.prototype.hasOwnProperty.call(SORTS, s) ? s : 'nuevo';
+    st.tl.length = 0; (u.get('tl') || '').split(',').forEach(function (t) { if (TLS.indexOf(t) > -1) st.tl.push(t); });
+    st.se.length = 0; (u.get('se') || '').split(',').forEach(function (s) { if (SES.indexOf(s) > -1) st.se.push(s); });
+  }
+
+  var $ = function (s, r) { return (r || d).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || d).querySelectorAll(s)); };
+  var grid = $('#sh-grid'), vacio = $('#sh-vacio'), fin = $('#sh-fin');
+  function marcarControles() {
+    $$('#sh-sort button').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-sort') === st.sort ? 'true' : 'false'); });
+    $$('#sh-tl button').forEach(function (b) { b.setAttribute('aria-pressed', st.tl.indexOf(b.getAttribute('data-tl')) > -1 ? 'true' : 'false'); });
+    $$('#sh-se button').forEach(function (b) { b.setAttribute('aria-pressed', st.se.indexOf(b.getAttribute('data-se')) > -1 ? 'true' : 'false'); });
+  }
+
+  /* alto real del header (dos filas en tablet/teléfono) → chips sticky */
+  function medirHd() { var h = $('.pm-hd'); if (h) d.documentElement.style.setProperty('--hdh', h.offsetHeight + 'px'); }
+  medirHd(); addEventListener('resize', medirHd);
+
+  /* ── índice de secciones ── */
+  function pintarCats() {
+    var total = PIEZAS.length;
+    var h = '<li class="todas"><a href="./shop.html" data-cat=""' + (!st.cat ? ' aria-current="page"' : '') + '><span>TODAS</span><span class="n">' + total + '</span></a></li>';
+    h += CATS.map(function (c) {
+      var n = PIEZAS.filter(function (p) { return p.cat === c.key; }).length;
+      return '<li><a href="./shop.html?cat=' + encodeURIComponent(c.key) + '" data-cat="' + PM.esc(c.key) + '"' + (st.cat === c.key ? ' aria-current="page"' : '') + '>' +
+        '<span>' + PM.esc(nombre(c)) + (c.kj ? ' <span lang="ja" aria-hidden="true">' + PM.esc(c.kj) + '</span>' : '') + '</span><span class="n">' + n + '</span></a></li>';
+    }).join('');
+    $('#sh-cats').innerHTML = h;
+    /* centrar el chip activo en la tira (solo la tira: nunca la página) */
+    var act = $('#sh-cats a[aria-current]'), ul = $('#sh-cats');
+    if (act && innerWidth < 1024) ul.scrollLeft = Math.max(0, act.offsetLeft - (ul.clientWidth - act.offsetWidth) / 2);
+  }
+
+  /* ── cabecera ── */
+  function pintarHead() {
+    var c = st.cat ? catDe(st.cat) : null;
+    $('#sh-mig').textContent = c ? nombre(c) : 'TODAS LAS PIEZAS';
+    $('#sh-h1-t').textContent = c ? nombre(c) : 'SHOP';
+    $('#sh-h1-kj').textContent = c ? (c.kj || '') : '店';
+    var t = $('#sh-terr');
+    if (c) { t.hidden = false; t.href = './territorio.html?cat=' + encodeURIComponent(c.key); t.setAttribute('aria-label', 'Entrar al territorio de ' + nombre(c)); }
+    else t.hidden = true;
+    var chip = $('#sh-q-chip');
+    if (st.q) { chip.hidden = false; chip.innerHTML = '<span class="sep" aria-hidden="true">/</span><span>«' + PM.esc(st.q.toUpperCase()) + '»</span><button type="button" id="sh-q-out" aria-label="Quitar la búsqueda">[ × ]</button>'; }
+    else { chip.hidden = true; chip.innerHTML = ''; }
+    d.title = (c ? String(c.nombre || c.key) + ' ' + (c.kj || '') : 'Shop 店') + ' — Panni Margot';
+    var q = $('#sh-q'); if (q && q.value !== st.q) q.value = st.q;
+    $('#sh-q-x').hidden = !st.q;
+    var hq = $('#pm-q'); if (hq && hq.value !== st.q) hq.value = st.q;
+  }
+
+  /* ── filtro + orden ── */
+  function filtrar() {
+    var q = st.q.toLowerCase();
+    var out = PIEZAS.filter(function (p) {
+      if (st.cat && p.cat !== st.cat) return false;
+      if (st.tl.length && !st.tl.some(function (t) { return p.tl === t || (p.tls || []).indexOf(t) > -1; })) return false;
+      if (st.se.length && !st.se.some(function (s) { return (p.sellos || []).indexOf(s) > -1; })) return false;
+      if (q) {
+        var blob = [p.nm, p.cat, p.kj, p.sku, (p.mat || []).join(' '), p.desc || ''].join(' ').toLowerCase();
+        if (blob.indexOf(q) < 0) return false;
+      }
+      return true;
+    });
+    if (st.sort === 'up') out.sort(function (a, b) { return (a.pr || 0) - (b.pr || 0); });
+    else if (st.sort === 'down') out.sort(function (a, b) { return (b.pr || 0) - (a.pr || 0); });
+    else out.sort(function (a, b) { return tsSala(b) - tsSala(a); });
+    return out;
+  }
+
+  /* toma de sala: la primera foto de la grilla es siempre la frontal de cuerpo entero sobre el fondo más claro
+     (la toma original pasa a segunda: es la que aparece en hover). La ficha sigue usando el orden del catálogo. */
+  var TOMA = {
+    /* ABRIGOS */
+    'blazer-nuime': 4, 'campera-kyappu': 1, 'poncho-nuno': 4, 'tapado-taika': 1, 'tapado-taika-brushed-mask': 1,
+    'buzo-kiji': 2, 'buzo-haori-brushed': 4, 'trench-shukai-organza-j35qv': 2, 'campera-gamu-jo-tca43': 9,
+    'trench-shukai-memory-ebqcb': 1, 'trench-shukai-silver-1usjo': 9, 'camisa-kurokk-190jt': 3, 'sweater-soshiki-161dt': 4,
+    /* CAMISAS */
+    'camisa-cropped-baikara-black-1': 6,
+    /* VESTIDOS */
+    'capa-vestido-so-1': 3, 'vestido-jedai': 5,
+    /* PANTALONES */
+    'pantalon-gamu-1': 3, 'pantalon-torihazushi-satinado': 2, 'pantalon-pinsetto-bvs6s': 1, 'pantalon-tateyama-1bnse': 4,
+    'bermuda-kinpu-16kza': 2, 'pantalon-musubime-vuwhp': 3,
+    /* DISCONTINOUS */
+    'buzo-vestido-naga-sa-1': 3
+  };
+  /* sesiones en estudio gris: calibración por pieza medida sobre la toma de sala (02/09, luminancia de la pared y altura de la
+     línea del piso en la foto): [corte, escala, brillo]. corte=1 → el encuadre se ancla arriba y la escala deja la línea del piso
+     FUERA del cuadro (corte neto a la canilla/rodilla); brillo → la pared de esa sesión llega al blanco de la sala. MANUK va sobre negro a propósito. */
+  var CAL = {
+    /* ABRIGOS */
+    'blazer-nuime': [0, 1.03, 1.09], 'trench-firewall-1-4': [0, 1.03, 1.03], 'buzo-haori-brushed': [1, 1.21, 1.0], 'trench-shukai-organza-j35qv': [1, 1.03, 1.14], 'campera-gamu-jo-tca43': [1, 1.03, 1.26], 'trench-shukai-memory-ebqcb': [1, 1.15, 1.0], 'trench-shukai-silver-1usjo': [1, 1.19, 1.1], 'sweater-soshiki-161dt': [1, 1.33, 1.06],
+    /* VESTIDOS */
+    'capa-vestido-so-1': [0, 1.03, 1.17], 'vestido-bitcoin-1': [1, 1.24, 1.0], 'mono-yakushoku': [1, 1.24, 1.0],
+    /* DISCONTINOUS */
+    'buzo-vestido-naga-sa-1': [0, 1.03, 1.19], 'jean-tsuru-blue': [0, 1.03, 1.16], 'pantalon-deportivo-tartan-nn': [0, 1.03, 1.14],
+    /* CAMISAS */
+    'camisa-over-poketto-white-brushed-5': [0, 1.03, 1.06], 'camisa-oversize-baikara-poplin-white-brushed': [0, 1.03, 1.1], 'camisa-yuno-poplin-black': [0, 1.03, 1.09], 'camisa-mitake-7kf2x': [1, 1.36, 1.14], 'camisa-mitake-1v1y9': [1, 1.24, 1.0], 'camisa-baikara-top-z00un': [1, 1.19, 1.45],
+    /* KIMONOS */
+    'saco-kimono': [0, 1.03, 1.12], 'tapado-kimono-brushed-kangae': [0, 1.03, 1.17], 'tapado-aka-1mn5v': [1, 1.18, 1.14], 'tapado-suko-1h339': [1, 1.21, 1.1], 'tapado-purotto-1p6nz': [1, 1.18, 1.15], 'kimono-koto-1rpv5': [0, 1.03, 1.06],
+    /* REMERAS */
+    'remera-waffuru': [0, 1.03, 1.15], 'remera-oversize-purasu-black': [0, 1.03, 1.04], 'remera-puritsu-z2liy': [1, 1.03, 1.0], 'remera-haku-b9q68': [1, 1.08, 1.0], 'remera-pannito-8-bits-1ulsz': [1, 1.19, 1.11], 'remera-samurai-white-sjb13': [1, 1.23, 1.0], 'remera-samurai-black-1g7y1': [1, 1.16, 1.22],
+    /* PANTALONES */
+    'pantalon-torihazushi': [0, 1.03, 1.19], 'pantalon-torihazushi-satinado': [0, 1.03, 1.15], 'pantalon-hasu': [1, 1.29, 1.0], 'pantalon-pinsetto-bvs6s': [1, 1.24, 1.15], 'falda-pantalon-suedo-hxz5f': [1, 1.17, 1.02], 'pantalon-tateyama-1bnse': [1, 1.23, 1.01], 'bermuda-daisen-xcp0p': [1, 1.15, 1.17], 'bermuda-kinpu-16kza': [1, 1.3, 1.02], 'pantalon-musubime-vuwhp': [1, 1.38, 1.19]
+  };
+  var GRIS = CAL;
+  /* la primera tarjeta de una sala nunca es de estudio gris: el Blazer Nuime (la más nueva del dump, sin toma sobre blanco)
+     entra en LO NUEVO detrás de las tres primeras sobre blanco (ts de sala, no del catálogo) */
+  var TS_SALA = { 'blazer-nuime': 231 };
+  function tsSala(p) { return TS_SALA[p.id] != null ? TS_SALA[p.id] : (p.ts || 0); }
+  function deSala(p) {
+    var i = TOMA[p.id]; if (!i || !p.imgs || !p.imgs[i]) return p;
+    var imgs = p.imgs.slice(); imgs.splice(i, 1); imgs.unshift(p.imgs[i]);
+    var q = Object.create(p); q.imgs = imgs; q.lq = C.lo ? C.lo(imgs[0]) : imgs[0]; return q;
+  }
+  function pintarGrid() {
+    var lista = filtrar(), n = lista.length;
+    /* la primera fila (3 en desktop) con prioridad alta; el resto lazy con LQIP. La foto B (hover) solo con puntero fino: en touch nunca se muestra */
+    grid.innerHTML = lista.map(function (p, i) { var c = CAL[p.id]; return PM.pcardHTML(deSala(p), { eager: i < 3, hover: PM.FINE, cls: c ? 'gris' + (c[0] ? ' corte' : '') : '' }); }).join('');
+    /* calibración de cada sesión gris: escala y brillo como variables de la tarjeta (el hover del sistema sigue mandando sobre el filtro) */
+    $$('.pcard.gris', grid).forEach(function (c) { var k = CAL[c.getAttribute('data-id')]; if (k) { c.style.setProperty('--sc', k[1]); c.style.setProperty('--br', k[2]); } });
+    /* los sellos dejan la foto y se pegan al nombre (estado junto al nombre, como el rojo de Demobaza) */
+    $$('.pcard', grid).forEach(function (c) { var s = $('.pcard-ph > .sellos', c), nm = $('.pcard-nm', c); if (s && nm) nm.appendChild(s); });
+    /* plegable de teléfono: el orden activo siempre visible + cantidad de filtros */
+    var act = st.tl.length + st.se.length;
+    $('#sh-tg-n').textContent = '· ' + SORTS[st.sort] + (act ? ' · ' + act + (act === 1 ? ' FILTRO' : ' FILTROS') : '');
+    /* variante grande para pantallas densas */
+    $$('.pcard-a', grid).forEach(function (img) {
+      var src = img.getAttribute('src'); if (!src || !C.hi) return;
+      img.setAttribute('srcset', src + ' 640w, ' + C.hi(src) + ' 1024w');
+      img.setAttribute('sizes', '(min-width:1024px) 30vw, 50vw');
+    });
+    $('#sh-n').textContent = n;
+    $('#sh-n-t').textContent = n === 1 ? 'PIEZA EN SALA' : 'PIEZAS EN SALA';
+    vacio.hidden = n > 0; fin.hidden = n === 0;
+    if (!n) {
+      var hayF = st.tl.length || st.se.length;
+      $('#sh-vacio-t').textContent = st.q && !hayF
+        ? 'No hay ninguna pieza que responda a «' + st.q.toUpperCase() + '». Probá con otra palabra, o entrá a una sección y mirá lo que hay.'
+        : st.q ? 'Con esa búsqueda y esos filtros no queda ninguna pieza en sala. Sacá un filtro, probá otra palabra o cambiá de sección.'
+        : 'Con esa combinación no queda ninguna pieza en sala. Probá con otro talle, sacá un sello o cambiá de sección.';
+      $('#sh-clear').textContent = st.q && !hayF ? 'QUITAR LA BÚSQUEDA' : 'LIMPIAR FILTROS';
+    }
+    $('#sh-fin-n').textContent = n;
+    grid.classList.remove('dim');
+  }
+
+  function url(push) {
+    var p = new URLSearchParams();
+    if (st.cat) p.set('cat', st.cat);
+    if (st.q) p.set('q', st.q);
+    if (st.sort !== 'nuevo') p.set('sort', st.sort);
+    if (st.tl.length) p.set('tl', st.tl.join(','));
+    if (st.se.length) p.set('se', st.se.join(','));
+    var u = location.pathname + (p.toString() ? '?' + p.toString() : '');
+    try { history[push ? 'pushState' : 'replaceState']({ cat: st.cat, q: st.q, sort: st.sort, tl: st.tl.slice(), se: st.se.slice() }, '', u); } catch (e) {}
+  }
+  function pintar() { pintarCats(); pintarHead(); pintarGrid(); }
+
+  /* ── eventos ── */
+  $('#sh-cats').addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-cat]'); if (!a) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button) return;
+    e.preventDefault();
+    st.cat = a.getAttribute('data-cat') || '';
+    pintar(); url(true);
+    /* el índice se vuelve a pintar: el foco vuelve al link activo (teclado / lector de pantalla no quedan en <body>) */
+    var f = $('#sh-cats a[aria-current]'); if (f) f.focus({ preventScroll: true });
+    var top = $('.sh-head').getBoundingClientRect().top + scrollY;
+    if (scrollY > top) scrollTo({ top: top, behavior: PM.RM ? 'auto' : 'smooth' });
+  });
+  $('#sh-sort').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-sort]'); if (!b) return;
+    st.sort = b.getAttribute('data-sort');
+    $$('button', this).forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+    pintarGrid(); url(false);
+  });
+  function toggleChips(root, key, arr) {
+    root.addEventListener('click', function (e) {
+      var b = e.target.closest('button[data-' + key + ']'); if (!b) return;
+      var v = b.getAttribute('data-' + key), i = arr.indexOf(v);
+      if (i > -1) arr.splice(i, 1); else arr.push(v);
+      b.setAttribute('aria-pressed', i > -1 ? 'false' : 'true');
+      pintarGrid(); url(false);
+    });
+  }
+  toggleChips($('#sh-tl'), 'tl', st.tl);
+  toggleChips($('#sh-se'), 'se', st.se);
+  /* plegable de teléfono */
+  var tools = $('.sh-tools'), tg = $('#sh-tg');
+  tg.addEventListener('click', function () {
+    var open = !tools.classList.contains('open');
+    tools.classList.toggle('open', open); tg.setAttribute('aria-expanded', open ? 'true' : 'false');
+    $('[aria-hidden]', tg).textContent = open ? '[ − ]' : '[ + ]';
+  });
+
+  var q = $('#sh-q'), tq = 0;
+  q.addEventListener('input', function () {
+    clearTimeout(tq); grid.classList.add('dim');
+    tq = setTimeout(function () { st.q = q.value.trim(); pintarHead(); pintarGrid(); url(false); }, 180);
+  });
+  q.addEventListener('keydown', function (e) { if (e.key === 'Escape') { q.value = ''; q.dispatchEvent(new Event('input')); } });
+  $('#sh-q-x').addEventListener('click', function () { q.value = ''; st.q = ''; pintarHead(); pintarGrid(); url(false); q.focus(); });
+  d.addEventListener('click', function (e) {
+    if (e.target.id === 'sh-q-out') { st.q = ''; pintarHead(); pintarGrid(); url(false); }
+  });
+  /* el buscador del header es global: busca en TODAS las secciones (sin vacíos falsos por estar en una sala) */
+  var hb = $('.pm-buscar');
+  if (hb) hb.addEventListener('submit', function (e) {
+    var i = $('#pm-q'); if (!i || !i.value.trim()) return;
+    e.preventDefault(); st.q = i.value.trim(); st.cat = ''; pintar(); url(true);
+    if (hb.classList.contains('open')) { hb.classList.remove('open'); var tg = $('.pm-buscar-tg', hb); if (tg) tg.setAttribute('aria-expanded', 'false'); }
+    var top = $('.sh-head').getBoundingClientRect().top + scrollY; scrollTo({ top: top, behavior: PM.RM ? 'auto' : 'smooth' });
+  });
+  $('#sh-clear').addEventListener('click', function () {
+    st.tl.length = 0; st.se.length = 0; st.q = ''; q.value = '';
+    marcarControles();
+    pintarHead(); pintarGrid(); url(false);
+    var f = $('#sh-cats a[aria-current]'); if (f) f.focus();
+  });
+  addEventListener('popstate', function () { leerURL(); marcarControles(); pintar(); });
+
+  leerURL(); marcarControles(); pintar(); url(false);
+})();
+</script>
+
+<script id="pmgate-js">
+/* Cortina de acceso. Recuerda el ingreso por dispositivo. */
+(function(){
+  var H='d5600e28005cacbad0d820784e3f9f75220b38689e9c7e16bda6513d11c3443e', K='pm_gate_ok';
+  var g=document.getElementById('pmgate');
+  if(!g) return;
+  var root=document.documentElement;
+  var f=document.getElementById('pmgate-f'), i=document.getElementById('pmgate-i'), e=document.getElementById('pmgate-e');
+  var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  function abrir(){
+    root.classList.remove('pmgate-lock');
+    if(RM){ g.remove(); return; }
+    g.classList.add('pmgate--out');
+    setTimeout(function(){ g.remove(); }, 480);
+  }
+
+  try{ if(localStorage.getItem(K)===H){ abrir(); return; } }catch(err){}
+
+  root.classList.add('pmgate-lock');
+  setTimeout(function(){ try{ i.focus(); }catch(err){} }, 60);
+
+  async function sha(txt){
+    var b=new TextEncoder().encode(txt);
+    var d=await crypto.subtle.digest('SHA-256', b);
+    return Array.from(new Uint8Array(d)).map(function(x){return x.toString(16).padStart(2,'0');}).join('');
+  }
+
+  f.addEventListener('submit', async function(ev){
+    ev.preventDefault();
+    var v=i.value;
+    if(!v){ e.textContent=''; i.focus(); return; }
+    var h;
+    try{ h=await sha(v); }catch(err){ e.textContent='[ !! ] SIN CONEXIÓN SEGURA'; return; }
+    if(h===H){
+      try{ localStorage.setItem(K,H); }catch(err){}
+      e.textContent='[ OK ]';
+      abrir();
+    }else{
+      e.textContent='[ !! ] NO';
+      i.value=''; i.focus();
+    }
+  });
+
+  /* El foco no sale del portón mientras esté cerrado. */
+  g.addEventListener('keydown', function(ev){
+    if(ev.key!=='Tab') return;
+    var f2=g.querySelectorAll('input,button');
+    if(!f2.length) return;
+    var pri=f2[0], ult=f2[f2.length-1];
+    if(ev.shiftKey && document.activeElement===pri){ ev.preventDefault(); ult.focus(); }
+    else if(!ev.shiftKey && document.activeElement===ult){ ev.preventDefault(); pri.focus(); }
+  });
+})();
+</script>
+</body>
+</html>

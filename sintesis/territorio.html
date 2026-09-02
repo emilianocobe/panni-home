@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Territorio 漂流 — Panni Margot</title>
+<meta name="description" content="Deriva por una sección de la casa: las piezas reales flotando en un plano, para recorrer sin orden.">
+<link rel="icon" href="../favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./base.css">
+<style>
+/* ═══ TERRITORIO · deriva de UNA sección · módulo negro ═══ */
+.terr{display:flex;flex-direction:column}
+
+/* el plano ocupa el viewport bajo el header; el pie de la casa queda debajo */
+#mapa{
+  position:relative;height:calc(100dvh - var(--hdh,72px));min-height:520px;overflow:hidden; /* hidden (no clip): el propio #mapa absorbe el scroll-into-view del foco y el listener lo resetea */
+  touch-action:pinch-zoom;background:var(--bg);-webkit-user-select:none;user-select:none;
+  border-bottom:1px solid var(--line);outline-offset:-3px;
+}
+#mapa:focus-visible{outline:1px solid var(--fg)}
+#plano{position:absolute;top:0;left:0;will-change:transform;z-index:1}
+#voro{position:absolute;inset:0;pointer-events:none}
+#voro polygon{fill:none;stroke:var(--line);stroke-width:1}
+#voro circle{fill:var(--line)}
+
+/* piezas */
+.pz{position:absolute;display:block;color:var(--fg);-webkit-tap-highlight-color:transparent}
+.pz .ph{display:block;background:var(--surface);box-shadow:0 0 0 1px rgba(255,255,255,.04)}
+.pz .pm-img{filter:grayscale(1) contrast(1.1)}
+/* la cinta del SKU entra entera: hasta dos líneas, sin elipsis */
+.pz .tag{display:block;max-width:100%;margin-top:7px;font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.12em;text-transform:uppercase;color:var(--fg-2);white-space:normal;overflow-wrap:anywhere;overflow:hidden;line-height:1.35;max-height:2.7em}
+.pz .tag [lang="ja"]{letter-spacing:0}
+.pz:focus-visible{outline:1px solid var(--fg);outline-offset:8px}
+@media (hover:hover) and (pointer:fine){
+  .pz:hover .pm-img,.pz:focus-visible .pm-img{filter:grayscale(0) contrast(1)}
+  .pz:hover .tag,.pz:focus-visible .tag{color:var(--fg)}
+}
+
+/* HUD: dato puro sobre el foco */
+.hud{position:absolute;z-index:7;pointer-events:none}
+.hud a,.hud button{pointer-events:auto}
+/* el título no se mezcla con el plano: lleva un velo negro radial detrás para leerse siempre */
+.hud-t{top:clamp(24px,5vh,56px);left:var(--gut);max-width:min(70vw,900px)}
+.hud-t::before{content:"";position:absolute;inset:-24px -72px -32px -40px;z-index:-1;background:radial-gradient(ellipse at 40% 50%,rgba(0,0,0,.86) 30%,rgba(0,0,0,0) 75%);pointer-events:none}
+.hud-t .ey{color:var(--fg-2)}
+.hud-t h1{margin-top:var(--s-3);display:flex;align-items:baseline;gap:.3em;flex-wrap:wrap}
+.hud-t h1 .kj{font-family:var(--f-ja);font-size:.38em;font-weight:400;letter-spacing:.1em;color:var(--fg-2);text-transform:none;line-height:1}
+.hud-t .kana{display:block;margin-top:var(--s-3);font-family:var(--f-ja);font-size:var(--t-3);letter-spacing:.5em;color:var(--fg-2)}
+.hud-ctl{top:clamp(24px,5vh,56px);right:var(--gut);display:flex;gap:var(--s-2);align-items:center}
+.hud-ctl .btn{background:var(--bg)}
+/* la línea de datos del pie lleva un velo negro degradado detrás (como el título): se lee siempre, sin pisar fotos en negativo */
+.hud-b{left:var(--gut);right:var(--gut);bottom:var(--s-4);display:flex;justify-content:space-between;align-items:flex-end;gap:var(--s-6)}
+.hud-b::before{content:"";position:absolute;z-index:-1;left:calc(var(--gut) * -1);right:calc(var(--gut) * -1);bottom:calc(var(--s-4) * -1);height:120px;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.88));pointer-events:none}
+.hud-b .ey{display:flex;flex-wrap:wrap;gap:6px var(--s-4);align-items:center;color:var(--fg-2)}
+.hud-b .ey b{color:var(--fg);font-variant-numeric:tabular-nums}
+.hud-b .dial{text-transform:none;letter-spacing:.06em;color:var(--fg)}
+.hud-b .der{text-align:right;justify-content:flex-end}
+.hud-pas i{display:inline-block;width:7px;height:7px;border:1px solid var(--fg-2);margin-right:2px}
+.hud-pas i.on{background:var(--fg);border-color:var(--fg)}
+.hud-pie{position:absolute;left:50%;bottom:var(--s-4);transform:translateX(-50%);z-index:7;display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.16em;color:var(--fg-2);mix-blend-mode:difference}
+.hud-pie:hover,.hud-pie:focus-visible{color:var(--fg)}
+.hud-pie .t-pie{display:none}
+.vert-kana{position:absolute;left:calc(var(--gut) - 2px);top:50%;transform:translateY(-50%);z-index:7;pointer-events:none;writing-mode:vertical-rl;font-family:var(--f-ja);font-size:var(--t-3);letter-spacing:.5em;color:var(--fg-2);mix-blend-mode:difference}
+
+/* rizo al soltar el arrastre */
+.rip{position:fixed;z-index:940;width:16px;height:16px;margin:-8px 0 0 -8px;border:1px solid var(--fg);border-radius:50%;pointer-events:none;mix-blend-mode:difference;animation:t-rip .6s ease-out forwards}
+@keyframes t-rip{0%{transform:scale(1);opacity:.9}100%{transform:scale(9);opacity:0}}
+
+/* revelado circular hacia la ficha (sala blanca) */
+/* (solo transform: un disco blanco que crece desde el punto del click) */
+.t-circ{position:fixed;left:var(--cx,50%);top:var(--cy,50%);z-index:300;width:300vmax;height:300vmax;margin:-150vmax 0 0 -150vmax;border-radius:50%;background:var(--white);pointer-events:none;transform:scale(0);will-change:transform;transition:transform .55s var(--ease)}
+.t-circ.on{transform:scale(1)}
+
+/* vista lista: la renuncia hecha sistema */
+.t-lista{
+  position:fixed;inset:0;z-index:210;background:var(--cromo-bg);color:var(--cromo-fg);
+  display:flex;flex-direction:column;opacity:0;transition:opacity var(--dur-fast);
+}
+.t-lista.on{opacity:1}
+.t-lista .pm-dlg-h{padding-inline:var(--gut)}
+.t-lista .pm-dlg-b{padding:var(--s-8) var(--gut)}
+.t-lista ol{max-width:1100px;margin-inline:auto;border-top:1px solid var(--cromo-line)}
+.li-row{
+  display:grid;grid-template-columns:40px minmax(0,1fr) 320px 90px 120px;gap:var(--s-4);align-items:baseline;
+  min-height:52px;padding:var(--s-4) var(--s-1);border-bottom:1px solid var(--cromo-line);
+  font-family:var(--f-mono);font-size:var(--t-2);letter-spacing:.1em;text-transform:uppercase;color:var(--cromo-fg);
+  transition:background var(--dur-fast);
+}
+.li-row:hover,.li-row:focus-visible{background:var(--cromo-surface)}
+.li-row .ix{color:var(--cromo-fg-2);font-variant-numeric:tabular-nums}
+.li-row .nm{font-family:var(--f-text);font-weight:500;letter-spacing:.08em}
+.li-row .nm .sellos{display:inline-flex;margin-left:8px;vertical-align:middle}
+.li-row .sk{color:var(--cromo-fg-2);font-size:var(--t-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li-row .tl{color:var(--cromo-fg-2);font-size:var(--t-1)}
+.li-row .pr{text-align:right;font-variant-numeric:tabular-nums}
+.t-lista .pm-dlg-f{display:flex;gap:var(--s-3);flex-wrap:wrap;justify-content:space-between;align-items:center;padding-inline:var(--gut)}
+.t-lista .pm-dlg-f .ey{color:var(--cromo-fg-2)}
+
+/* sin sección válida: índice de territorios */
+.t-idx{padding-block:var(--s-16) var(--s-24)}
+.t-idx a>span:first-child{display:inline-flex;align-items:baseline;gap:.4em;min-width:0}
+.t-idx h1{margin:var(--s-3) 0 var(--s-8)}
+.t-idx h1 .kj{font-family:var(--f-ja);font-size:.38em;font-weight:400;color:var(--fg-2);margin-left:.3em;vertical-align:.2em}
+.t-idx ul{border-top:1px solid var(--line)}
+.t-idx a{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-4);min-height:64px;padding:var(--s-4) 0;border-bottom:1px solid var(--line);font-family:var(--f-display);font-size:var(--t-7);text-transform:uppercase;line-height:1;color:var(--fg)}
+.t-idx a .kj{font-family:var(--f-ja);font-size:.5em;color:var(--fg-2);margin-left:.4em}
+.t-idx a .n{font-family:var(--f-mono);font-size:var(--t-2);letter-spacing:.14em;color:var(--fg-2)}
+.t-idx a:hover .n,.t-idx a:focus-visible .n{color:var(--fg)}
+
+@media (max-width:1023px){
+  .t-lista .pm-dlg-b{padding:var(--s-6) var(--gut)}
+  .li-row{grid-template-columns:32px minmax(0,1fr) 110px;gap:var(--s-3)}
+  .li-row .sk,.li-row .tl{display:none}
+}
+@media (max-width:767px){
+  #mapa{min-height:480px}
+  .vert-kana{display:none}
+  .hud-t{top:var(--s-4);max-width:calc(100vw - var(--gut) * 2)}
+  .hud-t::before{inset:-16px -40px -24px -24px}
+  .hud-t h1 .kj{font-size:.32em}
+  .hud-t .kana{display:none}
+  .hud-ctl{top:auto;bottom:var(--s-4);left:var(--gut);right:var(--gut);justify-content:space-between}
+  .hud-ctl .btn{flex:1 1 0;padding-inline:var(--s-3);font-size:var(--t-1)}
+  .t-vis{display:none}
+  /* teléfono: una sola línea de datos (piezas · pasaporte · pie de la casa) sobre los dos botones: el HUD ocupa lo mínimo */
+  .hud-b{bottom:calc(var(--s-4) + 52px);flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:var(--s-1) var(--s-4)}
+  .hud-b::before{height:150px}
+  .hud-b .ey{gap:4px var(--s-3)}
+  .hud-b .der{text-align:left;justify-content:flex-start}
+  .hud-b .dial,.hud-b .coords{display:none}
+  /* en touch no hay rueda que ceda el scroll: el atajo al pie vive como texto en la línea de datos (el arrastre en el borde inferior también baja) */
+  .hud-pie{position:static;transform:none;mix-blend-mode:normal;min-height:0;min-width:0;padding:0;color:var(--fg-2);letter-spacing:.14em;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--fg-3)}
+  .hud-pie .t-pie{display:inline;margin-left:6px}
+  .hud-pie:hover,.hud-pie:focus-visible{color:var(--fg);text-decoration-color:currentColor}
+  .t-idx a{font-size:var(--t-6)}
+}
+@media (hover:none),(pointer:coarse){
+  .pz .tag{font-size:var(--t-1)}
+}
+</style>
+
+<style id="pmgate-css">
+/* ═══ CORTINA DE ACCESO — estética de la casa, fail-closed ═══ */
+#pmgate{position:fixed;inset:0;z-index:99999;background:#000;color:#fff;
+  display:grid;place-items:center;padding:24px;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  opacity:1;transition:opacity .45s ease}
+#pmgate.pmgate--out{opacity:0;pointer-events:none}
+#pmgate::after{content:"";position:absolute;inset:-25%;pointer-events:none;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:pmgate-grain 1s steps(6) infinite}
+@keyframes pmgate-grain{0%{transform:translate(0,0)}25%{transform:translate(-3%,-4%)}50%{transform:translate(-6%,2%)}75%{transform:translate(3%,-5%)}100%{transform:translate(2%,-2%)}}
+.pmgate-in{position:relative;z-index:2;width:min(420px,100%);display:grid;gap:26px;justify-items:center;text-align:center}
+.pmgate-mark{width:clamp(56px,14vw,76px);height:auto;fill:#fff}
+.pmgate-kana{font-family:"Noto Sans JP",sans-serif;font-size:clamp(11px,3vw,13px);letter-spacing:.5em;color:#a8a8a8;margin-right:-.5em}
+.pmgate-t{font-size:clamp(10px,2.6vw,11px);letter-spacing:.34em;text-transform:uppercase}
+.pmgate-f{width:100%;display:grid;gap:14px;justify-items:center}
+.pmgate-row{width:100%;display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid #5c5c5c;padding-bottom:10px;transition:border-color .2s}
+.pmgate-row:focus-within{border-bottom-color:#fff}
+.pmgate-cue{font-size:11px;color:#5c5c5c;flex:none}
+#pmgate-i{flex:1;min-width:0;background:none;border:0;color:#fff;
+  font:inherit;font-size:clamp(13px,3.4vw,15px);letter-spacing:.24em;
+  padding:8px 0;min-height:44px;caret-color:#fff}
+#pmgate-i:focus{outline:none}
+#pmgate-i::placeholder{color:#242424;letter-spacing:.3em}
+.pmgate-go{background:none;border:1px solid #5c5c5c;color:#fff;font:inherit;
+  font-size:11px;letter-spacing:.16em;padding:0 14px;min-height:44px;cursor:pointer;
+  transition:background .15s,color .15s,border-color .15s}
+.pmgate-go:hover,.pmgate-go:focus-visible{background:#fff;color:#000;border-color:#fff}
+.pmgate-go:focus-visible{outline:2px solid #fff;outline-offset:3px}
+#pmgate-i:focus-visible{outline:none}
+.pmgate-err{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#a8a8a8;min-height:1.2em}
+.pmgate-foot{font-size:9px;letter-spacing:.2em;color:#5c5c5c;text-transform:uppercase;line-height:2}
+.pmgate-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
+@media (prefers-reduced-motion:reduce){
+  #pmgate{transition:none}
+  #pmgate::after{animation:none}
+}
+</style>
+</head>
+<body>
+<div id="pmgate" role="dialog" aria-modal="true" aria-labelledby="pmgate-t">
+  <div class="pmgate-in">
+    <svg class="pmgate-mark" viewBox="0 0 104 103" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667Z"/></svg>
+    <p class="pmgate-kana" lang="ja" aria-hidden="true">バーニ　マーゴット</p>
+    <p class="pmgate-t" id="pmgate-t">ACCESO PRIVADO</p>
+    <form class="pmgate-f" id="pmgate-f" autocomplete="off" novalidate>
+      <label class="pmgate-sr" for="pmgate-i">Frase de acceso</label>
+      <div class="pmgate-row">
+        <span class="pmgate-cue" aria-hidden="true">&gt;&gt;</span>
+        <input id="pmgate-i" type="password" autocomplete="current-password"
+               spellcheck="false" placeholder="········" aria-describedby="pmgate-e">
+        <button class="pmgate-go" type="submit">[ OK ]</button>
+      </div>
+      <p class="pmgate-err" id="pmgate-e" role="status" aria-live="polite"></p>
+    </form>
+    <p class="pmgate-foot" aria-hidden="true">
+      &lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()&gt;&gt;<br>
+      &gt;&gt;HONDURAS4940##
+    </p>
+  </div>
+</div>
+<main id="contenido" class="terr">
+  <section id="mapa" tabindex="0" role="region" aria-label="Territorio" aria-describedby="mapa-ayuda">
+    <p id="mapa-ayuda" class="sr">Plano de piezas para recorrer. Con el teclado: flechas para desplazar el plano, Tab para pasar de pieza en pieza, Enter para abrir la pieza.</p>
+    <!-- el HUD va antes del plano en el DOM: con teclado, los controles de salida llegan antes que las 16+ piezas -->
+    <div class="hud hud-t">
+      <p class="ey"><span>SHOP <span lang="ja" aria-hidden="true">店</span></span> <span aria-hidden="true">/</span> <span>TERRITORIO <span lang="ja" aria-hidden="true">漂流</span></span></p>
+      <h1 class="disp disp-l"><span id="t-h1">TERRITORIO</span><span class="kj" lang="ja" id="t-kj">漂流</span></h1>
+      <span class="kana" lang="ja" aria-hidden="true" id="t-kana"></span>
+    </div>
+
+    <div class="hud hud-ctl">
+      <a class="btn sm" id="t-shop" href="./shop.html" aria-label="Vista compra">[ ≡ ] <span class="t-vis">VISTA </span>COMPRA</a>
+      <button type="button" class="btn sm" id="t-lista-tg" aria-haspopup="dialog" aria-controls="lista" aria-expanded="false" aria-label="Vista lista">[ ⋮ ] <span class="t-vis">VISTA </span>LISTA</button>
+    </div>
+
+    <div class="hud hud-b">
+      <p class="ey"><span class="coords num" id="t-coords" aria-hidden="true">X:+0000 :: Y:+0000</span><span><b id="t-n">0</b> PIEZAS EN PLANO</span><span class="dial" aria-hidden="true">&gt;&gt;HONDURAS4940##</span></p>
+      <p class="ey der" id="t-pas"></p>
+    </div>
+    <a class="hud-pie" href="#pm-term" aria-label="Ir al pie de la casa">[ ↓ ]<span class="t-pie" aria-hidden="true">PIE DE LA CASA</span></a>
+
+    <div id="plano"></div>
+    <div class="vert-kana" lang="ja" aria-hidden="true">バーニ　マーゴット</div>
+  </section>
+</main>
+
+<div id="lista" class="t-lista" role="dialog" aria-modal="true" aria-labelledby="li-t" hidden>
+  <div class="pm-dlg-h"><h2 id="li-t">VISTA LISTA <span class="n" id="li-n"></span> <span lang="ja" aria-hidden="true">店</span></h2><button type="button" class="pm-x" data-cerrar="lista" aria-label="Cerrar la vista lista" data-foco>[ × ] CERRAR</button></div>
+  <div class="pm-dlg-b"><ol id="li-ol" aria-label="Piezas del territorio"></ol></div>
+  <div class="pm-dlg-f"><span class="ey">MISMAS PIEZAS, EN ORDEN · <span lang="ja" aria-hidden="true">一点物</span> CADA UNA ES ÚNICA</span><a class="btn" id="li-shop" href="./shop.html">[ ≡ ] VISTA COMPRA</a></div>
+</div>
+<div id="t-circ" class="t-circ" aria-hidden="true" hidden></div>
+
+<script src="./catalogo.js"></script>
+<script src="./base.js"></script>
+<script>
+(function () {
+  'use strict';
+  var d = document, C = window.CATALOGO || { piezas: [], categorias: [] };
+  var CATS = C.categorias || [];
+  var KEYS = CATS.map(function (c) { return c.key; });
+  var raw = String(PM.qs('cat') || '').toUpperCase().replace(/ WORLD$/, '');
+  var KEY = KEYS.indexOf(raw) > -1 ? raw : '';
+  var CAT = null; for (var i = 0; i < CATS.length; i++) if (CATS[i].key === KEY) CAT = CATS[i];
+  var NOMBRE = CAT ? String(CAT.nombre || CAT.key).toUpperCase() : '';
+
+  PM.montarCromo({ activa: 'territorio', modulo: 'negro', sello: KEY || undefined });
+
+  var $ = function (s, r) { return (r || d).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || d).querySelectorAll(s)); };
+  var RM = PM.RM, FINE = PM.FINE;
+  var mapa = $('#mapa'), plano = $('#plano'), main = $('#contenido');
+
+  function medirHd() { var h = $('.pm-hd'); if (h) d.documentElement.style.setProperty('--hdh', h.offsetHeight + 'px'); }
+  medirHd(); addEventListener('resize', medirHd);
+
+  /* ── sin sección válida: índice de territorios ── */
+  if (!CAT) {
+    d.title = 'Territorios 漂流 — Panni Margot';
+    main.innerHTML = '<div class="wrap t-idx"><p class="ey">SHOP <span lang="ja" aria-hidden="true">店</span> / TERRITORIOS</p>' +
+      '<h1 class="disp disp-l">Elegí un territorio<span class="kj" lang="ja" aria-hidden="true">漂流</span></h1><ul>' +
+      CATS.map(function (c) {
+        var n = (C.piezas || []).filter(function (p) { return p.cat === c.key; }).length;
+        return '<li><a href="./territorio.html?cat=' + encodeURIComponent(c.key) + '"><span>' + PM.esc(String(c.nombre || c.key).toUpperCase()) +
+          '<span class="kj" lang="ja" aria-hidden="true">' + PM.esc(c.kj || '') + '</span></span><span class="n">' + n + (n === 1 ? ' PIEZA' : ' PIEZAS') + ' <span aria-hidden="true">&gt;&gt;</span></span></a></li>';
+      }).join('') + '</ul></div>';
+    return;
+  }
+
+  /* ── datos ── */
+  var PZ = (C.porCat ? C.porCat(KEY) : (C.piezas || []).filter(function (p) { return p.cat === KEY; })).slice()
+    .sort(function (a, b) { return (b.ts || 0) - (a.ts || 0); });
+  var N = PZ.length;
+  d.title = String(CAT.nombre || CAT.key) + ' · Territorio 漂流 — Panni Margot';
+  $('#t-h1').textContent = NOMBRE;
+  $('#t-kj').textContent = CAT.kj || '';
+  /* solo dialecto literal de la casa: katakana de la marca + kanji de la sección */
+  $('#t-kana').textContent = 'バーニ　マーゴット · ' + (CAT.kj || '');
+  $('#t-n').textContent = N;
+  $('#t-shop').href = './shop.html?cat=' + encodeURIComponent(KEY);
+  $('#li-shop').href = './shop.html?cat=' + encodeURIComponent(KEY);
+  mapa.setAttribute('aria-label', 'Territorio de ' + NOMBRE + ': ' + N + ' piezas en el plano');
+  function pintarPas() { $('#t-pas').innerHTML = PM.pasaporte.html('hud-pas'); }
+  /* teléfono: la caja [ ↓ ] PIE DE LA CASA deja el plano y pasa a la línea de datos (una sola fila: piezas · pasaporte · pie) */
+  if (innerWidth < 768) { var pie = $('.hud-pie'), hb0 = $('.hud-b'); if (pie && hb0) hb0.appendChild(pie); }
+  pintarPas(); d.addEventListener('pm:pasaporte', pintarPas);
+
+  /* ── seed determinista por sección ── */
+  function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  var seed = 20260812; for (var k = 0; k < KEY.length; k++) seed = (seed * 31 + KEY.charCodeAt(k)) | 0;
+  var rnd = mulberry32(seed);
+
+  var PHONE = innerWidth < 768;
+  var view = { w: mapa.clientWidth, h: mapa.clientHeight };
+  /* radio de la espiral: crece con el viewport para que el plano respire en pantallas grandes */
+  /* piezas grandes (fotos que mandan) y radio en proporción, para que el plano no se sienta ralo */
+  /* la foto es el único contenido: piezas más grandes que una tarjeta del shop y radio más corto, 6–8 enteras por pantalla */
+  /* desktop compacto (1024–1279, notebooks): piezas y radio en proporción al ancho, para que el primer cuadro tenga aire y nada quede detrás del título */
+  var K = PHONE ? 1 : Math.max(0.7, Math.min(1, view.w / 1440));
+  var GA = 2.39996322, R = PHONE ? 120 : Math.max(260 * K, Math.min(340, Math.min(view.w, view.h) / 2.9));
+  var W0 = PHONE ? 150 : Math.round(250 * K), WR = PHONE ? 26 : Math.round(130 * K); /* ancho de pieza: W0 + rnd()*WR (teléfono: 2–3 enteras por pantalla) */
+  /* anisotropía de la espiral: apaisada en desktop, vertical en teléfono (el viewport es alto y angosto) */
+  var AX = PHONE ? 1.0 : 1.3, AY = PHONE ? 1.25 : 1.0;
+  var rmax = R * Math.sqrt(N + 0.7);
+  var PW = Math.max(view.w + 400, Math.round(2 * (rmax * AX + W0 + WR)));
+  var PH = Math.max(view.h + 300, Math.round(2 * (rmax * AY + (W0 + WR) * 1.4)));
+  /* teléfono: el plano es una columna doble escalonada del ancho del viewport (se recorre hacia abajo, 2–3 piezas enteras
+     por pantalla, ninguna detrás del título); el ancho y el alto se cierran después de ubicar las piezas */
+  if (PHONE) PW = view.w;
+  plano.style.width = PW + 'px'; plano.style.height = PH + 'px';
+
+  /* arranque del plano (mismo cálculo que abajo): sirve para reservar la zona del título */
+  var TX0 = PHONE ? 0 : view.w / 2 - PW / 2, TY0 = PHONE ? 0 : view.h / 2 - PH / 2 + 90;
+  /* zona del título medida en el DOM (incluye la línea de katakana); fallback si aún no hay layout */
+  var TIT_W = PHONE ? view.w : 660, TIT_H = PHONE ? 120 : 250;
+  function medirTit() {
+    var t = $('.hud-t'), m = mapa.getBoundingClientRect(), r = t && t.getBoundingClientRect();
+    if (r && r.width > 0 && r.height > 0) { TIT_W = Math.ceil(r.right - m.left); TIT_H = Math.ceil(r.bottom - m.top); }
+  }
+  medirTit();
+  var TAG_H = 40; /* alto de la cinta del SKU (hasta dos líneas) */
+
+  /* ── piezas en espiral áurea ── */
+  var POS = [], html = '';
+  var GAPM = 16, SLM = 12, COLW = (view.w - SLM * 2 - GAPM) / 2, colY = [TIT_H + 28, TIT_H + 28 + Math.round((W0 * 1.33 + TAG_H) / 2)];
+  PZ.forEach(function (p, i) {
+    var w = W0 + rnd() * WR, x, y;
+    if (PHONE) {
+      var c = i % 2;
+      x = SLM + c * (COLW + GAPM) + COLW / 2 + (rnd() - 0.5) * 10;
+      y = colY[c] + w * 0.66;
+      colY[c] += w * 1.33 + TAG_H + GAPM + Math.round(rnd() * 12);
+    } else {
+      var r = R * Math.sqrt(i + 0.7), th = i * GA + (rnd() - 0.5) * 0.5;
+      x = PW / 2 + Math.cos(th) * r * AX + (rnd() - 0.5) * 60;
+      y = PH / 2 + Math.sin(th) * r * AY + (rnd() - 0.5) * 40;
+    }
+    var rot = (rnd() * 5 - 2.5).toFixed(2);
+    POS.push({ x: x, y: y, w: w, rot: rot, p: p, i: i });
+  });
+  if (PHONE) { PH = Math.max(view.h, Math.max(colY[0], colY[1]) + 220); plano.style.height = PH + 'px'; }
+  /* relajación: las piezas se empujan entre sí hasta no pisarse (con aire), y ninguna queda detrás del título del HUD.
+     El título es un obstáculo fijo en coordenadas del plano; la espiral áurea da el orden, la relajación el aire. */
+  (function relajar() {
+    var BM = PHONE ? 8 : 24, GAP = PHONE ? 16 : 28, TIT = { l: -TX0 - GAP, t: -TY0 - GAP, r: -TX0 + TIT_W + GAP, b: -TY0 + TIT_H + GAP };
+    function caja(q) { return { l: q.x - q.w / 2, t: q.y - q.w * 0.66, r: q.x + q.w / 2, b: q.y + q.w * 0.67 + TAG_H }; }
+    for (var it = 0; it < 60; it++) {
+      var mov = 0, a, b, A, B, ox, oy, i, j;
+      for (i = 0; i < POS.length; i++) {
+        a = POS[i]; A = caja(a);
+        /* título: solo se empuja la pieza, hacia el lado de menor penetración */
+        ox = Math.min(A.r - TIT.l, TIT.r - A.l); oy = Math.min(A.b - TIT.t, TIT.b - A.t);
+        if (ox > 0 && oy > 0) { if (oy < ox) a.y += (A.t + A.b < TIT.t + TIT.b ? -oy : oy); else a.x += (A.l + A.r < TIT.l + TIT.r ? -ox : ox); mov++; A = caja(a); }
+        for (j = i + 1; j < POS.length; j++) {
+          b = POS[j]; B = caja(b);
+          ox = Math.min(A.r - B.l, B.r - A.l) + GAP; oy = Math.min(A.b - B.t, B.b - A.t) + GAP;
+          if (ox <= 0 || oy <= 0) continue;
+          if (ox < oy) { var sx = (a.x < b.x ? -1 : 1) * ox / 2; a.x += sx; b.x -= sx; }
+          else { var sy = (a.y < b.y ? -1 : 1) * oy / 2; a.y += sy; b.y -= sy; }
+          mov++; A = caja(a);
+        }
+        /* dentro del plano */
+        a.x = Math.max(a.w / 2 + BM, Math.min(PW - a.w / 2 - BM, a.x));
+        a.y = Math.max(a.w * 0.66 + BM, Math.min(PH - a.w * 0.67 - TAG_H - BM, a.y));
+      }
+      if (!mov) break;
+    }
+  })();
+  POS.forEach(function (q) {
+    var p = q.p, w = q.w, i = q.i;
+    html += '<a class="pz" href="./ficha.html?id=' + encodeURIComponent(p.id) + '" data-id="' + PM.esc(p.id) + '" data-sku="' + PM.esc(p.sku || '') + '"' +
+      ' aria-label="' + PM.esc(p.nm) + ' — ' + PM.esc(PM.fmt(p.pr)) + (p.tl ? ' — talle ' + PM.esc(p.tl === 'U' ? 'único' : p.tl) : '') + '"' +
+      ' style="width:' + Math.round(w) + 'px;left:' + Math.round(q.x - w / 2) + 'px;top:' + Math.round(q.y - w * 0.66) + 'px;transform:rotate(' + q.rot + 'deg)">' +
+      '<span class="ph">' + PM.pic(p, 0, { alt: p.nm, eager: i < 4, vt: true, sizes: Math.round(w) + 'px' }) + '</span>' +
+      '<span class="tag" aria-hidden="true">' + PM.esc(p.sku || p.nm) + '</span></a>';
+  });
+
+  /* ── Voronoi por recorte de semiplanos (sitios = piezas + algunos puntos fantasma) ── */
+  var sites = POS.slice();
+  for (var f = 0; f < Math.max(3, Math.round(N / 2)); f++) sites.push({ x: rnd() * PW, y: rnd() * PH });
+  function clip(poly, mx, my, nx, ny) {
+    var out = [], n = poly.length;
+    function inside(p) { return (p[0] - mx) * nx + (p[1] - my) * ny <= 0; }
+    for (var i = 0; i < n; i++) {
+      var a = poly[i], b = poly[(i + 1) % n], ia = inside(a), ib = inside(b);
+      if (ia !== ib) {
+        var den = (b[0] - a[0]) * nx + (b[1] - a[1]) * ny;
+        var t = den ? ((mx - a[0]) * nx + (my - a[1]) * ny) / den : 0;
+        out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
+      }
+      if (ib) out.push(b);
+    }
+    return out;
+  }
+  var svg = '<svg id="voro" viewBox="0 0 ' + PW + ' ' + PH + '" width="' + PW + '" height="' + PH + '" aria-hidden="true" focusable="false">';
+  sites.forEach(function (s, i) {
+    var poly = [[0, 0], [PW, 0], [PW, PH], [0, PH]];
+    sites.forEach(function (o, j) { if (i !== j && poly.length) poly = clip(poly, (s.x + o.x) / 2, (s.y + o.y) / 2, o.x - s.x, o.y - s.y); });
+    if (poly.length) svg += '<polygon points="' + poly.map(function (p) { return Math.round(p[0]) + ',' + Math.round(p[1]); }).join(' ') + '"/>';
+    svg += '<circle cx="' + Math.round(s.x) + '" cy="' + Math.round(s.y) + '" r="2"/>';
+  });
+  svg += '</svg>';
+  plano.innerHTML = svg + html;
+  var piezas = $$('.pz', plano);
+  /* variante grande para pantallas densas (mismo patrón que el shop) */
+  $$('.pz .pm-img', plano).forEach(function (img) {
+    var src = img.getAttribute('src'); if (!src || !C.hi) return;
+    img.setAttribute('srcset', src + ' 640w, ' + C.hi(src) + ' 1024w');
+  });
+
+  /* foco de linterna del sistema */
+  PM.linterna(mapa);
+
+  /* SKU en scramble: llegada escalonada + hover */
+  piezas.forEach(function (a, i) {
+    var tag = $('.tag', a), sku = a.getAttribute('data-sku') || '';
+    if (!RM) setTimeout(function () { PM.scramble(tag, sku, { dur: 520 }); }, 120 + i * 60);
+    a.addEventListener('pointerenter', function () { if (FINE && !RM) PM.scramble(tag, sku, { dur: 420 }); });
+  });
+
+  /* ── paneo con inercia + límites elásticos ── */
+  function medir() { view.w = mapa.clientWidth; view.h = mapa.clientHeight; }
+  /* al cruzar el breakpoint de teléfono (rotación) el plano se recalcula entero: recarga con debounce */
+  var tRs = 0;
+  addEventListener('resize', function () {
+    medir(); clearTimeout(tRs);
+    /* con la vista lista abierta no se recarga: nadie pierde la lectura por girar el teléfono */
+    tRs = setTimeout(function () { if ((innerWidth < 768) !== PHONE && !$('#lista').classList.contains('on')) location.reload(); }, 400);
+  });
+  mapa.addEventListener('scroll', function () { mapa.scrollLeft = 0; mapa.scrollTop = 0; });
+  /* barra del navegador que se pliega, panel lateral, rotación dentro del mismo rango: si el plano cambia más de un 15 % se vuelve a encuadrar (sin recargar) */
+  if ('ResizeObserver' in window) {
+    var encW = view.w, encH = view.h, tRo = 0;
+    new ResizeObserver(function () {
+      clearTimeout(tRo);
+      tRo = setTimeout(function () {
+        medir();
+        if (Math.abs(view.w - encW) / encW < 0.15 && Math.abs(view.h - encH) / encH < 0.15) return;
+        if ((innerWidth < 768) !== PHONE) return; /* eso lo resuelve la recarga de arriba */
+        encW = view.w; encH = view.h; medirTit();
+        var E = encuadre(); tx = E.x; ty = E.y; vx = vy = 0; marca();
+      }, 150);
+    }).observe(mapa);
+  }
+  /* arranque: se busca, alrededor del centro de la espiral, el encuadre que deja MÁS piezas enteras dentro del
+     viewport y NINGUNA pisada por el título, los toggles, la katakana vertical o la línea de datos del pie */
+  function encuadre() {
+    /* SB: alto real del HUD inferior medido en el DOM (línea de datos + botones) + aire; nunca un número fijo */
+    var SB = 96;
+    if (PHONE) { var hb = $('.hud-b'), hc = $('.hud-ctl'), mr = mapa.getBoundingClientRect(), top = Infinity;
+      [hb, hc].forEach(function (n) { var r = n && n.getBoundingClientRect(); if (r && r.height) top = Math.min(top, r.top - mr.top); });
+      SB = isFinite(top) ? Math.max(96, Math.ceil(view.h - top) + 16) : 200; }
+    var SL = PHONE ? 10 : 96, SR = PHONE ? 10 : 40, CTL_W = PHONE ? 0 : 380, CTL_H = PHONE ? 0 : 120, GAP = 24;
+    function score(ox, oy) {
+      var sc = 0, i, p, l, t, r, b, vis, cut, tapa;
+      for (i = 0; i < POS.length; i++) {
+        p = POS[i]; l = p.x - p.w / 2 + ox; t = p.y - p.w * 0.66 + oy; r = l + p.w; b = t + p.w * 1.33 + TAG_H;
+        /* fracción visible (área dentro del viewport útil) */
+        vis = Math.max(0, Math.min(r, view.w - SR) - Math.max(l, SL)) * Math.max(0, Math.min(b, view.h - SB) - Math.max(t, 0)) / ((r - l) * (b - t));
+        if (vis <= 0) continue;
+        cut = l < SL || r > view.w - SR || t < 0 || b > view.h - SB;
+        /* tapa: detrás del título (con aire de GAP), o en teléfono demasiado pegada a su base */
+        tapa = (l < TIT_W + GAP && t < TIT_H + GAP) || (r > view.w - CTL_W && t < CTL_H) || (PHONE && t < TIT_H + 12) || (t > view.h - SB);
+        /* una pieza asomando apenas por un borde (un pie bajo el header) resta más que una cortada a la mitad */
+        if (tapa) sc -= 50; else if (!cut) sc += 3; else if (vis >= 0.6) sc += 1; else if (vis < 0.35) sc -= 4; else sc -= 1;
+      }
+      return sc;
+    }
+    var best = { s: -1e9, x: TX0, y: TY0 }, ox, oy, s, dist;
+    for (oy = -400; oy <= 400; oy += 40) for (ox = -480; ox <= 480; ox += 40) {
+      var kx = clampX(TX0 + ox), ky = clampY(TY0 + oy);
+      s = score(kx, ky); dist = (Math.abs(ox) + Math.abs(oy)) / 400;
+      if (s - dist > best.s) best = { s: s - dist, x: kx, y: ky };
+    }
+    return best;
+  }
+  var E0 = encuadre();
+  var tx = E0.x, ty = E0.y, cx = tx, cy = ty, vx = 0, vy = 0;
+  var down = false, moved = 0, sx0 = 0, sy0 = 0, bx0 = 0, by0 = 0, lx = 0, ly = 0, pid = null, cap = false;
+  var lastInput = performance.now(), drift = 0.7;
+  function clampX(v) { return Math.min(0, Math.max(view.w - PW, v)); }
+  function clampY(v) { return Math.min(0, Math.max(view.h - PH, v)); }
+  function marca() { lastInput = performance.now(); }
+
+  mapa.addEventListener('pointerdown', function (e) {
+    if (down || e.button > 0) return;
+    if (e.target.closest && e.target.closest('.hud, .hud-pie')) return;
+    down = true; cap = false; pid = e.pointerId; moved = 0; sx0 = lx = e.clientX; sy0 = ly = e.clientY; bx0 = tx; by0 = ty; vx = vy = 0; marca();
+  });
+  addEventListener('pointermove', function (e) {
+    if (!down || e.pointerId !== pid) return;
+    if (e.pointerType === 'mouse' && e.buttons === 0) { down = false; return; }
+    var dx = e.clientX - sx0, dy = e.clientY - sy0;
+    moved = Math.max(moved, Math.hypot(dx, dy));
+    if (moved > 6 && !cap) { cap = true; try { mapa.setPointerCapture(pid); } catch (_) {} }
+    var nx = bx0 + dx, ny = by0 + dy, kx = clampX(nx), ky = clampY(ny);
+    tx = kx + (nx - kx) * 0.32; ty = ky + (ny - ky) * 0.32;
+    vx = e.clientX - lx; vy = e.clientY - ly; lx = e.clientX; ly = e.clientY; marca();
+  }, { passive: true });
+  function soltar(e) {
+    if (!down) return;
+    if (e && e.pointerId != null && e.pointerId !== pid) return;
+    down = false; marca();
+    if (cap) { cap = false; try { mapa.releasePointerCapture(pid); } catch (_) {} }
+    setTimeout(function () { moved = 0; }, 0);
+    /* touch: ya en el borde inferior del plano, un arrastre decidido hacia arriba baja al pie de la casa */
+    if (e && e.pointerType === 'touch' && moved > 6 && (vy < -3 || (sy0 - ly) > 120) && ty <= clampY(-1e9) + 2 && scrollY < 4) {
+      vx = vy = 0; ty = clampY(ty);
+      scrollTo({ top: mapa.offsetTop + mapa.offsetHeight - 40, behavior: RM ? 'auto' : 'smooth' });
+    }
+    if (!RM && moved > 6 && e && e.clientX != null) {
+      var r = d.createElement('div'); r.className = 'rip'; r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px';
+      d.body.appendChild(r); r.addEventListener('animationend', function () { r.remove(); });
+    }
+  }
+  addEventListener('pointerup', soltar); addEventListener('pointercancel', soltar);
+  addEventListener('blur', function () { down = false; cap = false; });
+  /* la rueda recorre el plano; en el borde inferior deja pasar el scroll hacia el pie de la casa */
+  mapa.addEventListener('wheel', function (e) {
+    var abajo = ty <= clampY(-1e9) + 0.5, arriba = ty >= -0.5;
+    if (e.deltaY > 0 && abajo && Math.abs(e.deltaX) < 2) return;
+    if (e.deltaY < 0 && scrollY > 0) return;
+    if (e.deltaY < 0 && arriba && Math.abs(e.deltaX) < 2 && scrollY === 0) return;
+    e.preventDefault(); marca(); tx -= e.deltaX; ty -= e.deltaY;
+  }, { passive: false });
+
+  /* teclado: flechas recorren el plano (con el foco dentro del territorio) */
+  mapa.addEventListener('keydown', function (e) {
+    var paso = e.shiftKey ? 260 : 90, ok = true;
+    if (e.key === 'ArrowLeft') tx += paso; else if (e.key === 'ArrowRight') tx -= paso;
+    else if (e.key === 'ArrowUp') ty += paso; else if (e.key === 'ArrowDown') ty -= paso; else ok = false;
+    if (ok) { e.preventDefault(); marca(); tx = clampX(tx); ty = clampY(ty); }
+  });
+  /* foco por teclado: el plano trae la pieza al centro */
+  plano.addEventListener('focusin', function (e) {
+    var a = e.target.closest('.pz'); if (!a) return;
+    var i = piezas.indexOf(a); if (i < 0) return; marca();
+    tx = clampX(view.w / 2 - POS[i].x); ty = clampY(view.h / 2 - POS[i].y + 40);
+    mapa.style.setProperty('--lx', (view.w / 2) + 'px'); mapa.style.setProperty('--ly', (view.h / 2) + 'px');
+  });
+
+  /* ── click → ficha con revelado circular hacia la sala blanca ── */
+  var circ = $('#t-circ'), yendo = false;
+  function irA(href, x, y) {
+    if (yendo) return; yendo = true;
+    /* con view transitions del navegador la foto ya viaja sola (base.css): un solo efecto, no dos encadenados */
+    if (RM || 'startViewTransition' in d) { location.href = href; return; }
+    circ.style.setProperty('--cx', x + 'px'); circ.style.setProperty('--cy', y + 'px');
+    circ.hidden = false;
+    requestAnimationFrame(function () { circ.classList.add('on'); });
+    setTimeout(function () { location.href = href; }, 520);
+  }
+  plano.addEventListener('click', function (e) {
+    var a = e.target.closest('.pz'); if (!a) return;
+    if (moved > 6 && e.detail > 0) { e.preventDefault(); e.stopPropagation(); return; }
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button) return;
+    e.preventDefault();
+    PM.vistas.marcar(a.getAttribute('data-id'));
+    var rc = a.getBoundingClientRect();
+    irA(a.href, e.clientX > 0 ? e.clientX : rc.left + rc.width / 2, e.clientY > 0 ? e.clientY : rc.top + rc.height / 2);
+  });
+  addEventListener('pageshow', function () { yendo = false; circ.classList.remove('on'); circ.hidden = true; });
+
+  /* ── vista lista ── */
+  var tg = $('#t-lista-tg');
+  $('#li-n').textContent = ':: ' + N + (N === 1 ? ' PIEZA' : ' PIEZAS');
+  $('#li-ol').innerHTML = PZ.map(function (p, i) {
+    return '<li><a class="li-row" href="./ficha.html?id=' + encodeURIComponent(p.id) + '" data-id="' + PM.esc(p.id) + '">' +
+      '<span class="ix">' + (i < 9 ? '0' : '') + (i + 1) + '</span>' +
+      '<span class="nm">' + PM.esc(p.nm) + PM.sellosHTML((p.sellos || []).slice(0, 2)) + '</span>' +
+      '<span class="sk">' + PM.esc(p.sku || '') + '</span>' +
+      '<span class="tl">TALLE ' + PM.esc(p.tl === 'U' ? 'ÚNICO' : (p.tl || '—')) + '</span>' +
+      '<span class="pr">' + PM.fmt(p.pr) + '</span></a></li>';
+  }).join('');
+  tg.addEventListener('click', function () { PM.abrir('lista'); tg.setAttribute('aria-expanded', 'true'); });
+  d.addEventListener('pm:dialogo', function (e) { if (e.detail && e.detail.id === 'lista' && !e.detail.abierto) tg.setAttribute('aria-expanded', 'false'); });
+  $('#li-ol').addEventListener('click', function (e) { var a = e.target.closest('a[data-id]'); if (a) PM.vistas.marcar(a.getAttribute('data-id')); });
+
+  /* ── bucle maestro: inercia, rebote, deriva en reposo, coordenadas ── */
+  var coords = $('#t-coords'), cootxt = '';
+  function pad(v) { var s = Math.abs(Math.round(v)).toString(); while (s.length < 4) s = '0' + s; return (v < 0 ? '-' : '+') + s; }
+  var LERP = RM ? 1 : 0.14;
+  function frame() {
+    requestAnimationFrame(frame);
+    if (d.hidden) return;
+    if (!down) {
+      if (!RM) {
+        tx += vx; ty += vy; vx *= 0.94; vy *= 0.94;
+        tx += (clampX(tx) - tx) * 0.12; ty += (clampY(ty) - ty) * 0.12;
+        if (performance.now() - lastInput > 6000) { drift += 0.0011; tx = clampX(tx + Math.cos(drift) * 0.2); ty = clampY(ty + Math.sin(drift) * 0.2); }
+      } else { tx = clampX(tx); ty = clampY(ty); }
+    }
+    cx += (tx - cx) * LERP; cy += (ty - cy) * LERP;
+    plano.style.transform = 'translate3d(' + cx.toFixed(1) + 'px,' + cy.toFixed(1) + 'px,0)';
+    var t = 'X:' + pad(-(cx - (view.w - PW) / 2)) + ' :: Y:' + pad(-(cy - (view.h - PH) / 2));
+    if (t !== cootxt) { cootxt = t; coords.textContent = t; }
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+
+<script id="pmgate-js">
+/* Cortina de acceso. Recuerda el ingreso por dispositivo. */
+(function(){
+  var H='d5600e28005cacbad0d820784e3f9f75220b38689e9c7e16bda6513d11c3443e', K='pm_gate_ok';
+  var g=document.getElementById('pmgate');
+  if(!g) return;
+  var root=document.documentElement;
+  var f=document.getElementById('pmgate-f'), i=document.getElementById('pmgate-i'), e=document.getElementById('pmgate-e');
+  var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  function abrir(){
+    root.classList.remove('pmgate-lock');
+    if(RM){ g.remove(); return; }
+    g.classList.add('pmgate--out');
+    setTimeout(function(){ g.remove(); }, 480);
+  }
+
+  try{ if(localStorage.getItem(K)===H){ abrir(); return; } }catch(err){}
+
+  root.classList.add('pmgate-lock');
+  setTimeout(function(){ try{ i.focus(); }catch(err){} }, 60);
+
+  async function sha(txt){
+    var b=new TextEncoder().encode(txt);
+    var d=await crypto.subtle.digest('SHA-256', b);
+    return Array.from(new Uint8Array(d)).map(function(x){return x.toString(16).padStart(2,'0');}).join('');
+  }
+
+  f.addEventListener('submit', async function(ev){
+    ev.preventDefault();
+    var v=i.value;
+    if(!v){ e.textContent=''; i.focus(); return; }
+    var h;
+    try{ h=await sha(v); }catch(err){ e.textContent='[ !! ] SIN CONEXIÓN SEGURA'; return; }
+    if(h===H){
+      try{ localStorage.setItem(K,H); }catch(err){}
+      e.textContent='[ OK ]';
+      abrir();
+    }else{
+      e.textContent='[ !! ] NO';
+      i.value=''; i.focus();
+    }
+  });
+
+  /* El foco no sale del portón mientras esté cerrado. */
+  g.addEventListener('keydown', function(ev){
+    if(ev.key!=='Tab') return;
+    var f2=g.querySelectorAll('input,button');
+    if(!f2.length) return;
+    var pri=f2[0], ult=f2[f2.length-1];
+    if(ev.shiftKey && document.activeElement===pri){ ev.preventDefault(); ult.focus(); }
+    else if(!ev.shiftKey && document.activeElement===ult){ ev.preventDefault(); pri.focus(); }
+  });
+})();
+</script>
+</body>
+</html>
