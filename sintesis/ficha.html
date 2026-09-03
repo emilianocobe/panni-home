@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Ficha — Panni Margot</title>
-<link rel="icon" href="../favicon.svg">
+<link rel="icon" href="../../favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://acdn-us.mitiendanube.com">
@@ -93,7 +93,7 @@
 .d-precio{margin-top:var(--s-3);display:flex;flex-direction:column;gap:var(--s-1)}
 .d-precio .top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:var(--s-1) var(--s-3)}
 .d-precio .pr{font-family:var(--f-mono);font-size:clamp(24px,1.9vw,28px);letter-spacing:-.01em;line-height:1;font-variant-numeric:tabular-nums;color:var(--fg)}
-.d-precio .cuotas{font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--fg-2);line-height:1.6;margin-top:var(--s-1)}
+.d-precio .pago{font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--fg-2);line-height:1.6;margin-top:var(--s-1)}
 .d-precio .sku{font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--fg-2);line-height:1.6;min-height:1.6em;min-width:0;max-width:100%}
 /* SKUs largos cortan dentro de la columna (también con los glifos katakana del scramble): la página nunca gana scroll horizontal */
 .d-precio .sku [aria-hidden]{white-space:pre-wrap;overflow-wrap:anywhere}
@@ -202,7 +202,7 @@
   .d-stick.compacta .mats{gap:0}
   .d-stick.compacta .med th,.d-stick.compacta .med td{line-height:1.4}
   .d-stick.compacta .d-cab .sellos{margin-top:var(--s-1)}
-  .d-stick.compacta .d-precio .cuotas{margin-top:0}
+  .d-stick.compacta .d-precio .pago{margin-top:0}
   .d-stick.compacta .tl-sel label{min-height:28px}
 }
 /* touch: targets ≥44px en todos los controles propios de la página */
@@ -377,7 +377,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
         <p class="d-desc" id="d-desc"></p>
         <div class="d-precio">
           <div class="top"><span class="pr num" id="d-pr"></span><span class="sku" id="d-sku"></span></div>
-          <span class="cuotas">HASTA 6 CUOTAS · MERCADO PAGO / NAVE</span>
+          <span class="pago">MERCADO PAGO · NAVE</span>
         </div>
         <div class="filas" id="filas"></div>
         <div class="cta" id="cta">
@@ -552,7 +552,8 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   $('d-desc').textContent = p.desc || '';
   if (!p.desc) $('d-desc').hidden = true;
   $('d-pr').textContent = PM.fmt(p.pr);
-  $('cta-pr').innerHTML = esc(PM.fmt(p.pr)) + '<small>HASTA 6 CUOTAS</small>';
+  /* la barra fija del teléfono solo lleva el precio: los medios de pago ya están en la columna, y acá no entra ninguna línea sin romper el CTA */
+  $('cta-pr').textContent = PM.fmt(p.pr);
   var sku = $('d-sku');
   PM.scramble(sku, p.sku);
   if (PM.FINE) sku.addEventListener('pointerenter', function () { PM.scramble(sku, p.sku, { dur: 480 }); });
@@ -580,7 +581,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   /* medidas: las de ESTA pieza; si la casa las publica por talle, la tabla sigue al talle elegido */
   function medTabla(tl) {
     var med = (tl && p.medPorTalle && p.medPorTalle[tl]) || p.med, mt = (tl && p.medPorTalle && p.medPorTalle[tl]) ? tl : p.medTalle;
-    if (!med || !med.length) return '<p class="nota">Esta pieza se mide en el taller antes de salir. Pedinos las medidas por Instagram <b>@pannimargot</b> o en Honduras 4940 y te las pasamos en el día.</p>';
+    if (!med || !med.length) return '<p class="nota">Esta pieza se mide en el taller antes de salir. Pedinos las medidas por Instagram <b>@pannimargot</b> o en Honduras 4940.</p>';
     /* sin talle elegido, la tabla no finge selección: es la referencia del talle publicado */
     return '<table class="med">' + (mt ? '<caption' + (multi ? '' : ' class="sr"') + '>Talle ' + esc(mt) + (multi && !tl ? ' · referencia' : '') + ' · en plano</caption>' : '<caption class="sr">Tomadas sobre esta pieza, en plano</caption>') + '<tbody>' +
       med.map(function (r) { return '<tr><th scope="row">' + esc(r[0]) + '</th><td>' + esc(r[1]) + '</td></tr>'; }).join('') + '</tbody></table>';

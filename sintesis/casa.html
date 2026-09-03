@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>La Casa — Panni Margot</title>
 <meta name="description" content="La casa Panni Margot: manifiesto, taller y boutique en Honduras 4940, Palermo Soho, Buenos Aires.">
-<link rel="icon" href="../favicon.svg">
+<link rel="icon" href="../../favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://acdn-us.mitiendanube.com">
@@ -421,10 +421,10 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
         <p class="tajos-cap"><span><a href="./ficha.html?id=tapado-taika-brushed-mask">TAPADO TAIKA BRUSHED MASK</a> · <span lang="ja" aria-hidden="true">手描き</span><span class="sr">pintado a mano</span><span class="uno-de" data-id="tapado-taika-brushed-mask"></span></span><span>CORTE 01—05 · SIN RETAZO</span></p>
       </div>
       <div class="taller-side">
-        <p class="ey"><b>SERIES</b> · PIEZAS DE A</p>
-        <p class="nums"><span aria-hidden="true">1<i></i>3<i></i>5<i></i>8</span><span class="sr">Piezas de a una, de a tres, de a cinco, de a ocho: de a pocas</span></p>
+        <p class="ey"><b>SERIES</b> · CÓMO SALE CADA PIEZA</p>
+        <p class="nums"><span aria-hidden="true">DE A<i></i>UNA</span><span class="sr">De a una: hay piezas que salen de a una y otras que se repiten pocas veces</span></p>
         <div class="txt">
-          <p>De a una, de a tres, de a cinco, de a ocho — de a pocas, nunca en serie: cuando una pieza se va, no vuelve igual. <b>Nunca XS</b> — la prenda se ajusta al cuerpo que la lleva, no al revés.</p>
+          <p>Hay piezas que salen <b>de a una</b> y otras que se repiten pocas veces: nunca en serie, y cuando una se va no vuelve igual. <b>Nunca XS</b> — la prenda se ajusta al cuerpo que la lleva, no al revés.</p>
           <p><b>El pintor de la casa</b> pinta cada prenda a pincel, de a una. No es una estampa: es una mano, y por eso ninguna sale igual a otra. Las piezas pintadas llevan el sello <span lang="ja" aria-hidden="true">手描き</span><span class="sr">pintado a mano</span>; las que son una sola, además, el <span lang="ja" aria-hidden="true">一点物</span><span class="sr">pieza única</span> 1/1. Los cuidados de cada pieza van en su etiqueta interna.</p>
           <p>Si te enamorás de algo que ya no está y ese textil se terminó, <b>se rehace en otro textil</b>: parecida, nunca igual.</p>
         </div>
@@ -434,8 +434,8 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
 
     <section class="sala" aria-labelledby="sala-t">
       <div class="sala-head">
-        <h3 class="ey" id="sala-t"><b>LO PINTADO, HOY EN SALA</b> · <span lang="ja" aria-hidden="true">手描き</span> · <span id="sala-n"></span></h3>
-        <a class="lnk" href="./shop.html">TODO EL SHOP <span lang="ja" aria-hidden="true">店</span> &gt;&gt;</a>
+        <h3 class="ey" id="sala-t"><b>LO PINTADO A MANO</b> · <span lang="ja" aria-hidden="true">手描き</span> · <span id="sala-n"></span></h3>
+        <a class="lnk" id="sala-todas" href="./shop.html?se=%E6%89%8B%E6%8F%8F%E3%81%8D">TODAS LAS PINTADAS <span lang="ja" aria-hidden="true">手描き</span> &gt;&gt;</a>
       </div>
       <div class="pgrid" id="sala-grid"></div>
     </section>
@@ -562,10 +562,13 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   }
 
   /* lo pintado, hoy en sala: curado, no volcado. Sólo espaldas pintadas de la misma sesión (fondo claro, cuerpo entero), 6 piezas → 3 columnas sin huecos. */
-  var FUERA = { 'capa-vestido-so-brushed-2':1, 'campera-gamu-jo-tca43':1 }; /* frente sobre gris / otra sesión: rompen la consistencia fotográfica */
+  var FUERA = { 'campera-gamu-jo-tca43':1 }; /* frente sobre gris / otra sesión: rompen la consistencia fotográfica */
   var ESPALDA = { 'tapado-taika-brushed-mask':0, 'camisa-over-poketto-white-brushed-5':3, 'camisa-oversize-baikara-poplin-white-brushed':0, 'tapado-kimono-brushed-kangae':5, 'tapado-kimono-brushed-takai':0, 'buzo-haori-brushed':0 }; /* índice de la foto de espalda en catalogo.js */
   var GRANDES = ['tapado-kimono-brushed-takai','camisa-over-poketto-white-brushed-5','buzo-haori-brushed','camisa-oversize-baikara-poplin-white-brushed']; /* ya llevan pz-<id> en el hero/manifiesto: la tarjeta no repite el view-transition-name */
-  var piezas = (window.CATALOGO && CATALOGO.piezas || []).filter(function(p){ return (p.sellos||[]).indexOf('手描き') > -1 && !FUERA[p.id]; });
+  /* el total de pintadas de la tienda (7 hoy) manda sobre la selección: la sala dice «6 DE 7» y el enlace
+     lleva a las 7 filtradas en el shop. Un «MOSTRANDO 6» a secas se leía como si la casa tuviera 6. */
+  var TODAS = (window.CATALOGO && CATALOGO.piezas || []).filter(function(p){ return (p.sellos||[]).indexOf('手描き') > -1; });
+  var piezas = TODAS.filter(function(p){ return !FUERA[p.id]; });
   piezas.sort(function(a,b){ return (b.ts||0) - (a.ts||0); });
   piezas = piezas.slice(0, 6);
   var grid = d.getElementById('sala-grid');
@@ -575,11 +578,12 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
       if (imgs[k]) q = Object.assign({}, p, { imgs: [imgs[k]].concat(imgs.filter(function(_,j){ return j !== k; })), lq: imgs[k] });
       return PM.pcardHTML(q, { eager:false, cls:'rv' + (i%3 ? ' rv-d' + (i%3) : ''), vt: GRANDES.indexOf(p.id) < 0 });
     }).join('');
-    d.getElementById('sala-n').textContent = piezas.length + (piezas.length === 1 ? ' PIEZA' : ' PIEZAS');
+    d.getElementById('sala-n').textContent = piezas.length < TODAS.length ? 'MOSTRANDO ' + piezas.length + ' DE ' + TODAS.length : 'MOSTRANDO ' + piezas.length;
     PM.revelar(grid);
   } else {
     /* estado vacío: hoy no hay piezas pintadas en sala */
-    d.getElementById('sala-n').textContent = 'HOY NINGUNA EN SALA';
+    d.getElementById('sala-n').textContent = 'NINGUNA EN PANTALLA';
+    var lt = d.getElementById('sala-todas'); if (lt) lt.hidden = true;
     grid.className = 'sala-vacia';
     grid.innerHTML = 'LAS PINTADAS SE FUERON TODAS · LAS QUE YA NO ESTÁN VIVEN EN EL <a class="lnk" href="./archivo.html">ARCHIVO <span lang="ja" aria-hidden="true">記憶</span> &gt;&gt;</a>';
   }

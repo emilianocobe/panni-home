@@ -141,8 +141,12 @@
     var vis = node.firstChild, sr = node.lastChild;
     sr.textContent = txt;
     if (RM) { pintarJa(vis, txt); return; }
-    var t0 = null;
+    var t0 = null, listo = false, guarda = 0;
+    /* red de seguridad: si el bucle de cuadros no llega a cerrar (pestaña en segundo plano, rAF frenado,
+       captura headless con reloj virtual), el texto queda escrito igual. Nunca se muestran glifos «pegados». */
+    function cerrar() { if (listo) return; listo = true; clearTimeout(guarda); pintarJa(vis, txt); }
     function frame(t) {
+      if (listo) return;
       if (t0 == null) t0 = t;
       var k = Math.min(1, (t - t0) / dur), out = '', n = txt.length, lim = Math.floor(k * n);
       for (var i = 0; i < n; i++) {
@@ -151,9 +155,10 @@
         else out += GLIFOS[Math.floor(Math.random() * GLIFOS.length)];
       }
       if (k < 1) { vis.textContent = out; requestAnimationFrame(frame); }
-      else pintarJa(vis, txt);
+      else cerrar();
     }
     requestAnimationFrame(frame);
+    guarda = setTimeout(cerrar, dur + 400);
   }
   /* el texto final del scramble lleva su japonés con lang="ja" (fuente y lectores) */
   var RE_JA = /([぀-ヿ一-鿿　]+)/g;
@@ -415,9 +420,9 @@
       '<div class="pm-2col"><label class="pm-campo"><span>LOCALIDAD</span><input type="text" name="loc" autocomplete="address-level2"></label>' +
       '<label class="pm-campo"><span>PROVINCIA</span><input type="text" name="prov" autocomplete="address-level1"></label></div></div></section>' +
       '<section class="pm-paso" data-paso="3"><h3>Pago</h3>' +
-      '<label class="pm-opt"><input type="radio" name="pago" value="mp" checked><span class="t">MERCADO PAGO<span class="d">Tarjeta, dinero en cuenta o transferencia. Hasta 6 cuotas.</span></span><span class="pr">6 CUOTAS</span></label>' +
-      '<label class="pm-opt"><input type="radio" name="pago" value="nave"><span class="t">NAVE<span class="d">Tarjetas de crédito y débito. Hasta 6 cuotas.</span></span><span class="pr">6 CUOTAS</span></label>' +
-      '<p class="pm-nota" style="margin-top:var(--s-4)">PAGÁS EN LA PLATAFORMA QUE ELIJAS. EL PRECIO QUE VISTE ES EL PRECIO QUE PAGÁS.</p>' +
+      '<label class="pm-opt"><input type="radio" name="pago" value="mp" checked><span class="t">MERCADO PAGO<span class="d">Tarjeta, dinero en cuenta o transferencia.</span></span></label>' +
+      '<label class="pm-opt"><input type="radio" name="pago" value="nave"><span class="t">NAVE<span class="d">Tarjetas de crédito y débito.</span></span></label>' +
+      '<p class="pm-nota" style="margin-top:var(--s-4)">PAGÁS EN LA PLATAFORMA QUE ELIJAS. LA FINANCIACIÓN DEPENDE DEL MEDIO DE PAGO.</p>' +
       '<div class="pm-resumen" id="pm-chk-res"></div></section>' +
       '<section class="pm-paso pm-listo" data-paso="4"><h3>Pedido<br>en reserva</h3>' +
       '<span class="code" id="pm-chk-code"></span>' +
@@ -486,7 +491,7 @@
     envios: { t: 'Envíos', ja: '配送', p: ['<b>A todo el país</b> por correo, con seguimiento por link. El plazo de despacho se informa al confirmar el pedido.', 'También podés <b>retirar sin cargo en Honduras 4940</b>, Palermo Soho, de lunes a sábado de 11 a 19. Te avisamos cuando la pieza está lista.'] },
     cambios: { t: 'Cambios y devoluciones', ja: '交換', p: ['El plazo de cambio se informa al confirmar el pedido. Las piezas salen de a una, de a pocas — nunca en serie: el cambio es por otro talle si queda, por otra pieza o por crédito en la casa; si el textil lo permite, también <b>se ajusta al cuerpo</b> en el taller.', 'Tiene que volver sin uso, con su etiqueta y en el mismo estado en que salió.'] },
     arrepentimiento: { t: 'Botón de arrepentimiento', ja: '撤回', p: ['Si compraste online, podés <b>revocar la compra dentro de los 10 días corridos de recibida la pieza</b>, sin dar motivos y sin costo. Te devolvemos el importe por el mismo medio de pago.', 'Completá el formulario y te respondemos por email con las instrucciones para la devolución.'], ley: 'LEY 24.240 · ART. 34 · RES. 424/2020', form: true },
-    terminos: { t: 'Términos y condiciones', ja: '規約', p: ['Los precios están en <b>pesos argentinos</b> e incluyen IVA. Cada pieza publicada está disponible en los talles que ves; salen de a una, de a pocas — nunca en serie. Al sumarla al carrito <b>queda reservada mientras completás la compra</b>.', 'Pagás con Mercado Pago o Nave, hasta 6 cuotas. Las fotos son de la pieza real; el color puede variar según la pantalla.'] },
+    terminos: { t: 'Términos y condiciones', ja: '規約', p: ['Los precios están publicados en <b>pesos argentinos</b>. Cada pieza publicada está disponible en los talles que ves; salen de a una, de a pocas — nunca en serie. Al sumarla al carrito <b>queda reservada mientras completás la compra</b>.', 'Pagás con Mercado Pago o Nave; la financiación depende del medio de pago que elijas. Las fotos son de la pieza real; el color puede variar según la pantalla.'] },
     talles: { t: 'Guía de talles y cuidados', ja: '寸法', p: ['<b>No hay XS: la prenda se ajusta al cuerpo que la lleva.</b> La mayoría de las fichas trae las medidas reales de esa pieza (hombros, pecho, largo); si falta, pedilas por Instagram o en la boutique. Compará con una prenda tuya que te quede bien.', 'Cuidados: van en la <b>etiqueta interna</b> de cada pieza. Cualquier duda, te la respondemos por Instagram <b>@pannimargot</b>.'] }
   };
   function legalHTML() {
@@ -552,7 +557,7 @@
       '<div id="pm-cart-pas"></div>' +
       '<span class="st" role="status" aria-live="polite"></span></div>' +
       '<div id="pm-cart-f" class="pm-dlg-f" hidden><div class="pm-tot"><span>TOTAL</span><b id="pm-cart-tot">$ 0</b></div>' +
-      '<p class="pm-nota">ENVÍO Y CUOTAS SE DEFINEN EN EL PASO SIGUIENTE · HASTA 6 CUOTAS CON MERCADO PAGO O NAVE</p>' +
+      '<p class="pm-nota">ENVÍO Y PAGO SE DEFINEN EN EL PASO SIGUIENTE · MERCADO PAGO · NAVE</p>' +
       '<button type="button" class="btn fill block lg" id="pm-cart-go">INICIAR COMPRA &gt;&gt;</button></div></aside>';
   }
   function termHTML() {
@@ -708,6 +713,15 @@
     });
 
     // menú a pantalla (teléfono): [ ≡ ] abre, [ × ] / Esc / ensanchar la ventana cierran; el scroll de la página queda trabado mientras está abierto
+    // el panel tapa la pantalla: mientras está abierto, todo lo que queda debajo va `inert` (no se tabula ni lo leen los lectores)
+    function fondoMenu(on) {
+      Array.prototype.forEach.call(d.body.children, function (c) {
+        if (c === hd || c.id === 'pm-velo' || c.id === 'grain' || c.id === 'cur' || c.id === 'cur-ring') return;
+        if (c.tagName === 'SCRIPT' || c.tagName === 'SVG') return;
+        if (on) { if (!c.hasAttribute('inert')) { c.setAttribute('inert', ''); c.setAttribute('data-pm-inert', 'pm-menu'); } }
+        else if (c.getAttribute('data-pm-inert') === 'pm-menu') { c.removeAttribute('inert'); c.removeAttribute('data-pm-inert'); }
+      });
+    }
     function menu(on) {
       var tg = $('.pm-menu-tg', hd); if (!tg) return;
       if (on === hd.classList.contains('menu-open')) return;
@@ -715,17 +729,33 @@
       tg.setAttribute('aria-expanded', on ? 'true' : 'false');
       tg.setAttribute('aria-label', on ? 'Cerrar el menú' : 'Abrir el menú');
       if (!abiertos.length) H.style.overflow = on ? 'hidden' : '';
+      fondoMenu(on);
       if (on) { var a = $('.pm-nav a[aria-current="page"]', hd) || $('.pm-nav a', hd); if (a) setTimeout(function () { a.focus({ preventScroll: true }); }, 30); }
       else if (d.activeElement && hd.contains(d.activeElement)) tg.focus();
     }
+    // el foco da la vuelta dentro del panel (el resto del documento ya está inerte)
+    d.addEventListener('keydown', function (e) {
+      if (e.key !== 'Tab' || !hd.classList.contains('menu-open') || abiertos.length) return;
+      var f = Array.prototype.filter.call(hd.querySelectorAll('a[href],button:not([disabled]),input:not([disabled])'), function (n) { return n.offsetWidth || n.offsetHeight || n.getClientRects().length; });
+      if (!f.length) return;
+      var pri = f[0], ult = f[f.length - 1];
+      if (e.shiftKey && d.activeElement === pri) { e.preventDefault(); ult.focus(); }
+      else if (!e.shiftKey && d.activeElement === ult) { e.preventDefault(); pri.focus(); }
+    });
     d.addEventListener('keydown', function (e) { if (e.key === 'Escape' && hd.classList.contains('menu-open') && !abiertos.length) { e.preventDefault(); menu(false); } });
     try {
       var mqTel = w.matchMedia('(max-width: 767px)');
       var cerrarSiAncho = function () { if (!mqTel.matches) menu(false); };
       if (mqTel.addEventListener) mqTel.addEventListener('change', cerrarSiAncho); else if (mqTel.addListener) mqTel.addListener(cerrarSiAncho);
     } catch (e) {}
-    /* al abrir un diálogo (carrito) el menú se cierra: no conviven dos capas */
-    d.addEventListener('pm:dialogo', function (e) { if (e.detail && e.detail.abierto) menu(false); });
+    /* al abrir un diálogo (carrito) el menú se cierra: no conviven dos capas.
+       Al cerrarse, el menú devuelve el `inert` que había puesto; el diálogo lo vuelve a tomar para sí. */
+    d.addEventListener('pm:dialogo', function (e) {
+      if (!e.detail || !e.detail.abierto) return;
+      var eraMenu = hd.classList.contains('menu-open');
+      menu(false);
+      if (eraMenu) fondo(e.detail.id, true);
+    });
     $('#pm-cart-go').addEventListener('click', function () { if (!cart.n()) return; chkPaso(1); abrirDialogo('pm-chk'); });
     chkBind();
     $('#pm-news').addEventListener('submit', function (e) {

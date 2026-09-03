@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Panni Margot — Inicio</title>
 <meta name="description" content="Panni Margot. Piezas únicas, sin género, hechas en Buenos Aires. Honduras 4940, Palermo Soho.">
-<link rel="icon" href="../favicon.svg">
+<link rel="icon" href="../../favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://acdn-us.mitiendanube.com" crossorigin>
@@ -60,8 +60,10 @@
 /* deriva leve: la foto respira (solo transform) */
 @keyframes pm-deriva{0%,100%{transform:translate3d(0,0,0) scale(1.02)}50%{transform:translate3d(0,-1.2%,0) scale(1.045)}}
 @keyframes pm-deriva-d{0%,100%{transform:translate3d(0,0,0) scale(1.14)}50%{transform:translate3d(0,-1%,0) scale(1.165)}}
+@keyframes pm-deriva-m{0%,100%{transform:translate3d(0,0,0) scale(1.2)}50%{transform:translate3d(0,-1%,0) scale(1.225)}}
 html.js .hero-ph .pm-img{animation:pm-deriva 14s var(--ease) infinite}
 @media (min-width:1024px){html.js .hero-ph .pm-img{animation-name:pm-deriva-d}}
+@media (max-width:767px){html.js .hero-ph .pm-img{animation-name:pm-deriva-m}}
 @supports (animation-timeline: scroll()){
   html.js .hero-txt{animation:pm-hero-out linear both;animation-timeline:scroll();animation-range:0 60vh}
 }
@@ -139,14 +141,14 @@ html.js .hero-ph .pm-img{animation:pm-deriva 14s var(--ease) infinite}
 @media (hover:hover) and (pointer:fine){.mk-a:hover .pm-img,.mk-b:hover .pm-img,.mk-a:focus-visible .pm-img,.mk-b:focus-visible .pm-img{filter:grayscale(0) contrast(1)}}
 .mk .pcard-meta{display:flex;padding-top:var(--s-3)}
 
-/* ── 7 · ARCHIVO teaser: 3 piezas 完売 en deriva suave ─────────────── */
+/* ── 7 · ARCHIVO teaser: 3 piezas 終了 · ya no están en la tienda ─────────────── */
 .arc{position:relative;border-top:1px solid var(--line)}
 .sec.arc{padding-top:var(--s-24)}
 .arc-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gut);align-items:start}
 .arc-grid .pcard:nth-child(1){grid-column:1/5;margin-top:var(--s-16)}
 .arc-grid .pcard:nth-child(2){grid-column:5/9;margin-top:0}
 .arc-grid .pcard:nth-child(3){grid-column:9/13;margin-top:var(--s-24)}
-/* la foto manda: el negro del archivo se lee como negro; 完売 es el único indicador de vendida */
+/* la foto manda: el negro del archivo se lee como negro; 終了 es el único indicador de «ya no está en la tienda» */
 .arc .pcard .pm-img{filter:grayscale(1) contrast(1.05) brightness(.92)}
 @media (hover:hover) and (pointer:fine){
   .arc .pcard:hover .pm-img,.arc .pcard:focus-visible .pm-img{filter:grayscale(0) contrast(1)}
@@ -217,21 +219,37 @@ html.js .bq-milim.viva .ring{animation-play-state:running}
   .bq .in{grid-template-columns:1fr;padding-block:var(--s-16)}
   .bq-milim{max-width:520px}
 }
+/* tablet vertical (768–1023, alto ≥ ancho): mismo trato que el teléfono, medido acá. Con la foto a 56svh y
+   el titular a 13vw, en 768×1024 (header de dos filas, 131 px) el lead arrancaba en 995 y quedaba cortado por
+   el pliegue. Foto a 44svh y titular a 9.6vw: el lead cierra en ~915 y el botón entra entero (~1003).
+   Se acota a vertical para no recortar la figura en ventanas anchas y bajas de este mismo rango. */
+@media (min-width:768px) and (max-width:1023px) and (max-aspect-ratio:1/1){
+  .hero-ph{max-height:44svh}
+  .hero h1{font-size:clamp(56px,9.6vw,88px)}
+  .hero h1 .ja{font-size:13px;letter-spacing:.32em;margin-top:var(--s-2)}
+  .hero .lead{margin-top:var(--s-4);max-width:40ch}
+  .hero-cta{margin-top:var(--s-6)}
+}
 /* buscador del cromo a 1024–1200 (input de 120px): el placeholder no se corta a mitad de palabra */
 .pm-buscar input{text-overflow:ellipsis}
 .pm-buscar input::placeholder{text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
 @media (max-width:767px){
   .sec-h{flex-direction:column;align-items:flex-start;gap:var(--s-4)}
   .sec-h .der{align-items:flex-start;text-align:left}
-  /* primera pantalla del teléfono (390×844 − header 60): foto ≈ 48svh + dialecto en UNA línea + titular entero + el lead completo.
-     El botón asoma al pie: invita a seguir sin cortar nada */
+  /* primera pantalla del teléfono (390×844 − header 60): la FOTO manda a sangre (55svh ≈ 464px, la mayor parte
+     de lo que se ve) y debajo entran completos el dialecto en UNA línea, el titular y el lead.
+     Medido en 390×844 (header 60): la foto va de 60 a 525, el titular cierra en 640, ジェンダーレス en 667,
+     el lead en 745 y el botón entra entero en 765–820 — 24 px de aire al pie, nada cortado */
   .hero{gap:var(--s-4)}
-  .hero-ph{aspect-ratio:4/5;max-height:48svh}
+  .hero-ph{aspect-ratio:auto;height:55svh;max-height:none}
+  /* la toma se acerca: la prenda ocupa el tile, sin pared muerta a los lados */
+  .hero-ph .pm-img{object-position:50% 46%;transform:scale(1.2);transform-origin:50% 44%}
   .hero-txt{padding-bottom:var(--s-6);gap:var(--s-6)}
-  .hero-dial{white-space:nowrap;overflow:hidden;letter-spacing:.08em}
-  .hero h1{font-size:clamp(48px,14.5vw,84px);margin-top:var(--s-3)}
-  .hero h1 .ja{margin-top:var(--s-3);letter-spacing:.3em}
-  .hero .lead{margin-top:var(--s-4);font-size:var(--t-5);max-width:34ch}
+  .hero-dial{white-space:nowrap;overflow:hidden;letter-spacing:.06em;font-size:9px}
+  .hero h1{font-size:clamp(44px,12.4vw,72px);margin-top:var(--s-2)}
+  /* el piso de 9px manda: en teléfono ジェンダーレス se fija, no se calcula como .17em del titular */
+  .hero h1 .ja{font-size:10px;margin-top:var(--s-2);letter-spacing:.3em}
+  .hero .lead{margin-top:var(--s-3);font-size:15px;max-width:34ch}
   .hero-cta{margin-top:var(--s-6)}
   .arc-h{grid-template-columns:1fr;gap:var(--s-4)}
   .arc-h .lnk{justify-self:start}
@@ -347,7 +365,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
       <div class="sec-h">
         <h2 id="t-secs" class="rv">Las secciones <span lang="ja" aria-hidden="true">漂流</span></h2>
         <div class="der rv rv-d1">
-          <p class="ey">OCHO SECCIONES · <b id="secs-n">0</b> PIEZAS DISPONIBLES</p>
+          <p class="ey">OCHO SECCIONES <span lang="ja" aria-hidden="true">店</span></p>
           <a class="lnk" href="./shop.html">VER TODO EL SHOP</a>
         </div>
       </div>
@@ -361,7 +379,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
       <div class="sec-h">
         <h2 id="t-nuevo" class="rv">Lo nuevo <span lang="ja" aria-hidden="true">店</span></h2>
         <div class="der rv rv-d1">
-          <p class="ey">LAS OCHO MÁS RECIENTES DE LA TIENDA</p>
+          <p class="ey">OCHO DE LAS ÚLTIMAS EN ENTRAR</p>
           <a class="lnk" href="./shop.html">TODAS LAS PIEZAS</a>
         </div>
       </div>
@@ -513,7 +531,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   }
   /* tomas que no cierran con el set de estudio blanco (fondo oscuro, plano corto): no van en la tira */
   /* la Kagyaku además es la cara de ABRIGOS en LAS SECCIONES: una capa, una sola vez en la home */
-  var FUERA_NUEVO = ['camisa-cropped-baikara-black-1','blazer-nuime','capa-vestido-so-1','capa-vestido-so-brushed-2','camisa-vestido-hansode-black','capa-resversible-kagyaku'];
+  var FUERA_NUEVO = ['camisa-cropped-baikara-black-1','blazer-nuime','capa-vestido-so-1','camisa-vestido-hansode-black','capa-resversible-kagyaku'];
   /* piezas cuya primera toma es de estudio gris con línea de piso: en la tira se muestran desde otra toma (sobre blanco, cuerpo entero) */
   var TOMA_NUEVO = { 'campera-kyappu': 1, 'pantalon-gamu-1': 3 };
   /* la LQIP acompaña siempre a la toma que se muestra (si no, mientras carga se ve otra foto detrás) */
@@ -522,8 +540,6 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     var i = TOMA_NUEVO[p.id];
     return (i && p.imgs[i]) ? Object.assign({}, p, { imgs: p.imgs.slice(i).concat(p.imgs.slice(0, i)), lq: lqDe(p.imgs[i]) }) : p;
   }
-  /* el sufijo numérico de desambiguación del catálogo ("… Brushed 5") no es nombre de pieza: se limpia al pintar (queda en el SKU) */
-  function limpio(p){ return Object.assign({}, p, { nm: String(p.nm || '').replace(/\s+\d+$/, '') }); }
   var excluir = [HERO_ID, mano ? mano.id : null].filter(Boolean);
   var tallos = {}, porCat = {}, nuevas = [];
   excluir.forEach(function(id){ var p = byId(id); if (p) tallos[tallo(p.nm)] = 1; });
@@ -554,7 +570,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     DISCONTINOUS: { id: 'pantalon-parattsuo', idx: 0 }
   };
   var cats = C.categorias.slice().sort(function(a,b){ return ORDEN.indexOf(a.key) - ORDEN.indexOf(b.key); });
-  var total = 0;
+  /* los tiles no llevan conteo: un número al lado de ABRIGOS se leería como el stock de la casa */
   setHTML('secs', cats.map(function(c){
     var p = null, idx = 0, cara = CARA[c.key], cp = cara ? byId(cara.id) : null;
     if (cp && cp.cat === c.key && cp.imgs[cara.idx]) {
@@ -569,7 +585,6 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
       p = lista[0];
     }
     if (!p) return '';
-    var n = c.n != null ? c.n : piezas.filter(function(q){ return q.cat === c.key; }).length; total += n;
     var manuk = c.key === 'MANUK';
     /* MANUK es un mundo propio: su tile lleva a manuk.html, no a la deriva genérica */
     var href = manuk ? './manuk.html' : './territorio.html?cat=' + encodeURIComponent(c.key);
@@ -579,12 +594,11 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
         (manuk ? PM.sellosHTML(['MANUK']) : '') +
         '<span class="ir" aria-hidden="true">' + (manuk ? 'MUNDO PROPIO' : 'ENTRAR') + ' &gt;&gt;</span></span>' +
       '<span class="ter-meta"><span class="ter-nm"><span class="nm">' + esc(c.nombre) + '</span><span lang="ja" aria-hidden="true">' + esc(c.kj) + '</span></span>' +
-      '<span class="ter-n"><b>' + n + '</b><span class="sr"> </span>' + (n === 1 ? 'PIEZA' : 'PIEZAS') + '</span></span></a>';
+      '<span class="ter-n" aria-hidden="true">' + (manuk ? 'MUNDO<b>&gt;&gt;</b>' : 'DERIVA<b>&gt;&gt;</b>') + '</span></span></a>';
   }).join(''));
-  var sn = $('secs-n'); if (sn) sn.textContent = total;
 
   setHTML('nuevo', nuevas.map(function(p, i){
-    return PM.pcardHTML(limpio(conToma(p)), { eager: false, vt: true, cls: 'rv' + (i % 4 ? ' rv-d' + (i % 4) : '') });
+    return PM.pcardHTML(conToma(p), { eager: false, vt: true, cls: 'rv' + (i % 4 ? ' rv-d' + (i % 4) : '') });
   }).join(''));
 
   /* ── MUNDO: pieza 手描き real (espalda pintada) ── */
@@ -609,10 +623,12 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   else if ($('mk-b')) { $('mk-b').hidden = true; }
   var fams = {};
   mk.forEach(function(p){ var f = /hoodie/i.test(p.nm) ? 'HOODIES' : /sw?ear?shirt|buzo/i.test(p.nm) ? 'BUZOS' : /t-?shirt|remera/i.test(p.nm) ? 'REMERAS' : 'OTRAS'; fams[f] = (fams[f] || 0) + 1; });
-  /* las familias son dato (manuk.html no filtra por familia); el único enlace es la fila total */
-  setHTML('mk-list', Object.keys(fams).map(function(f){
-    return '<div><span>' + f + '</span><span class="sr"> · </span><span>' + fams[f] + (fams[f] === 1 ? ' PIEZA' : ' PIEZAS') + '</span></div>';
-  }).join('') + '<a href="./manuk.html"><span>TODO MANUK WORLD</span><span class="sr"> · </span><span>' + mk.length + ' PIEZAS</span></a>');
+  var tlsMk = {}; mk.forEach(function(p){ (PM.talles(p) || []).forEach(function(t){ tlsMk[PM.talleTxt(t)] = 1; }); });
+  /* familias y talle son dato duro del catálogo; los conteos NO van: un número acá se leería como el stock de MANUK */
+  setHTML('mk-list',
+    '<div><span>FAMILIAS</span><span>' + esc(Object.keys(fams).join(' · ')) + '</span></div>' +
+    (Object.keys(tlsMk).length ? '<div><span>TALLE</span><span>' + esc(Object.keys(tlsMk).join(' · ')) + '</span></div>' : '') +
+    '<a href="./manuk.html"><span>TODO MANUK WORLD</span><span>ENTRAR &gt;&gt;</span></a>');
 
   /* ── ARCHIVO teaser: 3 piezas que ya no están en la tienda ── */
   /* tres distintas entre sí y de lo que ya está arriba (la Kagyaku es la cara de ABRIGOS): trench-camisa negra, kimono pintado, espalda pintada */
@@ -620,7 +636,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   var arc = arcIds.map(byId).filter(Boolean);
   if (arc.length < 3) arc = (C.archivo || []).slice(0, 3);
   setHTML('arc', arc.map(function(p, i){
-    return PM.pcardHTML(limpio(p), { vendida: true, hover: true, vt: false, href: './archivo.html?id=' + encodeURIComponent(p.id), cls: 'rv' + (i ? ' rv-d' + i : ''), sellos: false });
+    return PM.pcardHTML(p, { vendida: true, hover: true, vt: false, href: './archivo.html?id=' + encodeURIComponent(p.id), cls: 'rv' + (i ? ' rv-d' + i : ''), sellos: false });
   }).join(''));
 
   /* las derivas infinitas (archivo, anillo del plano) solo corren mientras se ven: fuera del viewport quedan en pausa */

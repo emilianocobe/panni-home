@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Territorio 漂流 — Panni Margot</title>
 <meta name="description" content="Deriva por una sección de la casa: las piezas reales, de a una, a pantalla completa.">
-<link rel="icon" href="../favicon.svg">
+<link rel="icon" href="../../favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://acdn-us.mitiendanube.com" crossorigin>
@@ -13,10 +13,12 @@
 <link rel="stylesheet" href="./base.css">
 <style>
 /* ═══ TERRITORIO · deriva de UNA sección · módulo negro ═══
-   Se recorre pieza por pieza: cada pieza a sangre (la figura entera a la izquierda, el detalle de la prenda a la derecha),
-   nombre · precio · sello como coordenadas flotantes. La deriva es el tránsito: rueda, flechas, swipe o el mapa del costado
-   avanzan con un fundido lento (translate + opacity). El HUD se posa sobre la foto en diferencia: nunca la tapa. */
-:root{--hdh:72px;--S:calc(100dvh - var(--hdh))}
+   Se recorre pieza por pieza. En escritorio, cada pieza son dos tomas a sangre separadas por una banda de negro:
+   ese aire es el diseño, y ahí adentro se posan las coordenadas (ordinal · nombre · precio · sello · ver la pieza),
+   en texto desnudo, sin una sola caja. En teléfono, una pieza por pantalla y nada encima del cuerpo.
+   Dos registros tipográficos y nada más: el display de la sección y un micro-rótulo de 10px.
+   La deriva es el tránsito: rueda, flechas, teclado o swipe, con un fundido lento (translate + opacity). */
+:root{--hdh:72px;--S:calc(100dvh - var(--hdh));--gapc:clamp(56px,5vw,88px)}
 html{scroll-padding-top:var(--hdh)}
 html.t-snap{scroll-snap-type:y mandatory}
 html.t-snap .pm-ft{scroll-snap-align:start}
@@ -36,70 +38,104 @@ html.t-snap .pm-ft{scroll-snap-align:start}
 .pz.on{opacity:1;visibility:visible;transform:none;z-index:2;transition-delay:0s,0s,0s}
 /* la primera pieza aparece de golpe: la deriva empieza recién con el primer gesto */
 .t-escena.t-init .pz,.t-escena.t-init .co{transition:none}
-.pz-fig{position:absolute;inset:0;display:grid;grid-template-columns:38% minmax(0,1fr);grid-template-rows:minmax(0,1fr);background:var(--g-900)}
+/* dos tomas de la misma pieza, a sangre, casi pegadas: la foto manda y el aire es el justo.
+   Las coordenadas bajan al pie, agrupadas, y nunca se paran encima del cuerpo. */
+.pz-fig{position:absolute;inset:0;display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.12fr);column-gap:var(--gapc);
+  grid-template-rows:minmax(0,1fr);background:var(--bg)}
 .pz-cel{position:relative;overflow:hidden;min-width:0;min-height:0}
-.pz-fig img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;filter:grayscale(1) contrast(1.04);transition:filter 1s var(--ease)}
-/* el detalle: la misma prenda, más cerca (recorte del torso, nunca un macro inventado) */
-.pz-b{object-position:50% 46%;transform:scale(1.3);transform-origin:50% 46%}
+/* los marcos son más altos que las tomas (2:3): sin zoom, `cover` escala por altura y entra la pared vacía
+   y el piso. Se recorta con `scale` (propiedad aparte) para no pelear con el transform de la respiración. */
+.pz-fig img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;
+  transform-origin:50% 30%;
+  filter:grayscale(1) contrast(1.17) brightness(.93);transition:filter 1s var(--ease)}
+.pz-a{scale:1.16}
+/* la segunda toma rima con la primera: la misma figura, más cerca, cortada abajo — nunca en el cuello */
+.pz-b{scale:1.10;object-position:50% 18%}
 @media (hover:hover) and (pointer:fine){
-  .pz.on .pz-fig{animation:t-respira 22s ease-in-out infinite alternate}
-  .pz:hover .pz-fig img,.pz:focus-within .pz-fig img{filter:grayscale(0) contrast(1)}
+  .pz.on .pz-fig img{animation:t-respira 22s ease-in-out infinite alternate}
+  .pz:hover .pz-fig img,.pz:focus-within .pz-fig img{filter:grayscale(0) contrast(1.02) brightness(1)}
 }
-@keyframes t-respira{from{transform:scale(1)}to{transform:scale(1.035)}}
+@keyframes t-respira{from{transform:scale(1)}to{transform:scale(1.04)}}
 /* la linterna del sistema deja las coordenadas (--lx/--ly) en la escena; la luz se pinta por pieza, más suave que en el plano negro */
 .t-escena.linterna::after{display:none}
+/* una sola capa de luz por pieza (no una caja por etiqueta): el foco que sigue al puntero
+   + dos velos que hunden el borde de arriba y el de abajo, donde se posa la tipografía */
 .pz-luz{position:absolute;inset:0;z-index:2;pointer-events:none;
-  background:radial-gradient(circle var(--lr,560px) at var(--lx,50%) var(--ly,42%),transparent 0,rgba(0,0,0,.04) 55%,rgba(0,0,0,.12) 100%)}
-@media (hover:none),(pointer:coarse){.pz-luz{background:radial-gradient(ellipse 80% 70% at 50% 45%,transparent 0,rgba(0,0,0,.1) 100%)}}
+  /* la banda de abajo es corta (donde viven las coordenadas) pero densa: sobre una pared clara, el ordinal y las flechas
+     tienen que leerse igual que sobre un fondo negro */
+  --vtop:clamp(120px,15vh,190px);--vtopw:100%;--vbot:clamp(112px,14vh,168px);--vbotc:rgba(0,0,0,.88);--vbotm:rgba(0,0,0,.46);
+  --vfoco:radial-gradient(circle var(--lr,620px) at var(--lx,50%) var(--ly,42%),transparent 0,rgba(0,0,0,.07) 55%,rgba(0,0,0,.24) 100%);
+  background:linear-gradient(rgba(0,0,0,.78),rgba(0,0,0,.34) 46%,transparent) top left/var(--vtopw) var(--vtop) no-repeat,
+             linear-gradient(to top,var(--vbotc),var(--vbotm) 52%,transparent) bottom/100% var(--vbot) no-repeat,
+             var(--vfoco)}
+/* en escritorio el velo de arriba sólo cubre la columna donde vive el título de la sección: la foto grande queda intacta */
+@media (min-width:1024px){.pz-luz{--vtopw:calc(46% - var(--gapc)/2)}}
+@media (hover:none),(pointer:coarse){.pz-luz{--vfoco:radial-gradient(ellipse 82% 72% at 50% 42%,transparent 0,rgba(0,0,0,.2) 100%)}}
 
-/* coordenadas: el enlace cubre la escena; los datos flotan como etiquetas de la casa (negro sobre la foto, familia de los sellos) */
-.pz-link{position:absolute;inset:0;z-index:3;display:block;color:var(--white);-webkit-tap-highlight-color:transparent;outline:none}
+/* coordenadas: el enlace cubre la escena; los datos van en texto desnudo dentro de la banda de aire —
+   sin chapa, sin fondo. La legibilidad la sostienen el negro de la banda y el velo de la escena. */
+.pz-link{position:absolute;inset:0;z-index:3;display:block;color:var(--white);-webkit-tap-highlight-color:transparent}
+/* el enlace es la pantalla entera: el foco se ve siempre, en cualquier ancho (regla dura del brief §1.12) */
+.pz-link:focus-visible{outline:1px solid var(--white);outline-offset:-6px}
 .pz-link:focus-visible .co.go{text-decoration:underline;text-underline-offset:5px}
-.tag,.co{display:inline-flex;align-items:center;gap:8px;height:26px;padding:0 10px;background:var(--black);color:var(--white);
-  font-family:var(--f-mono);font-weight:400;font-size:var(--t-1);letter-spacing:.16em;text-transform:uppercase;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
-.co{position:absolute;transform:translate(-50%,-50%);transition:opacity .9s var(--ease) .25s}
+.co{position:absolute;transform:translate(-50%,-50%);text-align:center;color:var(--white);
+  font-family:var(--f-mono);font-weight:400;font-size:var(--t-1);letter-spacing:.2em;text-transform:uppercase;line-height:1.5;
+  font-variant-numeric:tabular-nums;text-shadow:0 1px 2px rgba(0,0,0,.85),0 0 10px rgba(0,0,0,.8),0 0 30px rgba(0,0,0,.55);
+  transition:opacity .9s var(--ease) .25s}
 .pz:not(.on) .co{opacity:0;transition-delay:0s}
-.co.i1,.co.i2{font-size:var(--t-2);padding:0 8px}
-.co.nm{font-family:var(--f-text);font-weight:600;font-size:var(--t-3);letter-spacing:.18em;height:32px;padding:0 14px;max-width:min(60vw,640px);overflow:hidden;text-overflow:ellipsis;display:block;line-height:32px}
-.co.sk{letter-spacing:.2em;color:var(--g-300)}
-.co.pr{font-size:var(--t-2);font-weight:500}
-.co.se{padding:0;background:none;height:auto}
+/* el ordinal se apoya sobre la foto, no sobre negro: un tono más alto que el gris de sistema para que se lea sobre una pared clara */
+.co.i1{color:var(--g-100)}
+.co.i1 .b{color:var(--g-300)}
+.co.nm{font-family:var(--f-text);font-weight:500;font-size:var(--t-4);letter-spacing:.14em;line-height:1.35}
+.co.pr{letter-spacing:.22em}
 .co.se .sellos{display:inline-flex;gap:var(--s-1)}
-.co .sello{background:var(--black);color:var(--white);border-color:var(--white)}
+.co .sello{background:none;color:var(--white);border-color:var(--white)}
 .co .sello.uno{background:var(--white);color:var(--black);border-color:var(--white)}
-.co.go{letter-spacing:.22em}
-.co.go::after{content:"";position:absolute;left:10px;right:10px;bottom:6px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform var(--dur-fast) var(--ease)}
+.co.go{letter-spacing:.26em;padding-bottom:7px}
+.co.go::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform var(--dur-fast) var(--ease)}
 .pz:hover .co.go::after,.pz-link:focus-visible .co.go::after{transform:scaleX(1)}
-/* desktop: cuadrícula de tres columnas y dos filas, como coordenadas */
-.co.i1{left:8%;top:34%}  .co.nm{left:56%;top:34%}  .co.i2{left:92%;top:34%}
-.co.sk{left:56%;top:48%}
-.co.ln{left:8%;top:64%}  .co.pr{left:56%;top:64%}  .co.se{left:92%;top:64%}
-.co.go{left:56%;top:78%}
+/* escritorio: las coordenadas se agrupan al pie, en el mismo idioma que el teléfono —
+   nombre, precio y sello alineados al margen izquierdo; ordinal enfrentado a la derecha.
+   Nada flota en el medio de la pantalla (brief §8) y la escena entera sigue siendo el enlace. */
+@media (min-width:1024px){
+  .co{transform:none;text-align:left}
+  .co.nm{left:var(--gut);bottom:96px;font-size:var(--t-5);max-width:42ch}
+  .co.pr{left:var(--gut);bottom:72px;font-size:var(--t-2);letter-spacing:.14em}
+  .co.se{left:var(--gut);bottom:50px}
+  .co.i1{left:auto;right:var(--gut);bottom:72px;text-align:right}
+  /* la invitación aparece con el puntero o el foco: la escena entera ya es el enlace, y el rótulo no tiene que gritar.
+     Lleva su propia transición corta (la larga y demorada de .co es para la entrada de cada pieza, no para esto). */
+  .co.go{left:auto;right:var(--gut);bottom:96px;opacity:0;transition:opacity var(--dur-fast) var(--ease)}
+  .pz.on:hover .co.go,.pz-link:focus-visible .co.go{opacity:1}
+}
 
-/* ── HUD fijo: título arriba, controles abajo, mapa al costado — todo como etiquetas negras sobre la foto ── */
+/* ── HUD fijo: el nombre de la sección arriba (display grande, sin caja), cuatro rótulos abajo. Nada más. ── */
 .t-hud{position:fixed;z-index:30;color:var(--white);pointer-events:none;transition:opacity .5s var(--ease),visibility 0s linear 0s}
 .t-hud a,.t-hud button{pointer-events:auto}
 .t-hud.off,.t-mapa.off{opacity:0;visibility:hidden;transition:opacity .35s var(--ease),visibility 0s linear .35s}
-.t-top{top:calc(var(--hdh) + 20px);left:var(--gut);max-width:min(48vw,560px);display:flex;flex-direction:column;align-items:flex-start;gap:2px}
-.t-top .ey{color:var(--g-300);height:24px;padding:0 10px;display:inline-flex;align-items:center;gap:6px;background:var(--black);line-height:1}
-.t-top h1{display:inline-flex;align-items:baseline;gap:.45em;padding:0 12px;height:44px;background:var(--black);font-family:var(--f-display);font-size:clamp(22px,2.2vw,30px);line-height:44px;text-transform:uppercase;letter-spacing:.01em}
-.t-top h1 .kj{font-family:var(--f-ja);font-size:.46em;font-weight:400;letter-spacing:.12em;color:var(--g-300);text-transform:none}
-.t-top .kata{height:22px;padding:0 10px;display:inline-flex;align-items:center;background:var(--black);font-family:var(--f-ja);font-size:var(--t-1);letter-spacing:.4em;color:var(--g-300);white-space:nowrap}
-.t-bot{left:var(--gut);right:var(--gut);bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:var(--s-4)}
-.t-vistas{display:flex;align-items:center;gap:2px;white-space:nowrap}
-.t-hud .lnk{display:inline-flex;align-items:center;height:28px;padding:0 10px;background:var(--black);color:var(--white);border:0;cursor:pointer;font:inherit;font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.16em;text-transform:uppercase;text-decoration:none;white-space:pre}
-.t-hud .lnk:hover,.t-hud .lnk:focus-visible{text-decoration:underline;text-underline-offset:5px}
-.t-pas{display:inline-flex;align-items:center;height:28px;padding:0 10px;background:var(--black);font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;color:var(--g-300)}
-.t-pas .hud-pas{display:inline-flex;align-items:center;gap:0 var(--s-2)}
-.t-pas .hud-pas b{font-weight:500;color:var(--white)}
-.t-pas .hud-pas i{display:inline-block;width:6px;height:6px;border:1px solid var(--g-300);margin-right:3px;vertical-align:middle}
-.t-pas .hud-pas i.on{background:var(--white);border-color:var(--white)}
-.t-flechas{display:flex;align-items:center;gap:2px}
-.t-flechas button{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:28px;padding:0 6px;background:var(--black);color:var(--white);font-family:var(--f-mono);font-size:var(--t-2);letter-spacing:.1em;white-space:pre;cursor:pointer;transition:opacity var(--dur-fast)}
-.t-flechas button:hover,.t-flechas button:focus-visible{text-decoration:underline;text-underline-offset:5px}
-.t-flechas button[aria-disabled="true"]{color:var(--g-300);opacity:.55;cursor:default;text-decoration:none}
+/* el velo es corto a propósito (la foto manda): la legibilidad del rótulo la sostiene un halo pegado a la letra,
+   que oscurece alrededor del glifo y no lava la imagen */
+.t-hud{text-shadow:0 1px 2px rgba(0,0,0,.85),0 0 10px rgba(0,0,0,.8),0 0 30px rgba(0,0,0,.55)}
+.t-top{top:calc(var(--hdh) + clamp(26px,5.2vh,66px));left:var(--gut);max-width:min(46vw,680px);display:flex;flex-direction:column;align-items:flex-start;gap:clamp(10px,1.4vh,18px)}
+.t-top .ey{color:var(--g-100);font-size:var(--t-1);letter-spacing:.24em;line-height:1}
+.t-top h1{font-family:var(--f-display);font-size:clamp(38px,6vw,88px);line-height:.84;text-transform:uppercase;letter-spacing:.005em}
+.t-top .sub{color:var(--g-100);font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.24em;text-transform:uppercase;line-height:1}
+.t-top .sub .kj{font-family:var(--f-ja);letter-spacing:.3em}
+.t-top .sub .b{color:var(--g-300)}
+.t-bot{left:var(--gut);right:var(--gut);bottom:clamp(16px,2.6vh,30px);display:flex;justify-content:space-between;align-items:center;gap:var(--s-4)}
+.t-vistas{display:flex;align-items:center;gap:var(--s-6);white-space:nowrap}
+.t-hud .lnk,.t-flechas button{position:relative;display:inline-flex;align-items:center;background:none;padding:0;border:0;color:var(--white);cursor:pointer;
+  font:inherit;font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.2em;text-transform:uppercase;text-decoration:none;white-space:pre}
+.t-hud .lnk::after,.t-flechas button::after{content:"";position:absolute;left:-8px;right:-8px;top:-14px;bottom:-14px}
+.t-hud .lnk:hover,.t-hud .lnk:focus-visible,.t-flechas button:hover,.t-flechas button:focus-visible{text-decoration:underline;text-underline-offset:6px}
+.t-pas{display:none}
+.t-flechas{display:flex;align-items:center;gap:var(--s-6)}
+.t-flechas button[aria-disabled="true"]{color:var(--g-300);cursor:default;text-decoration:none}
 
-/* mapa: puntos numerados al costado; el actual lleva número, el resto lo muestra al pasar; miniatura al pasar */
+/* el riel de puntos se retiró de la primera pantalla: la deriva se recorre con la rueda, las flechas,
+   el teclado o la vista lista. La marca no abre con un panel de control. */
+.t-mapa{display:none}
 .t-mapa{position:fixed;z-index:30;right:calc(var(--gut) - 4px);top:50%;transform:translateY(-50%);color:var(--white);transition:opacity .5s var(--ease),visibility 0s linear 0s}
 .t-mapa ol{display:flex;flex-direction:column;gap:0}
 .t-mapa button{position:relative;display:flex;align-items:center;justify-content:flex-end;gap:8px;height:24px;padding:0 4px;color:inherit;font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;font-variant-numeric:tabular-nums;cursor:pointer}
@@ -143,40 +179,48 @@ html.t-snap .pm-ft{scroll-snap-align:start}
 
 /* ── tablet y teléfono: una sola foto (la figura entera), coordenadas apiladas al centro, HUD compacto ── */
 @media (max-width:1023px){
-  .pz-fig{grid-template-columns:1fr}
+  .pz-fig{grid-template-columns:1fr;column-gap:0}
   .pz-cel-b{display:none}
-  .pz-fig img{object-position:50% 22%}
-  .t-mapa{display:none}
-  .t-pas{display:none}
-  .co.i1{left:10%;top:30%}  .co.i2{left:90%;top:30%}
-  .co.nm{left:50%;top:60%;max-width:84vw}
-  .co.sk{left:50%;top:65%}
-  .co.pr{left:50%;top:70%}
-  .co.ln{left:50%;top:75%}
-  .co.se{left:50%;top:80%}
-  .co.go{left:50%;top:88%}
+  .pz-fig img{object-position:50% 20%}
+  .pz-a{scale:1.22;transform-origin:50% 26%}
+  /* el pie de la foto se hunde lo que la tipografía necesita, no más */
+  .pz-luz{--vbot:clamp(120px,17vh,190px);--vbotc:rgba(0,0,0,.86);--vbotm:rgba(0,0,0,.52)}
+  /* una pieza por pantalla: nada encima del cuerpo. Nombre y precio al pie, el ordinal enfrentado */
+  .co.se,.co.go{display:none}
+  /* sin «VER LA PIEZA» a la vista, el foco de teclado se marca sobre el nombre */
+  .pz-link:focus-visible .co.nm{text-decoration:underline;text-underline-offset:5px}
+  .co.nm,.co.pr{left:var(--gut);top:auto;transform:none;text-align:left;max-width:70vw}
+  .co.nm{bottom:98px;font-size:var(--t-3);max-width:68vw}
+  .co.pr{bottom:74px}
+  .co.i1{left:auto;right:var(--gut);top:auto;bottom:74px;transform:none;text-align:right}
   .t-lista .pm-dlg-b{padding:var(--s-6) var(--gut)}
   .li-row{grid-template-columns:32px minmax(0,1fr) 110px;gap:var(--s-3)}
   .li-row .sk,.li-row .tl{display:none}
 }
+/* tablet: el cromo va a dos filas, así que el rótulo de la sección arranca más abajo y el velo de arriba lo acompaña */
+@media (min-width:768px) and (max-width:1023px){.pz-luz{--vtop:clamp(200px,24vh,260px)}}
 @media (max-width:767px){
-  .t-top{top:calc(var(--hdh) + 12px);max-width:70vw}
-  .t-top h1{font-size:22px;height:36px;line-height:36px}
-  .t-top .kata{display:none}
-  .t-bot{bottom:12px;gap:var(--s-3)}
+  .t-top{top:calc(var(--hdh) + 18px);max-width:80vw;gap:10px}
+  .t-top h1{font-size:clamp(32px,10.6vw,46px)}
+  .t-top .ey{letter-spacing:.2em}
+  .t-bot{bottom:14px;gap:var(--s-4)}
   .t-vis{display:none}
-  .co.nm{font-size:var(--t-2);height:28px;line-height:28px;padding:0 10px}
-  .co.nm{top:61%}
-  .co.i1{left:11%;top:28%}  .co.i2{left:89%;top:28%}
-  .co.go{top:87%}
+  .co.nm{bottom:88px;max-width:62vw}
+  .co.pr{bottom:66px}
+  .co.i1{bottom:66px}
   .t-idx a{font-size:var(--t-6)}
 }
-/* touch: la etiqueta se ve de 32px pero el blanco de toque es de 44px */
+/* touch: el blanco de toque de cada control llega a 44px sin engordar la etiqueta */
 @media (hover:none),(pointer:coarse){
-  .t-hud .lnk,.t-flechas button{position:relative;height:32px}
-  .t-hud .lnk::after,.t-flechas button::after{content:"";position:absolute;left:0;right:0;top:-6px;bottom:-6px}
-  .t-vistas,.t-flechas{gap:var(--s-2)}
+  .t-hud .lnk::after,.t-flechas button::after{left:-10px;right:-10px;top:-16px;bottom:-16px}
+  .t-vistas{gap:var(--s-8)}
+  .t-flechas{gap:var(--s-8)}
 }
+
+/* SISTEMA: en la primera pantalla del territorio la barra del cromo se aquieta —
+   sin el campo de búsqueda desplegado ni el ítem apagado con PRONTO (viven en el resto del sitio).
+   En teléfono la nav es un panel a pantalla: ahí el menú es el mismo que en todas las páginas. */
+@media (min-width:768px){.pm-hd .pm-buscar,.pm-hd .pm-nav-off{display:none}}
 </style>
 
 <style id="pmgate-css">
@@ -246,8 +290,8 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
 <main id="contenido" class="terr">
   <div class="t-hud t-top">
     <p class="ey"><span>SHOP <span lang="ja" aria-hidden="true">店</span></span> <span aria-hidden="true">/</span> <span>TERRITORIO <span lang="ja" aria-hidden="true">漂流</span></span></p>
-    <h1><span id="t-h1">TERRITORIO</span><span class="kj" lang="ja" id="t-kj">漂流</span></h1>
-    <p class="kata" lang="ja" aria-hidden="true">バーニ　マーゴット</p>
+    <p class="sub"><span class="kj" lang="ja" id="t-kj">漂流</span> <span class="b" aria-hidden="true">·</span> <span id="t-n"></span></p>
+    <h1 id="t-h1">TERRITORIO</h1>
   </div>
 
   <div id="deriva" class="t-deriva">
@@ -257,7 +301,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     </section>
   </div>
 
-  <nav class="t-mapa" aria-label="Mapa del territorio"><ol id="t-mapa-ol"></ol></nav>
+  <nav class="t-mapa" aria-label="Mapa del territorio" hidden><ol id="t-mapa-ol"></ol></nav>
 
   <div class="t-hud t-bot">
     <div class="t-vistas">
@@ -315,9 +359,9 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     main.innerHTML = '<div class="wrap t-idx"><p class="ey">SHOP <span lang="ja" aria-hidden="true">店</span> / TERRITORIOS</p>' +
       '<h1 class="disp disp-l">Elegí un territorio<span class="kj" lang="ja" aria-hidden="true">漂流</span></h1><ul>' +
       CATS.map(function (c) {
-        var n = (C.piezas || []).filter(function (p) { return p.cat === c.key; }).length;
+        /* sin conteos: un número al lado de ABRIGOS se lee como el stock de la casa */
         return '<li><a href="' + (c.key === 'MANUK' ? './manuk.html' : './territorio.html?cat=' + encodeURIComponent(c.key)) + '"><span>' + PM.esc(String(c.nombre || c.key).toUpperCase()) +
-          '<span class="kj" lang="ja" aria-hidden="true">' + PM.esc(c.kj || '') + '</span></span><span class="n">' + n + (n === 1 ? ' PIEZA' : ' PIEZAS') + ' <span aria-hidden="true">&gt;&gt;</span></span></a></li>';
+          '<span class="kj" lang="ja" aria-hidden="true">' + PM.esc(c.kj || '') + '</span></span><span class="n">ENTRAR <span aria-hidden="true">&gt;&gt;</span></span></a></li>';
       }).join('') + '</ul></div>';
     return;
   }
@@ -330,9 +374,10 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   d.title = String(CAT.nombre || CAT.key) + ' · Territorio 漂流 — Panni Margot';
   $('#t-h1').textContent = NOMBRE;
   $('#t-kj').textContent = CAT.kj || '';
+  $('#t-n').textContent = 'MOSTRANDO ' + N;
   $('#t-shop').href = './shop.html?cat=' + encodeURIComponent(KEY);
   $('#li-shop').href = './shop.html?cat=' + encodeURIComponent(KEY);
-  escena.setAttribute('aria-label', 'Territorio de ' + NOMBRE + ': ' + N + ' piezas, de a una');
+  escena.setAttribute('aria-label', 'Territorio de ' + NOMBRE + ': ' + N + ' piezas en pantalla, de a una');
   deriva.style.setProperty('--n', N);
   function pintarPas() { $('#t-pas').innerHTML = PM.pasaporte.html('hud-pas'); }
   pintarPas(); d.addEventListener('pm:pasaporte', pintarPas);
@@ -343,11 +388,11 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   /* ── escena: una capa por pieza ── */
   var html = '';
   PZ.forEach(function (p, i) {
-    /* detalle: la última toma del set (otra vista real de la prenda; la segunda suele ser la guía de medidas) */
-    var a = (p.imgs && p.imgs[0]) || '', b = (p.imgs && p.imgs.length > 1) ? p.imgs[p.imgs.length - 1] : a, first = i === 0;
+    /* segunda toma: otra vista real de la misma pieza. Se busca en el otro extremo del set (los cuadros contiguos
+       del principio son de la misma sesión y el díptico se leía como una foto duplicada) y nunca la última, que suele ser plana. */
+    var I = p.imgs || [], a = I[0] || '', b = I[Math.floor(I.length / 2)] || I[2] || I[1] || a, first = i === 0;
     var lq = p.lq || '';
-    var linea = PM.lineaTxt(p);
-    var sellos = (p.sellos || []).slice(0, 2);
+    var sellos = (p.sellos || []).slice(0, 1);
     html += '<div class="pz" id="pz-' + i + '" data-i="' + i + '">' +
       '<div class="pz-fig">' +
         '<span class="pz-cel"><img class="pz-a" alt="' + PM.esc(p.nm) + '" ' + (first ? 'src="' + PM.esc(hi(a)) + '" loading="eager" fetchpriority="high"' : 'data-src="' + PM.esc(hi(a)) + '"') + ' decoding="async"' +
@@ -356,12 +401,9 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
       '</div>' +
       '<div class="pz-luz" aria-hidden="true"></div>' +
       '<a class="pz-link" href="./ficha.html?id=' + encodeURIComponent(p.id) + '" data-id="' + PM.esc(p.id) + '">' +
-        '<span class="co i1" aria-hidden="true">' + nn(i) + '</span>' +
+        '<span class="co i1" aria-hidden="true">' + nn(i) + ' <span class="b">/</span> ' + N + '</span>' +
         '<span class="co nm">' + PM.esc(p.nm) + '</span>' +
-        '<span class="co i2" aria-hidden="true">' + N + '</span>' +
         '<span class="sr">Pieza ' + (i + 1) + ' de ' + N + '. </span>' +
-        '<span class="co sk" aria-hidden="true">' + PM.esc(p.sku || '') + '</span>' +
-        '<span class="co ln">' + PM.esc(linea) + '</span>' +
         '<span class="co pr">' + PM.esc(PM.fmt(p.pr)) + '</span>' +
         (sellos.length ? '<span class="co se">' + PM.sellosHTML(sellos) + '</span>' : '') +
         '<span class="co go">VER LA PIEZA <span aria-hidden="true">&gt;&gt;</span></span>' +
@@ -386,7 +428,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
 
   /* ── vista lista ── */
   var tg = $('#t-lista-tg'), lista = $('#lista');
-  $('#li-n').textContent = ':: ' + N + (N === 1 ? ' PIEZA' : ' PIEZAS');
+  $('#li-n').textContent = ':: ' + N + ' EN PANTALLA';
   $('#li-ol').innerHTML = PZ.map(function (p, i) {
     return '<li><a class="li-row" href="./ficha.html?id=' + encodeURIComponent(p.id) + '" data-id="' + PM.esc(p.id) + '">' +
       '<span class="ix">' + nn(i) + '</span>' +

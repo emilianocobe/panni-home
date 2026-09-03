@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Shop 店 — Panni Margot</title>
 <meta name="description" content="Piezas de a una, de a pocas — nunca en serie —, hechas en Buenos Aires. Abrigos, camisas, pantalones, kimonos, remeras, vestidos, Manuk World y Discontinous.">
-<link rel="icon" href="../favicon.svg">
+<link rel="icon" href="../../favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
@@ -32,8 +32,9 @@
 .sh-q-chip button{font:inherit;letter-spacing:inherit;text-decoration:underline;text-underline-offset:4px;color:var(--fg);min-height:24px}
 
 /* tres columnas: índice · grilla · orden/filtros */
+/* la foto manda: los rieles se quedan con lo mínimo y todo lo que sobra se lo lleva la grilla */
 .sh-lay{
-  display:grid;grid-template-columns:max-content minmax(0,1fr) 176px;gap:var(--s-8) clamp(32px,3vw,48px);
+  display:grid;grid-template-columns:max-content minmax(0,1fr) 144px;gap:var(--s-8) var(--s-8);
   padding-top:var(--s-8);align-items:start;
 }
 .sh-cats,.sh-tools{position:sticky;top:calc(var(--hd) + var(--s-6));max-height:calc(100dvh - var(--hd) - var(--s-12));overflow-y:auto;scrollbar-width:none}
@@ -106,6 +107,8 @@
 .pcard-meta{flex-direction:column;align-items:flex-start;gap:2px;padding-top:var(--s-2);font-size:var(--t-1);letter-spacing:.06em;line-height:1.35}
 .pcard-nm{overflow-wrap:anywhere;font-weight:400}
 .pcard-pr{font-size:var(--t-1);letter-spacing:.02em;color:var(--fg-2)}
+/* en desktop la ficha de la tarjeta sube un punto (11 px): debajo de una foto de 400 px, 10 px se lee tímido al lado de la referencia */
+@media (min-width:1024px){.pcard-meta,#sh-grid .pcard-pr{font-size:var(--t-2)}}
 /* sellos como parte de la ficha (el rojo de estado de Demobaza va pegado al nombre): en la misma línea que el nombre, nunca stickers sobre la foto */
 #sh-grid .pcard-ln{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px}
 #sh-grid .pcard-ln .sellos{position:static;display:inline-flex;margin:0;gap:var(--s-1)}
@@ -113,6 +116,9 @@
 #sh-grid .sello{height:14px;padding:0 4px;font-size:var(--t-0);letter-spacing:.08em;font-weight:400}
 #sh-grid .sello [lang="ja"]{font-size:var(--t-0)}
 #sh-grid .sello.uno{background:none;color:var(--fg);border:1px solid var(--fg)}
+/* corte de bloque: el de estudio (otra sesión, otro fondo) empieza SIEMPRE en fila nueva. Una hairline al medio del aire
+   cierra el bloque blanco: la última fila incompleta pasa a leerse como final de bloque y no como un hueco de render. */
+#sh-grid .sh-corte{grid-column:1/-1;height:0;border-top:1px solid var(--line)}
 /* separador de bloque (MANUK cierra TODAS) */
 #sh-grid .sh-sep{grid-column:1/-1;display:flex;align-items:center;gap:var(--s-4);margin-top:var(--s-8);padding-top:var(--s-6);border-top:1px solid var(--line)}
 #sh-grid .sh-sep [lang="ja"]{color:var(--fg-2)}
@@ -136,8 +142,22 @@
   .shop .pcard:hover .pm-img,.shop .pcard:focus-visible .pm-img{filter:grayscale(0) contrast(1)}
 }
 /* aire quirúrgico entre filas; entre columnas lo justo para que la foto gane escala */
-@media (min-width:1280px){.shop .pgrid{gap:var(--s-16) var(--s-8)}}
-@media (min-width:1024px) and (max-width:1279px){.shop .pgrid{gap:var(--s-12) var(--s-6)}}
+@media (min-width:1280px){.shop .pgrid{gap:var(--s-16) var(--s-6)}}
+@media (min-width:1024px) and (max-width:1279px){.shop .pgrid{gap:var(--s-12) var(--s-4)}}
+/* el riel de filtros entra en 144px porque los sellos dejan de ser cajas: lista tipográfica, igual que ORDENAR y MI TALLE */
+@media (min-width:1024px){
+  .sh-tools .chips{flex-direction:column;flex-wrap:nowrap;gap:0}
+  .sh-tools .chip{
+    min-height:32px;padding:0;border:0;background:none;color:var(--fg-2);gap:6px;
+    font-size:var(--t-2);letter-spacing:.12em;
+    text-decoration:underline;text-decoration-color:transparent;text-underline-offset:5px;
+    transition:color var(--dur-fast),text-decoration-color var(--dur-fast);
+  }
+  .sh-tools .chip [lang="ja"]{color:var(--fg-3)}
+  .sh-tools .chip:hover,.sh-tools .chip:focus-visible{color:var(--fg)}
+  .sh-tools .chip[aria-pressed="true"]{color:var(--fg);text-decoration-color:currentColor}
+  .sh-tools .chip[aria-pressed="true"] [lang="ja"]{color:var(--fg-2)}
+}
 .sh-fin{margin-top:var(--s-16);padding-top:var(--s-6);border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:var(--s-4);flex-wrap:wrap}
 
 /* vacío elegante */
@@ -166,7 +186,8 @@
   .sh-head-r{display:contents}
   .sh-head .sh-n{flex:0 0 auto;order:1;white-space:nowrap;align-self:baseline;line-height:1;letter-spacing:.08em;display:inline-block}
   .sh-head .sh-n b{font-size:var(--t-4);margin-right:4px;vertical-align:-.02em;white-space:nowrap}
-  .sh-head .sh-n .sala{display:none}
+  /* en una sola fila con el título y el territorio: «16 EN PANTALLA» (la palabra PIEZAS es la que sobra, nunca «EN PANTALLA») */
+  .sh-head .sh-n #sh-n-t{display:none}
   .sh-head-r .btn .entrar{display:none}
   .sh-head-r .btn [lang="ja"]{margin:0 2px}
   /* el territorio como link de texto en la misma línea (nunca un botón outline enorme): se alinea a la derecha */
@@ -184,13 +205,19 @@
     position:sticky;top:var(--hdh,calc(var(--hd) + 48px));z-index:50;order:1;
     display:flex;align-items:center;gap:0;
     max-height:none;max-width:none;overflow:visible;background:var(--bg);
-    margin-inline:calc(var(--gut) * -1);padding-inline:var(--gut);border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    /* una sola línea cierra la banda: título y tira de secciones son UN bloque, no dos cajas apiladas */
+    margin-inline:calc(var(--gut) * -1);padding-inline:var(--gut);border-bottom:1px solid var(--line);
   }
   .sh-cats h2{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);margin:0}
   .sh-cats ul{
     flex:1 1 auto;min-width:0;flex-direction:row;align-items:center;gap:var(--s-4);height:44px;overflow-x:auto;scrollbar-width:none;
-    -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 32px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 32px),transparent);
+    /* con el scroll en cero no hay nada a la izquierda que difuminar: la máscara izquierda se comía la primera letra de TODAS.
+       Se pinta sólo la derecha, y la izquierda aparece recién cuando la tira se desplazó (clase .desp). */
+    -webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 32px),transparent);mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 32px),transparent);
     padding-right:32px;
+  }
+  .sh-cats ul.desp{
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 16px,#000 calc(100% - 32px),transparent);mask-image:linear-gradient(90deg,transparent 0,#000 16px,#000 calc(100% - 32px),transparent);
   }
   .sh-cats ul::-webkit-scrollbar{display:none}
   .sh-cats li{flex:0 0 auto}
@@ -210,10 +237,8 @@
   .sort button,.tls button{min-height:44px;white-space:nowrap}
   .chip{min-height:36px;white-space:nowrap}
   .sh-main{order:3;padding-top:var(--s-4)}
-}
-@media (max-width:767px){
-  #sh-grid .pcard-nm{min-height:calc(2 * 1.35em)}
-  /* teléfono: orden y filtros se pliegan detrás de un solo control, al final de la misma banda de chips */
+  /* teléfono Y tablet: orden y filtros se pliegan detrás de un solo control, al final de la misma banda de chips.
+     Así queda UNA sola banda antes de la grilla (título + secciones) y la sala arranca arriba, no detrás de un panel de filtros */
   .sh-tg{
     display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;min-height:44px;padding-left:var(--s-3);border-left:1px solid var(--line);
     font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--fg);text-align:left;white-space:nowrap;
@@ -222,6 +247,9 @@
   .sh-tools{border-bottom:0}
   .sh-tools:not(.open){display:none}
   .sh-tools.open{border-bottom:1px solid var(--line)}
+}
+@media (max-width:767px){
+  #sh-grid .pcard-nm{min-height:calc(2 * 1.35em)}
   .sh-fs{flex-direction:column;align-items:stretch;gap:var(--s-4);padding:var(--s-3) 0 var(--s-6)}
 }
 @media (hover:none),(pointer:coarse){
@@ -304,10 +332,11 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     <div class="sh-head">
       <div>
         <p class="ey sh-mig"><span>SHOP <span lang="ja" aria-hidden="true">店</span></span><span class="sep" aria-hidden="true">/</span><span id="sh-mig">TODAS LAS PIEZAS</span><span id="sh-q-chip" class="sh-q-chip" hidden></span></p>
-        <h1 class="disp disp-l" id="sh-h1"><span id="sh-h1-t">SHOP</span><span class="kj" lang="ja" id="sh-h1-kj">店</span></h1>
+        <h1 class="disp disp-l" id="sh-h1"><span id="sh-h1-t">SHOP</span><span class="kj" lang="ja" aria-hidden="true" id="sh-h1-kj">店</span></h1>
       </div>
       <div class="sh-head-r">
-        <p class="sh-n ey" id="sh-status" role="status" aria-live="polite" aria-atomic="true"><b id="sh-n">0</b><span id="sh-n-t">PIEZAS</span><span class="sala"> EN SALA</span></p>
+        <!-- el número cuenta lo que hay EN PANTALLA, nunca el stock de la casa -->
+        <p class="sh-n ey" id="sh-status" role="status" aria-live="polite" aria-atomic="true"><b id="sh-n">0</b><span id="sh-n-t">PIEZAS</span><span class="sala"> EN PANTALLA</span></p>
         <a class="btn" id="sh-terr" href="./territorio.html" hidden>[<span class="esp"> </span><span lang="ja" aria-hidden="true">漂流</span><span class="esp"> </span>] <span class="entrar">ENTRAR AL </span>TERRITORIO</a>
       </div>
     </div>
@@ -328,7 +357,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
           <button type="button" class="btn" id="sh-clear">LIMPIAR FILTROS</button>
         </div>
         <div class="sh-fin ey" id="sh-fin" hidden>
-          <span><b id="sh-fin-n">0</b> <span id="sh-fin-t">PIEZAS</span><span id="sh-fin-x"> · TODO LO PUBLICADO ESTÁ DISPONIBLE</span></span>
+          <span><b id="sh-fin-n">0</b> <span id="sh-fin-t">PIEZAS</span> EN PANTALLA<span id="sh-fin-x"> · TODO LO QUE VES ESTÁ DISPONIBLE</span></span>
           <a class="lnk" href="./archivo.html">LO QUE YA NO ESTÁ VIVE EN EL ARCHIVO <span lang="ja" aria-hidden="true">記憶</span></a>
         </div>
       </section>
@@ -338,7 +367,8 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
         <div class="sh-f">
           <h2 class="ey">ORDENAR</h2>
           <div class="sort" id="sh-sort" role="group" aria-label="Ordenar">
-            <button type="button" data-sort="nuevo" aria-pressed="true">LO NUEVO</button>
+            <button type="button" data-sort="casa" aria-pressed="true">ORDEN DE LA CASA<span class="sr">: las piezas agrupadas por sesión de fotos, como las cuelga la casa</span></button>
+            <button type="button" data-sort="nuevo" aria-pressed="false">LO NUEVO<span class="sr">: de la última publicada a la primera</span></button>
             <button type="button" data-sort="up" aria-pressed="false">PRECIO <span class="arr" aria-hidden="true">↑</span><span class="sr">de menor a mayor</span></button>
             <button type="button" data-sort="down" aria-pressed="false">PRECIO <span class="arr" aria-hidden="true">↓</span><span class="sr">de mayor a menor</span></button>
           </div>
@@ -382,11 +412,15 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   function catDe(k) { for (var i = 0; i < CATS.length; i++) if (CATS[i].key === k) return CATS[i]; return null; }
   function nombre(c) { return String(c.nombre || c.key).toUpperCase(); }
 
-  var SORTS = { nuevo: 'LO NUEVO', up: 'PRECIO ↑', down: 'PRECIO ↓' };
+  /* dos cosas distintas, dos nombres distintos: ORDEN DE LA CASA agrupa por sesión de fotos (es el orden por defecto);
+     LO NUEVO ordena SOLO por fecha real de publicación (ts = lastmod), sin agrupar nada. */
+  var SORTS = { casa: 'ORDEN DE LA CASA', nuevo: 'LO NUEVO', up: 'PRECIO ↑', down: 'PRECIO ↓' };
   /* talles reales con stock en la sala (nomenclatura de la casa: 1/2/3/4, XL, U); orden numérico, letras, único al final */
   function tallesDe(lista) {
-    var out = [];
-    lista.forEach(function (p) { PM.talles(p).forEach(function (t) { if (out.indexOf(t) < 0) out.push(t); }); });
+    var out = [], n = {};
+    lista.forEach(function (p) { PM.talles(p).forEach(function (t) { n[t] = (n[t] || 0) + 1; if (out.indexOf(t) < 0) out.push(t); }); });
+    /* un talle que en la sala existe en UNA sola pieza no es un rail: es un dato suelto (así la cintura 23/24 de un jean no se cuela entre 1 · 2 · 3 · 4) */
+    out = out.filter(function (t) { return n[t] > 1; });
     out.sort(function (a, b) { var na = parseInt(a, 10), nb = parseInt(b, 10), L = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'U']; if (!isNaN(na) && !isNaN(nb)) return na - nb; if (!isNaN(na)) return -1; if (!isNaN(nb)) return 1; return L.indexOf(a) - L.indexOf(b); });
     return out;
   }
@@ -397,15 +431,15 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     var tls = tallesDe(base), bloque = d.getElementById('sh-tl').closest('.sh-f');
     for (var i = st.tl.length - 1; i >= 0; i--) if (tls.indexOf(st.tl[i]) < 0) st.tl.splice(i, 1);
     d.getElementById('sh-tl').innerHTML = tls.map(function (t) { return '<button type="button" data-tl="' + PM.esc(t) + '" aria-pressed="' + (st.tl.indexOf(t) > -1 ? 'true' : 'false') + '">' + PM.esc(PM.talleTxt(t)) + '</button>'; }).join('');
-    bloque.hidden = tls.length <= 1 && tls[0] === 'U';
+    bloque.hidden = !tls.length || (tls.length === 1 && tls[0] === 'U');
   }
   var SES = ['一点物', '手描き', '不連続'];
-  var st = { cat: '', q: '', sort: 'nuevo', tl: [], se: [] };
+  var st = { cat: '', q: '', sort: 'casa', tl: [], se: [] };
   /* todo el estado vive en la URL: sección, búsqueda, orden, talles y sellos (compartible, vuelve intacto desde la ficha) */
   function leerURL() {
     var u = new URLSearchParams(location.search);
     st.cat = catValida(u.get('cat')); st.q = (u.get('q') || '').trim();
-    var s = u.get('sort'); st.sort = Object.prototype.hasOwnProperty.call(SORTS, s) ? s : 'nuevo';
+    var s = u.get('sort'); st.sort = Object.prototype.hasOwnProperty.call(SORTS, s) ? s : 'casa';
     st.tl.length = 0; (u.get('tl') || '').split(',').forEach(function (t) { if (TLS.indexOf(t) > -1) st.tl.push(t); });
     st.se.length = 0; (u.get('se') || '').split(',').forEach(function (s) { if (SES.indexOf(s) > -1) st.se.push(s); });
   }
@@ -424,18 +458,31 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   medirHd(); addEventListener('resize', medirHd);
 
   /* ── índice de secciones ── */
+  /* el índice no lleva conteos: un número al lado de ABRIGOS se lee como «la casa tiene N abrigos», y esta sala muestra
+     una selección. Lo único que se cuenta es lo que hay en pantalla (la línea de estado). */
   function pintarCats() {
-    var total = PIEZAS.length;
-    var h = '<li class="todas"><a href="./shop.html" data-cat=""' + (!st.cat ? ' aria-current="page"' : '') + '><span>TODAS</span><span class="n">' + total + '</span></a></li>';
+    var h = '<li class="todas"><a href="./shop.html" data-cat=""' + (!st.cat ? ' aria-current="page"' : '') + '><span>TODAS</span></a></li>';
     h += CATS.map(function (c) {
-      var n = PIEZAS.filter(function (p) { return p.cat === c.key; }).length;
       return '<li><a href="./shop.html?cat=' + encodeURIComponent(c.key) + '" data-cat="' + PM.esc(c.key) + '"' + (st.cat === c.key ? ' aria-current="page"' : '') + '>' +
-        '<span>' + PM.esc(nombre(c)) + (c.kj ? ' <span lang="ja" aria-hidden="true">' + PM.esc(c.kj) + '</span>' : '') + '</span><span class="n">' + n + '</span></a></li>';
+        '<span>' + PM.esc(nombre(c)) + (c.kj ? ' <span lang="ja" aria-hidden="true">' + PM.esc(c.kj) + '</span>' : '') + '</span></a></li>';
     }).join('');
     $('#sh-cats').innerHTML = h;
     /* centrar el chip activo en la tira (solo la tira: nunca la página) */
     var act = $('#sh-cats a[aria-current]'), ul = $('#sh-cats');
-    if (act && innerWidth < 1024) ul.scrollLeft = Math.max(0, act.offsetLeft - (ul.clientWidth - act.offsetWidth) / 2);
+    /* se mueve lo MÍNIMO para que el chip activo entre entero: si ya se ve (ABRIGOS, CAMISAS…) la tira no se mueve y TODAS sigue a la vista;
+       centrarlo dejaba el chip anterior cortado al ras del borde, y arrastrarlo a la izquierda escondía TODAS.
+       Se repite cuando terminan de cargar las tipografías: medido con la fuente de respaldo, el chip queda corto y el activo se corta */
+    function traerChip() {
+      if (!act || innerWidth >= 1024) return;
+      var l = act.offsetLeft - ul.offsetLeft, r = l + act.offsetWidth, util = ul.clientWidth - 32;
+      if (r > ul.scrollLeft + util) ul.scrollLeft = r - util;
+      else if (l < ul.scrollLeft + 16) ul.scrollLeft = Math.max(0, l - 16);
+    }
+    /* la máscara izquierda sólo existe cuando la tira se movió: con el scroll en cero el primer chip entra entero */
+    function marcarDesp() { ul.classList.toggle('desp', ul.scrollLeft > 2); }
+    ul.addEventListener('scroll', marcarDesp, { passive: true });
+    traerChip(); marcarDesp();
+    if (d.fonts && d.fonts.ready) d.fonts.ready.then(function () { traerChip(); marcarDesp(); }).catch(function () {});
   }
 
   /* ── cabecera ── */
@@ -474,6 +521,8 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     });
     if (st.sort === 'up') out.sort(function (a, b) { return (a.pr || 0) - (b.pr || 0); });
     else if (st.sort === 'down') out.sort(function (a, b) { return (b.pr || 0) - (a.pr || 0); });
+    /* LO NUEVO = fecha real de publicación y nada más: la primera tarjeta es SIEMPRE la de lastmod más reciente de esta sala */
+    else if (st.sort === 'nuevo') out.sort(function (a, b) { return (b.ts || 0) - (a.ts || 0) || (b.pos || 0) - (a.pos || 0); });
     else out.sort(function (a, b) { return tsSala(b) - tsSala(a); });
     /* en TODAS, MANUK (fotos sobre negro) cierra la sala como bloque propio: no se mezcla con la sala blanca */
     if (!st.cat) out = out.filter(function (p) { return p.cat !== 'MANUK'; }).concat(out.filter(function (p) { return p.cat === 'MANUK'; }));
@@ -486,6 +535,8 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
      cabeza/pies = fracción del alto de la foto donde empieza la cabeza y terminan los pies · centro = fracción del ancho del centro de la figura.
      pared = luminancia de la pared (0–255) para llevarla al blanco de la sala; en la sesión blanca ya viene calibrada como brillo (>1).
      sesión: 'b' = ciclorama blanco (primera en cada sala) · 'g' = estudio gris con piso (cierra la sala, cuerpo entero, sin recortes).
+     ct (7º campo, opcional) = contraste propio de la pieza. Las prendas BLANCAS necesitan poco brillo y mucho contraste: con el brillo general
+     (1.14) el textil blanco se clipea contra el blanco de la sala y la figura queda partida (cabeza y manos sobre un pantalón negro).
      Con eso cada figura entra a UNA sola escala: cabeza al 4 %, pies al 96 % de la tarjeta. MANUK va sobre negro a propósito (sin calibrar). */
   var TOMA = {
     /* ── sesión blanca ── */
@@ -493,19 +544,19 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     'campera-deportiva-tartan-nn':[0,.094,.975,.520,1.14,'b'],
     'campera-kyappu':[1,.156,.875,.503,1.14,'b'],
     'capa-resversible-kagyaku':[0,.110,.850,.505,1.14,'b'],
-    'capa-vestido-so-1':[3,.087,.900,.487,1.26,'b'],
+    'capa-vestido-so-1':[3,.087,.900,.487,1.40,'b',1.30],
     'poncho-nuno':[4,.117,.890,.539,1.14,'b'],
     'tapado-taika':[6,.052,.944,.527,1.14,'b'],
     'tapado-taika-brushed-mask':[1,.175,.898,.502,1.14,'b'],
-    'buzo-vestido-naga-sa-1':[3,.113,.863,.472,1.29,'b'],
-    'camisa-katto-blanca':[0,.071,.935,.473,1.14,'b'],
+    'buzo-vestido-naga-sa-1':[3,.113,.863,.472,1.40,'b',1.30],
+    'camisa-katto-blanca':[0,.071,.935,.473,1.00,'b',1.30],
     'camisa-katto-negra':[6,.035,.946,.497,1.14,'b'],
-    'camisa-ken':[0,.090,.871,.464,1.24,'b'],
+    'camisa-ken':[0,.090,.871,.464,1.19,'b',1.18],
     'camisa-over-poketto-white-brushed-5':['local',.110,.910,.505,1.00,'b'],
     'camisa-oversize-baikara-poplin-white-brushed':['local',.110,.890,.450,1.00,'b'],
-    'camisa-oversize-ginga-white-poplin':[0,.148,.894,.494,1.14,'b'],
+    'camisa-oversize-ginga-white-poplin':[0,.148,.894,.494,1.02,'b',1.30],
     'camisa-vestido-hansode-black':[0,.100,.871,.520,1.14,'b'],
-    'camisa-vestido-hansode-white':[0,.083,.885,.531,1.20,'b'],
+    'camisa-vestido-hansode-white':[0,.083,.885,.531,1.16,'b',1.19],
     'camisa-yuno-poplin-black':[0,.094,.892,.522,1.18,'b'],
     'capa-camisa-fudo':[0,.131,.877,.483,1.14,'b'],
     'falda-pantalon-puritsu':[0,.117,.875,.516,1.14,'b'],
@@ -518,7 +569,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     'remeron-oversize-soft-black':[0,.065,.875,.511,1.14,'b'],
     'pantalon-akemi-foil':[0,.106,.896,.467,1.14,'b'],
     'remera-oversize-purasu-black':[0,.058,.933,.481,1.14,'b'],
-    'remera-vestido-hafu-white':[0,.042,.944,.486,1.14,'b'],
+    'remera-vestido-hafu-white':[0,.042,.944,.486,1.02,'b',1.30],
     'mono-zentai':[0,.106,.858,.517,1.14,'b'],
     'chaleco-vestido-ginga':[0,.117,.912,.505,1.14,'b'],
     'jean-tsuru-blue':[0,.129,.938,.492,1.28,'b'],
@@ -565,7 +616,8 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     'pantalon-musubime-vuwhp':[7,.135,.905,.525,211,'g']
   };
   function sesion(p) { var t = TOMA[p.id]; return p.cat === 'MANUK' ? 'm' : (t && t[5] === 'g' ? 'g' : 'b'); }
-  /* en LO NUEVO la sesión blanca va primero y el estudio gris cierra la sala: lo que se ve a ciegas es una sola sesión */
+  /* ORDEN DE LA CASA: la sesión blanca va primero y el estudio gris cierra la sala (consistencia fotográfica), y dentro de cada
+     sesión manda la fecha. Es un orden de sala, NO una novedad: por eso tiene nombre propio y no se llama «LO NUEVO». */
   function tsSala(p) { return (p.ts || 0) + (sesion(p) === 'g' ? 0 : 1e10); }   /* ts = lastmod real en segundos epoch: el salto tiene que superar cualquier fecha */
   /* variables de la tarjeta: la foto entra por contain (alto = alto de la tarjeta; ancho = 0.889 del ancho); escala y traslado llevan cabeza al 4 % y pies al 96 % */
   var HEAD = 0.04, FEET = 0.96, CONTAIN_W = (2 / 3) / (3 / 4);
@@ -576,7 +628,9 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     var tx = -sc * (t[3] - 0.5) * CONTAIN_W;
     var br = t[4] > 2 ? Math.min(1.4, Math.max(1, 253 / ((t[4] - 128) * 1.15 + 128))) : t[4];
     card.style.setProperty('--sc', sc.toFixed(4)); card.style.setProperty('--ty', ty.toFixed(4)); card.style.setProperty('--tx', tx.toFixed(4));
-    card.style.setProperty('--br', br.toFixed(3)); if (t[0] === 'local') card.style.setProperty('--ct', '1.04');
+    card.style.setProperty('--br', br.toFixed(3));
+    var ct = t[6] || (t[0] === 'local' ? 1.04 : 0);
+    if (ct) card.style.setProperty('--ct', ct);
   }
   function deSala(p) {
     var f = TOMA[p.id], i = f ? f[0] : 0, q;
@@ -588,9 +642,11 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   function pintarGrid() {
     var lista = filtrar(), n = lista.length;
     /* la primera fila (3 en desktop) con prioridad alta; el resto lazy con LQIP. La foto B (hover) solo con puntero fino: en touch nunca se muestra */
-    var sep = false;
+    var sep = false, corte = false;
     grid.innerHTML = lista.map(function (p, i) {
       var h = '';
+      /* el bloque de estudio (otra sesión, otro fondo) arranca en fila nueva, nunca a mitad de fila: las primeras filas son una sola familia */
+      if (st.sort === 'casa' && sesion(p) === 'g' && !corte) { corte = true; h += '<div class="sh-corte" aria-hidden="true"></div>'; }
       if (!st.cat && p.cat === 'MANUK' && !sep) { sep = true; h += '<h2 class="sh-sep ey"><b>MANUK WORLD</b> <span lang="ja" aria-hidden="true">世界</span><a class="lnk" href="./manuk.html">ENTRAR AL MUNDO</a></h2>'; }
       return h + PM.pcardHTML(deSala(p), { eager: i < 3, hover: PM.FINE, cls: p.cat === 'MANUK' ? 'manuk' : 'ses-' + sesion(p) });
     }).join('');
@@ -623,11 +679,11 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     /* la línea de cierre se pinta desde los datos de la sala: únicas 1/1 declaradas por la casa y las que quedan una (nunca «ediciones de n»: el stock no es una tirada) */
     var u = lista.filter(function (p) { return PM.esUnica(p); }).length;
     var ul = lista.filter(function (p) { return PM.esUltima(p); }).length;
-    var txt = ' · TODO LO PUBLICADO ESTÁ DISPONIBLE';
+    var txt = ' · TODO LO QUE VES ESTÁ DISPONIBLE';
     if (u === n && n) txt += n === 1 ? ' · ÚNICA 1/1' : ' · LAS ' + n + ' SON ÚNICAS 1/1';
     else {
       if (u) txt += ' · ' + u + (u === 1 ? ' ÚNICA 1/1' : ' ÚNICAS 1/1');
-      if (ul) txt += ' · ' + (ul === 1 ? 'DE UNA QUEDA UNA' : 'DE ' + ul + ' QUEDA UNA');
+      if (ul) txt += ' · ' + ul + (ul === 1 ? ' PIEZA' : ' PIEZAS') + ' CON UNA SOLA DISPONIBLE';
     }
     $('#sh-fin-x').textContent = txt;
     grid.classList.remove('dim');
@@ -637,7 +693,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     var p = new URLSearchParams();
     if (st.cat) p.set('cat', st.cat);
     if (st.q) p.set('q', st.q);
-    if (st.sort !== 'nuevo') p.set('sort', st.sort);
+    if (st.sort !== 'casa') p.set('sort', st.sort);
     if (st.tl.length) p.set('tl', st.tl.join(','));
     if (st.se.length) p.set('se', st.se.join(','));
     var u = location.pathname + (p.toString() ? '?' + p.toString() : '');

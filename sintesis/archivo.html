@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Archivo — Panni Margot</title>
 <meta name="description" content="Archivo 記憶: las piezas que ya no están en la tienda. Salieron de a una, de a pocas; el taller sigue ahí para rehacerlas en otro textil.">
-<link rel="icon" href="../favicon.svg">
+<link rel="icon" href="../../favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://acdn-us.mitiendanube.com">
@@ -35,7 +35,7 @@ main .pm-img,#ar-ficha .pm-img{filter:grayscale(1) contrast(1.04)}
 .ar-hf.b .pm-img{object-position:50% 34%;transform:scale(1.32);transform-origin:50% 36%}
 .ar-hf:focus-visible{outline:1px solid var(--fg);outline-offset:-6px}
 /* el texto vive en el aire gris del estudio, nunca sobre el cuerpo */
-.ar-hero-t{position:absolute;inset:0;z-index:2;pointer-events:none;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto 1fr;padding:var(--s-8) var(--gut) var(--s-8);mix-blend-mode:difference;color:var(--white)}
+.ar-hero-t{position:absolute;inset:0;z-index:2;pointer-events:none;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto 1fr;column-gap:var(--s-6);padding:var(--s-8) var(--gut) var(--s-8);mix-blend-mode:difference;color:var(--white)}
 .ar-hero-t .ey,.ar-hero-t .ey b{color:var(--white)}
 .ar-hero-t .ey{opacity:.78}
 .ar-hero-t .ey.r{text-align:right;grid-column:2;grid-row:1}
@@ -53,7 +53,7 @@ main .pm-img,#ar-ficha .pm-img{filter:grayscale(1) contrast(1.04)}
 .ar-hero-c button:hover b,.ar-hero-c button:focus-visible b{text-decoration:underline;text-underline-offset:4px}
 .ar-hero-c button:focus-visible{outline-offset:-4px}
 
-/* ─── 2 · EL PLANO · lo vendido orbita ───────────────────────────────── */
+/* ─── 2 · EL PLANO · lo que ya no está en la tienda orbita ───────────────────────────────── */
 .ar-pl-h{display:flex;justify-content:space-between;align-items:center;gap:var(--s-4) var(--s-8);flex-wrap:wrap;padding:var(--s-6) var(--gut);border-bottom:1px solid var(--line)}
 .ar-pl-h .ey{margin:0}
 .ar-pl-r{display:flex;align-items:center;gap:var(--s-6);flex-wrap:wrap;margin-left:auto}
@@ -201,17 +201,26 @@ main .pm-img,#ar-ficha .pm-img{filter:grayscale(1) contrast(1.04)}
 @media (max-width:767px){
   .ar-hero{grid-template-columns:1fr;height:min(calc(100dvh - var(--hdtot)),720px);min-height:480px}
   .ar-hf.b,.ar-hero-c .b{display:none}
-  .ar-hf.a .pm-img{width:100%;object-position:62% 18%}   /* la prenda entra entera; el título sigue en el aire gris */
+  /* la prenda se acerca hasta llenar el cuadro (el campo blanco del estudio deja de mandar) y se corre a la
+     derecha: la columna izquierda queda en aire limpio para el kicker y ARCHIVO */
+  .ar-hf.a .pm-img{width:100%;object-position:30% 0;transform:scale(1.2);transform-origin:50% 25%}
   .ar-hero-c{grid-template-columns:1fr}
-  .ar-hero-t{padding:var(--s-6) var(--gut) var(--s-6)}
-  .ar-hero-t h1{font-size:clamp(44px,12vw,56px)}
+  .ar-hero-t{padding:var(--s-4) var(--gut) var(--s-6);grid-template-columns:1fr;grid-template-rows:auto 1fr;row-gap:var(--s-2)}
+  .ar-hero-t h1{grid-column:1;grid-row:2;font-size:clamp(44px,12vw,56px)}
+  /* el kicker en UNA sola línea: sin «LO QUE», 9px y tracking corto — deja de empujar el título */
+  .ar-hero-t .ey.l{grid-column:1;grid-row:1;white-space:nowrap;font-size:9px;letter-spacing:.1em;margin-bottom:0}
+  .ar-hero-t .ey.l .lg{display:none}
+  /* el contador viaja adentro de esa misma línea (columna derecha), no abre una fila propia */
+  .ar-hero-t .ey.r{grid-row:1;grid-column:1;justify-self:end;align-self:baseline;font-size:9px;letter-spacing:.1em;white-space:nowrap;pointer-events:none}
   .ar-hero-t .ey.r .anos-w{display:none}
   .ar-pl-h{gap:var(--s-3) var(--s-4)}
   .ar-coords{display:none}
   .ar-mapa{min-height:460px;height:min(60dvh,520px);--fx:28px}
   .ar-man .lead{font-size:clamp(34px,10vw,44px)}
   .ar-man .acc{margin-top:var(--s-8)}
-  .ar-ano{padding-top:var(--s-8)}
+  /* la cabecera del índice entra en una línea por lado: en 390 el tracking de 12px la partía en dos */
+  .ar-ano{padding-top:var(--s-8);font-size:var(--t-2);letter-spacing:.12em}
+  .ar-ano small{font-size:9px;letter-spacing:.12em}
   .ar-row{grid-template-columns:64px minmax(0,1fr) auto;gap:var(--s-4)}
   .ar-row .ix{display:none}
   .ar-row .ph{width:64px}
@@ -293,8 +302,8 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     <button type="button" class="ar-hf a" id="hf-a" data-id=""></button>
     <button type="button" class="ar-hf b" id="hf-b" data-id=""></button>
     <div class="ar-hero-t">
-      <p class="ey l">01 :: LO QUE YA NO ESTÁ EN LA TIENDA</p>
-      <p class="ey r num"><b id="ar-n">16 PIEZAS</b></p>
+      <p class="ey l">01 :: <span class="lg">LO QUE </span>YA NO ESTÁ EN LA TIENDA</p>
+      <p class="ey r num"><b id="ar-n">MOSTRANDO 16</b></p>
       <h1 class="disp" id="ar-h1">ARCHIVO<span lang="ja" aria-hidden="true">記憶</span></h1>
     </div>
   </section>
@@ -303,7 +312,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   <!-- 2 · PLANO · lo que salió orbita -->
   <section aria-labelledby="pl-t">
     <div class="ar-pl-h">
-      <p class="ey" id="pl-t">02 :: LO QUE SALIÓ ORBITA · <b id="pl-n">16 PIEZAS</b></p>
+      <p class="ey" id="pl-t">02 :: LO QUE SALIÓ ORBITA · <b id="pl-n">MOSTRANDO 16</b></p>
       <div class="ar-pl-r">
         <span class="ar-coords" id="coords" aria-hidden="true">X:+0000 :: Y:+0000 :: <span lang="ja">漂流</span></span>
         <span class="ar-hint" aria-hidden="true">ARRASTRÁ<span class="k"> · ← → ↑ ↓</span></span>
@@ -339,7 +348,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   <section class="ar-ix wrap" id="indice" aria-labelledby="ix-t">
     <div class="ar-ix-h rv">
       <h2 id="ix-t">Índice</h2>
-      <p class="ey"><b id="ix-n">16</b> PIEZAS · <span lang="ja" aria-hidden="true">終了</span> YA NO ESTÁN EN LA TIENDA</p>
+      <p class="ey">MOSTRANDO <b id="ix-n">16</b> · <span lang="ja" aria-hidden="true">終了</span> YA NO ESTÁN EN LA TIENDA</p>
     </div>
     <div id="ix-list"></div>
   </section>
@@ -365,7 +374,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
         <div class="fi-cta"><button type="button" class="btn fill lg block" id="fi-pedir" aria-expanded="false" aria-controls="fi-form">¿ME LA PODÉS HACER? <span class="arr" aria-hidden="true">&gt;&gt;</span></button>
           <p class="fi-nota">SIN PRECIO: EL REMAKE SE COTIZA EN EL TALLER SEGÚN EL TEXTIL · <span lang="ja" aria-hidden="true">工房</span></p></div>
         <form class="fi-form" id="fi-form" novalidate hidden>
-          <p class="nota">PEDIDO ESPECIAL :: REMAKE EN OTRO TEXTIL · EL TALLER TE RESPONDE POR EMAIL</p>
+          <p class="nota">PEDIDO ESPECIAL :: REMAKE EN OTRO TEXTIL · TE ESCRIBIMOS A TU EMAIL</p>
           <label class="pm-campo"><span>TU EMAIL</span><input type="email" name="email" id="fi-email" autocomplete="email" required placeholder="vos@correo.com"></label>
           <label class="pm-campo"><span>QUÉ QUERÉS QUE HAGAMOS</span><textarea name="pedido" id="fi-txt" required></textarea></label>
           <button type="submit" class="btn fill">ENVIAR AL TALLER <span class="arr" aria-hidden="true">&gt;&gt;</span></button>
@@ -393,7 +402,8 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   // orden: lastmod real más reciente primero (ts), estable — el archivo no publica fechas
   ARCH=ARCH.slice().sort(function(a,b){return (b.ts||0)-(a.ts||0);});
   var byId={}; ARCH.forEach(function(p){byId[p.id]=p;});
-  var nTxt=ARCH.length+(ARCH.length===1?' PIEZA':' PIEZAS');
+  /* MOSTRANDO n: cuenta lo que hay en esta página, nunca «todo lo que salió de la tienda» */
+  var nTxt='MOSTRANDO '+ARCH.length;
   d.getElementById('ar-n').textContent=nTxt;
   d.getElementById('pl-n').textContent=nTxt;
   d.getElementById('ix-n').textContent=ARCH.length;
@@ -423,7 +433,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
 
   /* ─── HERO: dos piezas, gigantes, mismo gris ────────────────────────── */
   function heroDe(p){return {id:p.id,nm:p.nm,imgs:[p.hero||p.imgs[0]],lq:p.lq};}
-  var dA=byId['capa-reversible-kagyaku']||ARCH[0], dB=byId['hoodie-kitsutsuki-white-brushed-8']||ARCH[1]||ARCH[0];
+  var dA=byId['tapado-uru-black']||ARCH[0], dB=byId['hoodie-kitsutsuki-white-brushed-8']||ARCH[1]||ARCH[0];
   hfA.setAttribute('data-id',dA.id); hfA.setAttribute('aria-label',dA.nm+' · ya no está en la tienda. Abrir la ficha');
   hfA.innerHTML=PM.pic(heroDe(dA),0,{alt:'',eager:true,ariaHidden:true});
   hfB.setAttribute('data-id',dB.id); hfB.setAttribute('aria-label',dB.nm+' · ya no está en la tienda. Abrir la ficha');
@@ -611,7 +621,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
 
   /* ─── ÍNDICE: vista lista accesible, una sola lista sin fechas (el archivo guarda bajas de la tienda, no ventas fechadas) ─ */
   var ix=d.getElementById('ix-list');
-  ix.innerHTML='<h3 class="ar-ano"><span class="num">'+ARCH.length+(ARCH.length===1?' PIEZA':' PIEZAS')+'</span><small>YA NO ESTÁN EN LA TIENDA · <span lang="ja" aria-hidden="true">終了</span></small></h3>'+
+  ix.innerHTML='<h3 class="ar-ano"><span class="num">'+ARCH.length+' EN PANTALLA</span><small>YA NO ESTÁN EN LA TIENDA · <span lang="ja" aria-hidden="true">終了</span></small></h3>'+
     '<ol aria-label="Piezas del archivo">'+ARCH.map(function(p,i){
       var idx=i+1;
       return '<li><button type="button" class="ar-row" data-id="'+esc(p.id)+'">'+
@@ -674,7 +684,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   form.addEventListener('submit',function(e){
     e.preventDefault();
     var bad=form.querySelector(':invalid'); if(bad){bad.focus();bad.reportValidity&&bad.reportValidity();return;}
-    st.textContent='RECIBIDO :: EL TALLER TE RESPONDE POR EMAIL';
+    st.textContent='RECIBIDO :: TE ESCRIBIMOS A TU EMAIL';
     Array.prototype.forEach.call(form.querySelectorAll('input,textarea,button'),function(x){x.disabled=true;});
     st.focus&&st.setAttribute('tabindex','-1'); st.focus();
   });

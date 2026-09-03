@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Manuk World 世界 — Panni Margot</title>
 <meta name="description" content="MANUK WORLD: hoodies, jerseys y remeras cozysize para cualquier cuerpo. La sub-marca del hermano de Panni, hecha en Buenos Aires.">
-<link rel="icon" href="../favicon.svg">
+<link rel="icon" href="../../favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://acdn-us.mitiendanube.com" crossorigin>
@@ -14,47 +14,52 @@
 <style>
 /* ═══ MANUK WORLD 世界 · takeover dentro del sistema ═══ */
 
-/* ─── hero · díptico a sangre: dos cuerpos con el hoodie puesto (noche · día) y el titular cruzando la costura ───
-   distinto del molde de la home (texto | foto): acá LA FOTO ES EL FONDO y la tipografía va a sangre encima; 世界 como marca de agua */
+/* ─── hero · TRÍPTICO a sangre: tres cuerpos con el hoodie PUESTO, tres lugares (noche · día · calle) ───
+   no es el split de la home (texto | foto) ni un díptico: son tres fotos de campaña a pantalla y la tipografía
+   entra a sangre por abajo, medida al ancho real del viewport (ver `ajustarTitular` en el script) */
 .mk-top{position:relative}
 .mk-hero{
-  position:relative;height:calc(100svh - var(--hd));min-height:640px;max-height:1000px;
+  position:relative;display:flex;flex-direction:column;justify-content:flex-end;
+  height:calc(100svh - var(--hd-real, var(--hd)));min-height:600px;max-height:1040px;
   overflow:hidden;background:var(--bg);color:var(--fg);
 }
-.mk-hero-dip{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:2px;background:var(--bg)}
-.mk-hero-dip .ph{position:relative;aspect-ratio:auto;height:100%;overflow:hidden;background:var(--surface)}
-.mk-hero-dip .ph .pm-img{position:absolute;inset:0;object-position:50% var(--oy,28%);filter:grayscale(1) contrast(1.08) brightness(.9);transition:filter var(--dur) var(--ease)}
-/* velo al pie: el titular se lee sobre cualquiera de las dos fotos sin apagarlas arriba */
-.mk-hero::after{content:"";position:absolute;inset:auto 0 0 0;height:62%;z-index:1;pointer-events:none;
-  background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.5) 50%,rgba(0,0,0,.9))}
-/* 世界 como marca de agua: vertical, pegado al borde derecho (la katakana vertical del sistema), sobre la baranda y no sobre las caras */
-.mk-kj{position:absolute;right:var(--gut);top:var(--s-12);z-index:1;pointer-events:none;user-select:none;
-  writing-mode:vertical-rl;text-orientation:upright;
-  font-family:var(--f-ja);font-weight:500;font-size:clamp(140px,13vw,220px);line-height:1;letter-spacing:.06em;color:var(--fg);opacity:.16}
-.mk-hero-txt{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:space-between;padding:var(--s-6) var(--gut) var(--s-8);min-width:0}
-.mk-coord{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--s-4);
+.mk-trip{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px;background:var(--bg)}
+.mk-trip .ph{position:relative;aspect-ratio:auto;height:100%;overflow:hidden;background:var(--surface)}
+.mk-trip .pm-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% var(--oy,26%);
+  filter:grayscale(1) var(--fx,contrast(1.06) brightness(.95));transition:filter var(--dur) var(--ease)}
+/* número de toma por panel, arriba: la coordenada tipográfica fina de la referencia, nunca sobre la cara */
+.mk-trip .ph:first-child .n{left:var(--gut)}
+.mk-trip .n{position:absolute;top:var(--s-12);left:var(--s-4);z-index:2;font-family:var(--f-mono);font-size:var(--t-1);
+  letter-spacing:.18em;color:var(--fg);opacity:.55;font-variant-numeric:tabular-nums}
+/* velo al pie: el titular es blanco puro sobre negro puro en las tres fotos (la tercera es casi blanca en el pie) */
+.mk-hero::after{content:"";position:absolute;inset:auto 0 0 0;height:60%;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.3) 26%,rgba(0,0,0,.8) 58%,rgba(0,0,0,.97) 82%,#000)}
+.mk-coord{position:absolute;top:var(--s-6);left:0;right:0;z-index:2;display:flex;justify-content:space-between;align-items:flex-start;gap:var(--s-4);
+  padding-inline:var(--gut);pointer-events:none;
   font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.18em;text-transform:uppercase;color:var(--fg-2);line-height:1.6}
-.mk-coord span{display:inline-flex;align-items:center;gap:8px;padding:4px 0}
+.mk-coord span{display:inline-flex;align-items:center;gap:8px}
 .mk-coord [lang="ja"]{letter-spacing:0;font-size:var(--t-3);color:var(--fg)}
-.mk-hero-b{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:var(--s-6) var(--s-12)}
-.mk-h1{
-  font-family:var(--f-display);font-weight:400;text-transform:uppercase;
-  font-size:clamp(88px,15.4vw,224px);line-height:.8;letter-spacing:-.015em;color:var(--fg);
-  margin-left:calc(var(--gut) * -1 + 3px);margin-bottom:-.06em;   /* a sangre: la M toca el borde, el pie de la W pisa el marco */
-}
-.mk-h1 .pt{display:inline-block;transform:translateY(-.02em)}
-.mk-hero-mid{display:flex;flex-direction:column;gap:var(--s-6);max-width:34ch;padding-bottom:var(--s-2)}
-.mk-hero-mid .lead{font-size:var(--t-6);max-width:30ch;color:var(--fg-2)}
-.mk-hero-mid .lead b{font-weight:400;color:var(--fg)}
+/* bloque de abajo: una línea de sentido + el CTA, y el titular a sangre pegado al borde inferior */
+.mk-hero-txt{position:relative;z-index:2;display:flex;flex-direction:column;gap:var(--s-6);padding-bottom:10px;min-width:0}   /* el pie del titular apoya sobre el filo, no lo cruza */
+.mk-hero-fila{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--s-4) var(--s-8);padding-inline:var(--gut)}
+.mk-hero-fila .lead{font-size:var(--t-5);max-width:38ch;color:var(--fg-2)}
+.mk-hero-fila .lead b{font-weight:400;color:var(--fg)}
 .mk-hero-cta{display:flex;flex-wrap:wrap;gap:var(--s-3) var(--s-6);align-items:center}
+.mk-h1{
+  font-family:var(--f-display);font-weight:400;text-transform:uppercase;letter-spacing:0;color:var(--fg);
+  font-size:96px;line-height:.8;margin:0;padding:0;   /* el tamaño real lo fija el script midiendo el ancho */
+}
+.mk-h1 .ln{display:block;width:max-content;max-width:none;white-space:nowrap}
 /* tira de las piezas de la foto (patrón Demobaza: la foto manda, la data debajo): una celda por cuerpo → ficha */
-.mk-hero-pz{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border-bottom:1px solid var(--line)}
-.mk-hero-pz a{display:flex;justify-content:space-between;align-items:center;gap:var(--s-4);min-height:52px;padding:var(--s-2) var(--gut);min-width:0;
-  font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--fg-2);line-height:1.6}
+.mk-hero-pz{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:1px solid var(--line)}
+.mk-hero-pz a{display:flex;justify-content:space-between;align-items:center;gap:var(--s-4);min-height:52px;padding:var(--s-2) var(--s-4);min-width:0;
+  font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.1em;text-transform:uppercase;color:var(--fg-2);line-height:1.6}
+.mk-hero-pz a:first-child{padding-left:var(--gut)}
+.mk-hero-pz a:last-child{padding-right:var(--gut)}
 .mk-hero-pz a + a{border-left:1px solid var(--line)}
 .mk-hero-pz a .l{display:flex;align-items:center;gap:var(--s-3);min-width:0}
 .mk-hero-pz a .l b{color:var(--fg);font-weight:400;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mk-hero-pz a .l .n{color:var(--fg);letter-spacing:0;font-variant-numeric:tabular-nums}
+.mk-hero-pz a .l .n{color:var(--fg-2);letter-spacing:0;font-variant-numeric:tabular-nums}
 .mk-hero-pz a .r{display:flex;align-items:center;gap:var(--s-4);white-space:nowrap}
 .mk-hero-pz a .r .num{color:var(--fg);font-variant-numeric:tabular-nums}
 .mk-hero-pz a .ver{color:var(--fg);text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--fg-2);transition:text-decoration-color var(--dur-fast)}
@@ -63,32 +68,15 @@
 .mk-hero-pz a:focus-visible{outline-offset:-4px}
 @media (hover:hover) and (pointer:fine){
   /* el cuerpo de la fila que se toca vuelve a color */
-  .mk-top:has(.mk-hero-pz a:nth-child(1):hover) .mk-hero-dip .ph:nth-child(1) .pm-img,
-  .mk-top:has(.mk-hero-pz a:nth-child(2):hover) .mk-hero-dip .ph:nth-child(2) .pm-img{filter:grayscale(0) contrast(1)}
+  .mk-top:has(.mk-hero-pz a:nth-child(1):hover) .mk-trip .ph:nth-child(1) .pm-img,
+  .mk-top:has(.mk-hero-pz a:nth-child(2):hover) .mk-trip .ph:nth-child(2) .pm-img,
+  .mk-top:has(.mk-hero-pz a:nth-child(3):hover) .mk-trip .ph:nth-child(3) .pm-img{filter:grayscale(0) contrast(1)}
 }
 /* las celdas a sangre tocan los bordes del viewport o de un overflow:hidden: el anillo de foco va hacia adentro para no perderse */
-.mk-calle a:focus-visible,.mk-det a:focus-visible{outline-offset:-4px}
+.mk-det a:focus-visible{outline-offset:-4px}
 
 /* ─── marquesina propia (dialecto MANUK, cuatro frases) ─── */
 .mk-marq{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-
-/* ─── campaña · tres looks completos a sangre ─── */
-.mk-calle{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-1)}
-.mk-calle a{position:relative;display:block;aspect-ratio:3/4;overflow:hidden;background:var(--surface);color:var(--fg);min-width:0}
-/* consistencia fotográfica: tres cuadros frontales a la misma distancia; --oy alinea las caras a la misma altura
-   y el tercero (contra pared blanca, casi quemado) se empareja en exposición con los otros dos */
-.mk-calle .pm-img{position:absolute;inset:0;object-position:50% var(--oy,20%);transition:transform var(--dur) var(--ease),filter var(--dur) var(--ease)}
-.mk-calle a:nth-child(1) .pm-img{filter:grayscale(1) contrast(1.06) brightness(1.08)}
-.mk-calle a:nth-child(3) .pm-img{filter:grayscale(1) contrast(1.12) brightness(.8);transform:scale(1.16) translateY(4%)}
-.mk-calle .cap{position:absolute;left:var(--s-4);bottom:var(--s-4);z-index:2;display:inline-flex;align-items:center;gap:var(--s-3);padding:6px 10px;background:rgba(0,0,0,.72);
-  font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--fg-2);max-width:calc(100% - var(--s-8));min-width:0}
-.mk-calle .cap b{color:var(--fg);font-weight:400;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mk-calle .cap span{white-space:nowrap}
-@media (hover:hover) and (pointer:fine){
-  .mk-calle a:hover .pm-img,.mk-calle a:focus-visible .pm-img{filter:grayscale(0) contrast(1);transform:scale(1.03)}
-  .mk-calle a:nth-child(3):hover .pm-img,.mk-calle a:nth-child(3):focus-visible .pm-img{transform:scale(1.19) translateY(4%)}
-  .mk-calle a:hover .cap b,.mk-calle a:focus-visible .cap b{text-decoration:underline;text-underline-offset:4px}
-}
 
 /* ─── cabeceras de sección ─── */
 .mk-sec{padding-block:var(--s-16)}
@@ -109,19 +97,21 @@
 /* ─── grilla: nombre + precio y nada más ─── */
 .mk-bloque + .mk-bloque{margin-top:var(--s-16)}
 .mk-item .pcard-nm{overflow-wrap:anywhere}
-/* consistencia fotográfica de los hoodies: las seis fotos del dump traen EXACTAMENTE el mismo encuadre (hoodie colgado
-   del riel, rótulo quemado abajo), así que UNA sola regla recorta el rótulo (≈5% inferior) y conserva la percha en todas;
-   aplica a la foto A y a la B → sin salto de escala en hover */
-#mk-grid-hoodies .pcard-ph .pm-img{object-position:50% 40%;transform:scale(1.09);transform-origin:50% 100%}
-/* el encuadre del dump NO es idéntico en las seis (todas 640×960): GREEN, PTW BLACK y PTW WHITE traen el gancho y el riel enteros,
-   las otras tres ya lo tienen cortado. Se empareja por pieza: esas tres se acercan un poco más (origen abajo: el ruedo no se mueve) para que el gancho quede fuera en las seis
-   y solo se vea la percha (aplica a la foto A y a la B → sin salto en hover) */
-#mk-grid-hoodies .pcard[data-id="manuk-hoodie-001-green"] .pm-img{transform:scale(1.17)}
-#mk-grid-hoodies .pcard[data-id="manuk-hoodie-002-ptw-black"] .pm-img,
-#mk-grid-hoodies .pcard[data-id="manuk-hoodie-002-ptw-white"] .pm-img{transform:scale(1.14)}
-/* PINK: el platillo del fondo del estudio (a ~488px del ruedo) queda afuera a partir de 1.14 */
-#mk-grid-hoodies .pcard[data-id="manuk-hoodie-001-pink"] .pm-img{transform:scale(1.17)}
-/* sellos: la sala es de MANUK, así que el chip MANUK se filtra en JS y queda solo el estado (一点物 1/1) */
+/* ─ bloque CALLE: las tres tarjetas son cuerpo entero con el hoodie PUESTO (la campaña real del HOODIE/001).
+   Las tomas son 2/3 y la tarjeta es 3/4: --oy alinea las tres a la misma altura de cuerpo, sin recortar cabezas ni pies. ─ */
+#mk-grid-calle .pcard-ph .pm-img{object-position:50% var(--oy,50%)}
+#mk-grid-calle .pcard[data-id="manuk-hoodie-001-green"] .pm-img{--oy:42%;filter:grayscale(1) contrast(1.1) brightness(1.06)}
+#mk-grid-calle .pcard[data-id="manuk-hoodie-001-black"] .pm-img{--oy:46%;filter:grayscale(1) contrast(1.04) brightness(1)}
+#mk-grid-calle .pcard[data-id="manuk-hoodie-001-pink"] .pm-img{--oy:38%;filter:grayscale(1) contrast(1.14) brightness(.86)}
+@media (hover:hover) and (pointer:fine){
+  #mk-grid-calle .pcard:hover .pm-img,#mk-grid-calle .pcard:focus-visible .pm-img{filter:grayscale(0) contrast(1) brightness(1)}
+}
+/* ─ bloque ESTUDIO: las tres fotos del dump traen el mismo encuadre (prenda colgada, rótulo quemado abajo):
+   una regla recorta el rótulo (≈5% inferior) y el gancho, y se empareja por pieza (foto A y B → sin salto en hover). ─ */
+#mk-grid-estudio .pcard-ph .pm-img{object-position:50% 40%;transform:scale(1.09);transform-origin:50% 100%}
+#mk-grid-estudio .pcard[data-id="manuk-hoodie-002-ptw-black"] .pm-img,
+#mk-grid-estudio .pcard[data-id="manuk-hoodie-002-ptw-white"] .pm-img{transform:scale(1.14)}
+/* sellos: la sala es de MANUK, así que el chip MANUK se filtra en JS y queda solo el estado (ÚLTIMA) */
 .mk-item .sellos{top:var(--s-3);left:var(--s-3)}
 
 /* sala blanca: jerseys y remeras (las fotos de Tienda Nube van sobre blanco → cambiar de sala, no de glitch) */
@@ -143,9 +133,9 @@ html[data-grano="off"] #grain{opacity:0;transition:opacity var(--dur)}
 .mk-arch .txt{color:var(--fg-2);max-width:40ch}
 .mk-arch .txt b{color:var(--fg);font-weight:400}
 .mk-arch .lnk{display:inline-flex;align-items:center;margin-top:var(--s-8)}
-.mk-arch .pgrid.c2{gap:var(--s-6)}
-/* mismo encuadre que la grilla de hoodies: sin riel ni platillo, la percha se conserva (foto A y B) */
-.mk-arch .pcard-ph .pm-img{object-position:50% 40%;transform:scale(1.14);transform-origin:50% 100%}
+.mk-arch .pgrid{gap:var(--s-6)}
+/* las tres del archivo también son cuerpo entero con la prenda puesta: se alinean por altura de cuerpo, no se recortan */
+.mk-arch .pcard-ph .pm-img{object-position:50% var(--oy,44%)}
 .mk-arch .pcard-ano{display:block;margin-top:2px;font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--fg-2)}
 
 /* ─── manifiesto · díptico + texto ─── */
@@ -153,7 +143,7 @@ html[data-grano="off"] #grain{opacity:0;transition:opacity var(--dur)}
 .mk-dip{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--s-3);min-width:0}
 .mk-dip a{display:block;position:relative;color:var(--fg);min-width:0}
 .mk-dip .ph{aspect-ratio:3/4}
-.mk-dip .ph .pm-img{object-position:50% 30%}
+.mk-dip .ph .pm-img{object-position:50% 42%}
 .mk-dip .cap{display:flex;justify-content:space-between;gap:var(--s-3);padding-top:var(--s-3);min-width:0;font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--fg-2)}
 .mk-dip .cap b{color:var(--fg);font-weight:400;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mk-dip .cap span{white-space:nowrap}
@@ -187,56 +177,53 @@ html[data-grano="off"] #grain{opacity:0;transition:opacity var(--dur)}
 
 /* ─── responsive ─── */
 @media (max-width:1023px){
-  /* tablet: el díptico se mantiene; titular y lead apilados */
-  .mk-hero{height:calc(100svh - var(--hd-real, var(--hd)));min-height:600px;max-height:900px}
-  .mk-hero-txt{padding-bottom:var(--s-6)}
-  .mk-hero-b{grid-template-columns:minmax(0,1fr);gap:var(--s-4)}
-  .mk-h1{font-size:clamp(80px,15vw,140px)}
-  .mk-kj{font-size:clamp(120px,16vw,160px)}
+  /* tablet: el tríptico pasa a díptico (calle + noche) y el titular sigue midiéndose al ancho */
+  .mk-hero{min-height:560px;max-height:900px}
+  .mk-trip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mk-trip .ph:nth-child(3){display:none}
+  .mk-hero-fila{gap:var(--s-3) var(--s-6)}
   .mk-coord{flex-wrap:wrap}
-  /* tres etiquetas completas (GREEN / BLACK / PINK): nombre y precio en dos filas, nada cortado */
-  .mk-calle .cap{flex-direction:column;align-items:flex-start;gap:2px;padding:8px 10px}
-  .mk-calle .cap b{white-space:normal;overflow-wrap:anywhere;text-overflow:clip}
+  .mk-hero-pz{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mk-hero-pz a:nth-child(3){display:none}
   .mk-comp-grid .pcard:nth-child(3){display:none}
   .mk-arch .in{grid-template-columns:minmax(0,1fr);gap:var(--s-8)}
-  .mk-arch .pgrid.c2{grid-template-columns:repeat(2,minmax(0,1fr))}
   .mk-mani{grid-template-columns:minmax(0,1fr);gap:var(--s-12)}
   .mk-texto{position:static}
   .mk-texto .disp{max-width:none}
   .mk-det{grid-template-columns:repeat(2,minmax(0,1fr))}
   .mk-cierre{padding-block:var(--s-16)}
 }
+/* tablet: los tres bloques de la sala son de TRES piezas cada uno (calle · estudio · archivo).
+   Con la grilla del sistema en 2 columnas la tercera quedaba sola cerrando el bloque; a este ancho
+   entran las tres en una fila y el bloque se lee como una unidad. En teléfono siguen en 2 (a 390 px
+   tres tarjetas quedarían de 110 px y la foto dejaría de mandar). */
+@media (min-width:768px) and (max-width:1023px){
+  #mk-grid-calle,#mk-grid-estudio,#mk-grid-archivo{grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-8) var(--s-4)}
+}
 @media (max-width:767px){
-  /* teléfono: UNA foto (la noche) a pantalla, el titular entero y una línea encima: la primera pantalla cierra sola */
-  .mk-hero{height:calc(100svh - var(--hd-real, var(--hd)));min-height:560px;max-height:none}
-  .mk-hero-dip{grid-template-columns:1fr;gap:0}
-  .mk-hero-dip .ph:nth-child(2){display:none}
-  .mk-hero-dip .ph .pm-img{object-position:50% 30%}
-  .mk-hero::after{height:70%}
-  .mk-kj{font-size:clamp(88px,24vw,110px);top:var(--s-12);right:var(--s-3);opacity:.18}
-  .mk-hero-txt{padding:var(--s-4) var(--gut) var(--s-6)}
-  .mk-coord{font-size:var(--t-0);letter-spacing:.14em}
-  .mk-coord span{padding:0}
-  .mk-hero-b{grid-template-columns:1fr;gap:var(--s-4)}
-  .mk-h1{font-size:clamp(64px,18vw,96px);margin-bottom:0}
-  .mk-hero-mid{gap:var(--s-4);max-width:none}
-  .mk-hero-mid .lead{font-size:var(--t-5);max-width:30ch}
+  /* teléfono: UNA foto (la noche) a pantalla, el titular en dos líneas medidas: la primera pantalla cierra sola */
+  .mk-hero{min-height:560px;max-height:none}
+  .mk-trip{grid-template-columns:1fr;gap:0}
+  .mk-trip .ph:nth-child(2),.mk-trip .ph:nth-child(3){display:none}
+  .mk-trip .pm-img{object-position:50% 30%}
+  .mk-trip .n{display:none}
+  .mk-hero::after{height:66%}
+  .mk-coord{font-size:var(--t-0);letter-spacing:.14em;top:var(--s-4)}
+  .mk-coord > span:last-child{display:none}   /* «BUENOS AIRES» caía sola en una segunda línea; el 世界 del primer span se queda */
+  .mk-hero-txt{gap:var(--s-3)}
+  .mk-hero-fila{flex-direction:column;align-items:stretch;gap:var(--s-4)}
+  .mk-hero-fila .lead{font-size:var(--t-5);max-width:32ch}
+  .mk-hero-cta{gap:var(--s-3) var(--s-4)}
   .mk-hero-cta .btn{flex:1 1 auto}
   .mk-hero-pz{grid-template-columns:1fr}
-  .mk-hero-pz a:nth-child(2){display:none}
-  .mk-hero-pz a .l .n{display:none}
-  /* campaña: tira horizontal con snap, un look por pantalla */
-  .mk-calle{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;gap:var(--s-1)}
-  .mk-calle::-webkit-scrollbar{display:none}
-  .mk-calle a{flex:0 0 84vw;scroll-snap-align:start}
-  .mk-calle .cap{left:var(--s-3);bottom:var(--s-3)}
+  .mk-hero-pz a:nth-child(2),.mk-hero-pz a:nth-child(3){display:none}
   .mk-sec,.mk-blanco,.mk-arch{padding-block:var(--s-12)}
   .mk-head{margin-bottom:var(--s-6)}
   .mk-bloque + .mk-bloque{margin-top:var(--s-12)}
   .mk-item .pcard-meta{letter-spacing:.02em}
   .mk-dip{gap:var(--s-2)}
   .mk-dip .cap{flex-direction:column;gap:2px}
-  .mk-arch .pgrid.c2{gap:var(--s-3)}
+  .mk-arch .pgrid{gap:var(--s-6) var(--s-3)}
   /* el nombre se oculta solo visualmente: el enlace sigue diciendo a qué pieza lleva */
   .mk-det .cap .nm{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   .mk-cierre .in{grid-template-columns:1fr}
@@ -311,25 +298,23 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
 </div>
 <main id="contenido">
 
-  <!-- ─── HERO · díptico a sangre ─── -->
+  <!-- ─── HERO · tríptico a sangre: tres cuerpos, tres lugares ─── -->
   <div class="mk-top">
     <section class="mk-hero" aria-labelledby="mk-t">
-      <div class="mk-hero-dip" id="mk-dip-hero" aria-hidden="true"></div>
-      <span class="mk-kj" lang="ja" aria-hidden="true">世界</span>
+      <div class="mk-trip" id="mk-trip" aria-hidden="true"></div>
+      <div class="mk-coord">
+        <span><span lang="ja" aria-hidden="true">世界</span> MANUK WORLD · LA SUB-MARCA DEL HERMANO DE PANNI</span>
+        <span>BUENOS AIRES</span>
+      </div>
       <div class="mk-hero-txt">
-        <div class="mk-coord">
-          <span><span lang="ja" aria-hidden="true">世界</span> MANUK WORLD · LA SUB-MARCA DEL HERMANO DE PANNI</span>
-        </div>
-        <div class="mk-hero-b">
-          <h1 class="mk-h1" id="mk-t">MANUK<span class="pt">.</span><br>WORLD<span class="sr"> — Manuk World, el mundo del hermano de Panni</span></h1>
-          <div class="mk-hero-mid">
-            <p class="lead"><b>Cozysize para cualquier cuerpo.</b> Hoodies, jerseys y remeras hechos en Buenos Aires, de a pocos.</p>
-            <div class="mk-hero-cta">
-              <a class="btn fill" href="#piezas">VER LAS PIEZAS <span class="arr">&gt;&gt;</span></a>
-              <a class="lnk" href="./shop.html?cat=MANUK">SHOP :: MANUK</a>
-            </div>
+        <div class="mk-hero-fila">
+          <p class="lead"><b>Cozysize para cualquier cuerpo.</b> Hoodies, jerseys y remeras hechos en Buenos Aires, de a pocos.</p>
+          <div class="mk-hero-cta">
+            <a class="btn fill" href="#piezas">VER LAS PIEZAS <span class="arr">&gt;&gt;</span></a>
+            <a class="lnk" href="./shop.html?cat=MANUK">SHOP :: MANUK</a>
           </div>
         </div>
+        <h1 class="mk-h1" id="mk-t"><span class="ln">MANUK.WORLD</span><span class="sr"> — el mundo del hermano de Panni</span></h1>
       </div>
     </section>
     <nav class="mk-hero-pz" id="mk-hero-pz" aria-label="Las piezas de la foto"></nav>
@@ -337,35 +322,29 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
 
   <div class="mk-marq" id="mk-marq"></div>
 
-  <!-- ─── CAMPAÑA · en la calle ─── -->
-  <section class="mk-sec" aria-labelledby="mk-calle-t" style="padding-bottom:0">
-    <div class="wrap">
-      <div class="mk-head rv">
-        <div>
-          <p class="ey">LOOKS COMPLETOS · <span lang="ja" aria-hidden="true">世界</span></p>
-          <h2 id="mk-calle-t">En la calle</h2>
-        </div>
-        <p class="ey">HOODIE/001 · TRES COLORES</p>
-      </div>
-    </div>
-    <div class="mk-calle bleed rv" id="mk-calle"></div>
-  </section>
-
   <!-- ─── LAS PIEZAS ─── -->
   <section class="mk-sec mk-anc" id="piezas" aria-labelledby="mk-piezas-t">
     <div class="wrap">
       <div class="mk-head rv">
         <div>
-          <p class="ey">TODAS LAS PIEZAS · <span id="mk-n-total"></span> · <span lang="ja" aria-hidden="true">世界</span></p>
+          <p class="ey">MOSTRANDO <span id="mk-n-total"></span> · <span lang="ja" aria-hidden="true">世界</span></p>
           <h2 id="mk-piezas-t">Las piezas</h2>
         </div>
         <nav class="mk-idx" aria-label="Índice de la sala" id="mk-idx"></nav>
       </div>
-      <div class="mk-bloque mk-anc" id="hoodies">
+      <div class="mk-bloque mk-anc" id="calle">
         <div class="mk-head rv">
-          <h3>HOODIES</h3>
+          <h3>HOODIE/001 · EN LA CALLE</h3>
+          <p class="ey">TRES COLORES · TALLE ÚNICO</p>
         </div>
-        <div class="pgrid" id="mk-grid-hoodies"></div>
+        <div class="pgrid" id="mk-grid-calle"></div>
+      </div>
+      <div class="mk-bloque mk-anc" id="estudio">
+        <div class="mk-head rv">
+          <h3>HOODIE/002 · NYC · EN ESTUDIO</h3>
+          <p class="ey">PROVE THEM WRONG</p>
+        </div>
+        <div class="pgrid" id="mk-grid-estudio"></div>
       </div>
     </div>
   </section>
@@ -390,10 +369,10 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
       <div class="rv">
         <p class="ey">YA NO ESTÁN</p>
         <h2 class="disp" id="mk-arch-t">En el archivo <span lang="ja" aria-hidden="true">記憶</span></h2>
-        <p class="txt"><b>Cada tanda sale y no vuelve igual.</b> Lo que ya no está en la tienda queda acá.</p>
+        <p class="txt"><b>Lo que ya no está en la tienda queda acá.</b> Si el textil ya no existe, el taller la rehace en otro.</p>
         <a class="lnk" href="./archivo.html">TODO EL ARCHIVO <span class="arr">&gt;&gt;</span></a>
       </div>
-      <div class="pgrid c2 rv rv-d1" id="mk-grid-archivo"></div>
+      <div class="pgrid rv rv-d1" id="mk-grid-archivo"></div>
     </div>
   </section>
 
@@ -407,7 +386,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
           <h2 class="disp" id="mk-mani-t">Cozysize para un mundo incómodo</h2>
           <div class="txt">
             <p><b>MANUK es la casa del hoodie.</b> Streetwear crudo, cortado y cosido en Buenos Aires: gráfica de calle, capucha, cozysize.</p>
-            <p>Un solo talle que abraza cualquier cuerpo. Sin género, sin temporada: <b>cada tanda sale y no vuelve igual.</b> Lo que ya no está vive en el Archivo.</p>
+            <p>Un solo talle que abraza cualquier cuerpo. Sin género, sin temporada: <b>hoodies, jerseys y remeras, y nada más.</b> Lo que ya no está vive en el Archivo.</p>
             <p>Prove them wrong.</p>
           </div>
           <div class="mk-datos" id="mk-datos"></div>
@@ -424,7 +403,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
           <p class="ey">DE CERCA</p>
           <h2 id="mk-det-t">El detalle</h2>
         </div>
-        <p class="ey">PERCHA · GRÁFICA · LETRAS · ETIQUETA</p>
+        <p class="ey">CUATRO CORTES · <span lang="ja" aria-hidden="true">世界</span></p>
       </div>
     </div>
     <div class="mk-det bleed rv" id="mk-det"></div>
@@ -510,24 +489,59 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   /* solo piezas vivas (con precio) para hero, campaña y detalle: si una pasa al archivo, cae al fallback */
   function viva(id) { var p = byId(id); return p && piezas.indexOf(p) > -1 ? p : null; }
 
-  /* ─── HERO · díptico: dos cuerpos con el HOODIE/001 puesto — la noche (GREEN, gradas, toma 16) y el día (BLACK, capucha, toma 12).
-       Las dos en -1024-1024 (la variante grande que responde) con su -480-0 como placeholder. En teléfono queda solo la noche. ─── */
+  /* ─── HERO · TRÍPTICO: tres cuerpos con el HOODIE/001 PUESTO, tres lugares y tres luces —
+       01 la noche (GREEN, gradas, capucha puesta) · 02 el día (BLACK, baranda a contraluz) · 03 la calle (PINK, pared de calcos).
+       Las tres en -1024-1024 (la variante grande que responde) con su -480-0 como placeholder.
+       En tablet quedan dos, en teléfono una: la primera pantalla nunca deja de ser una foto de campaña. ─── */
   function grande(u) { return String(u || '').replace(/-640-0(\.\w+)$/, '-1024-1024$1'); }
   var HERO = [
-    { id: 'manuk-hoodie-001-green', i: 16, oy: '30%' },
-    { id: 'manuk-hoodie-001-black', i: 12, oy: '24%' }
-  ].map(function (x) { var p = viva(x.id); return p && p.imgs[x.i] ? { p: p, i: x.i, oy: x.oy } : null; }).filter(Boolean);
-  if (HERO.length < 2) piezas.forEach(function (p) { if (HERO.length < 2 && !HERO.some(function (h) { return h.p === p; })) HERO.push({ p: p, i: 0, oy: '30%' }); });
+    { id: 'manuk-hoodie-001-green', i: 12, oy: '22%', fx: 'contrast(1.14) brightness(1.04)' },
+    { id: 'manuk-hoodie-001-black', i: 13, oy: '24%', fx: 'contrast(1.1) brightness(.92)' },
+    { id: 'manuk-hoodie-001-pink', i: 16, oy: '18%', fx: 'contrast(1.3) brightness(.6)' }
+  ].map(function (x) { var p = viva(x.id); return p && p.imgs[x.i] ? { p: p, i: x.i, oy: x.oy, fx: x.fx } : null; }).filter(Boolean);
+  if (HERO.length < 3) piezas.forEach(function (p) { if (HERO.length < 3 && !HERO.some(function (h) { return h.p === p; })) HERO.push({ p: p, i: 0, oy: '30%', fx: '' }); });
   var hW = HERO[0] ? HERO[0].p : null, hB = HERO[1] ? HERO[1].p : null;
-  document.getElementById('mk-dip-hero').innerHTML = HERO.map(function (h, k) {
+  document.getElementById('mk-trip').innerHTML = HERO.map(function (h, k) {
     var src = grande(h.p.imgs[h.i]);
-    return '<span class="ph"><img class="pm-img" src="' + esc(src) + '" alt="" loading="eager"' + (k === 0 ? ' fetchpriority="high"' : '') + ' decoding="async" style="--oy:' + esc(h.oy) + ';background-image:url(&quot;' + esc(src.replace(/-1024-1024(\.\w+)$/, '-480-0$1')) + '&quot;)"></span>';
+    return '<span class="ph"><span class="n">0' + (k + 1) + '</span>' +
+      '<img class="pm-img" src="' + esc(src) + '" alt="" loading="eager"' + (k === 0 ? ' fetchpriority="high"' : '') +
+      ' decoding="async" style="--oy:' + esc(h.oy) + ';--fx:' + esc(h.fx) + ';background-image:url(&quot;' + esc(src.replace(/-1024-1024(\.\w+)$/, '-480-0$1')) + '&quot;)"></span>';
   }).join('');
   document.getElementById('mk-hero-pz').innerHTML = HERO.map(function (h, k) {
     return '<a href="./ficha.html?id=' + encodeURIComponent(h.p.id) + '">' +
       '<span class="l"><span class="n">0' + (k + 1) + '</span><b>' + esc(h.p.nm) + '</b></span>' +
       '<span class="r"><span class="num">' + PM.fmt(h.p.pr) + '</span><span class="ver">Ver la pieza</span></span></a>';
   }).join('');
+
+  /* ─── TITULAR A SANGRE · se MIDE, no se estima ───
+     Anton no tiene un ancho previsible por carácter: se sondea el ancho real del texto a 100px y se resuelve la
+     tipografía que hace entrar la línea más larga en el ancho del hero (menos un cabello de seguridad), con techo
+     por altura para que nunca empuje la foto fuera. En teléfono el titular se parte en dos líneas.
+     SISTEMA: base.css no trae un ajustador de titulares al ancho; queda resuelto acá. */
+  (function () {
+    var h1 = document.getElementById('mk-t'), hero = document.querySelector('.mk-hero');
+    if (!h1 || !hero) return;
+    var SR = '<span class="sr"> — el mundo del hermano de Panni</span>', rid = 0, ult = '';
+    function pintar() {
+      var txt = window.innerWidth <= 767 ? ['MANUK.', 'WORLD'] : ['MANUK.WORLD'];
+      if (txt.join('|') !== ult) {
+        ult = txt.join('|');
+        h1.innerHTML = txt.map(function (t) { return '<span class="ln">' + t + '</span>'; }).join('') + SR;
+      }
+      var lns = h1.querySelectorAll('.ln'), ancho = hero.clientWidth, alto = hero.clientHeight;
+      if (!lns.length || !ancho) return;
+      h1.style.fontSize = '100px';
+      var mayor = 0;   /* .ln es width:max-content → el rect ES el ancho del texto, no el del contenedor */
+      [].forEach.call(lns, function (n) { mayor = Math.max(mayor, n.getBoundingClientRect().width); });
+      if (!mayor) return;
+      var porAncho = 100 * (ancho - 2) / mayor;                    /* 2px de resguardo: la línea entra entera, siempre */
+      var porAlto = (alto * (lns.length > 1 ? .40 : .27)) / (lns.length * .8);   /* .8 = el line-height real de .mk-h1 */   /* techo: el titular nunca come la foto */
+      h1.style.fontSize = Math.max(40, Math.min(porAncho, porAlto)) + 'px';
+    }
+    function pedir() { if (!rid) rid = requestAnimationFrame(function () { rid = 0; pintar(); }); }
+    pintar(); window.addEventListener('resize', pedir);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(pintar);
+  })();
 
   /* ─── marquesina de dialecto MANUK (cuatro frases, nada más; MADE IN BUENOS AIRES ya está en el pie del hero) ─── */
   PM.marquesina(document.getElementById('mk-marq'), [
@@ -537,38 +551,48 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     '&gt;&gt;MANUK.WORLD##'
   ]);
 
-  /* ─── CAMPAÑA · tres looks del HOODIE/001, los tres frontales y a la misma distancia (contact sheet del dump) ─── */
-  /* (la toma 16 del GREEN es la del hero: acá va la 15, mismo encuadre frontal, cuerpo entero) */
-  var calle = [
-    { id: 'manuk-hoodie-001-green', i: 15, oy: '30%' },
-    { id: 'manuk-hoodie-001-black', i: 14, oy: '15%' },
-    { id: 'manuk-hoodie-001-pink', i: 13, oy: '8%' }
-  ].map(function (x) { var p = viva(x.id); return p ? { p: p, i: Math.min(x.i, p.imgs.length - 1), oy: x.oy } : null; }).filter(Boolean);
-  document.getElementById('mk-calle').innerHTML = calle.map(function (x) {
-    return '<a href="./ficha.html?id=' + encodeURIComponent(x.p.id) + '" style="--oy:' + esc(x.oy) + '">' +
-      foto(x.p, x.i, { alt: '' }) +
-      '<span class="cap"><b>' + esc(x.p.nm) + '</b><span>' + PM.fmt(x.p.pr) + '</span></span></a>';
-  }).join('');
-
-  /* ─── GRILLAS · nombre + precio + sello de estado (el chip MANUK sobra en su propia sala) ─── */
-  function itemHTML(p) {
-    var q = Object.assign({}, p, { sellos: (p.sellos || []).filter(function (s) { return s !== 'MANUK'; }) });
-    return PM.pcardHTML(q, { cls: 'mk-item' });
+  /* ─── GRILLAS · nombre + precio + sello de estado (el chip MANUK sobra en su propia sala) ───
+       `conFotos` reordena la galería REAL de la pieza para que la tarjeta abra con una toma con la prenda PUESTA
+       (foto A) y el hover muestre otra toma del mismo look (foto B). No agrega ni inventa fotos: solo elige el orden.
+       SISTEMA: `pcardHTML` siempre toma imgs[0]/imgs[1]; no acepta índices. Queda resuelto acá. */
+  function conFotos(p, orden) {
+    var im = orden.map(function (i) { return p.imgs[i]; }).filter(Boolean);
+    if (im.length < 2) return p;
+    return Object.assign({}, p, { imgs: im, lq: im[0].replace(/-(640|1024)-0(\.\w+)$/, '-480-0$2') });
   }
-  var gH = document.getElementById('mk-grid-hoodies'), gR = document.getElementById('mk-grid-remeras'), gA = document.getElementById('mk-grid-archivo');
-  gH.innerHTML = hoodies.map(itemHTML).join('');
-  gR.innerHTML = jerseys.concat(remeras).map(itemHTML).join('');
+  /* la campaña real del HOODIE/001: tomas distintas de las del hero, las tres de cuerpo entero */
+  var FOTOS_CALLE = {
+    'manuk-hoodie-001-green': [16, 15, 14],
+    'manuk-hoodie-001-black': [14, 17, 16],
+    'manuk-hoodie-001-pink': [12, 13, 11]
+  };
+  function itemHTML(p, o) {
+    var q = Object.assign({}, p, { sellos: (p.sellos || []).filter(function (s) { return s !== 'MANUK'; }) });
+    if (o && o.fotos) q = conFotos(q, o.fotos);
+    return PM.pcardHTML(q, { cls: 'mk-item', vt: !(o && o.fotos) });   /* con foto reordenada no hay morph a la ficha: se apaga */
+  }
+  var calle = hoodies.filter(function (p) { return FOTOS_CALLE[p.id]; });
+  var estudio = hoodies.filter(function (p) { return !FOTOS_CALLE[p.id]; });
+  var gC = document.getElementById('mk-grid-calle'), gE = document.getElementById('mk-grid-estudio'),
+      gR = document.getElementById('mk-grid-remeras'), gA = document.getElementById('mk-grid-archivo');
+  gC.innerHTML = calle.map(function (p) { return itemHTML(p, { fotos: FOTOS_CALLE[p.id] }); }).join('');
+  gE.innerHTML = estudio.map(function (p) { return itemHTML(p); }).join('');
+  gR.innerHTML = jerseys.concat(remeras).map(function (p) { return itemHTML(p); }).join('');
+  /* el archivo MANUK también sale puesto: las tres tienen campaña propia en el dump */
+  var FOTOS_ARCH = { 'manuk-jersey78-black': [13, 12], 'remeron-tetsugaku-ukiyo1': [3, 4], 'remeron-tetsugaku-shibui': [1, 3] };
   gA.innerHTML = archivo.map(function (a) {
-    return PM.pcardHTML(a, { vendida: true, href: './archivo.html?id=' + encodeURIComponent(a.id), vt: false, sellos: false, cls: 'mk-item' })
+    var q = FOTOS_ARCH[a.id] ? conFotos(a, FOTOS_ARCH[a.id]) : a;
+    return PM.pcardHTML(q, { vendida: true, href: './archivo.html?id=' + encodeURIComponent(a.id), vt: false, sellos: false, cls: 'mk-item' })
       .replace(/<\/a>$/, '<span class="pcard-ano">EN EL ARCHIVO</span></a>');
   }).join('');
   /* (las tarjetas no llevan .rv: el reveal lo hacen los contenedores, ya observados por montarCromo) */
-  [gH, gR, gA].forEach(function (g) { g.addEventListener('click', function (e) { var a = e.target.closest('.pcard'); if (a) PM.vistas.marcar(a.getAttribute('data-id')); }); });
+  [gC, gE, gR, gA].forEach(function (g) { g.addEventListener('click', function (e) { var a = e.target.closest('.pcard'); if (a) PM.vistas.marcar(a.getAttribute('data-id')); }); });
   document.getElementById('mk-n-total').textContent = piezas.length;
   document.getElementById('mk-n-jerseys').textContent = jerseys.length;
   document.getElementById('mk-n-remeras').textContent = remeras.length;
   document.getElementById('mk-idx').innerHTML =
-    '<a href="#hoodies">HOODIES <span class="n">' + hoodies.length + '</span></a>' +
+    '<a href="#calle">EN LA CALLE <span class="n">' + calle.length + '</span></a>' +
+    '<a href="#estudio">EN ESTUDIO <span class="n">' + estudio.length + '</span></a>' +
     '<a href="#remeras">JERSEYS Y REMERAS <span class="n">' + (jerseys.length + remeras.length) + '</span></a>' +
     (archivo.length ? '<a href="#archivo">ARCHIVO <span class="n">' + archivo.length + '</span></a>' : '');
   if (!archivo.length) document.getElementById('archivo').remove();
@@ -587,10 +611,10 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
 
   /* ─── MANIFIESTO · díptico: dos looks que ya no están en la tienda (viven en el archivo) ─── */
   var dip = [
-    { id: 'manuk-jersey78-black', i: 13 },
-    { id: 'manuk-hoodie-002-ptw', i: 11 }
+    { id: 'manuk-jersey78-black', i: 8 },
+    { id: 'remeron-tetsugaku-ukiyo1', i: 2 }
   ].map(function (x) { var p = byId(x.id); return p ? { p: p, i: Math.min(x.i, p.imgs.length - 1) } : null; }).filter(Boolean);
-  if (dip.length < 2) dip = calle.slice(0, 2);
+  if (dip.length < 2) dip = HERO.slice(0, 2).map(function (h) { return { p: h.p, i: h.i }; });
   document.getElementById('mk-dip').innerHTML = dip.map(function (x) {
     var arch = archivo.indexOf(x.p) > -1;
     return '<a href="' + (arch ? './archivo.html?id=' : './ficha.html?id=') + encodeURIComponent(x.p.id) + '">' +
@@ -606,18 +630,17 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     ? '<div><span>CUIDADO</span><b>' + esc(String(cuiReal[0].cui).replace(/\.$/, '')) + '</b></div>'
     : '<div><span>HECHO EN</span><b>BUENOS AIRES</b></div>';
   document.getElementById('mk-datos').innerHTML =
-    '<div><span>PIEZAS EN LA SALA</span><b>' + piezas.length + '</b></div>' +
-    '<div><span>MODELOS</span><b>' + Object.keys(modelos).length + '</b></div>' +
+    '<div><span>EN PANTALLA</span><b>' + piezas.length + ' PIEZAS · ' + Object.keys(modelos).length + ' MODELOS</b></div>' +
     '<div><span>TALLE</span><b>ÚNICO · COZYSIZE</b></div>' +
     (precios.length ? '<div><span>PRECIOS</span><b>' + PM.fmt(min) + ' — ' + PM.fmt(max) + '</b></div>' : '') +
     filaCui;
 
   /* ─── DETALLE · 4 cortes, todos sobre negro ─── */
   var det = [
-    { id: 'manuk-hoodie-002-ptw-black', i: 2, t: 'PERCHA' },   /* MANUK HOODIES WORLD impreso en la percha */
-    { id: 'manuk-hoodie-001nycblack', i: 2, t: 'GRÁFICA' },     /* cartel Bedford Av */
+    { id: 'manuk-hoodie-001-green', i: 6, t: 'GRÁFICA' },       /* el dibujo blanco sobre el verde */
+    { id: 'manuk-hoodie-001-black', i: 8, t: 'MANGA' },         /* «WHAT» escrito a lo largo de la manga */
     { id: 'manuk-hoodie-002-ptw-black', i: 8, t: 'LETRAS' },    /* PROVE THEM WRONG de cerca */
-    { id: 'manuk-hoodie-001nycblack', i: 4, t: 'ETIQUETA' }     /* etiqueta MANUK en la manga */
+    { id: 'manuk-hoodie-001nycblack', i: 3, t: 'NEW YORK CITY' }  /* escrito a mano sobre el ruedo del 001NYC */
   ];
   document.getElementById('mk-det').innerHTML = det.map(function (x) {
     var p = viva(x.id); if (!p) return '';
@@ -627,11 +650,16 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   }).join('');
 
   /* ─── CON QUÉ VA · complementos Panni del hoodie del hero ─── */
-  /* fila pareja: solo complementos cuya primera foto es cuerpo entero (la bermuda Kinpu sale en recorte de torso) */
+  /* fila pareja: las tres tarjetas, cuerpo entero sobre el fondo claro del estudio de la casa.
+     La bermuda Kinpu sale en recorte de torso y el pantalón Tateyama abre en un plano de piernas: se evita la
+     primera y al segundo se le adelanta su toma de cuerpo entero (misma galería real de la pieza). */
   var evitar = { 'bermuda-kinpu-16kza': 1 };
+  var FOTOS_COMP = { 'pantalon-tateyama-1bnse': [4, 3] };
   var comp = ((hW && hW.comp) || []).map(byId).filter(function (q) { return q && !evitar[q.id]; }).slice(0, 3);
   if (comp.length < 3 && hB && hB.comp) hB.comp.map(byId).filter(Boolean).forEach(function (q) { if (comp.length < 3 && comp.indexOf(q) < 0 && !evitar[q.id]) comp.push(q); });
-  document.getElementById('mk-comp').innerHTML = comp.map(function (q) { return PM.pcardHTML(q, { cat: true, vt: false }); }).join('');
+  document.getElementById('mk-comp').innerHTML = comp.map(function (q) {
+    return PM.pcardHTML(FOTOS_COMP[q.id] ? conFotos(q, FOTOS_COMP[q.id]) : q, { cat: true, vt: false });
+  }).join('');
 })();
 </script>
 
