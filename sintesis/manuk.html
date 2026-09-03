@@ -475,7 +475,8 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   }
   var piezas = (C.piezas || []).filter(function (p) { return p.cat === 'MANUK'; })
     .sort(function (a, b) { return (b.ts || 0) - (a.ts || 0); });
-  var archivo = (C.archivo || []).filter(function (p) { return p.cat === 'MANUK'; });
+  /* «YA NO ESTÁN»: solo entradas del archivo sin hermana viva en el shop (el build ya las descarta; acá se vuelve a verificar) */
+  var archivo = (C.archivo || []).filter(function (p) { return p.cat === 'MANUK' && PM.sinHermanaViva(p); });
   var hoodies = piezas.filter(function (p) { return tipo(p) === 'HOODIES'; });
   var jerseys = piezas.filter(function (p) { return tipo(p) === 'JERSEYS'; });
   var remeras = piezas.filter(function (p) { return tipo(p) === 'REMERAS' || tipo(p) === 'OTRAS'; });
@@ -610,10 +611,8 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   PM.scramble(document.getElementById('mk-dial'), '>>MANUK.WORLD##', { dur: 620 });
 
   /* ─── MANIFIESTO · díptico: dos looks que ya no están en la tienda (viven en el archivo) ─── */
-  var dip = [
-    { id: 'manuk-jersey78-black', i: 8 },
-    { id: 'remeron-tetsugaku-ukiyo1', i: 2 }
-  ].map(function (x) { var p = byId(x.id); return p ? { p: p, i: Math.min(x.i, p.imgs.length - 1) } : null; }).filter(Boolean);
+  var DIP_I = { 'manuk-jersey78-black': 8, 'remeron-tetsugaku-ukiyo1': 2, 'remeron-tetsugaku-shibui': 1 };
+  var dip = archivo.slice(0, 2).map(function (p) { return { p: p, i: Math.min(DIP_I[p.id] || 1, p.imgs.length - 1) }; });
   if (dip.length < 2) dip = HERO.slice(0, 2).map(function (h) { return { p: h.p, i: h.i }; });
   document.getElementById('mk-dip').innerHTML = dip.map(function (x) {
     var arch = archivo.indexOf(x.p) > -1;

@@ -524,8 +524,9 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     /* LO NUEVO = fecha real de publicación y nada más: la primera tarjeta es SIEMPRE la de lastmod más reciente de esta sala */
     else if (st.sort === 'nuevo') out.sort(function (a, b) { return (b.ts || 0) - (a.ts || 0) || (b.pos || 0) - (a.pos || 0); });
     else out.sort(function (a, b) { return tsSala(b) - tsSala(a); });
-    /* en TODAS, MANUK (fotos sobre negro) cierra la sala como bloque propio: no se mezcla con la sala blanca */
-    if (!st.cat) out = out.filter(function (p) { return p.cat !== 'MANUK'; }).concat(out.filter(function (p) { return p.cat === 'MANUK'; }));
+    /* en TODAS, MANUK (fotos sobre negro) cierra la sala como bloque propio: no se mezcla con la sala blanca.
+       Con LO NUEVO no: ahí manda la fecha de publicación y nada más — un bloque que empuja MANUK al final desordena el orden pedido. */
+    if (!st.cat && st.sort !== 'nuevo') out = out.filter(function (p) { return p.cat !== 'MANUK'; }).concat(out.filter(function (p) { return p.cat === 'MANUK'; }));
     return out;
   }
 

@@ -253,14 +253,47 @@
      sistema no la infiere del stock. ultima: queda una sin declaración («QUEDA UNA», sello ÚLTIMA). No existe «edición de n». */
   function tallesDe(p) { var t = p && p.tls && p.tls.length ? p.tls : (p && p.tl ? [p.tl] : ['U']); return t.map(String).filter(function (x) { return !/^xs$/i.test(x); }); }
   function talleTxt(t) { return t === 'U' ? 'ÚNICO' : String(t); }
+  /* algunas piezas no se eligen por talle sino por DISEÑO (MANUK.SWEARSHIRT: NY · Skate · Fish, talle único):
+     `dis` son los diseños con stock. La variante que viaja al carrito es esa; el shop sigue filtrando por talle real. */
+  function disDe(p) { return p && p.dis && p.dis.length > 1 ? p.dis.map(String) : null; }
+  function varsDe(p) { return disDe(p) || tallesDe(p); }
+  function varLabel(p) { return disDe(p) ? 'DISEÑO' : 'TALLE'; }
+  function varTxt(p, v) { return disDe(p) ? String(v) : talleTxt(v); }
   function esUnica(p) { return !!(p && p.unica === true); }
   function esUltima(p) { return !!(p && !esUnica(p) && (p.ultima === true || (p.ultima == null && p.stock === 1))); }
   /* línea veraz de la pieza: «PIEZA ÚNICA · 1/1» (declarada) · «QUEDA UNA · TALLE n» · «TALLES 1 · 2 · 3» (sin cifra de edición) */
   function lineaTxt(p) {
+    var d = disDe(p);
+    if (d) return d.length + ' DISEÑOS · ' + d.join(' · ').toUpperCase();
     var t = tallesDe(p), tt = t.length > 1 ? 'TALLES ' + t.map(talleTxt).join(' · ') : 'TALLE ' + talleTxt(t[0]);
     if (esUnica(p)) return 'PIEZA ÚNICA · 1/1';
     if (esUltima(p)) return 'QUEDA UNA · ' + tt;
     return tt;
+  }
+  /* ¿esta entrada del Archivo NO tiene hermana viva en el shop? El build ya la descarta contra TODA la tienda; acá se
+     vuelve a verificar contra lo que ESTE sitio publica, para que ningún teaser dé por ida una pieza que está a la venta. */
+  var TIPO_PRENDA = { camisa: 1, blusa: 1, remera: 1, remeron: 1, musculosa: 1, top: 1, pantalon: 1, jean: 1, jeans: 1, short: 1, bermuda: 1, falda: 1, kimono: 1, vestido: 1, mono: 1, hoodie: 1, buzo: 1, sweater: 1, campera: 1, camperon: 1, capa: 1, tapado: 1, saco: 1, blazer: 1, trench: 1, poncho: 1, chaleco: 1, tshirt: 1, swearshirt: 1, jersey: 1, manuk: 1, oversize: 1, cropped: 1, over: 1 };
+  var COLOR_TOK = /^(black|white|pink|green|red|blue|grey|gray|yellow|silver|gold|sand|beige|nude|brown|orange|purple|negro|blanco|brushed|kids|nn|print|foil)$/;
+  var HASH_TOK = function (x) { return /^[a-z0-9]{5}$/.test(x) && /\d/.test(x); };
+  function tokMod(id) {
+    var t = String(id || '').split('-');
+    if (t.length > 1 && HASH_TOK(t[t.length - 1])) t.pop();
+    if (t.length > 1 && /^\d+$/.test(t[t.length - 1])) t.pop();
+    return t.filter(function (x) { return x && !COLOR_TOK.test(x) && !/^\d+$/.test(x) && !HASH_TOK(x); });
+  }
+  function sinHermanaViva(a) {
+    var id = typeof a === 'string' ? a : (a && a.id); if (!id) return false;
+    var T = tokMod(id), fs = T.join('-');
+    var prop = T.filter(function (x) { return !TIPO_PRENDA[x]; }), tip = T.filter(function (x) { return !!TIPO_PRENDA[x]; });
+    var ps = (w.CATALOGO && w.CATALOGO.piezas) || [];
+    for (var i = 0; i < ps.length; i++) {
+      var Q = tokMod(ps[i].id);
+      if (fs && Q.join('-') === fs) return false;
+      if (prop.length && tip.length &&
+        prop.every(function (x) { return Q.indexOf(x) > -1; }) &&
+        tip.some(function (x) { return Q.indexOf(x) > -1; })) return false;
+    }
+    return true;
   }
 
   /* ─── carrito (cantidad siempre 1; clave = pieza + talle) ─────────── */
@@ -273,7 +306,7 @@
       a.forEach(function (x) {
         var id = typeof x === 'string' ? x : (x && x.id), tl = typeof x === 'string' ? null : (x && x.tl);
         if (!id) return;
-        if (tl == null) { var p = byId(id); tl = p ? tallesDe(p)[0] : 'U'; }
+        if (tl == null) { var p = byId(id); tl = p ? varsDe(p)[0] : 'U'; }
         var k = claveDe(id, tl); if (vistos[k]) return; vistos[k] = 1;
         out.push({ id: id, tl: String(tl) });
       });
@@ -293,7 +326,8 @@
       o = o || {};
       var list = this._list(), p = byId(id);
       if (!p) return { ok: false, motivo: 'inexistente' };
-      var tls = tallesDe(p), tl = o.talle != null ? String(o.talle) : (tls.length === 1 ? tls[0] : null);
+      /* la variante del carrito es el talle o, en las piezas con diseno, el diseno elegido */
+      var tls = varsDe(p), tl = o.talle != null ? String(o.talle) : (tls.length === 1 ? tls[0] : null);
       if (tl == null) return { ok: false, motivo: 'talle', tls: tls };
       if (tls.indexOf(tl) < 0) return { ok: false, motivo: 'sin-stock', tls: tls };
       var k = claveDe(id, tl);
@@ -324,7 +358,7 @@
         vacio.hidden = true; f.hidden = false;
         list.innerHTML = entradas.map(function (e) {
           var p = e.p, unica = esUnica(p);
-          var linea = unica ? 'RESERVADA — ES ÚNICA' + (e.tl !== 'U' ? ' · TALLE ' + esc(e.tl) : '') : (esUltima(p) ? 'RESERVADA — QUEDA UNA' : 'EN TU CARRITO') + ' · TALLE ' + esc(talleTxt(e.tl));
+          var linea = unica ? 'RESERVADA — ES ÚNICA' + (e.tl !== 'U' ? ' · ' + varLabel(p) + ' ' + esc(e.tl) : '') : (esUltima(p) ? 'RESERVADA — QUEDA UNA' : 'EN TU CARRITO') + ' · ' + varLabel(p) + ' ' + esc(varTxt(p, e.tl));
           return '<li class="pm-ci" data-id="' + esc(p.id) + '" data-tl="' + esc(e.tl) + '">' +
             '<a class="ph" href="./ficha.html?id=' + encodeURIComponent(p.id) + '" tabindex="-1" aria-hidden="true">' + pic(p, 0, { alt: '', cls: '' }) + '</a>' +
             '<div><a class="nm" href="./ficha.html?id=' + encodeURIComponent(p.id) + '">' + esc(p.nm) + '</a>' +
@@ -332,7 +366,7 @@
             '<span class="tl">' + linea + '</span>' +
             sellosHTML(p.sellos) + '</div>' +
             '<div class="der"><span class="pr">' + fmt(p.pr) + '</span>' +
-            '<button type="button" class="quitar" data-quitar="' + esc(e.key) + '" aria-label="Quitar ' + esc(p.nm) + (e.tl !== 'U' ? ' talle ' + esc(e.tl) : '') + ' del carrito">QUITAR</button></div></li>';
+            '<button type="button" class="quitar" data-quitar="' + esc(e.key) + '" aria-label="Quitar ' + esc(p.nm) + (e.tl !== 'U' ? ' ' + varLabel(p).toLowerCase() + ' ' + esc(e.tl) : '') + ' del carrito">QUITAR</button></div></li>';
         }).join('');
         $('#pm-cart-tot').textContent = fmt(this.total());
       }
@@ -426,7 +460,7 @@
       '<div class="pm-resumen" id="pm-chk-res"></div></section>' +
       '<section class="pm-paso pm-listo" data-paso="4"><h3>Pedido<br>en reserva</h3>' +
       '<span class="code" id="pm-chk-code"></span>' +
-      '<p>La pieza quedó reservada a tu nombre. <b>Te enviamos el link de pago y el seguimiento a tu email.</b> Si elegiste retiro, te avisamos cuando esté lista en Honduras 4940.</p></section>' +
+      '<p id="pm-chk-ok">La pieza quedó reservada a tu nombre. <b>Te enviamos el link de pago y el seguimiento a tu email.</b> Si elegiste retiro, te avisamos cuando esté lista en Honduras 4940.</p></section>' +
       '</form></div>' +
       '<div class="pm-dlg-f"><div class="pm-chk-nav">' +
       '<button type="button" class="btn vol" id="pm-chk-vol">&lt;&lt; VOLVER</button>' +
@@ -447,7 +481,7 @@
     if (n === 3) {
       var entradas = cart.entradas(), envio = $('input[name=envio]:checked', dlg).value, pago = $('input[name=pago]:checked', dlg).value;
       $('#pm-chk-res').innerHTML =
-        entradas.map(function (e) { return '<div><span>' + esc(e.p.nm) + (e.tl !== 'U' ? ' · TALLE ' + esc(e.tl) : '') + '</span><b>' + fmt(e.p.pr) + '</b></div>'; }).join('') +
+        entradas.map(function (e) { return '<div><span>' + esc(e.p.nm) + (e.tl !== 'U' ? ' · ' + varLabel(e.p) + ' ' + esc(e.tl) : '') + '</span><b>' + fmt(e.p.pr) + '</b></div>'; }).join('') +
         '<div><span>ENVÍO</span><b>' + (envio === 'retiro' ? 'RETIRO · SIN CARGO' : 'A COTIZAR') + '</b></div>' +
         '<div class="tot"><span>TOTAL</span><b>' + fmt(cart.total()) + '</b></div>';
     }
@@ -473,6 +507,11 @@
       } else if (chk.paso === 3) {
         var code = 'PM-' + Math.random().toString(36).slice(2, 6).toUpperCase() + '-' + String(Date.now()).slice(-4);
         $('#pm-chk-code').textContent = code;
+        /* la confirmación se pluraliza: reservar tres piezas y leer «La pieza quedó reservada» es un dato falso */
+        var nPz = cart.n(), ok = $('#pm-chk-ok');
+        if (ok) ok.innerHTML = (nPz > 1 ? 'Las ' + nPz + ' piezas quedaron reservadas' : 'La pieza quedó reservada') +
+          ' a tu nombre. <b>Te enviamos el link de pago y el seguimiento a tu email.</b> Si elegiste retiro, te avisamos cuando ' +
+          (nPz > 1 ? 'estén listas' : 'esté lista') + ' en Honduras 4940.';
         cart.clear(); chkPaso(4);
         emit('pm:pedido', { code: code });
       } else {
@@ -489,9 +528,9 @@
   var LEGAL = {
     /* sin cifras que la casa no aprobó (plazos de despacho o de cambio): se informan al confirmar el pedido. El botón de arrepentimiento sí es ley */
     envios: { t: 'Envíos', ja: '配送', p: ['<b>A todo el país</b> por correo, con seguimiento por link. El plazo de despacho se informa al confirmar el pedido.', 'También podés <b>retirar sin cargo en Honduras 4940</b>, Palermo Soho, de lunes a sábado de 11 a 19. Te avisamos cuando la pieza está lista.'] },
-    cambios: { t: 'Cambios y devoluciones', ja: '交換', p: ['El plazo de cambio se informa al confirmar el pedido. Las piezas salen de a una, de a pocas — nunca en serie: el cambio es por otro talle si queda, por otra pieza o por crédito en la casa; si el textil lo permite, también <b>se ajusta al cuerpo</b> en el taller.', 'Tiene que volver sin uso, con su etiqueta y en el mismo estado en que salió.'] },
+    cambios: { t: 'Cambios y devoluciones', ja: '交換', p: ['Las condiciones y el plazo de cambio se informan al confirmar el pedido. Las piezas salen de a una, de a pocas — nunca en serie: escribinos por Instagram <b>@pannimargot</b> o pasá por la boutique y lo resolvemos con vos.', 'Para poder cambiarla tiene que volver en el mismo estado en que salió.'] },
     arrepentimiento: { t: 'Botón de arrepentimiento', ja: '撤回', p: ['Si compraste online, podés <b>revocar la compra dentro de los 10 días corridos de recibida la pieza</b>, sin dar motivos y sin costo. Te devolvemos el importe por el mismo medio de pago.', 'Completá el formulario y te respondemos por email con las instrucciones para la devolución.'], ley: 'LEY 24.240 · ART. 34 · RES. 424/2020', form: true },
-    terminos: { t: 'Términos y condiciones', ja: '規約', p: ['Los precios están publicados en <b>pesos argentinos</b>. Cada pieza publicada está disponible en los talles que ves; salen de a una, de a pocas — nunca en serie. Al sumarla al carrito <b>queda reservada mientras completás la compra</b>.', 'Pagás con Mercado Pago o Nave; la financiación depende del medio de pago que elijas. Las fotos son de la pieza real; el color puede variar según la pantalla.'] },
+    terminos: { t: 'Términos y condiciones', ja: '規約', p: ['Los precios están publicados en <b>pesos argentinos</b>. Cada pieza publicada está disponible en los talles que ves; salen de a una, de a pocas — nunca en serie.', 'Pagás con Mercado Pago o Nave; la financiación depende del medio de pago que elijas. Las fotos son de la pieza real; el color puede variar según la pantalla.'] },
     talles: { t: 'Guía de talles y cuidados', ja: '寸法', p: ['<b>No hay XS: la prenda se ajusta al cuerpo que la lleva.</b> La mayoría de las fichas trae las medidas reales de esa pieza (hombros, pecho, largo); si falta, pedilas por Instagram o en la boutique. Compará con una prenda tuya que te quede bien.', 'Cuidados: van en la <b>etiqueta interna</b> de cada pieza. Cualquier duda, te la respondemos por Instagram <b>@pannimargot</b>.'] }
   };
   function legalHTML() {
@@ -552,7 +591,7 @@
     return '<aside id="pm-cart" class="pm-cart" role="dialog" aria-modal="true" aria-labelledby="pm-cart-t" hidden>' +
       '<div class="pm-dlg-h"><h2 id="pm-cart-t">CARRITO <span id="pm-cart-n" class="n"></span> <span lang="ja" aria-hidden="true">器</span></h2><button type="button" class="pm-x" data-cerrar="pm-cart" aria-label="Cerrar carrito" data-foco>[ × ] CERRAR</button></div>' +
       '<div class="pm-dlg-b">' +
-      '<div id="pm-cart-vacio" class="pm-cart-vacio">TODAVÍA NADA.<br><b>PIEZAS DE A UNA, DE A POCAS — NUNCA EN SERIE.</b> CUANDO SUMÁS UNA, QUEDA RESERVADA MIENTRAS COMPRÁS.<br><a class="btn" href="./shop.html">IR AL SHOP <span lang="ja" aria-hidden="true">店</span></a></div>' +
+      '<div id="pm-cart-vacio" class="pm-cart-vacio">TODAVÍA NADA.<br><b>PIEZAS DE A UNA, DE A POCAS — NUNCA EN SERIE.</b> CADA PIEZA SALE DE A UNA, DE A POCAS — NUNCA EN SERIE.<br><a class="btn" href="./shop.html">IR AL SHOP <span lang="ja" aria-hidden="true">店</span></a></div>' +
       '<ul id="pm-cart-list" class="pm-cart-list" aria-label="Piezas en el carrito"></ul>' +
       '<div id="pm-cart-pas"></div>' +
       '<span class="st" role="status" aria-live="polite"></span></div>' +
@@ -702,7 +741,7 @@
         e.preventDefault();
         var idAdd = b.getAttribute('data-add'), tlAdd = b.getAttribute('data-talle');
         var r = cart.add(idAdd, { talle: tlAdd || undefined });
-        if (!r.ok && r.motivo === 'duplicado') { var st = $('#pm-cart .st'); if (st) st.textContent = esUnica(byId(idAdd)) ? 'YA ESTÁ EN TU CARRITO :: ES UNA SOLA' : 'YA ESTÁ EN TU CARRITO :: TALLE ' + talleTxt(r.talle); }
+        if (!r.ok && r.motivo === 'duplicado') { var pDup = byId(idAdd); var st = $('#pm-cart .st'); if (st) st.textContent = esUnica(pDup) ? 'YA ESTÁ EN TU CARRITO :: ES UNA SOLA' : 'YA ESTÁ EN TU CARRITO :: ' + varLabel(pDup) + ' ' + varTxt(pDup, r.talle); }
         /* sin talle elegido: la página lo resuelve (evento pm:talle); el sistema no adivina */
         if (!r.ok && (r.motivo === 'talle' || r.motivo === 'sin-stock')) emit('pm:talle', { id: idAdd, motivo: r.motivo, tls: r.tls, boton: b });
         return;
@@ -810,7 +849,8 @@
     linterna: linterna, revelar: revelar, marquesina: marquesina, legal: legal,
     abrir: abrirDialogo, cerrar: cerrarDialogo,
     qs: qs, byId: byId, esc: esc, el: el,
-    talles: tallesDe, talleTxt: talleTxt, esUnica: esUnica, esUltima: esUltima, lineaTxt: lineaTxt, clave: claveDe,
+    talles: tallesDe, talleTxt: talleTxt, dis: disDe, vars: varsDe, varLabel: varLabel, varTxt: varTxt, sinHermanaViva: sinHermanaViva,
+    esUnica: esUnica, esUltima: esUltima, lineaTxt: lineaTxt, clave: claveDe,
     RM: RM, FINE: FINE, SD: SD, KJ: KJ
   };
 })();

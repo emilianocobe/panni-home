@@ -508,9 +508,12 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   }
   /* verdad de stock: talles con stock (nomenclatura real de la casa, nunca XS). `unica` SOLO si la casa la declara única en su
      descripción y queda una (sello 一点物 1/1); `ultima` = queda una sin declaración (sello ÚLTIMA, «QUEDA UNA»). */
-  var tls = PM.talles(p), multi = tls.length > 1, unica = PM.esUnica(p), ultima = PM.esUltima(p), unico = tls.length === 1 && tls[0] === 'U';
+  /* la variante de esta pieza es el TALLE o, cuando la tienda publica DISEÑOS en vez de talles (MANUK.SWEARSHIRT: NY · Skate · Fish),
+     el diseño: mismo patrón de selector, mismo camino al carrito. VLAB nombra la dimensión en cada texto. */
+  var esDis = !!PM.dis(p), VLAB = PM.varLabel(p), vlab = VLAB.toLowerCase();
+  var tls = PM.vars(p), multi = tls.length > 1, unica = PM.esUnica(p), ultima = PM.esUltima(p), unico = !esDis && tls.length === 1 && tls[0] === 'U';
   /* línea VERAZ: «PIEZA ÚNICA · 1/1» · «QUEDA UNA · TALLE n» · «TALLES 1 · 2 · 3» — nunca una cifra de edición (el stock no es una tirada) */
-  var tlsTxt = unico ? 'TALLE ÚNICO' : (multi ? 'TALLES ' : 'TALLE ') + tls.map(PM.talleTxt).join(' · ');
+  var tlsTxt = unico ? 'TALLE ÚNICO' : esDis ? tls.length + ' DISEÑOS · ' + tls.join(' · ').toUpperCase() : (multi ? 'TALLES ' : 'TALLE ') + tls.map(PM.talleTxt).join(' · ');
   var edLinea = unica ? '<b>PIEZA ÚNICA</b> · 1/1' : ultima ? '<b>QUEDA UNA</b> · ' + esc(tlsTxt) : '<b>' + esc(tlsTxt) + '</b>';
   h += '<div class="calco" id="calco" aria-hidden="true"><i id="calco-n"></i><span>' + esc(p.sku) + ' :: ' + (unica ? '<span lang="ja">一点物</span>' : esc(ultima ? 'QUEDA UNA' : tlsTxt)) + '</span></div>';
   var ens = $('ensayo'); ens.innerHTML = h;
@@ -544,7 +547,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
 
   /* cabecera */
   $('d-cat').innerHTML = '<a href="' + TERR(p.cat) + '"><b>' + esc(CATNM(p.cat)) + '</b></a>' + (p.kj ? '<span lang="ja" aria-hidden="true">' + esc(p.kj) + '</span>' : '') +
-    (p.sellos && p.sellos.indexOf('手描き') > -1 ? '<span class="pint">PINTADA POR EL PINTOR DE LA CASA</span>' : '');
+    (p.sellos && p.sellos.indexOf('手描き') > -1 ? '<span class="pint">PINTADA A MANO EN EL TALLER</span>' : '');
   $('d-nm').textContent = p.nm;
   $('d-sellos').innerHTML = PM.sellosHTML(p.sellos);
   /* «PIEZA ÚNICA · 1/1» solo si la casa la declara; «QUEDA UNA · TALLE n» si queda una; si no, los talles con stock (ver arriba) */
@@ -566,12 +569,12 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   if (unico) talleHTML = '<p class="talle"><b>ÚNICO</b><span>SE AJUSTA AL CUERPO</span><button type="button" class="lnk" data-legal="talles">GUÍA DE TALLES</button></p>';
   /* una pieza única no «es el único talle que queda»: es su talle (sin contradecir el 1/1 de arriba) */
   else if (!multi) talleHTML = '<p class="talle"><b>' + esc(tls[0]) + '</b><span>' + (unica ? 'SU TALLE' : agot.length ? 'EL ÚNICO TALLE QUE QUEDA' : 'UN SOLO TALLE') + '</span><button type="button" class="lnk" data-legal="talles">GUÍA DE TALLES</button></p>';
-  else talleHTML = '<fieldset class="tl-sel" id="tl-sel" aria-describedby="tl-nota"><legend>Elegí tu talle</legend>' +
+  else talleHTML = '<fieldset class="tl-sel" id="tl-sel"' + (esDis ? '' : ' aria-describedby="tl-nota"') + '><legend>' + (esDis ? 'Elegí tu diseño' : 'Elegí tu talle') + '</legend>' +
     tls.map(function (t) { return '<label><input type="radio" name="talle" value="' + esc(t) + '"' + (talleSel === t ? ' checked' : '') + '><span>' + esc(t) + '</span></label>'; }).join('') +
-    agot.map(function (t) { return '<span class="ag" aria-hidden="true">' + esc(t) + '</span><span class="sr">Talle ' + esc(t) + ' agotado</span>'; }).join('') +
+    (esDis ? '' : agot.map(function (t) { return '<span class="ag" aria-hidden="true">' + esc(t) + '</span><span class="sr">Talle ' + esc(t) + ' agotado</span>'; }).join('')) +
     '<button type="button" class="lnk" data-legal="talles">GUÍA DE TALLES</button></fieldset>';
   /* una sola línea: «elegí el talle antes de agregar» ya lo dice el CTA (pm:talle) cuando hace falta */
-  var talleNota = unico ? '' : 'No hay XS: se ajusta al cuerpo. Compará con una prenda tuya.';
+  var talleNota = esDis ? 'Talle único, cozysize. El diseño que elegís es el que sale del taller.' : unico ? '' : 'No hay XS: se ajusta al cuerpo. Compará con una prenda tuya.';
 
   /* materiales */
   var matHTML = (p.mat && p.mat.length)
@@ -594,10 +597,10 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   var cuiHTML = cuiReal
     ? '<p class="lava"><b>' + esc(cuiReal) + '</b></p>'
     : '<p>Los cuidados de esta pieza van en su etiqueta interna. Cualquier duda, te la respondemos por Instagram <b>@pannimargot</b>.</p>';
-  if (p.sellos && p.sellos.indexOf('手描き') > -1) cuiHTML += '<p class="nota">Pintada a mano por el pintor de la casa: la etiqueta manda.</p>';
+  if (p.sellos && p.sellos.indexOf('手描き') > -1) cuiHTML += '<p class="nota">Pieza pintada a mano: el trazo no se repite en otra.</p>';
 
   $('filas').innerHTML =
-    '<section class="fila"><span class="no" aria-hidden="true">01</span><h2>' + (multi ? 'TU TALLE' : 'TALLE DE ESTA PIEZA') + '</h2><div class="cu">' + talleHTML + (talleNota ? '<p class="nota" id="tl-nota">' + talleNota + '</p>' : '') + '</div></section>' +
+    '<section class="fila"><span class="no" aria-hidden="true">01</span><h2>' + (esDis ? 'DISEÑO DE ESTA PIEZA' : multi ? 'TU TALLE' : 'TALLE DE ESTA PIEZA') + '</h2><div class="cu">' + talleHTML + (talleNota ? '<p class="nota" id="tl-nota">' + talleNota + '</p>' : '') + '</div></section>' +
     '<section class="fila"><span class="no" aria-hidden="true">02</span><h2>MATERIALES</h2><div class="cu">' + matHTML + '</div></section>' +
     '<section class="fila"><span class="no" aria-hidden="true">03</span><h2>MEDIDAS DE ESTA PIEZA</h2><div class="cu">' + medHTML + '</div></section>' +
     '<section class="fila"><span class="no" aria-hidden="true">04</span><h2>CUIDADOS</h2><div class="cu">' + cuiHTML + '</div></section>';
@@ -606,7 +609,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   function colchon() { d.documentElement.style.setProperty('--cta-h', (innerWidth < 1024 ? $('cta').offsetHeight : 0) + 'px'); }
   /* CTA único: agregar · en el carrito (única → reservada) */
   var b = $('add'), st = $('cta-st');
-  var tlTxt = function (t) { return PM.talleTxt(t); };
+  var tlTxt = function (t) { return PM.varTxt(p, t); };
   function pintar(ev) {
     /* con varios talles, «en el carrito» es por talle elegido (podés sumar otro talle de la misma pieza) */
     var en = talleSel != null && PM.cart.has(p.id, talleSel);
@@ -618,11 +621,11 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     if (talleSel != null) b.setAttribute('data-talle', talleSel); else b.removeAttribute('data-talle');
     /* el nombre accesible contiene el texto visible (2.5.3); el nombre de la pieza va en .sr */
     b.innerHTML = en
-      ? '<span>' + (unica ? 'RESERVADA — ES ÚNICA' : 'EN TU CARRITO · TALLE ' + esc(tlTxt(talleSel))) + '<span class="sr"> · ' + esc(p.nm) + ' ya está en tu carrito</span></span>'
-      : '<span>AGREGAR AL CARRITO<span class="sr"> ' + esc(p.nm) + (talleSel != null && !unico ? ' talle ' + esc(tlTxt(talleSel)) : '') + '</span></span><span class="pr">:: ' + esc(PM.fmt(p.pr)) + '</span>';
+      ? '<span>' + (unica ? 'RESERVADA — ES ÚNICA' : 'EN TU CARRITO · ' + VLAB + ' ' + esc(tlTxt(talleSel))) + '<span class="sr"> · ' + esc(p.nm) + ' ya está en tu carrito</span></span>'
+      : '<span>AGREGAR AL CARRITO<span class="sr"> ' + esc(p.nm) + (talleSel != null && !unico ? ' ' + vlab + ' ' + esc(tlTxt(talleSel)) : '') + '</span></span><span class="pr">:: ' + esc(PM.fmt(p.pr)) + '</span>';
     if (ev && ev.detail && ev.detail.id === p.id) {
       var msg = ev.detail.accion === 'add'
-        ? (unica ? 'QUEDÓ RESERVADA MIENTRAS COMPRÁS' : 'TALLE ' + esc(tlTxt(ev.detail.talle || talleSel)) + ' EN TU CARRITO :: QUEDA RESERVADA MIENTRAS COMPRÁS')
+        ? (unica ? 'EN TU CARRITO :: ES UNA SOLA' : VLAB + ' ' + esc(tlTxt(ev.detail.talle || talleSel)) + ' EN TU CARRITO')
         : ev.detail.accion === 'remove' ? 'LIBERADA :: VUELVE A LA SALA' : '';
       st.textContent = msg;
       /* con el drawer abierto <main> queda inert: se anuncia también en la región viva del carrito */
@@ -643,7 +646,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   /* sin talle elegido (base.js no adivina): se pide el talle y el foco va al selector */
   d.addEventListener('pm:talle', function (e) {
     if (!e.detail || e.detail.id !== p.id) return;
-    var msg = e.detail.motivo === 'sin-stock' ? 'ESE TALLE YA NO QUEDA :: ELEGÍ OTRO' : 'ELEGÍ TU TALLE :: ' + tls.join(' · ');
+    var msg = e.detail.motivo === 'sin-stock' ? (esDis ? 'ESE DISEÑO YA NO QUEDA :: ELEGÍ OTRO' : 'ESE TALLE YA NO QUEDA :: ELEGÍ OTRO') : 'ELEGÍ TU ' + VLAB + ' :: ' + tls.join(' · ').toUpperCase();
     st.textContent = msg;
     if (sel) { sel.classList.add('falta'); var r = sel.querySelector('input'); if (r) r.focus(); }
     colchon();
@@ -651,7 +654,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
   /* EN EL CARRITO: sin data-add el delegado de base.js no responde; el click muestra dónde está la pieza */
   b.addEventListener('click', function () {
     if (b.getAttribute('aria-disabled') !== 'true') return;
-    var msg = unica ? 'YA ESTÁ EN TU CARRITO :: ES UNA SOLA' : 'YA ESTÁ EN TU CARRITO :: TALLE ' + tlTxt(talleSel);
+    var msg = unica ? 'YA ESTÁ EN TU CARRITO :: ES UNA SOLA' : 'YA ESTÁ EN TU CARRITO :: ' + VLAB + ' ' + tlTxt(talleSel);
     st.textContent = msg;
     /* el carrito abierto deja <main> inert: se anuncia también en la región viva del drawer */
     var ds = d.querySelector('#pm-cart .st'); if (ds) ds.textContent = msg;

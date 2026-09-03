@@ -433,7 +433,11 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
 
   /* ─── HERO: dos piezas, gigantes, mismo gris ────────────────────────── */
   function heroDe(p){return {id:p.id,nm:p.nm,imgs:[p.hero||p.imgs[0]],lq:p.lq};}
-  var dA=byId['tapado-uru-black']||ARCH[0], dB=byId['hoodie-kitsutsuki-white-brushed-8']||ARCH[1]||ARCH[0];
+  /* el hero se elige del propio archivo (sin hermana viva en el shop) y por galería: dos piezas distintas, nunca de la misma categoría */
+  var HERO_POOL=ARCH.filter(function(a){return PM.sinHermanaViva(a);}).sort(function(x,y){return (y.imgs||[]).length-(x.imgs||[]).length;});
+  if(!HERO_POOL.length)HERO_POOL=ARCH.slice();
+  var dA=byId['tapado-uru-black']&&HERO_POOL.indexOf(byId['tapado-uru-black'])>-1?byId['tapado-uru-black']:HERO_POOL[0];
+  var dB=HERO_POOL.filter(function(x){return x!==dA&&x.cat!==dA.cat;})[0]||HERO_POOL.filter(function(x){return x!==dA;})[0]||dA;
   hfA.setAttribute('data-id',dA.id); hfA.setAttribute('aria-label',dA.nm+' · ya no está en la tienda. Abrir la ficha');
   hfA.innerHTML=PM.pic(heroDe(dA),0,{alt:'',eager:true,ariaHidden:true});
   hfB.setAttribute('data-id',dB.id); hfB.setAttribute('aria-label',dB.nm+' · ya no está en la tienda. Abrir la ficha');

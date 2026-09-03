@@ -345,7 +345,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
       <div>
         <p class="ey hero-dial" id="hero-dial" aria-hidden="true">BUENOS AIRES//<span lang="ja">デザイナー</span> ..DESIGNER &gt;&gt;HONDURAS4940##</p>
         <h1 id="h1"><span>He visto</span><span>personas</span><span class="ja" lang="ja" aria-hidden="true">ジェンダーレス</span></h1>
-        <p class="lead rv rv-d1">Un futuro donde la lucha por la igualdad ya terminó. Piezas de a una, sin género, hechas en Buenos Aires.</p>
+        <p class="lead rv rv-d1">Un futuro donde la lucha por la igualdad ya terminó. Piezas de a una, de a pocas — nunca en serie —, sin género, hechas en Buenos Aires.</p>
         <div class="hero-cta rv rv-d2">
           <a class="btn fill lg" href="./shop.html">ENTRAR AL SHOP <span lang="ja" aria-hidden="true">店</span></a>
           <a class="lnk" href="./casa.html">EL MANIFIESTO <span lang="ja" aria-hidden="true">家</span></a>
@@ -394,7 +394,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
         <p class="ey">MANIFIESTO <span lang="ja" aria-hidden="true">家</span></p>
         <h2 id="t-mundo" class="mundo-q rv">Somos todos <em>carbono, hidrógeno, oxígeno, nitrógeno.</em></h2>
         <div class="mundo-atoms rv rv-d1" aria-hidden="true"><span><b>C</b>6</span><span><b>H</b>1</span><span><b>O</b>8</span><span><b>N</b>7</span></div>
-        <p class="txt rv rv-d2" style="color:var(--fg-2)">Se corta, se pega, se pinta y sale. Cada pieza pasa por el taller una sola vez; lo pintado a mano lo firma el pintor de la casa.</p>
+        <p class="txt rv rv-d2" style="color:var(--fg-2)">Se corta, se pega, se pinta y sale. Lo pintado a mano lo pinta el pintor de la casa, trazo por trazo.</p>
         <div class="rv rv-d3"><a class="btn" href="./casa.html">LA CASA <span lang="ja" aria-hidden="true">家</span> <span class="arr">&gt;&gt;</span></a></div>
       </div>
       <a class="mundo-ph rv rv-scale" id="mundo-ph" href="./shop.html" aria-label="Ver el shop"></a>
@@ -631,10 +631,14 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     '<a href="./manuk.html"><span>TODO MANUK WORLD</span><span>ENTRAR &gt;&gt;</span></a>');
 
   /* ── ARCHIVO teaser: 3 piezas que ya no están en la tienda ── */
-  /* tres distintas entre sí y de lo que ya está arriba (la Kagyaku es la cara de ABRIGOS): trench-camisa negra, kimono pintado, espalda pintada */
-  var arcIds = ['camisa-trench-shukai-1','kimono-shiruku-black-brushed-3','remeron-oversize-burokku-brushed-4'];
-  var arc = arcIds.map(byId).filter(Boolean);
-  if (arc.length < 3) arc = (C.archivo || []).slice(0, 3);
+  /* solo entradas SIN hermana viva en el shop: el teaser no puede dar por ida una pieza que sigue a la venta (se verifica acá,
+     además del descarte que ya hace el build). Tres categorías distintas entre sí, las de galería más rica. */
+  var arcPool = (C.archivo || []).filter(function(a){ return PM.sinHermanaViva(a); });
+  var arcVistas = {}, arc = [];
+  arcPool.slice().sort(function(a,b){ return (b.imgs||[]).length - (a.imgs||[]).length; }).forEach(function(a){
+    if (arc.length >= 3 || arcVistas[a.cat]) return; arcVistas[a.cat] = 1; arc.push(a);
+  });
+  arcPool.forEach(function(a){ if (arc.length < 3 && arc.indexOf(a) < 0) arc.push(a); });
   setHTML('arc', arc.map(function(p, i){
     return PM.pcardHTML(p, { vendida: true, hover: true, vt: false, href: './archivo.html?id=' + encodeURIComponent(p.id), cls: 'rv' + (i ? ' rv-d' + i : ''), sellos: false });
   }).join(''));
