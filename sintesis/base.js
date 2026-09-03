@@ -102,7 +102,7 @@
     var src = (p.imgs && p.imgs[i]) || p.img || '';
     var lq = o.lq !== undefined ? (o.lq || '') : (p.lq || (p.imgs && p.imgs[0]) || '');   /* o.lq: LQIP propia de ESTA toma (null = sin placeholder) */
     var alt = o.alt != null ? o.alt : (p.nm || '');
-    var vt = o.vt ? 'view-transition-name:pz-' + String(p.id).replace(/[^a-z0-9_-]/gi, '') + ';' : '';
+    var vt = o.vt ? 'view-transition-name:pz-' + String(p.id).replace(/[^a-z0-9_-]/gi, '') + ';view-transition-class:pieza;' : '';
     return '<img class="pm-img ' + esc(o.cls || '') + '" src="' + esc(src) + '" alt="' + esc(alt) + '"' +
       (o.eager ? ' loading="eager" fetchpriority="high"' : ' loading="lazy"') +
       ' decoding="async"' + (o.sizes ? ' sizes="' + esc(o.sizes) + '"' : '') +

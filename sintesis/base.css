@@ -146,9 +146,10 @@ html[data-pasaporte="completo"] #grain{animation-play-state:paused;opacity:.03}
 #cur,#cur-ring{display:none}
 @media (hover:hover) and (pointer:fine){
   html.has-cur,html.has-cur *{cursor:none!important}
-  #cur,#cur-ring{display:block;position:fixed;top:0;left:0;z-index:9999;pointer-events:none;mix-blend-mode:difference;will-change:transform}
-  #cur{width:6px;height:6px;background:#fff;border-radius:50%;margin:-3px 0 0 -3px}
-  #cur-ring{width:36px;height:36px;border:1px solid #fff;border-radius:50%;margin:-18px 0 0 -18px;transition:width .3s var(--ease),height .3s var(--ease),margin .3s var(--ease),opacity .3s}
+  /* sin difference: sobre un gris medio la diferencia da el mismo gris y el cursor se evapora sobre las fotos */
+  #cur,#cur-ring{display:block;position:fixed;top:0;left:0;z-index:9999;pointer-events:none;will-change:transform}
+  #cur{width:7px;height:7px;background:#fff;border-radius:50%;margin:-3.5px 0 0 -3.5px;box-shadow:0 0 0 1px rgba(0,0,0,.55),0 0 6px 1px rgba(0,0,0,.35)}
+  #cur-ring{width:36px;height:36px;border:1px solid #fff;border-radius:50%;margin:-18px 0 0 -18px;box-shadow:0 0 0 1px rgba(0,0,0,.4),inset 0 0 0 1px rgba(0,0,0,.4);transition:width .3s var(--ease),height .3s var(--ease),margin .3s var(--ease),opacity .3s}
   #cur-ring.big{width:88px;height:88px;margin:-44px 0 0 -44px}
   #cur-ring.off,#cur.off{opacity:0}
 }
@@ -525,8 +526,18 @@ html.js .rv.in-view{opacity:1;transform:none}
 
 /* ─── 16 · VIEW TRANSITIONS (cross-document) ────────────────────────── */
 @view-transition{navigation:auto}
-::view-transition-old(root),::view-transition-new(root){animation-duration:.32s}
-::view-transition-group(pm-lockup){animation-duration:.32s}
+/* la raíz funde rápido y por debajo: el protagonista es la pieza que viaja */
+::view-transition-old(root),::view-transition-new(root){animation-duration:.28s;animation-timing-function:cubic-bezier(.4,0,.2,1)}
+::view-transition-group(root){z-index:0}
+::view-transition-group(pm-lockup){animation-duration:.4s;animation-timing-function:cubic-bezier(.2,.7,.2,1);z-index:3}
+/* la pieza: morph limpio, sin doble fundido — la foto crece de la tarjeta a la ficha */
+::view-transition-group(.pieza){animation-duration:.52s;animation-timing-function:cubic-bezier(.2,.7,.2,1);z-index:2}
+::view-transition-image-pair(.pieza){isolation:auto}
+::view-transition-old(.pieza),::view-transition-new(.pieza){
+  animation:none;mix-blend-mode:normal;width:100%;height:100%;object-fit:cover}
+@media(prefers-reduced-motion:reduce){
+  ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
+}
 
 /* ─── 17 · RESPONSIVE ───────────────────────────────────────────────── */
 @media (max-width:1279px) and (min-width:1024px){

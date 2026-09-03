@@ -232,6 +232,10 @@ html[data-grano="off"] #grain{opacity:0;transition:opacity var(--dur)}
 }
 </style>
 
+
+<script id="pmgate-pre">/* decide antes de pintar: sin parpadeo de la cortina al navegar */
+(function(){try{if(localStorage.getItem("pm_gate_ok")==="d5600e28005cacbad0d820784e3f9f75220b38689e9c7e16bda6513d11c3443e"){document.documentElement.className+=" pmgate-ok"}}catch(e){}})();
+</script>
 <style id="pmgate-css">
 /* ═══ CORTINA DE ACCESO — estética de la casa, fail-closed ═══ */
 #pmgate{position:fixed;inset:0;z-index:99999;background:#000;color:#fff;
@@ -268,6 +272,7 @@ html[data-grano="off"] #grain{opacity:0;transition:opacity var(--dur)}
 .pmgate-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
   clip:rect(0 0 0 0);white-space:nowrap;border:0}
 html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
+html.pmgate-ok #pmgate{display:none!important}
 @media (prefers-reduced-motion:reduce){
   #pmgate{transition:none}
   #pmgate::after{animation:none}
@@ -296,6 +301,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     </p>
   </div>
 </div>
+
 <main id="contenido">
 
   <!-- ─── HERO · tríptico a sangre: tres cuerpos, tres lugares ─── -->
@@ -662,6 +668,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
 })();
 </script>
 
+
 <script id="pmgate-js">
 /* Cortina de acceso. Recuerda el ingreso por dispositivo. */
 (function(){
@@ -679,6 +686,7 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
     setTimeout(function(){ g.remove(); }, 480);
   }
 
+  if(root.classList.contains('pmgate-ok')){ g.remove(); return; }
   try{ if(localStorage.getItem(K)===H){ abrir(); return; } }catch(err){}
 
   root.classList.add('pmgate-lock');

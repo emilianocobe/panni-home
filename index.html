@@ -44,9 +44,12 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--white);outline-offs
 @keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,-4%)}40%{transform:translate(-6%,2%)}60%{transform:translate(3%,-5%)}80%{transform:translate(-2%,4%)}100%{transform:translate(2%,-2%)}}
 
 /* ═══ CURSOR DOBLE MASA ═══ */
-#cur,#cur-ring{position:fixed;top:0;left:0;z-index:9999;pointer-events:none;mix-blend-mode:difference;will-change:transform}
-#cur{width:6px;height:6px;background:var(--white);border-radius:50%;margin:-3px 0 0 -3px}
-#cur-ring{width:38px;height:38px;border:1px solid var(--white);border-radius:50%;margin:-19px 0 0 -19px;transition:width .3s,height .3s,margin .3s}
+#cur,#cur-ring{position:fixed;top:0;left:0;z-index:9999;pointer-events:none;will-change:transform}
+#cur{width:7px;height:7px;background:var(--white);border-radius:50%;margin:-3.5px 0 0 -3.5px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.55),0 0 6px 1px rgba(0,0,0,.35)}
+#cur-ring{width:38px;height:38px;border:1px solid var(--white);border-radius:50%;margin:-19px 0 0 -19px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.4),inset 0 0 0 1px rgba(0,0,0,.4);
+  transition:width .3s,height .3s,margin .3s}
 #cur-ring.big{width:96px;height:96px;margin:-48px 0 0 -48px}
 
 /* ═══ MARCA: siempre vector ═══ */
@@ -267,6 +270,11 @@ footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
 
 
 
+
+
+<script id="pmgate-pre">/* decide antes de pintar: sin parpadeo de la cortina al navegar */
+(function(){try{if(localStorage.getItem("pm_gate_ok")==="d5600e28005cacbad0d820784e3f9f75220b38689e9c7e16bda6513d11c3443e"){document.documentElement.className+=" pmgate-ok"}}catch(e){}})();
+</script>
 <style id="pmgate-css">
 /* ═══ CORTINA DE ACCESO — estética de la casa, fail-closed ═══ */
 #pmgate{position:fixed;inset:0;z-index:99999;background:#000;color:#fff;
@@ -303,6 +311,7 @@ footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
 .pmgate-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
   clip:rect(0 0 0 0);white-space:nowrap;border:0}
 html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
+html.pmgate-ok #pmgate{display:none!important}
 @media (prefers-reduced-motion:reduce){
   #pmgate{transition:none}
   #pmgate::after{animation:none}
@@ -1274,6 +1283,8 @@ const TAB   = matchMedia('(min-width: 641px) and (max-width: 1024px)').matches;
 
 
 
+
+
 <script id="pmgate-js">
 /* Cortina de acceso. Recuerda el ingreso por dispositivo. */
 (function(){
@@ -1291,6 +1302,7 @@ const TAB   = matchMedia('(min-width: 641px) and (max-width: 1024px)').matches;
     setTimeout(function(){ g.remove(); }, 480);
   }
 
+  if(root.classList.contains('pmgate-ok')){ g.remove(); return; }
   try{ if(localStorage.getItem(K)===H){ abrir(); return; } }catch(err){}
 
   root.classList.add('pmgate-lock');
