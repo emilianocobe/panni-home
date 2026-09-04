@@ -197,6 +197,13 @@ footer{border-top:1px solid var(--g-700);padding:60px 28px 34px;font-size:10px;t
 
 
 
+
+
+
+
+<script id="pmgate-pre">/* decide antes de pintar: sin parpadeo de la cortina al navegar */
+(function(){try{if(localStorage.getItem("pm_gate_ok")==="d5600e28005cacbad0d820784e3f9f75220b38689e9c7e16bda6513d11c3443e"){document.documentElement.className+=" pmgate-ok"}}catch(e){}})();
+</script>
 <style id="pmgate-css">
 /* ═══ CORTINA DE ACCESO — estética de la casa, fail-closed ═══ */
 #pmgate{position:fixed;inset:0;z-index:99999;background:#000;color:#fff;
@@ -233,6 +240,7 @@ footer{border-top:1px solid var(--g-700);padding:60px 28px 34px;font-size:10px;t
 .pmgate-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
   clip:rect(0 0 0 0);white-space:nowrap;border:0}
 html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
+html.pmgate-ok #pmgate{display:none!important}
 @media (prefers-reduced-motion:reduce){
   #pmgate{transition:none}
   #pmgate::after{animation:none}
@@ -240,6 +248,28 @@ html.pmgate-lock,html.pmgate-lock body{overflow:hidden!important}
 </style>
 </head>
 <body class="pre">
+<div id="pmgate" role="dialog" aria-modal="true" aria-labelledby="pmgate-t">
+  <div class="pmgate-in">
+    <svg class="pmgate-mark" viewBox="0 0 104 103" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667Z"/></svg>
+    <p class="pmgate-kana" lang="ja" aria-hidden="true">バーニ　マーゴット</p>
+    <p class="pmgate-t" id="pmgate-t">ACCESO PRIVADO</p>
+    <form class="pmgate-f" id="pmgate-f" autocomplete="off" novalidate>
+      <label class="pmgate-sr" for="pmgate-i">Frase de acceso</label>
+      <div class="pmgate-row">
+        <span class="pmgate-cue" aria-hidden="true">&gt;&gt;</span>
+        <input id="pmgate-i" type="password" autocomplete="current-password"
+               spellcheck="false" placeholder="········" aria-describedby="pmgate-e">
+        <button class="pmgate-go" type="submit">[ OK ]</button>
+      </div>
+      <p class="pmgate-err" id="pmgate-e" role="status" aria-live="polite"></p>
+    </form>
+    <p class="pmgate-foot" aria-hidden="true">
+      &lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()&gt;&gt;<br>
+      &gt;&gt;HONDURAS4940##
+    </p>
+  </div>
+</div>
+
 <div id="pmgate" role="dialog" aria-modal="true" aria-labelledby="pmgate-t">
   <div class="pmgate-in">
     <svg class="pmgate-mark" viewBox="0 0 104 103" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667Z"/></svg>
@@ -710,6 +740,10 @@ if(RM)document.body.classList.remove('pre');
 
 
 
+
+
+
+
 <script id="pmgate-js">
 /* Cortina de acceso. Recuerda el ingreso por dispositivo. */
 (function(){
@@ -727,6 +761,7 @@ if(RM)document.body.classList.remove('pre');
     setTimeout(function(){ g.remove(); }, 480);
   }
 
+  if(root.classList.contains('pmgate-ok')){ g.remove(); return; }
   try{ if(localStorage.getItem(K)===H){ abrir(); return; } }catch(err){}
 
   root.classList.add('pmgate-lock');
