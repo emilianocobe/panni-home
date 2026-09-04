@@ -102,7 +102,7 @@
     var src = (p.imgs && p.imgs[i]) || p.img || '';
     var lq = o.lq !== undefined ? (o.lq || '') : (p.lq || (p.imgs && p.imgs[0]) || '');   /* o.lq: LQIP propia de ESTA toma (null = sin placeholder) */
     var alt = o.alt != null ? o.alt : (p.nm || '');
-    var vt = o.vt ? 'view-transition-name:pz-' + String(p.id).replace(/[^a-z0-9_-]/gi, '') + ';view-transition-class:pieza;' : '';
+    var vt = '';   /* sin transición entre documentos: los nombres creaban contexto de apilado sin uso */
     return '<img class="pm-img ' + esc(o.cls || '') + '" src="' + esc(src) + '" alt="' + esc(alt) + '"' +
       (o.eager ? ' loading="eager" fetchpriority="high"' : ' loading="lazy"') +
       ' decoding="async"' + (o.sizes ? ' sizes="' + esc(o.sizes) + '"' : '') +
@@ -646,6 +646,9 @@
     if (RM || !FINE) return;
     var dot = d.getElementById('cur'), ring = d.getElementById('cur-ring'); if (!dot || !ring) return;
     H.classList.add('has-cur');
+    /* al salir, el cursor propio se apaga: si el navegador retiene el ultimo
+       fotograma, no queda un cursor clavado que se lea como pantalla trabada */
+    addEventListener('pagehide', function(){ try{ H.classList.remove('has-cur'); }catch(e){} });
     /* nace apagado: hasta el primer movimiento del mouse no hay nada pintado en (0,0) */
     dot.classList.add('off'); ring.classList.add('off');
     var mx = innerWidth / 2, my = innerHeight / 2, dx = mx, dy = my, rx = mx, ry = my, run = false;

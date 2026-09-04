@@ -166,7 +166,7 @@ html[data-pasaporte="completo"] #grain{animation-play-state:paused;opacity:.03}
 }
 .pm-lk{display:inline-flex;align-items:center;height:44px;justify-self:start}
 .pm-lk svg{height:20px;width:auto;aspect-ratio:640/103;fill:currentColor;color:var(--cromo-fg)}
-.pm-lockup-hd{view-transition-name:pm-lockup}
+.pm-lockup-hd{}
 
 .pm-nav{display:flex;align-items:center;gap:clamp(16px,2vw,32px);justify-self:center}
 .pm-nav a,.pm-nav-off{
@@ -525,19 +525,13 @@ html.js .rv.in-view{opacity:1;transform:none}
 .rv-circ.on{clip-path:circle(150% at var(--cx,50%) var(--cy,50%))}
 
 /* ─── 16 · VIEW TRANSITIONS (cross-document) ────────────────────────── */
-@view-transition{navigation:auto}
-/* la raíz funde rápido y por debajo: el protagonista es la pieza que viaja */
-::view-transition-old(root),::view-transition-new(root){animation-duration:.28s;animation-timing-function:cubic-bezier(.4,0,.2,1)}
-::view-transition-group(root){z-index:0}
-::view-transition-group(pm-lockup){animation-duration:.4s;animation-timing-function:cubic-bezier(.2,.7,.2,1);z-index:3}
-/* la pieza: morph limpio, sin doble fundido — la foto crece de la tarjeta a la ficha */
-::view-transition-group(.pieza){animation-duration:.52s;animation-timing-function:cubic-bezier(.2,.7,.2,1);z-index:2}
-::view-transition-image-pair(.pieza){isolation:auto}
-::view-transition-old(.pieza),::view-transition-new(.pieza){
-  animation:none;mix-blend-mode:normal;width:100%;height:100%;object-fit:cover}
-@media(prefers-reduced-motion:reduce){
-  ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
-}
+/* ═══ CAMBIO DE PÁGINA ═══
+   Sin transición entre documentos: medida en Chrome, retenía el documento nuevo
+   hasta 4 s con la página anterior congelada en pantalla. Ahora el navegador
+   pinta apenas puede y la página entra con un fundido propio, corto y sin costo. */
+@keyframes pm-entrada{from{opacity:0}to{opacity:1}}
+body{animation:pm-entrada .22s cubic-bezier(.4,0,.2,1) both}
+@media(prefers-reduced-motion:reduce){body{animation:none}}
 
 /* ─── 17 · RESPONSIVE ───────────────────────────────────────────────── */
 @media (max-width:1279px) and (min-width:1024px){
