@@ -44,12 +44,18 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--white);outline-offs
 @keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,-4%)}40%{transform:translate(-6%,2%)}60%{transform:translate(3%,-5%)}80%{transform:translate(-2%,4%)}100%{transform:translate(2%,-2%)}}
 
 /* ═══ CURSOR DOBLE MASA ═══ */
-#cur,#cur-ring{position:fixed;top:0;left:0;z-index:9999;pointer-events:none;will-change:transform}
-#cur{width:7px;height:7px;background:var(--white);border-radius:50%;margin:-3.5px 0 0 -3.5px;
-  box-shadow:0 0 0 1px rgba(0,0,0,.55),0 0 6px 1px rgba(0,0,0,.35)}
-#cur-ring{width:38px;height:38px;border:1px solid var(--white);border-radius:50%;margin:-19px 0 0 -19px;
-  box-shadow:0 0 0 1px rgba(0,0,0,.4),inset 0 0 0 1px rgba(0,0,0,.4);
-  transition:width .3s,height .3s,margin .3s}
+/* NEGATIVO 反転 — el cursor elegido: da vuelta lo que tiene abajo */
+#cur{position:fixed;top:0;left:0;z-index:9999;pointer-events:none;will-change:transform;
+  width:30px;height:30px;border-radius:50%;margin:-15px 0 0 -15px;
+  -webkit-backdrop-filter:invert(1);backdrop-filter:invert(1);
+  border:1px solid rgba(255,255,255,.92);box-shadow:0 0 0 1px rgba(0,0,0,.55);
+  transition:width .34s cubic-bezier(.2,.7,.2,1),height .34s cubic-bezier(.2,.7,.2,1),margin .34s cubic-bezier(.2,.7,.2,1)}
+#cur.big{width:104px;height:104px;margin:-52px 0 0 -52px}
+#cur.press{width:22px;height:22px;margin:-11px 0 0 -11px}
+#cur-ring{display:none}
+@supports not ((backdrop-filter:invert(1)) or (-webkit-backdrop-filter:invert(1))){
+  #cur{background:rgba(255,255,255,.16)}
+}
 #cur-ring.big{width:96px;height:96px;margin:-48px 0 0 -48px}
 
 /* ═══ MARCA: siempre vector ═══ */
@@ -273,6 +279,7 @@ footer{padding:60px 28px 34px 66px;font-size:10px;text-transform:uppercase}
 
 
 
+
 <script id="pmgate-pre">/* decide antes de pintar: sin parpadeo de la cortina al navegar */
 (function(){try{if(localStorage.getItem("pm_gate_ok")==="d5600e28005cacbad0d820784e3f9f75220b38689e9c7e16bda6513d11c3443e"){document.documentElement.className+=" pmgate-ok"}}catch(e){}})();
 </script>
@@ -364,6 +371,7 @@ html.pmgate-ok #pmgate{display:none!important}
   </span>
   <div class="hd-r">
     <a href="./roadmap.html" style="color:var(--white);text-decoration:none;border:1px solid var(--g-500);padding:6px 12px;letter-spacing:.16em">ROADMAP · <span class="ja" lang="ja" aria-hidden="true">工程</span></a>
+    <a href="./cursores.html" style="color:var(--white);text-decoration:none;border:1px solid var(--g-500);padding:6px 12px;letter-spacing:.16em">CURSORES · <span class="ja" lang="ja" aria-hidden="true">カーソル</span></a>
     <span>HOME :: 9 CAMINOS</span>
     <span>DOC.INTERNO/2026</span>
   </div>
@@ -1185,6 +1193,7 @@ html.pmgate-ok #pmgate{display:none!important}
     <div class="idx-head"><span>ÍNDICE :: 2 ACTOS · 9 CAMINOS</span><button id="idxcls" type="button" aria-label="Cerrar índice">[ × ]</button></div>
     <nav class="idx-nav" aria-label="Saltos internos">
       <a id="idx-roadmap" href="./roadmap.html" style="background:var(--white);color:var(--black)">▸ ROADMAP DE LA OBRA<span class="ja" lang="ja" aria-hidden="true" style="color:var(--g-500)">工程</span></a>
+      <a href="./cursores.html" style="background:var(--white);color:var(--black)">▸ CURSORES · LOS CUATRO<span class="ja" lang="ja" aria-hidden="true" style="color:var(--g-500)">カーソル</span></a>
       <a href="#c-sintesis" style="background:var(--white);color:var(--black)">▸ LA SÍNTESIS · EL VEREDICTO<span class="ja" lang="ja" aria-hidden="true" style="color:var(--g-500)">統合</span></a>
       <a class="idx-acto" href="#acto-i">ACTO I :: LA MANO</a>
       <a href="#c-a">A :: GRAVEDAD<span class="ja" lang="ja" aria-hidden="true">重力</span></a>
@@ -1272,6 +1281,7 @@ const TAB   = matchMedia('(min-width: 641px) and (max-width: 1024px)').matches;
   }));
 })();
 </script>
+
 
 
 

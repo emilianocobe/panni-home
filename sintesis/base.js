@@ -661,9 +661,12 @@
     addEventListener('mousemove', function (e) { mx = e.clientX; my = e.clientY; dot.classList.remove('off'); ring.classList.remove('off'); if (!run) { run = true; requestAnimationFrame(loop); } }, { passive: true });
     d.addEventListener('mouseleave', function () { dot.classList.add('off'); ring.classList.add('off'); });
     d.addEventListener('mouseenter', function () { dot.classList.remove('off'); ring.classList.remove('off'); });
+    /* al apretar, la lente se contrae como un obturador */
+    addEventListener('pointerdown', function () { dot.classList.add('press'); }, { passive: true });
+    addEventListener('pointerup', function () { dot.classList.remove('press'); }, { passive: true });
     d.addEventListener('pointerover', function (e) {
       var t = e.target.closest ? e.target.closest('a,button,input,select,textarea,label,[data-cur],summary') : null;
-      ring.classList.toggle('big', !!t);
+      dot.classList.toggle('big', !!t);
     }, { passive: true });
   }
 

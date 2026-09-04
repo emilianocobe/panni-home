@@ -142,16 +142,27 @@ html[data-modulo="blanco"] #grain{display:none}
 /* gesto de la casa: pasaporte 10/10 → el grano se aquieta */
 html[data-pasaporte="completo"] #grain{animation-play-state:paused;opacity:.03}
 
-/* ─── 4 · CURSOR DOBLE MASA (solo puntero fino, sin RM) ─────────────── */
+/* ─── 4 · CURSOR NEGATIVO 反転 (solo puntero fino, sin RM) ──────────── */
 #cur,#cur-ring{display:none}
 @media (hover:hover) and (pointer:fine){
   html.has-cur,html.has-cur *{cursor:none!important}
-  /* sin difference: sobre un gris medio la diferencia da el mismo gris y el cursor se evapora sobre las fotos */
-  #cur,#cur-ring{display:block;position:fixed;top:0;left:0;z-index:9999;pointer-events:none;will-change:transform}
-  #cur{width:7px;height:7px;background:#fff;border-radius:50%;margin:-3.5px 0 0 -3.5px;box-shadow:0 0 0 1px rgba(0,0,0,.55),0 0 6px 1px rgba(0,0,0,.35)}
-  #cur-ring{width:36px;height:36px;border:1px solid #fff;border-radius:50%;margin:-18px 0 0 -18px;box-shadow:0 0 0 1px rgba(0,0,0,.4),inset 0 0 0 1px rgba(0,0,0,.4);transition:width .3s var(--ease),height .3s var(--ease),margin .3s var(--ease),opacity .3s}
-  #cur-ring.big{width:88px;height:88px;margin:-44px 0 0 -44px}
-  #cur-ring.off,#cur.off{opacity:0}
+  /* NEGATIVO 反転 — la lógica del sitio hecha lente: donde pasa, el mundo se da
+     vuelta. Sobre negro se ve blanca, sobre blanco negra, sobre una foto revela
+     el negativo del textil. Lleva anillo con halo porque invertir un gris medio
+     devuelve otro gris medio: sin el anillo se perdería sobre las fotos. */
+  #cur{display:block;position:fixed;top:0;left:0;z-index:9999;pointer-events:none;will-change:transform;
+    width:30px;height:30px;border-radius:50%;margin:-15px 0 0 -15px;
+    -webkit-backdrop-filter:invert(1);backdrop-filter:invert(1);
+    border:1px solid rgba(255,255,255,.92);box-shadow:0 0 0 1px rgba(0,0,0,.55);
+    transition:width .34s var(--ease),height .34s var(--ease),margin .34s var(--ease),opacity .3s}
+  #cur.big{width:104px;height:104px;margin:-52px 0 0 -52px}
+  #cur.press{width:22px;height:22px;margin:-11px 0 0 -11px}
+  #cur.off{opacity:0}
+  #cur-ring{display:none}
+  /* sin backdrop-filter no hay inversión: queda un disco tenue, nunca invisible */
+  @supports not ((backdrop-filter:invert(1)) or (-webkit-backdrop-filter:invert(1))){
+    #cur{background:rgba(255,255,255,.16)}
+  }
 }
 
 /* ─── 5 · HEADER · cromo negro persistente ──────────────────────────── */

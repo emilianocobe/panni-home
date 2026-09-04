@@ -167,6 +167,7 @@ html.pm-cur #t-et.on{display:block}
 }
 </style>
 
+
 <script id="pmgate-pre">/* decide antes de pintar: sin parpadeo de la cortina al navegar */
 (function(){try{if(localStorage.getItem("pm_gate_ok")==="d5600e28005cacbad0d820784e3f9f75220b38689e9c7e16bda6513d11c3443e"){document.documentElement.className+=" pmgate-ok"}}catch(e){}})();
 </script>
@@ -237,20 +238,19 @@ html.pmgate-ok #pmgate{display:none!important}
 </div>
 
 <header>
-  <span class="k">LABORATORIO · SEGUNDA VUELTA · NO ES UNA PÁGINA DEL SITIO</span>
+  <span class="k">LABORATORIO · EL ELEGIDO YA ESTÁ EN EL SITIO · NO ES UNA PÁGINA DEL SITIO</span>
   <h1>Cursores<span class="kj" lang="ja" aria-hidden="true">第二稿</span></h1>
-  <p>La primera vuelta no funcionó: el trazo de tinta y la cruz de pantalla completa eran ornamento.
-    Estos tres parten de algo que la marca ya tiene. El <b>monograma vuelve</b>, pero con la idea correcta:
-    el logo de Panni <b>ya es un marco</b> con las dos N adentro, así que el cursor encuadra la pieza que mirás.
-    Y dos caminos nuevos: <b>la inversión</b>, que es la lógica del sitio hecha lente, y <b>la caída</b>,
-    que es la única física que la mesa eligió. Probalos sobre las tres pistas y sobre los objetos.</p>
+  <p>El elegido es <b>Negativo 反転</b>: la lógica del sitio hecha lente — el módulo de marca es negro,
+    el de compra es blanco, y el cursor es el punto donde los dos se tocan. <b>Ya está puesto en la galería
+    y en las siete páginas del sitio.</b> Acá abajo queda para comparar, junto a los otros dos caminos y al
+    punto y anillo que el sitio tenía antes. Probalos sobre las tres pistas y sobre los objetos.</p>
 </header>
 
 <div id="sel" role="group" aria-label="Elegí un cursor">
-  <button data-c="0" aria-pressed="true"><span class="n">00 · EL DE HOY</span><span class="t">El actual</span></button>
-  <button data-c="1" aria-pressed="false"><span class="n">01 · LA MARCA</span><span class="t">Monograma<span class="ja" lang="ja" aria-hidden="true">印</span></span></button>
-  <button data-c="2" aria-pressed="false"><span class="n">02 · NUEVO</span><span class="t">Negativo<span class="ja" lang="ja" aria-hidden="true">反転</span></span></button>
-  <button data-c="3" aria-pressed="false"><span class="n">03 · NUEVO</span><span class="t">Tela<span class="ja" lang="ja" aria-hidden="true">布</span></span></button>
+  <button data-c="2" aria-pressed="true"><span class="n">★ ELEGIDA · EN EL SITIO</span><span class="t">Negativo<span class="ja" lang="ja" aria-hidden="true">反転</span></span></button>
+  <button data-c="1" aria-pressed="false"><span class="n">OPCIÓN · LA MARCA</span><span class="t">Monograma<span class="ja" lang="ja" aria-hidden="true">印</span></span></button>
+  <button data-c="3" aria-pressed="false"><span class="n">OPCIÓN · LA CAÍDA</span><span class="t">Tela<span class="ja" lang="ja" aria-hidden="true">布</span></span></button>
+  <button data-c="0" aria-pressed="false"><span class="n">OPCIÓN · EL ANTERIOR</span><span class="t">Punto y anillo</span></button>
 </div>
 
 <div id="ficha">
@@ -339,7 +339,7 @@ html.pmgate-ok #pmgate{display:none!important}
   root.classList.add('pm-cur');
 
   var INFO = {
-    0: ['Un punto blanco con un anillo que crece sobre lo interactivo.',
+    0: ['Un punto blanco con un anillo que crece sobre lo interactivo. <b>Es el que el sitio tuvo hasta ahora.</b>',
         'No es de Panni: es de cualquiera. Cumple y no dice nada.',
         'El halo oscuro que le agregamos: antes usaba mezcla por diferencia y sobre un gris medio se evaporaba. Ahora se sostiene sobre foto.',
         'Ninguno. Es la opción segura y la que ya está probada en las nueve páginas.'],
@@ -347,7 +347,7 @@ html.pmgate-ok #pmgate{display:none!important}
         'Porque el logo de Panni <b>ya es un marco</b>: un cuadrado con las dos N adentro. El cursor no le agrega nada a la marca, le da su función. Mirar una prenda es encuadrarla.',
         'El marco viaja con una curva lenta y llega antes que los piquetes, que aparecen recién cuando terminó de encuadrar: se siente un visor que enfoca, no un rectángulo que aparece. Al apretar, el marco se cierra un paso.',
         'Es el que más pantalla ocupa: sobre una grilla densa puede marear. Va fino y solo sobre piezas y botones, nunca sobre texto.'],
-    2: ['Una lente circular que <b>da vuelta lo que tiene abajo</b>: sobre negro se ve blanco, sobre blanco se ve negro, sobre una foto la revela en negativo. Sobre lo interactivo se agranda y aparece la acción adentro.',
+    2: ['<b>Es el cursor del sitio.</b> Una lente circular que <b>da vuelta lo que tiene abajo</b>: sobre negro se ve blanco, sobre blanco se ve negro, sobre una foto la revela en negativo. Sobre lo interactivo se agranda y aparece la acción adentro.',
         'Es la lógica del sitio hecha objeto. El módulo de marca es negro y el de compra es blanco: la marca ya piensa en positivo y negativo. El cursor es el punto donde los dos mundos se tocan.',
         'La inversión es real, no un dibujo: la lente lee los píxeles de abajo. Por eso sobre las fotos de las prendas aparece el negativo del textil, que es exactamente el lenguaje de la casa. Al apretar, se contrae como un obturador.',
         'Sobre un gris medio la inversión da otro gris medio: sin el anillo se perdería. Por eso lleva anillo blanco con halo, siempre.'],
@@ -358,7 +358,7 @@ html.pmgate-ok #pmgate{display:none!important}
   };
   var f1=document.getElementById('f1'),f2=document.getElementById('f2'),f3=document.getElementById('f3'),f4=document.getElementById('f4');
 
-  var modo=0, mx=innerWidth/2, my=innerHeight/2, hot=false, et='', rect=null, press=false;
+  var modo=2, mx=innerWidth/2, my=innerHeight/2, hot=false, et='', rect=null, press=false;
   var E={
     ad:document.getElementById('a-dot'), ar:document.getElementById('a-ring'),
     mn:document.getElementById('m-nn'), mm:document.getElementById('m-marco'), me:document.getElementById('m-et'),
@@ -463,6 +463,7 @@ html.pmgate-ok #pmgate{display:none!important}
   encender(); requestAnimationFrame(loop);
 })();
 </script>
+
 
 <script id="pmgate-js">
 /* Cortina de acceso. Recuerda el ingreso por dispositivo. */
