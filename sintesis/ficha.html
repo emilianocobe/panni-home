@@ -41,25 +41,18 @@
 /* el ensayo va siempre de a pares desde la primera toma; la única toma sola es la última cuando sobra:
    queda centrada, mismo 3/4 (nunca una toma apaisada que recorte el cuerpo, nunca un hueco) */
 .foto.sola{grid-column:1 / -1;width:calc(50% - var(--s-3) / 2);justify-self:center}
-.foto .n{position:absolute;right:var(--s-3);bottom:var(--s-2);z-index:2;font-family:var(--f-mono);font-size:var(--t-0);letter-spacing:.16em;color:var(--fg-2);opacity:0;transition:opacity var(--dur-fast)}
+.foto .n{position:absolute;left:var(--s-3);bottom:var(--s-3);z-index:2;pointer-events:none;
+  font-family:var(--f-mono);font-size:var(--t-0);letter-spacing:.2em;text-transform:uppercase;color:#fff;
+  text-shadow:0 1px 4px rgba(0,0,0,.85),0 0 12px rgba(0,0,0,.5);
+  opacity:0;transform:translateY(5px);transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease)}
+.foto .n .sep{color:rgba(255,255,255,.55);margin:0 7px}
+.foto .n .ja{font-family:var(--f-jp)}
 @media (hover:hover) and (pointer:fine){
   .foto:hover .pm-img{filter:grayscale(0) contrast(1)}
-  .foto:hover .n{opacity:1}
+  .foto:hover .n,.foto:focus-within .n{opacity:1;transform:translateY(0)}
 }
-/* papel de calco: lupa esmerilada que sigue al puntero sobre el ensayo */
-.calco{position:absolute;top:0;left:0;z-index:5;width:240px;height:170px;pointer-events:none;opacity:0;
-  border:1px solid var(--fg);background:rgba(255,255,255,.22);
-  -webkit-backdrop-filter:blur(2px) grayscale(0);backdrop-filter:blur(2px) grayscale(0);
-  transition:opacity var(--dur-fast);will-change:transform;
-  font-family:var(--f-mono);font-size:var(--t-0);letter-spacing:.18em;text-transform:uppercase;color:var(--fg)}
-.calco.on{opacity:1}
-.calco i{position:absolute;top:6px;right:8px;font-style:normal}
-.calco span{position:absolute;bottom:6px;left:8px;right:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.calco::before,.calco::after{content:"";position:absolute;background:var(--fg);opacity:.5}
-.calco::before{left:50%;top:0;bottom:0;width:1px}
-.calco::after{top:50%;left:0;right:0;height:1px}
-@supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){.calco{background:rgba(255,255,255,.7)}}
-@media (hover:none),(pointer:coarse){.calco{display:none}}
+@media (hover:none),(pointer:coarse){
+  .foto .n{opacity:1;transform:none}}
 
 /* botón de las tomas restantes: al pie del ensayo, alineado a la derecha como el contador */
 .ens-mas{display:flex;justify-content:flex-end;padding-top:var(--s-4)}
@@ -207,6 +200,7 @@
 }
 /* touch: targets ≥44px en todos los controles propios de la página */
 @media (hover:none),(pointer:coarse){
+  .foto .n{opacity:1;transform:none}
   .migas{padding-top:var(--s-2)}
   .migas a{min-height:44px}
   .tl-sel label{min-width:44px;min-height:44px}
@@ -265,7 +259,7 @@
   .migas{min-height:32px;padding-top:var(--s-2);padding-bottom:var(--s-2)}
   .ficha{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-2);padding-top:0;padding-bottom:var(--s-16)}
   .ensayo{display:contents}
-  .calco{display:none}
+  
   .d-cab,.d-desc,.d-precio,.filas,.cta,.ens-mas,.envio{grid-column:1 / -1}
   /* todas las tomas a sangre y a proporción real 2:3, sin recorte de piso */
   .foto,.foto.sola,.foto.sola-m{order:6;grid-column:1 / -1;width:auto;justify-self:auto;margin-inline:calc(var(--gut) * -1);aspect-ratio:2/3}
@@ -295,8 +289,9 @@
   .volver{flex-direction:column;align-items:stretch}
   .volver .btn{width:100%}
 }
-@media print{.calco,.cta{display:none}}
+@media print{.cta{display:none}}
 </style>
+
 
 
 
@@ -497,6 +492,14 @@ html.pmgate-ok #pmgate{display:none!important}
   /* solas: la última toma a ≥768 si N es impar; solasM: lo mismo en teléfono, donde la hero ocupa fila propia */
   var solas = [], solasM = [];
   if (N > 1) { if (N % 2 === 1) solas[N - 1] = true; if ((N - 1) % 2 === 1) solasM[N - 1] = true; }
+  /* el pie de cada toma: numero sobre el total, SKU y sello. Anclado a la foto, no al puntero. */
+  var _u = PM.esUnica(p), _ul = PM.esUltima(p), _tv = PM.vars(p), _dis = !!PM.dis(p);
+  var _sello = _u ? '<span class="ja" lang="ja">一点物</span>'
+    : _ul ? 'QUEDA UNA'
+    : _dis ? esc(_tv.length + ' DISEÑOS')
+    : (!_dis && _tv.length === 1 && _tv[0] === 'U') ? 'TALLE ÚNICO'
+    : esc((_tv.length > 1 ? 'TALLES ' : 'TALLE ') + _tv.map(PM.talleTxt).join(' · '));
+  var PIE = '<span class="sep">·</span>' + esc(p.sku) + '<span class="sep">·</span>' + _sello;
   var h = '';
   for (var i = 0; i < N; i++) {
     var sola = !!solas[i];
@@ -511,7 +514,7 @@ html.pmgate-ok #pmgate{display:none!important}
     img = img.replace('<img ', '<img ' + (big && big !== fotos[i] ? 'srcset="' + esc(fotos[i]) + ' 640w, ' + esc(big) + ' 800w" ' : '') + (i === 1 ? 'loading="eager" ' : ''));
     if (i === 1) img = img.replace(' loading="lazy"', '');
     h += '<figure class="foto' + (sola ? ' sola' : '') + (solasM[i] ? ' sola-m' : '') + '" data-i="' + (i + 1) + '">' + img +
-      '<span class="n" aria-hidden="true">' + (i < 9 ? '0' : '') + (i + 1) + ' / ' + (N < 10 ? '0' : '') + N + '</span></figure>';
+      '<span class="n" aria-hidden="true">' + (i < 9 ? '0' : '') + (i + 1) + ' / ' + (N < 10 ? '0' : '') + N + PIE + '</span></figure>';
   }
   /* verdad de stock: talles con stock (nomenclatura real de la casa, nunca XS). `unica` SOLO si la casa la declara única en su
      descripción y queda una (sello 一点物 1/1); `ultima` = queda una sin declaración (sello ÚLTIMA, «QUEDA UNA»). */
@@ -521,9 +524,7 @@ html.pmgate-ok #pmgate{display:none!important}
   var tls = PM.vars(p), multi = tls.length > 1, unica = PM.esUnica(p), ultima = PM.esUltima(p), unico = !esDis && tls.length === 1 && tls[0] === 'U';
   /* línea VERAZ: «PIEZA ÚNICA · 1/1» · «QUEDA UNA · TALLE n» · «TALLES 1 · 2 · 3» — nunca una cifra de edición (el stock no es una tirada) */
   var tlsTxt = unico ? 'TALLE ÚNICO' : esDis ? tls.length + ' DISEÑOS · ' + tls.join(' · ').toUpperCase() : (multi ? 'TALLES ' : 'TALLE ') + tls.map(PM.talleTxt).join(' · ');
-  var edLinea = unica ? '<b>PIEZA ÚNICA</b> · 1/1' : ultima ? '<b>QUEDA UNA</b> · ' + esc(tlsTxt) : '<b>' + esc(tlsTxt) + '</b>';
-  h += '<div class="calco" id="calco" aria-hidden="true"><i id="calco-n"></i><span>' + esc(p.sku) + ' :: ' + (unica ? '<span lang="ja">一点物</span>' : esc(ultima ? 'QUEDA UNA' : tlsTxt)) + '</span></div>';
-  var ens = $('ensayo'); ens.innerHTML = h;
+  var edLinea = unica ? '<b>PIEZA ÚNICA</b> · 1/1' : ultima ? '<b>QUEDA UNA</b> · ' + esc(tlsTxt) : '<b>' + esc(tlsTxt) + '</b>';  var ens = $('ensayo'); ens.innerHTML = h;
   /* las tomas que sobran entran con un solo gesto, al pie del ensayo */
   if (ocultas.length) {
     var mas = PM.el('<div class="ens-mas"><button type="button" class="lnk" id="ens-mas">VER LAS ' + todas.length + ' TOMAS ::</button></div>');
@@ -534,18 +535,18 @@ html.pmgate-ok #pmgate{display:none!important}
         var lq = u.replace(/-\d+-\d+\.(webp|jpg|png)$/, '-480-0.$1'), big = hi(u);
         var im = PM.pic({ id: p.id, imgs: [u], lq: lq, nm: p.nm }, 0, { alt: p.nm + ' — toma ' + (k + 1) + ' de ' + T, sizes: SIZES });
         if (big && big !== u) im = im.replace('<img ', '<img srcset="' + esc(u) + ' 640w, ' + esc(big) + ' 800w" ');
-        hh += '<figure class="foto rv" data-i="' + (k + 1) + '">' + im + '<span class="n" aria-hidden="true">' + (k < 9 ? '0' : '') + (k + 1) + ' / ' + T + '</span></figure>';
+        hh += '<figure class="foto rv" data-i="' + (k + 1) + '">' + im + '<span class="n" aria-hidden="true">' + (k < 9 ? '0' : '') + (k + 1) + ' / ' + T + PIE + '</span></figure>';
         k++;
       });
-      $('calco').insertAdjacentHTML('beforebegin', hh);
+      ens.insertAdjacentHTML('beforeend', hh);
       /* contadores y la toma suelta se recalculan sobre el total; la infografía sigue cerrando */
       N = T;
       Array.prototype.forEach.call(ens.querySelectorAll('.foto'), function (f, i) {
         f.classList.remove('sola', 'sola-m');
-        var n = f.querySelector('.n'); if (n) n.textContent = (i < 9 ? '0' : '') + (i + 1) + ' / ' + T;
+        var n = f.querySelector('.n'); if (n) n.innerHTML = (i < 9 ? '0' : '') + (i + 1) + ' / ' + T + PIE;
         if (i === T - 1) { if (T % 2 === 1) f.classList.add('sola'); if ((T - 1) % 2 === 1) f.classList.add('sola-m'); }
       });
-      if (grafsN) { var gs = ens.querySelectorAll('.foto'); for (var g = 0; g < grafsN; g++) ens.insertBefore(gs[TOPE - grafsN + g], $('calco')); }
+      if (grafsN) { var gs = ens.querySelectorAll('.foto'); for (var g = 0; g < grafsN; g++) ens.appendChild(gs[TOPE - grafsN + g]); }
       mas.remove();
       PM.revelar(ens);
       var f1 = ens.querySelectorAll('.foto')[TOPE - grafsN]; if (f1) { f1.setAttribute('tabindex', '-1'); f1.focus({ preventScroll: true }); }
@@ -706,24 +707,6 @@ html.pmgate-ok #pmgate{display:none!important}
   medir(); addEventListener('resize', medir, { passive: true });
   if (d.fonts && d.fonts.ready) d.fonts.ready.then(medir);
 
-  /* papel de calco: sigue al puntero sobre el ensayo (solo puntero fino, sin RM) */
-  var cal = $('calco'), calN = $('calco-n');
-  if (PM.FINE && !PM.RM && cal) {
-    var mx = 0, my = 0, cx = 0, cy = 0, run = false, over = null;
-    function loop() {
-      cx += (mx - cx) * .22; cy += (my - cy) * .22;
-      cal.style.transform = 'translate3d(' + (cx - 120) + 'px,' + (cy - 85) + 'px,0)';
-      if (Math.abs(mx - cx) + Math.abs(my - cy) > .3) requestAnimationFrame(loop); else run = false;
-    }
-    ens.addEventListener('pointermove', function (e) {
-      var r = ens.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top;
-      var f = e.target.closest ? e.target.closest('.foto') : null;
-      if (f !== over) { over = f; if (f) calN.textContent = (f.dataset.i < 10 ? '0' : '') + f.dataset.i + ' / ' + (N < 10 ? '0' : '') + N; }
-      cal.classList.toggle('on', !!f);
-      if (!run) { run = true; requestAnimationFrame(loop); }
-    }, { passive: true });
-    ens.addEventListener('pointerleave', function () { cal.classList.remove('on'); over = null; });
-  }
 
   /* completá el conjunto */
   var comp = (p.comp || []).map(PM.byId).filter(function (x) {
@@ -751,6 +734,7 @@ html.pmgate-ok #pmgate{display:none!important}
   $('conj').hidden = false;
 })();
 </script>
+
 
 
 
