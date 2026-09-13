@@ -154,7 +154,7 @@ html.js .tajos.on .strip{transform:none}
 .mapa .cuadra{position:absolute;top:calc(58% + 10px);font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.18em;color:var(--fg-2)}
 .mapa .cuadra.a{left:14%}.mapa .cuadra.b{right:14%;text-align:right}
 .mapa .nombre{position:absolute;left:var(--s-6);top:calc(58% - 14px);font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.3em;text-transform:uppercase;color:var(--fg-2)}
-.mapa .pin{position:absolute;left:47%;top:58%;width:14px;height:14px;background:var(--fg);transform:translate(-50%,-50%)}
+.mapa .pin{position:absolute;left:var(--mx,47%);top:var(--my,58%);width:14px;height:14px;background:var(--fg);transform:translate(-50%,-50%)}
 .mapa .pin::after{content:"";position:absolute;inset:-9px;border:1px solid var(--fg-2)}
 .mapa .pin::before{content:"";position:absolute;left:50%;top:14px;width:1px;height:26px;background:var(--fg-2)}
 .mapa .num{position:absolute;left:47%;bottom:var(--s-6);transform:translateX(-50%);font-family:var(--f-display);font-size:var(--t-8);line-height:.9;letter-spacing:-.005em;white-space:nowrap}
@@ -245,10 +245,20 @@ html.js .tajos.on .strip{transform:none}
   .sala-head{flex-direction:column;align-items:flex-start;gap:var(--s-2)}
   .cierre .kata{font-size:var(--t-5)}
 }
-/* mapa real: el embed público de Google (sin clave), pasado a blanco y negro — no carga nada de Google hasta que se pide */
+/* mapa propio (mapa.js): la calle Honduras real reemplaza a la dibujada; el barrio queda como marca de agua; el norte gira con el mapa */
 .mapa-acc{display:flex;flex-wrap:wrap;gap:var(--s-2) var(--s-4);margin-top:var(--s-3)}
-.mapa.real{padding:0;background:#000}
-.mapa-g{position:absolute;inset:0;width:100%;height:100%;border:0;filter:grayscale(1) invert(.92) contrast(1.18) brightness(.96)}
+.mapa.mapa-vivo .calle{opacity:0;transition:opacity .6s}
+.mapa.mapa-vivo .barrio{opacity:.45}
+.mapa.mapa-vivo .nombre{color:var(--fg)}
+@media (max-width:767px){.mapa .mapa-cred{top:6px;bottom:auto}}
+.mapa .norte .fl{display:inline-block;transition:transform 1.2s var(--ease)}
+.mapa.mapa-vivo .norte .fl{transform:rotate(141deg)}
+.mapa.mapa-vivo .pin{box-shadow:0 0 0 3px #000}
+.mapa.mapa-mueve .barrio,.mapa.mapa-mueve .num,.mapa.mapa-mueve .cuadra,.mapa.mapa-mueve .nombre{opacity:0;transition:opacity .3s}
+.mapa-ctl{display:flex;gap:var(--s-2)}
+.mapa-ctl button{min-width:32px;min-height:32px;border:1px solid var(--line);font-family:var(--f-mono);font-size:var(--t-2);color:var(--fg)}
+.mapa-ctl button:hover,.mapa-ctl button:focus-visible{border-color:var(--fg)}
+@media (hover:none),(pointer:coarse){.mapa-ctl button{min-width:44px;min-height:44px}}
 </style>
 <script id="pmgate-pre">/* decide antes de pintar: sin parpadeo de la cortina al navegar */
 (function(){try{if(localStorage.getItem("pm_gate_ok")==="d5600e28005cacbad0d820784e3f9f75220b38689e9c7e16bda6513d11c3443e"){document.documentElement.className+=" pmgate-ok"}}catch(e){}})();
@@ -467,21 +477,23 @@ html.pmgate-ok #pmgate{display:none!important}
           <b id="estado-t">…</b>
           <span class="sub" id="estado-s"></span>
         </div>
-        <div class="mapa milim rv rv-d1" id="mapa" role="img" aria-label="Plano tipográfico: Honduras 4940, cuadra del 4900 al 5000, Palermo Soho">
+        <div class="mapa milim rv rv-d1" id="mapa" role="img" aria-label="Mapa: Honduras 4940, cuadra del 4900 al 5000, Palermo Soho" data-mapa="casa" data-sin-rotulo="Honduras" data-mx=".47" data-my=".58" data-zoom="16.3">
           <p class="ey">HONDURAS <span lang="ja" aria-hidden="true">店</span></p>
           <p class="ey r">PALERMO SOHO<br>CABA · ARGENTINA</p>
           <span class="barrio" aria-hidden="true">Palermo Soho</span>
-          <span class="norte" aria-hidden="true">N ↑</span>
+          <span class="norte" aria-hidden="true">N <span class="fl">↑</span></span>
           <span class="nombre" aria-hidden="true">Honduras</span>
           <span class="calle" aria-hidden="true"></span>
           <span class="cuadra a" aria-hidden="true">4900</span>
           <span class="cuadra b" aria-hidden="true">5000</span>
           <span class="pin" aria-hidden="true"></span>
           <p class="num disp" aria-hidden="true">4940<small>LA CASA · <span lang="ja">家</span></small></p>
+          <span class="mapa-cred" aria-hidden="true">© OpenStreetMap · OpenFreeMap</span>
         </div>
         <div class="datos">
           <div><p class="ey">DIRECCIÓN</p><p>HONDURAS 4940<br>PALERMO SOHO · CABA</p>
-            <p class="mapa-acc"><button type="button" class="lnk" id="mapa-real" aria-controls="mapa">VER EL MAPA</button>
+            <p class="mapa-acc"><button type="button" class="lnk" id="mapa-mover" aria-controls="mapa" aria-pressed="false" hidden>MOVER EL MAPA</button>
+            <span class="mapa-ctl" id="mapa-ctl" hidden><button type="button" data-z="1" aria-label="Acercar el mapa">+</button><button type="button" data-z="-1" aria-label="Alejar el mapa">−</button></span>
             <a class="lnk" href="https://www.google.com/maps/search/?api=1&amp;query=Honduras%204940%2C%20Palermo%20Soho%2C%20CABA" target="_blank" rel="noopener noreferrer">ABRIR EN GOOGLE MAPS<span class="sr"> (se abre en una pestaña nueva)</span></a></p></div>
           <div><p class="ey">HORARIO</p><p>LUN — SÁB<br>11:00 — 19:00</p></div>
           <div><p class="ey">CONTACTO</p><a id="casa-wa" href="https://wa.me/541130274940" rel="noopener noreferrer" target="_blank">WHATSAPP<span class="sr"> (se abre en una pestaña nueva)</span></a><br><a href="https://instagram.com/pannimargot" rel="noopener noreferrer" target="_blank">@PANNIMARGOT<span class="sr"> (se abre en una pestaña nueva)</span></a></div>
@@ -519,6 +531,7 @@ html.pmgate-ok #pmgate{display:none!important}
 
 <script src="./catalogo.js"></script>
 <script src="./base.js"></script>
+<script src="./mapa.js"></script>
 <script>
 (function(){
   'use strict';
@@ -527,14 +540,19 @@ html.pmgate-ok #pmgate{display:none!important}
   /* ── WhatsApp de la casa: el mensaje llega con asunto y una línea abierta ── */
   (function(){ var a=document.getElementById('casa-wa'); if(a) a.href=PM.whatsapp({ asunto:'Consulta · La casa', abierta:true }); })();
 
-  /* ── mapa real al tocar: la fachada tipográfica se reemplaza por el mapa de Google en blanco y negro ── */
+  /* ── mapa propio (mapa.js): cuando el mapa real ya se ve, aparece MOVER EL MAPA; al soltarlo, la casa vuelve a su lugar ── */
   (function(){
-    var b=document.getElementById('mapa-real'), m=document.getElementById('mapa'); if(!b||!m) return;
+    var b=document.getElementById('mapa-mover'), c=document.getElementById('mapa-ctl'), m=document.getElementById('mapa'); if(!b||!m) return;
+    m.addEventListener('pm:mapa',function(){ b.hidden=false; });
     b.addEventListener('click',function(){
-      m.classList.add('real'); m.removeAttribute('role'); m.removeAttribute('aria-label');
-      m.innerHTML='<iframe class="mapa-g" title="Mapa: Honduras 4940, Palermo Soho, CABA" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Honduras+4940,+Palermo+Soho,+CABA,+Argentina&amp;z=16&amp;output=embed"></iframe>';
-      b.hidden=true;
+      if(!m.__mapaCtl) return;
+      var on=b.getAttribute('aria-pressed')!=='true';
+      m.__mapaCtl.mover(on);
+      b.setAttribute('aria-pressed',on?'true':'false');
+      b.textContent=on?'VOLVER A LA CASA':'MOVER EL MAPA';
+      if(c) c.hidden=!on;
     });
+    if(c) c.addEventListener('click',function(e){ var z=e.target.closest('[data-z]'); if(z&&m.__mapaCtl) m.__mapaCtl.acercar(parseFloat(z.getAttribute('data-z'))); });
   })();
   var d=document, H=d.documentElement;
   if (PM.SD) H.classList.add('sd');

@@ -694,6 +694,19 @@ body{animation:pm-entrada .22s cubic-bezier(.4,0,.2,1) both}
   html,html *{cursor:auto!important}
 }
 
+/* ─── 21 · MAPA PROPIO (mapa.js: MapLibre + OpenStreetMap, sin clave) ── */
+/* el lienzo va debajo del plano tipográfico, que queda como respaldo; la grilla milimetrada se repite ENCIMA del mapa */
+.mapa-lienzo{position:absolute!important;inset:0;z-index:0;opacity:0;transition:opacity 1.2s var(--ease);pointer-events:none;background:#000}
+.mapa-vivo .mapa-lienzo{opacity:1}
+.mapa-vivo::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background-image:inherit;background-size:inherit;opacity:.45}
+.mapa-vivo>:not(.mapa-lienzo){z-index:2}
+.mapa-mueve .mapa-lienzo{pointer-events:auto;cursor:grab}
+.mapa-mueve .mapa-lienzo:active{cursor:grabbing}
+.mapa-mueve::after{opacity:.2}
+.mapa-lienzo .maplibregl-canvas:focus{outline:none}
+.mapa-cred{display:none;position:absolute;right:8px;bottom:6px;font-family:var(--f-mono);font-size:var(--t-0);letter-spacing:.14em;text-transform:uppercase;color:var(--fg-2);pointer-events:none}
+.mapa-vivo .mapa-cred{display:block}
+
 /* ─── 20 · PRINT (por si acaso: recibo del pedido) ──────────────────── */
 @media print{
   #grain,#cur,#cur-ring,.pm-hd,.pm-ft,#pm-velo,.pm-cart,.marq{display:none!important}

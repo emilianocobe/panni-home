@@ -183,14 +183,16 @@ html.js .arc-grid .pcard:nth-child(3) .pcard-ph{animation-duration:13s;animation
 /* plano de mesa de corte: cruz de mira sobre milimetrado, sin radios */
 .bq-milim{position:relative;aspect-ratio:16/9;overflow:hidden;border:1px solid var(--line);display:flex;align-items:flex-end;padding:var(--s-4)}
 .bq-milim .cv,.bq-milim .ch{position:absolute;background:var(--line-2)}
-.bq-milim .cv{left:62%;top:0;bottom:0;width:1px}
-.bq-milim .ch{top:44%;left:0;right:0;height:1px}
-.bq-milim .marker{position:absolute;left:62%;top:44%;width:12px;height:12px;border:1px solid var(--fg);transform:translate(-50%,-50%)}
+.bq-milim .cv{left:var(--mx,62%);top:0;bottom:0;width:1px}
+.bq-milim .ch{top:var(--my,44%);left:0;right:0;height:1px}
+.bq-milim.mapa-vivo .cv,.bq-milim.mapa-vivo .ch{background:var(--g-800)}
+.bq-milim .marker{position:absolute;left:var(--mx,62%);top:var(--my,44%);width:12px;height:12px;border:1px solid var(--fg);transform:translate(-50%,-50%)}
 .bq-milim .marker::after{content:"";position:absolute;inset:3px;background:var(--fg)}
-.bq-milim .ring{position:absolute;left:62%;top:44%;width:120px;height:120px;border:1px solid var(--fg-2);transform:translate(-50%,-50%);opacity:.5}
+.bq-milim .ring{position:absolute;left:var(--mx,62%);top:var(--my,44%);width:120px;height:120px;border:1px solid var(--fg-2);transform:translate(-50%,-50%);opacity:.5}
 html.js .bq-milim .ring{animation:pm-ring 4s var(--ease) infinite;animation-play-state:paused}
 html.js .bq-milim.viva .ring{animation-play-state:running}
 @keyframes pm-ring{0%{transform:translate(-50%,-50%) scale(.2);opacity:.7}100%{transform:translate(-50%,-50%) scale(1.4);opacity:0}}
+.bq-milim.mapa-vivo .marker{background:#000}
 .bq-milim .lbl{position:relative;z-index:1;font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.16em;text-transform:uppercase;color:var(--fg-2);line-height:1.8}
 .bq-milim .lbl b{color:var(--fg);font-weight:400}
 
@@ -439,10 +441,11 @@ html.pmgate-ok #pmgate{display:none!important}
           <div><span>AHORA</span><span class="reloj" id="bq-reloj"></span></div>
           <div><span>CÓMO</span><b>SE PRUEBA EN LA BOUTIQUE, SE RETIRA SIN CARGO</b></div>
         </div>
-        <div class="bq-milim milim" style="margin-top:var(--s-6)" aria-hidden="true">
+        <div class="bq-milim milim" style="margin-top:var(--s-6)" aria-hidden="true" data-mapa="plano" data-mx=".62" data-my=".44" data-zoom="15.3">
           <span class="cv"></span><span class="ch"></span>
           <span class="ring"></span><span class="marker"></span>
           <p class="lbl">34°35'S · 58°25'O<br><b>HONDURAS 4940</b></p>
+          <span class="mapa-cred">© OpenStreetMap</span>
         </div>
       </div>
     </div>
@@ -452,6 +455,7 @@ html.pmgate-ok #pmgate{display:none!important}
 
 <script src="./catalogo.js"></script>
 <script src="./base.js"></script>
+<script src="./mapa.js"></script>
 <script>
 (function(){
   'use strict';
