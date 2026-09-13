@@ -286,6 +286,27 @@ html.pmgate-ok #pmgate{display:none!important}
     </p>
   </div>
 </div>
+<div id="pmgate" role="dialog" aria-modal="true" aria-labelledby="pmgate-t">
+  <div class="pmgate-in">
+    <svg class="pmgate-mark" viewBox="0 0 104 103" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667Z"/></svg>
+    <p class="pmgate-kana" lang="ja" aria-hidden="true">バーニ　マーゴット</p>
+    <p class="pmgate-t" id="pmgate-t">ACCESO PRIVADO</p>
+    <form class="pmgate-f" id="pmgate-f" autocomplete="off" novalidate>
+      <label class="pmgate-sr" for="pmgate-i">Frase de acceso</label>
+      <div class="pmgate-row">
+        <span class="pmgate-cue" aria-hidden="true">&gt;&gt;</span>
+        <input id="pmgate-i" type="password" autocomplete="current-password"
+               spellcheck="false" placeholder="········" aria-describedby="pmgate-e">
+        <button class="pmgate-go" type="submit">[ OK ]</button>
+      </div>
+      <p class="pmgate-err" id="pmgate-e" role="status" aria-live="polite"></p>
+    </form>
+    <p class="pmgate-foot" aria-hidden="true">
+      &lt;&lt;GENDERLESS(<span lang="ja">ジェンダーレス</span>)//FASHION#()&gt;&gt;<br>
+      &gt;&gt;HONDURAS4940##
+    </p>
+  </div>
+</div>
 
 <div id="pmgate" role="dialog" aria-modal="true" aria-labelledby="pmgate-t">
   <div class="pmgate-in">
@@ -500,16 +521,16 @@ html.pmgate-ok #pmgate{display:none!important}
     <!-- infografía: arquitectura del ecosistema -->
     <div style="margin-top:56px">
       <p class="tag" style="margin-bottom:16px">INFOGRAFÍA :: EL ECOSISTEMA QUE SE CONSTRUYE</p>
-      <div class="arqui mono" role="img" aria-label="Arquitectura: el catálogo vive en Medusa; el sitio Astro lo consume; Mercado Pago cobra; el feed alimenta a Instagram; el mailing y la logística se disparan desde los pedidos; el back office propio gobierna todo">
+      <div class="arqui mono" role="img" aria-label="Arquitectura: el catálogo, el stock y los pedidos viven en un sistema propio sobre Hostinger; el sitio Astro los muestra en vivo; Mercado Pago y NAVE cobran; el feed alimenta a Instagram; el mailing y la logística se disparan desde los pedidos; el back office propio gobierna todo">
         <div class="aq-col">
           <div class="aq-box aq-dim">TIENDA NUBE<br><span>HOY · SE MIGRA</span></div>
           <div class="aq-flecha" aria-hidden="true">▼ DUMP + 301</div>
-          <div class="aq-box aq-core">MEDUSA 2.x<br><span>CATÁLOGO · STOCK · PEDIDOS</span></div>
+          <div class="aq-box aq-core">SISTEMA PROPIO · MYSQL<br><span>CATÁLOGO · STOCK · PEDIDOS · HOSTINGER</span></div>
         </div>
         <div class="aq-col">
           <div class="aq-box">BACK OFFICE PROPIO<br><span>HIPER SENCILLO · PIEZA EN &lt;2 MIN</span></div>
           <div class="aq-flecha" aria-hidden="true">▼ GOBIERNA</div>
-          <div class="aq-box aq-core">SITIO NUEVO<br><span>ASTRO · HOME + ECOMMERCE</span></div>
+          <div class="aq-box aq-core">SITIO NUEVO<br><span>ASTRO · MISMA APP · PORTABLE A VPS</span></div>
         </div>
         <div class="aq-col">
           <div class="aq-box">MERCADO PAGO + NAVE<br><span>BRICKS · GALICIA · POINT LOCAL</span></div>
@@ -588,7 +609,7 @@ html.pmgate-ok #pmgate{display:none!important}
       <span class="n">7 HITOS :: <span data-nivel-count="2">0</span> CUMPLIDOS</span>
     </div>
     <p style="max-width:660px;font-size:14px;line-height:1.75;color:var(--g-800);margin-bottom:34px">
-      Octubre construye el comercio completo: el catálogo entero en Medusa, el storefront navegable,
+      Octubre construye el comercio completo: el catálogo entero en el sistema propio de la casa (sobre Hostinger, decisión del 13/09), el storefront navegable,
       el <strong>back office propio hiper sencillo</strong> que iguala y supera las 78 funciones verificadas
       de Tienda Nube, el <strong>stock unificado local + online</strong> que hace estructuralmente imposible
       vender dos veces una pieza única, y el checkout con Mercado Pago, logística y factura electrónica.
@@ -825,7 +846,7 @@ span.h-mark--of{margin-top:4px;display:block;font-family:var(--mono);font-size:9
           <li>Email marketing y facturación dependen de apps de terceros pagas.</li>
         </ul>
       </div>
-      <div class="card"><div class="c-tag"><span>LO QUE MEDUSA NO TRAE → SE CONSTRUYE EN EL BACK</span></div>
+      <div class="card"><div class="c-tag"><span>LO QUE TIENDA NUBE NO DA → SE CONSTRUYE EN EL SISTEMA PROPIO</span></div>
         <ul class="viñeta" style="font-size:12px">
           <li>Carrito abandonado + cupones programados.</li>
           <li>Feed META / Google Shopping generado desde el stock real.</li>
@@ -840,7 +861,7 @@ span.h-mark--of{margin-top:4px;display:block;font-family:var(--mono);font-size:9
     <p class="tag" style="margin:14px 0 4px">ESTUDIADOS :: CIN7 · ZOHO INVENTORY · ODOO · KATANA · DUX (AR) · CONTABILIUM (AR) · AIMS360 (MODA)</p>
     <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-top:20px">
       <div class="card"><div class="c-tag"><span>EL VEREDICTO</span><span>CONSTRUIR &gt; INTEGRAR</span></div>
-        <p>Medusa ya trae el 70% del motor que los líderes cobran caro (multi-ubicación, niveles, reservas).
+        <p>El motor que los líderes cobran caro (ubicaciones, niveles, reservas) se construye a la medida de la casa en el sistema propio: para una boutique de ~150 fichas vivas es acotado.
         Integrar un ERP externo crea <strong style="color:var(--white)">dos fuentes de verdad</strong> sincronizadas con minutos de
         latencia: tolerable con stock 50, fatal con stock 1. Se construye la capa propia y se integra
         solo facturación ARCA, Mercado Pago y el feed META.</p>
@@ -1088,8 +1109,8 @@ var H = [
  {n:1,f:'2026-09-11',t:'BASELINE SEO + MAPA 301',d:'Radiografía del posicionamiento actual (GA4 activo en TN) y mapa de redirecciones 1:1 de cada URL vieja a su nueva casa.',fr:'CANALES',r:'TRINI',a:'EMILIANO',e:'Informe baseline + tabla 301 completa',c:'Las 251 URLs de producto tienen destino escrito.',xp:25},
  {n:1,f:'2026-09-18',t:'MOCKUP «PINCELADA · <span lang="ja" aria-hidden="true">筆</span>»',d:'El universo 9 que pidió el equipo: pinceladas y pintura. Trazo que se dibuja, halftone de tinta, la mano de la diseñadora como sistema visual.',fr:'IDENTIDAD',r:'EMILIANO + DAMIÁN',a:'PANNI + JAVIER',e:'Mockup navegable en la galería',c:'Aprobado como capa estética del sitio real (o iterado una vez).',xp:45},
  {n:1,f:'2026-09-25',t:'SISTEMA DE DISEÑO v1 + DECISIONES',d:'Tokens definitivos, componentes (botones, cards, formularios), grilla. Y dos decisiones que cierran: proveedor de mailing y pieza musical opt-in.',fr:'IDENTIDAD',r:'EMILIANO + DAMIÁN',a:'JAVIER',e:'Design system documentado en el repo',c:'Un componente nuevo se arma solo con piezas del sistema.',xp:25},
- {n:1,f:'2026-09-25',t:'INFRAESTRUCTURA + STAGING',d:'Hosting productivo (storefront + Medusa + Postgres), CI/CD, staging con el portón de la casa para que el equipo mire la obra cuando quiera.',fr:'STOREFRONT',r:'DAMIÁN',a:'BELÉN',e:'Staging online con deploy automático',c:'Un push llega a staging solo, sin manos.',xp:15},
- {n:2,f:'2026-10-09',t:'CATÁLOGO COMPLETO EN MEDUSA',d:'251 productos, 560 variantes, categorías, matriz talle/color y fotos optimizadas. Sofía valida que lo que dice el sistema es lo que hay.',fr:'BACK OFFICE',r:'DAMIÁN + SOFÍA',a:'VERÓNICA',e:'Catálogo íntegro y validado',c:'Muestreo de 20 piezas al azar: cero diferencias contra la percha.',xp:45},
+ {n:1,f:'2026-09-25',t:'INFRAESTRUCTURA + STAGING',d:'Todo en Hostinger Cloud (decisión 13/09): la app del sitio y del sistema propio desplegada desde GitHub, base MySQL, tareas programadas y staging con el portón de la casa. Portable a un VPS sin reescribir.',fr:'STOREFRONT',r:'DAMIÁN',a:'BELÉN',e:'Staging online con deploy automático',c:'Un push llega a staging solo, sin manos.',xp:15},
+ {n:2,f:'2026-10-09',t:'CATÁLOGO COMPLETO EN EL SISTEMA PROPIO',d:'251 productos, 560 variantes, categorías, matriz talle/color y fotos optimizadas. Sofía valida que lo que dice el sistema es lo que hay.',fr:'BACK OFFICE',r:'DAMIÁN + SOFÍA',a:'VERÓNICA',e:'Catálogo íntegro y validado',c:'Muestreo de 20 piezas al azar: cero diferencias contra la percha.',xp:45},
  {n:2,f:'2026-10-09',t:'STOREFRONT CORE NAVEGABLE',d:'Home con el universo elegido (v1), grilla por categoría, ficha de producto con transiciones FLIP — el órgano de cohesión de toda la casa.',fr:'STOREFRONT',r:'DAMIÁN',a:'JAVIER',e:'Sitio navegable en staging',c:'Home → categoría → ficha sin salir del universo visual.',xp:55},
  {n:2,f:'2026-10-16',t:'BACK OFFICE F1 — PARIDAD SUPERADA',d:'El panel propio hiper sencillo: alta de pieza en una sola pantalla, edición, fotos, liquidación con tachado, cupones y venta manual de mostrador (POS mínimo).',fr:'BACK OFFICE',r:'DAMIÁN',a:'VERÓNICA',e:'Panel operativo sobre el catálogo real',c:'EL TEST SAGRADO: Verónica carga una pieza única con fotos en menos de 2 minutos, sin ayuda.',xp:60},
  {n:2,f:'2026-10-23',t:'STOCK UNIFICADO <span lang="ja" aria-hidden="true">一点物</span>',d:'La doctrina completa: disponible = existencia − reservado en la base, reserva de 20 min al iniciar pago, estados de pieza, etiquetas QR, kardex y alertas WhatsApp al equipo.',fr:'BACK OFFICE',r:'DAMIÁN',a:'VERÓNICA',e:'Stock local+online con una sola verdad',c:'Test de carrera: dos checkouts y un POS pelean la misma 1/1 y la base deja pasar exactamente uno.',xp:60},
