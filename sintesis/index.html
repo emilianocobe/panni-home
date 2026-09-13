@@ -53,6 +53,8 @@
 .hero-ph .pm-img{position:absolute;inset:0;object-position:50% 62%;transform:scale(1.02);filter:grayscale(1) contrast(1.08) brightness(1.06)}
 /* el cuerpo ocupa el afiche: la toma se acerca para que no quede pared muerta a los lados */
 @media (min-width:1024px){.hero-ph .pm-img{object-position:48% 70%;transform:scale(1.14)}}
+/* Trench Shukai Organza (toma 5): el rostro dentro de la capucha — «he visto personas» — encuadrado arriba en todos los anchos */
+.hero-ph[data-hero="trench-shukai-organza-j35qv"] .pm-img{object-position:50% 34%}
 @media (hover:hover) and (pointer:fine){
   .hero-ph:hover .pm-img,.hero-ph:focus-visible .pm-img,
   .hero:has(.hero-pz:hover) .hero-ph .pm-img,.hero:has(.hero-pz:focus-visible) .hero-ph .pm-img{filter:grayscale(0) contrast(1)}
@@ -461,18 +463,20 @@ html.pmgate-ok #pmgate{display:none!important}
   var $ = function(s){ return document.getElementById(s); };
   var setHTML = function(id, h){ var n = $(id); if (n) n.innerHTML = h; };
 
-  /* ── HERO: la pieza con más presencia (cuerpo entero, capucha, 14 tomas) ── */
-  var hero = byId('poncho-nuno') || piezas[0];
+  /* ── HERO: la pieza con más presencia. Desde el 13/09 el Poncho Nuno ya no está en la tienda (pasó al Archivo):
+     manda el Trench Shukai Organza, pieza única 1/1 — capucha, cuerpo entero, pared blanca y piso ── */
+  var hero = byId('trench-shukai-organza-j35qv') || byId('poncho-nuno') || piezas[0];
   var HERO_ID = hero ? hero.id : null;
   var heroPh = $('hero-ph'), heroPz = $('hero-pz');
   if (hero && heroPh) {
     var fichaHero = './ficha.html?id=' + encodeURIComponent(hero.id);
     heroPh.href = fichaHero;
     heroPh.setAttribute('aria-label', hero.nm + ' — ver la pieza');
+    heroPh.setAttribute('data-hero', hero.id);   /* el encuadre depende de la toma (CSS) */
     /* nada escrito encima de la foto: ni SKU ni sellos; la foto es la foto.
        Toma del hero: la 10 del Poncho Nuno (en cuclillas, capucha, pared blanca y piso): la más editorial de la serie.
        Se pide en 1024 (el catálogo trae 640 salvo la primera toma). */
-    var HERO_TOMA = { 'poncho-nuno': 10 };
+    var HERO_TOMA = { 'trench-shukai-organza-j35qv': 5, 'poncho-nuno': 10 };
     var ti = HERO_TOMA[hero.id];
     var heroSrc = (ti && hero.imgs[ti]) ? hero.imgs[ti].replace(/-640-0(\.\w+)$/, '-1024-1024$1') : (hero.hero || hero.imgs[0]);
     var hp = Object.assign({}, hero, { imgs: [heroSrc], lq: heroSrc.replace(/-1024-1024(\.\w+)$/, '-480-0$1') });
