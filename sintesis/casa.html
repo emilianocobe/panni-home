@@ -245,11 +245,11 @@ html.js .tajos.on .strip{transform:none}
   .sala-head{flex-direction:column;align-items:flex-start;gap:var(--s-2)}
   .cierre .kata{font-size:var(--t-5)}
 }
+/* mapa real: el embed público de Google (sin clave), pasado a blanco y negro — no carga nada de Google hasta que se pide */
+.mapa-acc{display:flex;flex-wrap:wrap;gap:var(--s-2) var(--s-4);margin-top:var(--s-3)}
+.mapa.real{padding:0;background:#000}
+.mapa-g{position:absolute;inset:0;width:100%;height:100%;border:0;filter:grayscale(1) invert(.92) contrast(1.18) brightness(.96)}
 </style>
-
-
-
-
 <script id="pmgate-pre">/* decide antes de pintar: sin parpadeo de la cortina al navegar */
 (function(){try{if(localStorage.getItem("pm_gate_ok")==="d5600e28005cacbad0d820784e3f9f75220b38689e9c7e16bda6513d11c3443e"){document.documentElement.className+=" pmgate-ok"}}catch(e){}})();
 </script>
@@ -409,11 +409,11 @@ html.pmgate-ok #pmgate{display:none!important}
   <div class="wrap">
     <div class="sec-head">
       <h2 class="disp disp-l" id="taller-t">El taller<span class="kj-t" lang="ja" aria-hidden="true">工房</span></h2>
-      <p class="ey">SE CORTA, SE PEGA, SE PINTA Y <b>SALE</b></p>
+      <p class="ey">SE CORTA, SE COSE, SE PINTA Y <b>SALE</b></p>
     </div>
-    <ol class="pasos" aria-label="Se corta, se pega, se pinta y sale">
+    <ol class="pasos" aria-label="Se corta, se cose, se pinta y sale">
       <li class="rv"><span class="n">01</span><span class="t">Se corta</span></li>
-      <li class="rv rv-d1"><span class="n">02</span><span class="t">Se pega</span></li>
+      <li class="rv rv-d1"><span class="n">02</span><span class="t">Se cose</span></li>
       <li class="rv rv-d2"><span class="n">03</span><span class="t">Se pinta</span></li>
       <li class="rv rv-d3"><span class="n">04</span><span class="t">Y sale</span></li>
     </ol>
@@ -426,13 +426,13 @@ html.pmgate-ok #pmgate{display:none!important}
           <div class="strip" style="--i:3" aria-hidden="true"><img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/tapado-taika-brushed-mask-8-8f2bc97faccb04667217194294878109-1024-1024.webp" alt="" loading="lazy" decoding="async" width="800" height="1200"></div>
           <div class="strip" style="--i:4" aria-hidden="true"><img src="https://acdn-us.mitiendanube.com/stores/004/814/798/products/tapado-taika-brushed-mask-8-8f2bc97faccb04667217194294878109-1024-1024.webp" alt="" loading="lazy" decoding="async" width="800" height="1200"></div>
         </figure>
-        <p class="tajos-cap"><span><a href="./ficha.html?id=tapado-taika-brushed-mask">TAPADO TAIKA BRUSHED MASK</a> · <span lang="ja" aria-hidden="true">手描き</span><span class="sr">pintado a mano</span><span class="uno-de" data-id="tapado-taika-brushed-mask"></span></span><span>CORTE 01—05 · SE CORTA, SE PEGA, SE PINTA Y SALE</span></p>
+        <p class="tajos-cap"><span><a href="./ficha.html?id=tapado-taika-brushed-mask">TAPADO TAIKA BRUSHED MASK</a> · <span lang="ja" aria-hidden="true">手描き</span><span class="sr">pintado a mano</span><span class="uno-de" data-id="tapado-taika-brushed-mask"></span></span><span>CORTE 01—05 · SE CORTA, SE COSE, SE PINTA Y SALE</span></p>
       </div>
       <div class="taller-side">
         <p class="ey"><b>SERIES</b> · CÓMO SALE CADA PIEZA</p>
         <p class="nums"><span aria-hidden="true">DE A<i></i>UNA</span><span class="sr">De a una: hay piezas que salen de a una y otras que se repiten pocas veces</span></p>
         <div class="txt">
-          <p>Hay piezas que salen <b>de a una</b> y otras que se repiten pocas veces: nunca en serie, y cuando una se va no vuelve igual. <b>Nunca XS</b> — la prenda se ajusta al cuerpo que la lleva, no al revés.</p>
+          <p>Hay piezas que salen <b>de a una</b> y otras que se repiten pocas veces: nunca en serie, y cuando una se va no vuelve igual.</p>
           <p><b>El pintor de la casa</b> pinta cada prenda a pincel, de a una. No es una estampa: es una mano, y por eso ninguna sale igual a otra. Las piezas pintadas llevan el sello <span lang="ja" aria-hidden="true">手描き</span><span class="sr">pintado a mano</span>; las que son una sola, además, el <span lang="ja" aria-hidden="true">一点物</span><span class="sr">pieza única</span> 1/1. Los cuidados de cada pieza van en su etiqueta interna.</p>
           <p>Si te enamorás de algo que ya no está y ese textil se terminó, <b>se rehace en otro textil</b>: parecida, nunca igual.</p>
         </div>
@@ -467,7 +467,7 @@ html.pmgate-ok #pmgate{display:none!important}
           <b id="estado-t">…</b>
           <span class="sub" id="estado-s"></span>
         </div>
-        <div class="mapa milim rv rv-d1" role="img" aria-label="Plano tipográfico: Honduras 4940, cuadra del 4900 al 5000, Palermo Soho">
+        <div class="mapa milim rv rv-d1" id="mapa" role="img" aria-label="Plano tipográfico: Honduras 4940, cuadra del 4900 al 5000, Palermo Soho">
           <p class="ey">HONDURAS <span lang="ja" aria-hidden="true">店</span></p>
           <p class="ey r">PALERMO SOHO<br>CABA · ARGENTINA</p>
           <span class="barrio" aria-hidden="true">Palermo Soho</span>
@@ -480,14 +480,16 @@ html.pmgate-ok #pmgate{display:none!important}
           <p class="num disp" aria-hidden="true">4940<small>LA CASA · <span lang="ja">家</span></small></p>
         </div>
         <div class="datos">
-          <div><p class="ey">DIRECCIÓN</p><p>HONDURAS 4940<br>PALERMO SOHO · CABA</p></div>
+          <div><p class="ey">DIRECCIÓN</p><p>HONDURAS 4940<br>PALERMO SOHO · CABA</p>
+            <p class="mapa-acc"><button type="button" class="lnk" id="mapa-real" aria-controls="mapa">VER EL MAPA</button>
+            <a class="lnk" href="https://www.google.com/maps/search/?api=1&amp;query=Honduras%204940%2C%20Palermo%20Soho%2C%20CABA" target="_blank" rel="noopener noreferrer">ABRIR EN GOOGLE MAPS<span class="sr"> (se abre en una pestaña nueva)</span></a></p></div>
           <div><p class="ey">HORARIO</p><p>LUN — SÁB<br>11:00 — 19:00</p></div>
-          <div><p class="ey">INSTAGRAM</p><a href="https://instagram.com/pannimargot" rel="noopener noreferrer" target="_blank">@PANNIMARGOT<span class="sr"> (se abre en una pestaña nueva)</span></a></div>
+          <div><p class="ey">CONTACTO</p><a id="casa-wa" href="https://wa.me/541130274940" rel="noopener noreferrer" target="_blank">WHATSAPP<span class="sr"> (se abre en una pestaña nueva)</span></a><br><a href="https://instagram.com/pannimargot" rel="noopener noreferrer" target="_blank">@PANNIMARGOT<span class="sr"> (se abre en una pestaña nueva)</span></a></div>
         </div>
       </div>
       <div class="bout-l rv rv-d1">
         <div class="txt bout-txt">
-          <p>Las piezas del shop están colgadas acá. <b>Pasá, probátelas, contanos qué buscás</b>: en la casa se ajusta al cuerpo y se conversa el remake. Si compraste online, <b>retirás sin cargo</b> cuando te avisamos que está lista.</p>
+          <p>Las piezas del shop están colgadas acá. <b>Pasá, probátelas, contanos qué buscás</b>: en la casa se conversa el remake. Si compraste online, <b>retirás sin cargo</b> cuando te avisamos que está lista.</p>
         </div>
         <div class="bout-btns">
           <a class="btn" href="https://www.google.com/maps/search/?api=1&amp;query=Honduras+4940%2C+Palermo%2C+Ciudad+Aut%C3%B3noma+de+Buenos+Aires" rel="noopener noreferrer" target="_blank">CÓMO LLEGAR <span class="arr">&gt;&gt;</span><span class="sr"> (se abre en una pestaña nueva)</span></a>
@@ -509,7 +511,6 @@ html.pmgate-ok #pmgate{display:none!important}
     <div class="cierre-btns">
       <a class="btn fill lg" href="./shop.html">ENTRAR AL SHOP <span lang="ja" aria-hidden="true">店</span> <span class="arr">&gt;&gt;</span></a>
       <a class="btn lg" href="./archivo.html">ARCHIVO <span lang="ja" aria-hidden="true">記憶</span></a>
-      <a class="btn lg" href="./manuk.html">MANUK WORLD <span lang="ja" aria-hidden="true">世界</span></a>
     </div>
   </div>
 </section>
@@ -522,6 +523,19 @@ html.pmgate-ok #pmgate{display:none!important}
 (function(){
   'use strict';
   PM.montarCromo({ activa:'casa', modulo:'negro', sello:'CASA' });
+
+  /* ── WhatsApp de la casa: el mensaje llega con asunto y una línea abierta ── */
+  (function(){ var a=document.getElementById('casa-wa'); if(a) a.href=PM.whatsapp({ asunto:'Consulta · La casa', abierta:true }); })();
+
+  /* ── mapa real al tocar: la fachada tipográfica se reemplaza por el mapa de Google en blanco y negro ── */
+  (function(){
+    var b=document.getElementById('mapa-real'), m=document.getElementById('mapa'); if(!b||!m) return;
+    b.addEventListener('click',function(){
+      m.classList.add('real'); m.removeAttribute('role'); m.removeAttribute('aria-label');
+      m.innerHTML='<iframe class="mapa-g" title="Mapa: Honduras 4940, Palermo Soho, CABA" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Honduras+4940,+Palermo+Soho,+CABA,+Argentina&amp;z=16&amp;output=embed"></iframe>';
+      b.hidden=true;
+    });
+  })();
   var d=document, H=d.documentElement;
   if (PM.SD) H.classList.add('sd');
 
@@ -621,10 +635,6 @@ html.pmgate-ok #pmgate{display:none!important}
   else { var ioc = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) { escribir(); ioc.disconnect(); } }); }, { threshold:.3 }); ioc.observe(cierre); }
 })();
 </script>
-
-
-
-
 <script id="pmgate-js">
 /* Cortina de acceso. Recuerda el ingreso por dispositivo. */
 (function(){

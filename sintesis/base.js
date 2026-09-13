@@ -9,6 +9,8 @@
   'use strict';
   var d = document, w = window, H = d.documentElement;
   H.classList.add('js');
+  /* revisión de títulos (weekly 08/09): la elección de la marca se recuerda entre páginas */
+  try { if (w.localStorage.getItem('pm_titulos') === 'chicos') H.setAttribute('data-titulos', 'chicos'); } catch (e) {}
 
   /* ─── utilidades ──────────────────────────────────────────────────── */
   var RM = false, FINE = false;
@@ -215,7 +217,7 @@
   };
 
   /* ─── pasaporte 通行証 ────────────────────────────────────────────── */
-  var CLAVES = ['ABRIGOS', 'CAMISAS', 'PANTALONES', 'KIMONOS', 'REMERAS', 'VESTIDOS', 'DISCONTINOUS', 'ARCHIVO', 'CASA', 'MANUK'];
+  var CLAVES = ['ABRIGOS', 'CAMISAS', 'PANTALONES', 'KIMONOS', 'REMERAS', 'VESTIDOS', 'DISCONTINOUS', 'ARCHIVO', 'CASA'];
   var KJ = { ABRIGOS: 'コート', CAMISAS: 'シャツ', PANTALONES: 'ズボン', KIMONOS: '着物', REMERAS: 'Tシャツ', VESTIDOS: '衣', DISCONTINOUS: '不連続', ARCHIVO: '記憶', CASA: '家', MANUK: '世界' };
   var pasaporte = {
     claves: CLAVES,
@@ -238,9 +240,9 @@
     html: function (cls) {
       var s = this._get().sellos;
       return '<span class="' + (cls || 'term-pas') + '" title="' + CLAVES.map(function (k) { return k + (s.indexOf(k) > -1 ? ' ✓' : ''); }).join(' · ') + '">' +
-        '<b>' + s.length + '/' + CLAVES.length + '</b> TERRITORIOS <span lang="ja" aria-hidden="true">通行証</span> ' +
+        '<b>' + s.length + '/' + CLAVES.length + '</b> SALAS <span lang="ja" aria-hidden="true">通行証</span> ' +
         CLAVES.map(function (k) { return '<i class="' + (s.indexOf(k) > -1 ? 'on' : '') + '" aria-hidden="true"></i>'; }).join('') +
-        '<span class="sr">Pasaporte: ' + s.length + ' de ' + CLAVES.length + ' territorios visitados</span></span>';
+        '<span class="sr">Pasaporte: ' + s.length + ' de ' + CLAVES.length + ' salas visitadas</span></span>';
     }
   };
   function aplicarPasaporte() {
@@ -296,8 +298,35 @@
     return true;
   }
 
+  /* ─── WhatsApp de la casa: el mensaje llega estructurado ──────────────
+     El número es el que ya usa la tienda actual (botón flotante wa.me en Tienda Nube).
+     whatsapp({ asunto, campos:[[etiqueta, valor]], nota }) → URL wa.me con el texto armado.
+     Formato de WhatsApp: *negrita* para las etiquetas; una línea por dato; vacíos fuera. */
+  var WA_NUMERO = '541130274940';
+  function whatsapp(o) {
+    o = o || {};
+    var L = [];
+    L.push('*' + String(o.asunto || 'CONSULTA').toUpperCase() + '*');
+    L.push('— desde pannimargot.com —');
+    var datos = (o.campos || []).filter(function (c) { return c && c[1] != null && String(c[1]).trim() !== ''; });
+    if (datos.length) L.push('');
+    datos.forEach(function (c) { L.push('*' + c[0] + ':* ' + String(c[1]).trim()); });
+    if (o.nota && String(o.nota).trim()) { L.push(''); L.push('*Mensaje:*'); L.push(String(o.nota).trim()); }
+    else if (o.abierta) { L.push(''); L.push('*Mi consulta:* '); }
+    return 'https://wa.me/' + WA_NUMERO + '?text=' + encodeURIComponent(L.join('\n'));
+  }
+
+  /* la URL absoluta de una pieza (el mensaje de WhatsApp lleva el link para que la casa la vea sin buscar) */
+  function urlPieza(id) { return location.href.split('#')[0].split('?')[0].replace(/[^\/]*$/, '') + 'ficha.html?id=' + encodeURIComponent(id); }
+  function nombreCat(k) { try { var c = w.CATALOGO && w.CATALOGO.cat && w.CATALOGO.cat(k); return c && c.nombre ? c.nombre : k; } catch (e) { return k; } }
+
   /* ─── carrito (cantidad siempre 1; clave = pieza + talle) ─────────── */
   function claveDe(id, tl) { return String(id) + '|' + String(tl == null ? '' : tl); }
+  var PEND = '?';   /* talle pendiente: la pieza está en el carrito y el talle se elige ahí */
+  function avisarPendientes() {
+    var k = cart.pendientes(), st = $('#pm-cart .st'); if (!st) return;
+    st.textContent = k ? (k === 1 ? 'ELEGÍ EL TALLE DE ESTA PIEZA PARA SEGUIR' : 'ELEGÍ EL TALLE DE LAS ' + k + ' PIEZAS PARA SEGUIR') : '';
+  }
   var cart = {
     /* entradas {id, tl}; se aceptan también ids sueltos guardados por versiones anteriores (talle = el primero con stock) */
     _list: function () {
@@ -328,8 +357,20 @@
       if (!p) return { ok: false, motivo: 'inexistente' };
       /* la variante del carrito es el talle o, en las piezas con diseno, el diseno elegido */
       var tls = varsDe(p), tl = o.talle != null ? String(o.talle) : (tls.length === 1 ? tls[0] : null);
-      if (tl == null) return { ok: false, motivo: 'talle', tls: tls };
+      /* pendiente:true → sin talle elegido la pieza entra igual con talle '?' y el carrito lo pide (weekly 08/09) */
+      if (tl == null) {
+        if (!o.pendiente) return { ok: false, motivo: 'talle', tls: tls };
+        if (list.some(function (x) { return x.id === id && x.tl === PEND; })) { if (o.abrir !== false) this.open(); avisarPendientes(); return { ok: false, motivo: 'duplicado', talle: PEND }; }
+        list.push({ id: id, tl: PEND }); store('pm_cart', list);
+        this.render(); emit('pm:cart', { ids: this._ids(), keys: list.map(function (x) { return claveDe(x.id, x.tl); }), accion: 'add', id: id, talle: PEND, pendiente: true });
+        var bp = $('.pm-carrito'); if (bp) { bp.classList.remove('pulse'); void bp.offsetWidth; bp.classList.add('pulse'); }
+        if (o.abrir !== false) this.open();
+        avisarPendientes();
+        return { ok: true, pendiente: true };
+      }
       if (tls.indexOf(tl) < 0) return { ok: false, motivo: 'sin-stock', tls: tls };
+      /* si la pieza ya estaba con el talle pendiente, elegirlo la resuelve (no suma una segunda línea) */
+      if (list.some(function (x) { return x.id === id && x.tl === PEND; })) return this.resolver(id, tl, o);
       var k = claveDe(id, tl);
       if (list.some(function (x) { return claveDe(x.id, x.tl) === k; })) { if (o.abrir !== false) this.open(); return { ok: false, motivo: 'duplicado', talle: tl }; }
       list.push({ id: id, tl: tl }); store('pm_cart', list);
@@ -338,6 +379,21 @@
       if (o.abrir !== false) this.open();
       return { ok: true, talle: tl };
     },
+    /* resolver(id, tl): la entrada con talle pendiente pasa a tener talle; si ese talle ya estaba, se funde */
+    resolver: function (id, tl, o) {
+      o = o || {};
+      var p = byId(id); if (!p) return { ok: false, motivo: 'inexistente' };
+      tl = String(tl);
+      if (varsDe(p).indexOf(tl) < 0) return { ok: false, motivo: 'sin-stock', tls: varsDe(p) };
+      var ya = this._list().some(function (x) { return x.id === id && x.tl === tl; });
+      var list = this._list().filter(function (x) { return !(x.id === id && x.tl === PEND); });
+      if (!ya) list.push({ id: id, tl: tl });
+      store('pm_cart', list); this.render();
+      emit('pm:cart', { ids: this._ids(), keys: list.map(function (x) { return claveDe(x.id, x.tl); }), accion: 'add', id: id, talle: tl });
+      var st = $('#pm-cart .st'); if (st) st.textContent = this.pendientes() ? '' : 'LISTO :: ' + varLabel(p) + ' ' + varTxt(p, tl);
+      return { ok: true, talle: tl };
+    },
+    pendientes: function () { return this._list().filter(function (x) { return x.tl === PEND; }).length; },
     /* remove(id) quita la pieza (todos sus talles); remove(id, tl) o remove('id|tl') solo esa entrada */
     remove: function (id, tl) {
       if (tl == null && String(id).indexOf('|') > -1) { var s = String(id).split('|'); id = s[0]; tl = s[1]; }
@@ -358,6 +414,17 @@
         vacio.hidden = true; f.hidden = false;
         list.innerHTML = entradas.map(function (e) {
           var p = e.p, unica = esUnica(p);
+          if (e.tl === PEND) {
+            var ops = varsDe(p).map(function (t) { return '<button type="button" class="pm-tl-op" data-resolver="' + esc(p.id) + '|' + esc(t) + '">' + esc(varTxt(p, t)) + '</button>'; }).join('');
+            return '<li class="pm-ci pend" data-id="' + esc(p.id) + '" data-tl="' + PEND + '">' +
+              '<a class="ph" href="./ficha.html?id=' + encodeURIComponent(p.id) + '" tabindex="-1" aria-hidden="true">' + pic(p, 0, { alt: '', cls: '' }) + '</a>' +
+              '<div><a class="nm" href="./ficha.html?id=' + encodeURIComponent(p.id) + '">' + esc(p.nm) + '</a>' +
+              '<span class="sku">' + esc(p.sku || p.cat || '') + '</span>' +
+              '<fieldset class="pm-tl-pend"><legend>ELEGÍ TU ' + esc(varLabel(p)) + '</legend><span class="ops">' + ops + '</span></fieldset>' +
+              '</div>' +
+              '<div class="der"><span class="pr">' + fmt(p.pr) + '</span>' +
+              '<button type="button" class="quitar" data-quitar="' + esc(claveDe(p.id, PEND)) + '" aria-label="Quitar ' + esc(p.nm) + ' del carrito">QUITAR</button></div></li>';
+          }
           var linea = unica ? 'RESERVADA — ES ÚNICA' + (e.tl !== 'U' ? ' · ' + varLabel(p) + ' ' + esc(e.tl) : '') : (esUltima(p) ? 'RESERVADA — QUEDA UNA' : 'EN TU CARRITO') + ' · ' + varLabel(p) + ' ' + esc(varTxt(p, e.tl));
           return '<li class="pm-ci" data-id="' + esc(p.id) + '" data-tl="' + esc(e.tl) + '">' +
             '<a class="ph" href="./ficha.html?id=' + encodeURIComponent(p.id) + '" tabindex="-1" aria-hidden="true">' + pic(p, 0, { alt: '', cls: '' }) + '</a>' +
@@ -369,6 +436,15 @@
             '<button type="button" class="quitar" data-quitar="' + esc(e.key) + '" aria-label="Quitar ' + esc(p.nm) + (e.tl !== 'U' ? ' ' + varLabel(p).toLowerCase() + ' ' + esc(e.tl) : '') + ' del carrito">QUITAR</button></div></li>';
         }).join('');
         $('#pm-cart-tot').textContent = fmt(this.total());
+        var wa = $('#pm-cart-wa');
+        if (wa) wa.href = whatsapp({
+          asunto: 'Consulta por mi carrito',
+          campos: entradas.map(function (e, i) {
+            var p = e.p, lab = varLabel(p) === 'DISEÑO' ? 'Diseño' : 'Talle', v = e.tl === PEND ? lab + ' a definir' : (e.tl === 'U' ? 'Talle único' : lab + ' ' + varTxt(p, e.tl));
+            return ['Pieza ' + (i + 1), p.nm + ' · ' + v + ' · ' + fmt(p.pr) + (p.sku ? ' · ' + p.sku : '')];
+          }).concat([['Total', fmt(this.total())]]),
+          abierta: true
+        });
       }
       var pas = $('#pm-cart-pas'); if (pas) pas.innerHTML = pasaporte.html('pm-cart-pas');
     },
@@ -531,7 +607,7 @@
     cambios: { t: 'Cambios y devoluciones', ja: '交換', p: ['Las condiciones y el plazo de cambio se informan al confirmar el pedido. Las piezas salen de a una, de a pocas — nunca en serie: escribinos por Instagram <b>@pannimargot</b> o pasá por la boutique y lo resolvemos con vos.', 'Para poder cambiarla tiene que volver en el mismo estado en que salió.'] },
     arrepentimiento: { t: 'Botón de arrepentimiento', ja: '撤回', p: ['Si compraste online, podés <b>revocar la compra dentro de los 10 días corridos de recibida la pieza</b>, sin dar motivos y sin costo. Te devolvemos el importe por el mismo medio de pago.', 'Completá el formulario y te respondemos por email con las instrucciones para la devolución.'], ley: 'LEY 24.240 · ART. 34 · RES. 424/2020', form: true },
     terminos: { t: 'Términos y condiciones', ja: '規約', p: ['Los precios están publicados en <b>pesos argentinos</b>. Cada pieza publicada está disponible en los talles que ves; salen de a una, de a pocas — nunca en serie.', 'Pagás con Mercado Pago o Nave; la financiación depende del medio de pago que elijas. Las fotos son de la pieza real; el color puede variar según la pantalla.'] },
-    talles: { t: 'Guía de talles y cuidados', ja: '寸法', p: ['<b>No hay XS: la prenda se ajusta al cuerpo que la lleva.</b> La mayoría de las fichas trae las medidas reales de esa pieza (hombros, pecho, largo); si falta, pedilas por Instagram o en la boutique. Compará con una prenda tuya que te quede bien.', 'Cuidados: van en la <b>etiqueta interna</b> de cada pieza. Cualquier duda, te la respondemos por Instagram <b>@pannimargot</b>.'] }
+    talles: { t: 'Guía de talles y cuidados', ja: '寸法', p: ['La mayoría de las fichas trae las <b>medidas reales de esa pieza</b> (hombros, pecho, largo); si falta, pedilas por Instagram o en la boutique. Compará con una prenda tuya que te quede bien.', 'Cuidados: van en la <b>etiqueta interna</b> de cada pieza. Cualquier duda, te la respondemos por Instagram <b>@pannimargot</b>.'] }
   };
   function legalHTML() {
     return '<div id="pm-legal" class="pm-legal" role="dialog" aria-modal="true" aria-labelledby="pm-legal-t" hidden><div class="in">' +
@@ -562,10 +638,10 @@
     { k: 'inicio', t: 'INICIO', ja: '', href: './index.html' },
     { k: 'shop', t: 'SHOP', ja: '店', href: './shop.html' },
     { k: 'archivo', t: 'ARCHIVO', ja: '記憶', href: './archivo.html' },
-    { k: 'casa', t: 'LA CASA', ja: '家', href: './casa.html' },
-    { k: 'manuk', t: 'MANUK', ja: '世界', href: './manuk.html' }
+    { k: 'casa', t: 'LA CASA', ja: '家', href: './casa.html' }
+    /* MANUK salió del proyecto (13/09): la sección queda guardada en archivo-futuro/manuk-world */
   ];
-  var ALIAS = { territorio: 'shop', ficha: 'shop', home: 'inicio', index: 'inicio', 'la casa': 'casa', 'manuk world': 'manuk' };
+  var ALIAS = { ficha: 'shop', home: 'inicio', index: 'inicio', 'la casa': 'casa' };
   function headerHTML(activa) {
     activa = ALIAS[activa] || activa;
     return '<header class="pm-hd"><div class="pm-hd-row">' +
@@ -591,13 +667,14 @@
     return '<aside id="pm-cart" class="pm-cart" role="dialog" aria-modal="true" aria-labelledby="pm-cart-t" hidden>' +
       '<div class="pm-dlg-h"><h2 id="pm-cart-t">CARRITO <span id="pm-cart-n" class="n"></span> <span lang="ja" aria-hidden="true">器</span></h2><button type="button" class="pm-x" data-cerrar="pm-cart" aria-label="Cerrar carrito" data-foco>[ × ] CERRAR</button></div>' +
       '<div class="pm-dlg-b">' +
-      '<div id="pm-cart-vacio" class="pm-cart-vacio">TODAVÍA NADA.<br><b>PIEZAS DE A UNA, DE A POCAS — NUNCA EN SERIE.</b> CADA PIEZA SALE DE A UNA, DE A POCAS — NUNCA EN SERIE.<br><a class="btn" href="./shop.html">IR AL SHOP <span lang="ja" aria-hidden="true">店</span></a></div>' +
+      '<div id="pm-cart-vacio" class="pm-cart-vacio">TODAVÍA NADA.<br><b>PIEZAS DE A UNA, DE A POCAS — NUNCA EN SERIE.</b><br><a class="btn" href="./shop.html">IR AL SHOP <span lang="ja" aria-hidden="true">店</span></a></div>' +
       '<ul id="pm-cart-list" class="pm-cart-list" aria-label="Piezas en el carrito"></ul>' +
       '<div id="pm-cart-pas"></div>' +
       '<span class="st" role="status" aria-live="polite"></span></div>' +
       '<div id="pm-cart-f" class="pm-dlg-f" hidden><div class="pm-tot"><span>TOTAL</span><b id="pm-cart-tot">$ 0</b></div>' +
       '<p class="pm-nota">ENVÍO Y PAGO SE DEFINEN EN EL PASO SIGUIENTE · MERCADO PAGO · NAVE</p>' +
-      '<button type="button" class="btn fill block lg" id="pm-cart-go">INICIAR COMPRA &gt;&gt;</button></div></aside>';
+      '<button type="button" class="btn fill block lg" id="pm-cart-go">INICIAR COMPRA &gt;&gt;</button>' +
+      '<a class="pm-cart-wa" id="pm-cart-wa" href="#" target="_blank" rel="noopener noreferrer">¿DUDAS? CONSULTÁ ESTE CARRITO POR WHATSAPP <span aria-hidden="true">&gt;&gt;</span><span class="sr"> (se abre en una pestaña nueva)</span></a></div></aside>';
   }
   function termHTML() {
     return '<div class="term" id="pm-term" aria-label="Estado de la casa">' +
@@ -733,6 +810,22 @@
     d.body.appendChild(el(legalHTML()));
     d.body.appendChild(el('<div id="grain" aria-hidden="true"></div>'));
     d.body.appendChild(el('<div id="cur" aria-hidden="true"></div>'));
+    /* conmutador de revisión: títulos grandes (identidad, defendidos por Javier) o chicos (la alternativa que pidió Sofía).
+       No es parte del sitio final: se saca cuando la marca decide. */
+    (function () {
+      var chicos = H.getAttribute('data-titulos') === 'chicos';
+      var r = el('<div class="pm-rev" role="group" aria-label="Revisión: tamaño de los títulos"><span class="k">TÍTULOS</span>' +
+        '<button type="button" data-t="grandes" aria-pressed="' + (!chicos) + '">GRANDES</button>' +
+        '<button type="button" data-t="chicos" aria-pressed="' + chicos + '">CHICOS</button></div>');
+      r.addEventListener('click', function (e) {
+        var b = e.target.closest('button[data-t]'); if (!b) return;
+        var c = b.getAttribute('data-t') === 'chicos';
+        if (c) H.setAttribute('data-titulos', 'chicos'); else H.removeAttribute('data-titulos');
+        try { w.localStorage.setItem('pm_titulos', c ? 'chicos' : 'grandes'); } catch (e2) {}
+        $$('button[data-t]', r).forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      });
+      d.body.appendChild(r);
+    })();
     d.body.appendChild(el('<div id="cur-ring" aria-hidden="true"></div>'));
 
     // eventos del cromo
@@ -742,11 +835,14 @@
       if ((b = t.closest('.pm-carrito'))) { e.preventDefault(); cart.open(); return; }
       if ((b = t.closest('[data-cerrar]'))) { cerrarDialogo(b.getAttribute('data-cerrar')); return; }
       if ((b = t.closest('[data-quitar]'))) { cart.remove(b.getAttribute('data-quitar')); return; }
+      if ((b = t.closest('[data-resolver]'))) { var rv = b.getAttribute('data-resolver').split('|'); cart.resolver(rv[0], rv[1]); return; }
       if ((b = t.closest('[data-legal]'))) { legal(b.getAttribute('data-legal')); return; }
       if ((b = t.closest('[data-add]'))) {
         e.preventDefault();
         var idAdd = b.getAttribute('data-add'), tlAdd = b.getAttribute('data-talle');
-        var r = cart.add(idAdd, { talle: tlAdd || undefined });
+        var pAdd = byId(idAdd);
+        /* sin talle elegido en una pieza con varios: entra al carrito y el talle se pide ahí */
+        var r = cart.add(idAdd, { talle: tlAdd || undefined, pendiente: !tlAdd && !!pAdd && varsDe(pAdd).length > 1 });
         if (!r.ok && r.motivo === 'duplicado') { var pDup = byId(idAdd); var st = $('#pm-cart .st'); if (st) st.textContent = esUnica(pDup) ? 'YA ESTÁ EN TU CARRITO :: ES UNA SOLA' : 'YA ESTÁ EN TU CARRITO :: ' + varLabel(pDup) + ' ' + varTxt(pDup, r.talle); }
         /* sin talle elegido: la página lo resuelve (evento pm:talle); el sistema no adivina */
         if (!r.ok && (r.motivo === 'talle' || r.motivo === 'sin-stock')) emit('pm:talle', { id: idAdd, motivo: r.motivo, tls: r.tls, boton: b });
@@ -801,7 +897,15 @@
       menu(false);
       if (eraMenu) fondo(e.detail.id, true);
     });
-    $('#pm-cart-go').addEventListener('click', function () { if (!cart.n()) return; chkPaso(1); abrirDialogo('pm-chk'); });
+    $('#pm-cart-go').addEventListener('click', function () {
+      if (!cart.n()) return;
+      if (cart.pendientes()) {
+        avisarPendientes();
+        var li = $('#pm-cart-list .pm-ci.pend'); if (li) { li.classList.remove('llamar'); void li.offsetWidth; li.classList.add('llamar'); var op = $('.pm-tl-op', li); if (op) op.focus(); }
+        return;
+      }
+      chkPaso(1); abrirDialogo('pm-chk');
+    });
     chkBind();
     $('#pm-news').addEventListener('submit', function (e) {
       e.preventDefault(); var i = $('#pm-news-e'), st = $('.pm-news .st');
@@ -857,6 +961,7 @@
     qs: qs, byId: byId, esc: esc, el: el,
     talles: tallesDe, talleTxt: talleTxt, dis: disDe, vars: varsDe, varLabel: varLabel, varTxt: varTxt, sinHermanaViva: sinHermanaViva,
     esUnica: esUnica, esUltima: esUltima, lineaTxt: lineaTxt, clave: claveDe,
+    whatsapp: whatsapp, WA: WA_NUMERO, urlPieza: urlPieza, nombreCat: nombreCat,
     RM: RM, FINE: FINE, SD: SD, KJ: KJ
   };
 })();

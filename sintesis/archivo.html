@@ -229,11 +229,34 @@ main .pm-img,#ar-ficha .pm-img{filter:grayscale(1) contrast(1.04)}
   .pz:active .pm-img,.ar-hf:active .pm-img,.fi-col .ph:active .pm-img{filter:grayscale(0)}
   .ar-row{min-height:56px}
 }
+/* pedido especial: opciones como texto plano con borde al elegir (mismo lenguaje que el selector de talle de la ficha) */
+.fi-op{border:0;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:var(--s-2) var(--s-4);min-width:0}
+.fi-op legend{width:100%;padding:0;margin-bottom:var(--s-2);font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.16em;color:var(--fg-2)}
+.fi-op label{position:relative;display:inline-flex;cursor:pointer}
+.fi-op input{position:absolute;opacity:0;width:1px;height:1px}
+.fi-op span{display:inline-flex;align-items:center;min-height:36px;padding:0 var(--s-3);border:1px solid var(--line);font-family:var(--f-mono);font-size:var(--t-2);letter-spacing:.12em;color:var(--fg-2)}
+.fi-op input:checked+span{border-color:var(--fg);color:var(--fg)}
+.fi-op input:focus-visible+span{outline:1px solid var(--fg);outline-offset:3px}
+.fi-form .opc{color:var(--fg-3);letter-spacing:.1em}
+@media (hover:none),(pointer:coarse){.fi-op span{min-height:44px}}
+
+/* ═══ EASTER EGG · el Archivo es «una historia dentro de la historia»: acá el cursor es el monograma
+   (idea de Panni, weekly 08/09). En reposo, marco y monograma viajan juntos; sobre una pieza o un botón el
+   marco se desprende y la encuadra con piquetes. Solo puntero fino y sin movimiento reducido. ═══ */
+html[data-cursor="monograma"] #cur{display:none!important}
+#ar-nn,#ar-marco{position:fixed;top:0;left:0;pointer-events:none;display:none;will-change:transform}
+html[data-cursor="monograma"] #ar-nn,html[data-cursor="monograma"] #ar-marco{display:block}
+#ar-nn{z-index:10000;margin:-9px 0 0 -9px;transition:opacity .25s}
+#ar-nn svg{display:block;width:18px;height:18px;fill:#fff;filter:drop-shadow(0 0 1px rgba(0,0,0,.9)) drop-shadow(0 0 4px rgba(0,0,0,.4));transition:transform .3s var(--ease)}
+#ar-nn.mini svg{transform:scale(.62)}
+#ar-nn.off,#ar-marco.off{opacity:0}
+#ar-marco{z-index:9999;border:1px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.5);
+  transition:left .42s var(--ease),top .42s var(--ease),width .42s var(--ease),height .42s var(--ease),opacity .2s}
+#ar-marco i{position:absolute;width:7px;height:7px;border:1px solid #fff;background:#000;opacity:0;transition:opacity .2s .12s;box-shadow:0 0 0 1px rgba(0,0,0,.5)}
+#ar-marco i:nth-child(1){left:-4px;top:-4px}#ar-marco i:nth-child(2){right:-4px;top:-4px}
+#ar-marco i:nth-child(3){left:-4px;bottom:-4px}#ar-marco i:nth-child(4){right:-4px;bottom:-4px}
+#ar-marco.enc i{opacity:1}
 </style>
-
-
-
-
 <script id="pmgate-pre">/* decide antes de pintar: sin parpadeo de la cortina al navegar */
 (function(){try{if(localStorage.getItem("pm_gate_ok")==="d5600e28005cacbad0d820784e3f9f75220b38689e9c7e16bda6513d11c3443e"){document.documentElement.className+=" pmgate-ok"}}catch(e){}})();
 </script>
@@ -341,7 +364,7 @@ html.pmgate-ok #pmgate{display:none!important}
       </div>
       <div class="rv rv-d1">
         <div class="txt">
-          <p><b>Ya no están en la tienda.</b> Acá quedan las que salieron del taller de a una, de a pocas — nunca en serie — y no vuelven iguales: se cortaron, se pegaron, se pintaron y salieron.</p>
+          <p><b>Ya no están en la tienda.</b> Acá quedan las que salieron del taller de a una, de a pocas — nunca en serie — y no vuelven iguales: se cortaron, se cosieron, se pintaron y salieron.</p>
           <p>El taller sigue ahí. Si viste algo que ya no está, se puede rehacer: <b>remake en otro textil</b>, con el mismo molde y otra piel. Nunca igual — cada remake es el primero.</p>
         </div>
         <div class="acc">
@@ -382,10 +405,24 @@ html.pmgate-ok #pmgate{display:none!important}
         <div class="fi-cta"><button type="button" class="btn fill lg block" id="fi-pedir" aria-expanded="false" aria-controls="fi-form">¿ME LA PODÉS HACER? <span class="arr" aria-hidden="true">&gt;&gt;</span></button>
           <p class="fi-nota">SIN PRECIO: EL REMAKE SE COTIZA EN EL TALLER SEGÚN EL TEXTIL · <span lang="ja" aria-hidden="true">工房</span></p></div>
         <form class="fi-form" id="fi-form" novalidate hidden>
-          <p class="nota">PEDIDO ESPECIAL :: REMAKE EN OTRO TEXTIL · TE ESCRIBIMOS A TU EMAIL</p>
-          <label class="pm-campo"><span>TU EMAIL</span><input type="email" name="email" id="fi-email" autocomplete="email" required placeholder="vos@correo.com"></label>
-          <label class="pm-campo"><span>QUÉ QUERÉS QUE HAGAMOS</span><textarea name="pedido" id="fi-txt" required></textarea></label>
-          <button type="submit" class="btn fill">ENVIAR AL TALLER <span class="arr" aria-hidden="true">&gt;&gt;</span></button>
+          <p class="nota">PEDIDO ESPECIAL :: POR WHATSAPP · LA CONSULTA LLEGA ARMADA CON ESTA PIEZA</p>
+          <fieldset class="fi-op" id="fi-quiero">
+            <legend>QUÉ TE GUSTARÍA</legend>
+            <label><input type="radio" name="quiero" value="Rehacerla en otro textil" checked><span>EN OTRO TEXTIL</span></label>
+            <label><input type="radio" name="quiero" value="Rehacerla igual, en mi talle"><span>IGUAL, EN MI TALLE</span></label>
+            <label><input type="radio" name="quiero" value="Consultar otra cosa"><span>OTRA CONSULTA</span></label>
+          </fieldset>
+          <fieldset class="fi-op" id="fi-talle">
+            <legend>TU TALLE <span class="opc">· OPCIONAL</span></legend>
+            <label><input type="radio" name="talle" value="1"><span>1</span></label>
+            <label><input type="radio" name="talle" value="2"><span>2</span></label>
+            <label><input type="radio" name="talle" value="3"><span>3</span></label>
+            <label><input type="radio" name="talle" value="4"><span>4</span></label>
+            <label><input type="radio" name="talle" value="No sé"><span>NO SÉ</span></label>
+          </fieldset>
+          <label class="pm-campo"><span>TU NOMBRE <span class="opc">· OPCIONAL</span></span><input type="text" name="nombre" id="fi-nombre" autocomplete="given-name"></label>
+          <label class="pm-campo"><span>ALGO MÁS <span class="opc">· OPCIONAL</span></span><textarea name="pedido" id="fi-txt" placeholder="Textil, color, para cuándo…"></textarea></label>
+          <button type="submit" class="btn fill">ENVIAR POR WHATSAPP <span class="arr" aria-hidden="true">&gt;&gt;</span></button>
           <span class="st" role="status" aria-live="polite" id="fi-st"></span>
         </form>
       </div>
@@ -400,6 +437,38 @@ html.pmgate-ok #pmgate{display:none!important}
 (function(){
   'use strict';
   PM.montarCromo({ activa:'archivo', modulo:'negro', sello:'ARCHIVO' });
+
+  /* ── EASTER EGG: el monograma es el cursor del Archivo ── */
+  (function(){
+    if(!PM.FINE||PM.RM) return;
+    var H=document.documentElement; H.setAttribute('data-cursor','monograma');
+    var nn=document.createElement('div'); nn.id='ar-nn'; nn.setAttribute('aria-hidden','true');
+    nn.innerHTML='<svg viewBox="0 0 104 103" focusable="false"><path fill-rule="evenodd" d="M1.333 0.167L102.5 0.167L103.167 0.667L103.333 102L102.833 102.667L1.167 102.833L0.5 102.333L0.333 1.5L1.333 0.333ZM12.167 10.833L11 12.5L11.167 91.5L12 92.167L92.167 92L92.667 91.167L92.5 11.5L91.667 10.833L12.333 10.833ZM20.5 34.5L23 35.167L46 54L47.167 53L47.167 35.5L47.667 34.667L50.333 35L73.667 54L74.667 53.5L74.833 35.167L75.5 34.5L83.5 34.667L84.167 35.833L84 72.833L83.333 73.5L81.167 73L59 54L57.167 53.167L56.667 53.833L56.667 72.167L55.833 73.5L54.5 73.5L31.833 54.333L29.5 53.333L29 72.833L27.667 73.667L20.333 73.5L19.5 70.5L19.5 37.5L19.667 35.333L20.5 34.667Z"/></svg>';
+    var mc=document.createElement('div'); mc.id='ar-marco'; mc.setAttribute('aria-hidden','true'); mc.innerHTML='<i></i><i></i><i></i><i></i>';
+    document.body.appendChild(mc); document.body.appendChild(nn);
+    nn.classList.add('off'); mc.classList.add('off');
+    var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my,hot=null,run=false;
+    function marco(){
+      if(hot){ var r=hot.getBoundingClientRect(); mc.style.left=(r.left-3)+'px'; mc.style.top=(r.top-3)+'px'; mc.style.width=(r.width+6)+'px'; mc.style.height=(r.height+6)+'px'; }
+      else { mc.style.left=(rx-13).toFixed(1)+'px'; mc.style.top=(ry-13).toFixed(1)+'px'; mc.style.width='26px'; mc.style.height='26px'; }
+    }
+    function loop(){
+      rx+=(mx-rx)*.2; ry+=(my-ry)*.2;
+      nn.style.transform='translate3d('+rx.toFixed(1)+'px,'+ry.toFixed(1)+'px,0)';
+      marco();
+      if(hot||Math.abs(mx-rx)+Math.abs(my-ry)>.2) requestAnimationFrame(loop); else run=false;
+    }
+    function go(){ if(!run){ run=true; requestAnimationFrame(loop); } }
+    addEventListener('mousemove',function(e){ mx=e.clientX; my=e.clientY; nn.classList.remove('off'); mc.classList.remove('off'); go(); },{passive:true});
+    document.addEventListener('mouseleave',function(){ nn.classList.add('off'); mc.classList.add('off'); });
+    document.addEventListener('pointerover',function(e){
+      var t=e.target.closest?e.target.closest('a,button,label,.pz,[data-cur]'):null;
+      if(t===hot) return; hot=t;
+      nn.classList.toggle('mini',!!t); mc.classList.toggle('enc',!!t); go();
+    },{passive:true});
+    addEventListener('scroll',function(){ if(hot) marco(); },{passive:true});
+    addEventListener('pagehide',function(){ H.removeAttribute('data-cursor'); });
+  })();
 
   var d=document, esc=PM.esc, RM=PM.RM, FINE=PM.FINE;
   // el alto real del header (a dos filas en tablet/teléfono) manda sobre la estimación del CSS
@@ -669,8 +738,7 @@ html.pmgate-ok #pmgate{display:none!important}
     var mat=d.getElementById('fi-mat'); mat.innerHTML=(p.mat&&p.mat.length)?p.mat.map(function(m){return '<li>'+esc(m)+'</li>';}).join(''):''; mat.hidden=!(p.mat&&p.mat.length);
     // formulario prefijado con la pieza
     form.hidden=true; pedir.hidden=false; pedir.setAttribute('aria-expanded','false');
-    d.getElementById('fi-txt').value='Vi esta pieza en el archivo: '+p.nm+' ('+(p.sku||p.id)+'). ¿Me la podés hacer en otro textil?';
-    d.getElementById('fi-email').value=''; st.textContent='';
+    form.reset(); st.innerHTML='';
     Array.prototype.forEach.call(form.querySelectorAll('input,textarea,button'),function(x){x.disabled=false;});
     PM.vistas.marcar(p.id);
   }
@@ -690,15 +758,32 @@ html.pmgate-ok #pmgate{display:none!important}
   });
   pedir.addEventListener('click',function(){
     form.hidden=false; pedir.setAttribute('aria-expanded','true'); pedir.hidden=true;
-    d.getElementById('fi-email').focus();
+    var q0=form.querySelector('input[name="quiero"]:checked'); if(q0) q0.focus();
     form.scrollIntoView({block:'nearest',behavior:RM?'auto':'smooth'});
   });
+  /* el mensaje llega estructurado: pieza, código, tipología, enlace, pedido, talle, nombre y lo que agregue la persona.
+     No se guarda nada: se arma el texto y se abre WhatsApp, donde la persona lo envía. */
   form.addEventListener('submit',function(e){
     e.preventDefault();
-    var bad=form.querySelector(':invalid'); if(bad){bad.focus();bad.reportValidity&&bad.reportValidity();return;}
-    st.textContent='RECIBIDO :: TE ESCRIBIMOS A TU EMAIL';
-    Array.prototype.forEach.call(form.querySelectorAll('input,textarea,button'),function(x){x.disabled=true;});
-    st.focus&&st.setAttribute('tabindex','-1'); st.focus();
+    if(!actual) return;
+    var val=function(nm){ var x=form.querySelector('input[name="'+nm+'"]:checked'); return x?x.value:''; };
+    var cat=(window.CATALOGO&&CATALOGO.cat&&CATALOGO.cat(actual.cat))||null;
+    var base=location.href.split('#')[0].split('?')[0].replace(/[^\/]*$/,'');
+    var url=PM.whatsapp({
+      asunto:'Pedido especial · Archivo',
+      campos:[
+        ['Pieza', actual.nm],
+        ['Código', actual.sku||actual.id],
+        ['Tipología', cat?cat.nombre:actual.cat],
+        ['Ver la pieza', base+'archivo.html#'+encodeURIComponent(actual.id)],
+        ['Me gustaría', val('quiero')],
+        ['Mi talle', val('talle')],
+        ['Mi nombre', d.getElementById('fi-nombre').value]
+      ],
+      nota: d.getElementById('fi-txt').value
+    });
+    var w=null; try{ w=window.open(url,'_blank','noopener'); }catch(_){}
+    st.innerHTML=(w?'SE ABRIÓ WHATSAPP CON TU CONSULTA :: ':'')+'<a class="lnk" href="'+esc(url)+'" target="_blank" rel="noopener">'+(w?'SI NO SE ABRIÓ, TOCÁ ACÁ':'ABRIR WHATSAPP CON TU CONSULTA')+'</a>';
   });
   // contador del ensayo vertical (solo desktop: en tablet/teléfono la ficha es una columna que se lee de corrido)
   var cto=0; col.addEventListener('scroll',function(){ if(cto||TAB)return; cto=requestAnimationFrame(function(){cto=0; var n=col.querySelectorAll('.ph').length, h=col.clientHeight||1;
@@ -714,10 +799,6 @@ html.pmgate-ok #pmgate{display:none!important}
   addEventListener('hashchange',function(){ var id=location.hash.replace(/^#/,''); if(byId[id]&&!fi.classList.contains('on'))abrirFicha(id,innerWidth/2,innerHeight/2); });
 })();
 </script>
-
-
-
-
 <script id="pmgate-js">
 /* Cortina de acceso. Recuerda el ingreso por dispositivo. */
 (function(){

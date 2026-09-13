@@ -118,6 +118,16 @@ input::placeholder,textarea::placeholder{color:var(--fg-2);opacity:1}
 .disp-xl{font-size:var(--t-9);letter-spacing:-.005em}
 .disp-l{font-size:var(--t-8)}
 .disp-m{font-size:var(--t-7);line-height:.95}
+/* ALTERNATIVA DE TÍTULOS MÁS CHICOS (weekly 08/09: Sofía los sintió grandes; Emiliano prometió la comparación).
+   Se activa con el conmutador de revisión; la marca decide cuál queda. */
+html[data-titulos="chicos"]{--t-7:clamp(20px,2.2vw,30px);--t-8:clamp(28px,4.2vw,60px);--t-9:clamp(38px,7vw,108px)}
+.pm-rev{position:fixed;left:var(--s-4);bottom:var(--s-4);z-index:80;display:flex;align-items:stretch;border:1px solid var(--cromo-line);background:var(--cromo-bg);font-family:var(--f-mono);font-size:var(--t-0);letter-spacing:.16em;color:var(--cromo-fg)}
+.pm-rev .k{display:flex;align-items:center;padding:0 var(--s-3);color:var(--cromo-fg-2,var(--cromo-fg));border-right:1px solid var(--cromo-line)}
+.pm-rev button{min-height:32px;padding:0 var(--s-3);border:0;background:none;color:var(--cromo-fg);font:inherit;letter-spacing:inherit;cursor:pointer}
+.pm-rev button[aria-pressed="true"]{background:var(--cromo-fg);color:var(--cromo-bg)}
+@media (hover:none),(pointer:coarse){.pm-rev button{min-height:44px}}
+@media (max-width:767px){body:has(.cta) .pm-rev{bottom:88px}}
+@media print{.pm-rev{display:none}}
 .mono{font-family:var(--f-mono);font-weight:400}
 .ey{font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.18em;text-transform:uppercase;color:var(--fg-2);line-height:1.6}
 .ey b{color:var(--fg);font-weight:400}
@@ -416,6 +426,16 @@ html[data-modulo="blanco"] #pm-velo{background:rgba(0,0,0,.4)}
 .pm-ci>div{min-width:0}
 .pm-ci .sku{overflow-wrap:anywhere}
 .pm-ci:first-child{padding-top:0}
+/* talle pendiente: el ítem pide el talle con botones del tamaño del resto de la tipografía del carrito */
+.pm-tl-pend{border:0;margin:var(--s-2) 0 0;padding:0;min-width:0}
+.pm-tl-pend legend{padding:0;margin-bottom:var(--s-2);font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.18em;color:var(--cromo-fg)}
+.pm-tl-pend .ops{display:flex;flex-wrap:wrap;gap:var(--s-2)}
+.pm-tl-op{min-width:36px;height:32px;padding:0 var(--s-3);border:1px solid var(--cromo-line);background:none;color:var(--cromo-fg);font-family:var(--f-mono);font-size:var(--t-2);letter-spacing:.12em;cursor:pointer}
+.pm-tl-op:hover,.pm-tl-op:focus-visible{border-color:var(--cromo-fg);background:var(--cromo-fg);color:var(--cromo-bg)}
+@media (hover:none),(pointer:coarse){.pm-tl-op{min-width:44px;height:44px}}
+.pm-ci.pend.llamar{animation:pm-llamar .5s var(--ease) 2}
+@keyframes pm-llamar{0%,100%{transform:none}30%{transform:translateX(-4px)}60%{transform:translateX(4px)}}
+@media (prefers-reduced-motion:reduce){.pm-ci.pend.llamar{animation:none;outline:1px solid var(--cromo-fg)}}
 .pm-ci .ph{width:88px;background:var(--cromo-surface)}
 .pm-ci .nm{display:block;font-family:var(--f-text);font-size:var(--t-3);letter-spacing:.1em;text-transform:uppercase;font-weight:500;color:var(--cromo-fg);text-decoration:none}
 .pm-ci .nm:hover,.pm-ci .nm:focus-visible{text-decoration:underline;text-underline-offset:4px}
@@ -432,6 +452,8 @@ html[data-modulo="blanco"] #pm-velo{background:rgba(0,0,0,.4)}
 .pm-cart-pas i.on{background:var(--cromo-fg);border-color:var(--cromo-fg)}
 .pm-tot{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.16em;text-transform:uppercase;color:var(--cromo-fg-2);margin-bottom:var(--s-3)}
 .pm-tot b{font-size:var(--t-6);letter-spacing:.02em;color:var(--cromo-fg);font-variant-numeric:tabular-nums;font-weight:400}
+.pm-cart-wa{display:flex;align-items:center;justify-content:center;gap:.6em;min-height:44px;margin-top:var(--s-3);font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.12em;text-transform:uppercase;color:var(--cromo-fg-2);text-decoration:underline;text-underline-offset:4px;text-decoration-color:transparent;transition:color var(--dur-fast),text-decoration-color var(--dur-fast)}
+.pm-cart-wa:hover,.pm-cart-wa:focus-visible{color:var(--cromo-fg);text-decoration-color:currentColor}
 .pm-nota{font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.1em;text-transform:uppercase;line-height:1.8;color:var(--cromo-fg-2);margin-bottom:var(--s-4)}
 .pm-cart .st{display:block;min-height:1.6em;margin-top:var(--s-2);font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;color:var(--cromo-fg)}
 

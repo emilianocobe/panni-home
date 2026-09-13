@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Shop 店 — Panni Margot</title>
-<meta name="description" content="Piezas de a una, de a pocas — nunca en serie —, hechas en Buenos Aires. Abrigos, camisas, pantalones, kimonos, remeras, vestidos, Manuk World y Discontinous.">
+<meta name="description" content="Piezas de a una, de a pocas — nunca en serie —, hechas en Buenos Aires. Abrigos, camisas, pantalones, kimonos, remeras, vestidos y Discontinous.">
 <link rel="icon" href="../../favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -261,11 +261,10 @@
   .sh-q .x{min-width:44px}
   .sh-q-chip button{display:inline-flex;align-items:center;min-height:44px;min-width:44px;margin-block:-14px;justify-content:center}
 }
+/* DISCONTINOUS aparte de las tipologías */
+.sh-cats li.aparte{margin-top:var(--s-4);padding-top:var(--s-4);border-top:1px solid var(--line)}
+@media (max-width:1023px){.sh-cats li.aparte{margin-top:0;padding-top:0;border-top:0;margin-left:var(--s-4)}}
 </style>
-
-
-
-
 <script id="pmgate-pre">/* decide antes de pintar: sin parpadeo de la cortina al navegar */
 (function(){try{if(localStorage.getItem("pm_gate_ok")==="d5600e28005cacbad0d820784e3f9f75220b38689e9c7e16bda6513d11c3443e"){document.documentElement.className+=" pmgate-ok"}}catch(e){}})();
 </script>
@@ -345,13 +344,12 @@ html.pmgate-ok #pmgate{display:none!important}
       <div class="sh-head-r">
         <!-- el número cuenta lo que hay EN PANTALLA, nunca el stock de la casa -->
         <p class="sh-n ey" id="sh-status" role="status" aria-live="polite" aria-atomic="true"><b id="sh-n">0</b><span id="sh-n-t">PIEZAS</span><span class="sala"> EN PANTALLA</span></p>
-        <a class="btn" id="sh-terr" href="./territorio.html" hidden>[<span class="esp"> </span><span lang="ja" aria-hidden="true">漂流</span><span class="esp"> </span>] <span class="entrar">ENTRAR AL </span>TERRITORIO</a>
       </div>
     </div>
 
     <div class="sh-lay">
-      <nav class="sh-cats" aria-label="Secciones">
-        <h2 class="ey">SECCIONES <span lang="ja" aria-hidden="true">店</span></h2>
+      <nav class="sh-cats" aria-label="Tipologías">
+        <h2 class="ey">TIPOLOGÍAS <span lang="ja" aria-hidden="true">種類</span></h2>
         <ul id="sh-cats"></ul>
         <!-- teléfono: el plegable de orden y filtros cierra la misma banda de chips (en desktop no se muestra) -->
         <button type="button" class="sh-tg" id="sh-tg" aria-expanded="false" aria-controls="sh-fs"><span aria-hidden="true">[ + ]</span><span>FILTROS</span><span class="n" id="sh-tg-n"></span></button>
@@ -470,10 +468,13 @@ html.pmgate-ok #pmgate{display:none!important}
      una selección. Lo único que se cuenta es lo que hay en pantalla (la línea de estado). */
   function pintarCats() {
     var h = '<li class="todas"><a href="./shop.html" data-cat=""' + (!st.cat ? ' aria-current="page"' : '') + '><span>TODAS</span></a></li>';
-    h += CATS.map(function (c) {
-      return '<li><a href="./shop.html?cat=' + encodeURIComponent(c.key) + '" data-cat="' + PM.esc(c.key) + '"' + (st.cat === c.key ? ' aria-current="page"' : '') + '>' +
+    /* DISCONTINOUS no es una tipología (es un estado): va al final y separado */
+    var item = function (c, cls) {
+      return '<li' + (cls ? ' class="' + cls + '"' : '') + '><a href="./shop.html?cat=' + encodeURIComponent(c.key) + '" data-cat="' + PM.esc(c.key) + '"' + (st.cat === c.key ? ' aria-current="page"' : '') + '>' +
         '<span>' + PM.esc(nombre(c)) + (c.kj ? ' <span lang="ja" aria-hidden="true">' + PM.esc(c.kj) + '</span>' : '') + '</span></a></li>';
-    }).join('');
+    };
+    h += CATS.filter(function (c) { return c.key !== 'DISCONTINOUS'; }).map(function (c) { return item(c); }).join('');
+    h += CATS.filter(function (c) { return c.key === 'DISCONTINOUS'; }).map(function (c) { return item(c, 'aparte'); }).join('');
     $('#sh-cats').innerHTML = h;
     /* centrar el chip activo en la tira (solo la tira: nunca la página) */
     var act = $('#sh-cats a[aria-current]'), ul = $('#sh-cats');
@@ -499,11 +500,8 @@ html.pmgate-ok #pmgate{display:none!important}
     $('#sh-mig').textContent = c ? nombre(c) : 'TODAS LAS PIEZAS';
     $('#sh-h1-t').textContent = c ? nombre(c) : 'SHOP';
     $('#sh-h1-kj').textContent = c ? (c.kj || '') : '店';
-    var t = $('#sh-terr');
-    /* MANUK tiene una sola puerta: su mundo (manuk.html), no un territorio genérico */
-    if (c && c.key === 'MANUK') { t.hidden = false; t.href = './manuk.html'; t.innerHTML = '[<span class="esp"> </span><span lang="ja" aria-hidden="true">世界</span><span class="esp"> </span>] <span class="entrar">ENTRAR AL </span>MUNDO'; t.setAttribute('aria-label', 'Entrar a Manuk World'); }
-    else if (c) { t.hidden = false; t.href = './territorio.html?cat=' + encodeURIComponent(c.key); t.innerHTML = '[<span class="esp"> </span><span lang="ja" aria-hidden="true">漂流</span><span class="esp"> </span>] <span class="entrar">ENTRAR AL </span>TERRITORIO'; t.setAttribute('aria-label', 'Entrar al territorio de ' + nombre(c)); }
-    else t.hidden = true;
+    /* sin página intermedia (weekly 08/09): la tipología ES la sala del shop. Entrar a una sella el pasaporte. */
+    if (c && PM.pasaporte) PM.pasaporte.sellar(c.key);
     var chip = $('#sh-q-chip');
     $('.sh-head').classList.toggle('has-q', !!st.q);
     if (st.q) { chip.hidden = false; chip.innerHTML = '<span class="sep" aria-hidden="true">/</span><span>«' + PM.esc(st.q.toUpperCase()) + '»</span><button type="button" id="sh-q-out" aria-label="Quitar la búsqueda">[ × ]</button>'; }
@@ -656,7 +654,6 @@ html.pmgate-ok #pmgate{display:none!important}
       var h = '';
       /* el bloque de estudio (otra sesión, otro fondo) arranca en fila nueva, nunca a mitad de fila: las primeras filas son una sola familia */
       if (st.sort === 'casa' && sesion(p) === 'g' && !corte) { corte = true; h += '<div class="sh-corte" aria-hidden="true"></div>'; }
-      if (!st.cat && p.cat === 'MANUK' && !sep) { sep = true; h += '<h2 class="sh-sep ey"><b>MANUK WORLD</b> <span lang="ja" aria-hidden="true">世界</span><a class="lnk" href="./manuk.html">ENTRAR AL MUNDO</a></h2>'; }
       return h + PM.pcardHTML(deSala(p), { eager: i < 3, hover: PM.FINE, cls: p.cat === 'MANUK' ? 'manuk' : 'ses-' + sesion(p) });
     }).join('');
     /* calibración por pieza como variables de la tarjeta (el hover del sistema sigue mandando sobre el filtro) */
@@ -776,10 +773,6 @@ html.pmgate-ok #pmgate{display:none!important}
   leerURL(); marcarControles(); pintar(); url(false);
 })();
 </script>
-
-
-
-
 <script id="pmgate-js">
 /* Cortina de acceso. Recuerda el ingreso por dispositivo. */
 (function(){

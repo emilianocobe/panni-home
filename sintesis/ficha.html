@@ -149,6 +149,10 @@
 .envio{margin-top:var(--s-6);display:grid;grid-template-columns:1.1fr 1.3fr auto;gap:0 var(--s-6);border-top:1px solid var(--line)}
 .envio>div{display:grid;grid-template-columns:28px minmax(0,1fr);gap:var(--s-3);padding:var(--s-4) 0;font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;line-height:1.7;color:var(--fg-2)}
 .envio>div.lk{align-items:start}
+.envio>div.wa{grid-column:1/-1;border-top:1px solid var(--line)}
+.envio>div.wa>span:last-child{white-space:normal}
+.envio .wa a{color:var(--fg);text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--fg-2)}
+.envio .wa a:hover,.envio .wa a:focus-visible{text-decoration-color:currentColor}
 .envio>div>span:last-child{min-width:0;white-space:nowrap}
 .envio b{color:var(--fg);font-weight:400}
 .envio .ic{color:var(--fg);letter-spacing:0}
@@ -291,10 +295,6 @@
 }
 @media print{.cta{display:none}}
 </style>
-
-
-
-
 <script id="pmgate-pre">/* decide antes de pintar: sin parpadeo de la cortina al navegar */
 (function(){try{if(localStorage.getItem("pm_gate_ok")==="d5600e28005cacbad0d820784e3f9f75220b38689e9c7e16bda6513d11c3443e"){document.documentElement.className+=" pmgate-ok"}}catch(e){}})();
 </script>
@@ -423,7 +423,8 @@ html.pmgate-ok #pmgate{display:none!important}
   var esc = PM.esc;
 
   var p = id ? (C.piezas || []).filter(function (x) { return x.id === id; })[0] : null;
-  var TERR = function (cat) { return './territorio.html?cat=' + encodeURIComponent(cat); };
+  /* sin página intermedia (weekly 08/09): la categoría lleva directo a su sala del shop */
+  var TERR = function (cat) { return './shop.html?cat=' + encodeURIComponent(cat); };
   var CATNM = function (key) { var c = (C.categorias || []).filter(function (x) { return x.key === key; })[0]; return c ? c.nombre.toUpperCase() : key; };
 
   /* ── estado: no encontrada ── */
@@ -574,7 +575,7 @@ html.pmgate-ok #pmgate{display:none!important}
   var agot = (p.tlsAgotados || []).map(String).filter(function (t) { return !/^xs$/i.test(t); });
   var talleSel = multi ? (PM.cart.talleDe(p.id) || null) : tls[0];   /* si ya está en el carrito, arranca con ese talle */
   var talleHTML;
-  if (unico) talleHTML = '<p class="talle"><b>ÚNICO</b><span>SE AJUSTA AL CUERPO</span><button type="button" class="lnk" data-legal="talles">GUÍA DE TALLES</button></p>';
+  if (unico) talleHTML = '<p class="talle"><b>ÚNICO</b><span>UN SOLO TALLE</span><button type="button" class="lnk" data-legal="talles">GUÍA DE TALLES</button></p>';
   /* una pieza única no «es el único talle que queda»: es su talle (sin contradecir el 1/1 de arriba) */
   else if (!multi) talleHTML = '<p class="talle"><b>' + esc(tls[0]) + '</b><span>' + (unica ? 'SU TALLE' : agot.length ? 'EL ÚNICO TALLE QUE QUEDA' : 'UN SOLO TALLE') + '</span><button type="button" class="lnk" data-legal="talles">GUÍA DE TALLES</button></p>';
   else talleHTML = '<fieldset class="tl-sel" id="tl-sel"' + (esDis ? '' : ' aria-describedby="tl-nota"') + '><legend>' + (esDis ? 'Elegí tu diseño' : 'Elegí tu talle') + '</legend>' +
@@ -582,7 +583,7 @@ html.pmgate-ok #pmgate{display:none!important}
     (esDis ? '' : agot.map(function (t) { return '<span class="ag" aria-hidden="true">' + esc(t) + '</span><span class="sr">Talle ' + esc(t) + ' agotado</span>'; }).join('')) +
     '<button type="button" class="lnk" data-legal="talles">GUÍA DE TALLES</button></fieldset>';
   /* una sola línea: «elegí el talle antes de agregar» ya lo dice el CTA (pm:talle) cuando hace falta */
-  var talleNota = esDis ? 'Talle único, cozysize. El diseño que elegís es el que sale del taller.' : unico ? '' : 'No hay XS: se ajusta al cuerpo. Compará con una prenda tuya.';
+  var talleNota = esDis ? 'Talle único, cozysize. El diseño que elegís es el que sale del taller.' : unico ? '' : 'Compará las medidas con una prenda tuya que te quede bien.';
 
   /* materiales */
   var matHTML = (p.mat && p.mat.length)
@@ -618,9 +619,21 @@ html.pmgate-ok #pmgate{display:none!important}
   /* CTA único: agregar · en el carrito (única → reservada) */
   var b = $('add'), st = $('cta-st');
   var tlTxt = function (t) { return PM.varTxt(p, t); };
+  /* consulta por WhatsApp: pieza, código, tipología, talle elegido (o «a definir»), precio y link, una línea por dato */
+  function waFicha() {
+    var a = $('f-wa'); if (!a) return;
+    var v = !multi ? (tls[0] === 'U' ? 'único' : tlTxt(tls[0])) : talleSel != null ? tlTxt(talleSel) : 'todavía no lo elegí';
+    a.href = PM.whatsapp({
+      asunto: 'Consulta por una pieza',
+      campos: [['Pieza', p.nm], ['Código', p.sku], ['Tipología', PM.nombreCat(p.cat)], [esDis ? 'Diseño' : 'Talle', v], ['Precio', PM.fmt(p.pr)], ['Ver la pieza', PM.urlPieza(p.id)]],
+      abierta: true
+    });
+  }
   function pintar(ev) {
     /* con varios talles, «en el carrito» es por talle elegido (podés sumar otro talle de la misma pieza) */
     var en = talleSel != null && PM.cart.has(p.id, talleSel);
+    /* la pieza entró sin talle: el botón lo dice adentro del propio recuadro, y un toque abre el carrito donde se elige */
+    var pend = !en && talleSel == null && PM.cart.has(p.id, '?');
     /* aria-disabled (no disabled): el botón sigue siendo focusable y el foco vuelve a él al cerrar el carrito;
        en el carrito → el click abre el carrito (la pieza ya está ahí; el listener de abajo lo resuelve) */
     b.setAttribute('aria-disabled', en ? 'true' : 'false');
@@ -628,11 +641,15 @@ html.pmgate-ok #pmgate{display:none!important}
     if (en) b.removeAttribute('data-add'); else b.setAttribute('data-add', p.id);
     if (talleSel != null) b.setAttribute('data-talle', talleSel); else b.removeAttribute('data-talle');
     /* el nombre accesible contiene el texto visible (2.5.3); el nombre de la pieza va en .sr */
-    b.innerHTML = en
+    b.innerHTML = pend
+      ? '<span>EN TU CARRITO :: ELEGÍ TU ' + VLAB + '<span class="sr"> · ' + esc(p.nm) + ' está en tu carrito sin ' + vlab + ' elegido</span></span>'
+      : en
       ? '<span>' + (unica ? 'RESERVADA — ES ÚNICA' : 'EN TU CARRITO · ' + VLAB + ' ' + esc(tlTxt(talleSel))) + '<span class="sr"> · ' + esc(p.nm) + ' ya está en tu carrito</span></span>'
       : '<span>AGREGAR AL CARRITO<span class="sr"> ' + esc(p.nm) + (talleSel != null && !unico ? ' ' + vlab + ' ' + esc(tlTxt(talleSel)) : '') + '</span></span><span class="pr">:: ' + esc(PM.fmt(p.pr)) + '</span>';
     if (ev && ev.detail && ev.detail.id === p.id) {
-      var msg = ev.detail.accion === 'add'
+      var msg = ev.detail.accion === 'add' && ev.detail.pendiente
+        ? 'EN TU CARRITO :: ELEGÍ TU ' + VLAB + ' AHÍ'
+        : ev.detail.accion === 'add'
         ? (unica ? 'EN TU CARRITO :: ES UNA SOLA' : VLAB + ' ' + esc(tlTxt(ev.detail.talle || talleSel)) + ' EN TU CARRITO')
         : ev.detail.accion === 'remove' ? 'LIBERADA :: VUELVE A LA SALA' : '';
       st.textContent = msg;
@@ -640,6 +657,7 @@ html.pmgate-ok #pmgate{display:none!important}
       if (ev.detail.accion === 'add') { var ds = d.querySelector('#pm-cart .st'); if (ds) ds.textContent = msg; }
     }
     if (ev && ev.detail && ev.detail.accion === 'clear') st.textContent = '';
+    waFicha();
     colchon();
   }
   pintar(); d.addEventListener('pm:cart', pintar);
@@ -677,8 +695,10 @@ html.pmgate-ok #pmgate{display:none!important}
     /* quiebres explícitos, sin separadores colgantes; el plazo de despacho no está en el brief: no se promete */
     '<div><span class="ic" aria-hidden="true">&gt;&gt;</span><span><b>ENVÍO A TODO EL PAÍS</b><br>CON SEGUIMIENTO<br>SALE DESDE LA BOUTIQUE</span></div>' +
     '<div><span class="ic" aria-hidden="true">##</span><span><b>RETIRO SIN CARGO · HONDURAS 4940</b><br>LUN — SÁB · 11:00 — 19:00<br><span class="reloj" id="f-reloj"></span></span></div>' +
-    '<div class="lk"><span class="ic" aria-hidden="true">::</span><span class="links"><button type="button" data-legal="envios">ENVÍOS</button><button type="button" data-legal="cambios">CAMBIOS</button><button type="button" data-legal="arrepentimiento">ARREPENTIMIENTO</button></span></div>';
+    '<div class="lk"><span class="ic" aria-hidden="true">::</span><span class="links"><button type="button" data-legal="envios">ENVÍOS</button><button type="button" data-legal="cambios">CAMBIOS</button><button type="button" data-legal="arrepentimiento">ARREPENTIMIENTO</button></span></div>' +
+    '<div class="wa"><span class="ic" aria-hidden="true">@@</span><span><b>¿DUDAS CON ESTA PIEZA?</b> <a id="f-wa" href="#" target="_blank" rel="noopener noreferrer">CONSULTALA POR WHATSAPP &gt;&gt;<span class="sr"> (se abre en una pestaña nueva)</span></a><br>EL MENSAJE LLEGA CON LA PIEZA, EL CÓDIGO Y TU ' + VLAB + '</span></div>';
   PM.reloj($('f-reloj'));
+  waFicha();
 
   $('ficha').hidden = false;
 
@@ -734,10 +754,6 @@ html.pmgate-ok #pmgate{display:none!important}
   $('conj').hidden = false;
 })();
 </script>
-
-
-
-
 <script id="pmgate-js">
 /* Cortina de acceso. Recuerda el ingreso por dispositivo. */
 (function(){
