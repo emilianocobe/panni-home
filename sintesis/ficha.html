@@ -593,7 +593,7 @@ html.pmgate-ok #pmgate{display:none!important}
   /* medidas: las de ESTA pieza; si la casa las publica por talle, la tabla sigue al talle elegido */
   function medTabla(tl) {
     var med = (tl && p.medPorTalle && p.medPorTalle[tl]) || p.med, mt = (tl && p.medPorTalle && p.medPorTalle[tl]) ? tl : p.medTalle;
-    if (!med || !med.length) return '<p class="nota">Esta pieza se mide en el taller antes de salir. Pedinos las medidas por Instagram <b>@pannimargot</b> o en Honduras 4940.</p>';
+    if (!med || !med.length) return '<p class="nota">Las medidas de esta pieza todavía no están cargadas. Pedilas por WhatsApp (abajo, en «¿Dudas con esta pieza?»), por Instagram <b>@pannimargot</b> o en Honduras 4940.</p>';
     /* sin talle elegido, la tabla no finge selección: es la referencia del talle publicado */
     return '<table class="med">' + (mt ? '<caption' + (multi ? '' : ' class="sr"') + '>Talle ' + esc(mt) + (multi && !tl ? ' · referencia' : '') + ' · en plano</caption>' : '<caption class="sr">Tomadas sobre esta pieza, en plano</caption>') + '<tbody>' +
       med.map(function (r) { return '<tr><th scope="row">' + esc(r[0]) + '</th><td>' + esc(r[1]) + '</td></tr>'; }).join('') + '</tbody></table>';
@@ -605,7 +605,7 @@ html.pmgate-ok #pmgate{display:none!important}
   var cuiReal = p.cui && p.cuiEstimado === false ? String(p.cui) : '';
   var cuiHTML = cuiReal
     ? '<p class="lava"><b>' + esc(cuiReal) + '</b></p>'
-    : '<p>Los cuidados de esta pieza van en su etiqueta interna. Cualquier duda, te la respondemos por Instagram <b>@pannimargot</b>.</p>';
+    : '<p>Los cuidados de esta pieza van en su etiqueta interna. Cualquier duda, te la respondemos por WhatsApp o por Instagram <b>@pannimargot</b>.</p>';
   if (p.sellos && p.sellos.indexOf('手描き') > -1) cuiHTML += '<p class="nota">Pieza pintada a mano: el trazo no se repite en otra.</p>';
 
   $('filas').innerHTML =
@@ -737,7 +737,7 @@ html.pmgate-ok #pmgate{display:none!important}
     var mqTel = window.matchMedia ? matchMedia('(max-width:767px)') : null;
     var pintarEy = function () {
       var n = mqTel && mqTel.matches ? Math.min(comp.length, 2) : comp.length;
-      $('conj-ey').innerHTML = n + (n === 1 ? ' PIEZA · OTRA CATEGORÍA · ' : ' PIEZAS · OTRAS CATEGORÍAS · ') + '<b>DE A UNA, DE A POCAS — NUNCA EN SERIE</b>';
+      $('conj-ey').innerHTML = n + (n === 1 ? ' PIEZA · OTRA TIPOLOGÍA · ' : ' PIEZAS · OTRAS TIPOLOGÍAS · ') + '<b>DE A UNA, DE A POCAS — NUNCA EN SERIE</b>';
     };
     pintarEy();
     if (mqTel) { if (mqTel.addEventListener) mqTel.addEventListener('change', pintarEy); else if (mqTel.addListener) mqTel.addListener(pintarEy); }

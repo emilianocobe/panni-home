@@ -359,7 +359,7 @@ html.pmgate-ok #pmgate{display:none!important}
         <div class="pgrid" id="sh-grid"></div>
         <div class="sh-vacio" id="sh-vacio" hidden>
           <h2 class="disp disp-m">Nada por acá<span lang="ja" aria-hidden="true">店</span></h2>
-          <p class="txt" id="sh-vacio-t">Con esa combinación no queda ninguna pieza en sala. Probá con otro talle, sacá un sello o cambiá de sección.</p>
+          <p class="txt" id="sh-vacio-t">Con esa combinación no queda ninguna pieza en sala. Probá con otro talle, sacá un sello o cambiá de tipología.</p>
           <button type="button" class="btn" id="sh-clear">LIMPIAR FILTROS</button>
         </div>
         <div class="sh-fin ey" id="sh-fin" hidden>
@@ -675,9 +675,9 @@ html.pmgate-ok #pmgate{display:none!important}
     if (!n) {
       var hayF = st.tl.length || st.se.length;
       $('#sh-vacio-t').textContent = st.q && !hayF
-        ? 'No hay ninguna pieza que responda a «' + st.q.toUpperCase() + '». Probá con otra palabra, o entrá a una sección y mirá lo que hay.'
-        : st.q ? 'Con esa búsqueda y esos filtros no queda ninguna pieza en sala. Sacá un filtro, probá otra palabra o cambiá de sección.'
-        : 'Con esa combinación no queda ninguna pieza en sala. Probá con otro talle, sacá un sello o cambiá de sección.';
+        ? 'No hay ninguna pieza que responda a «' + st.q.toUpperCase() + '». Probá con otra palabra, o entrá a una tipología y mirá lo que hay.'
+        : st.q ? 'Con esa búsqueda y esos filtros no queda ninguna pieza en sala. Sacá un filtro, probá otra palabra o cambiá de tipología.'
+        : 'Con esa combinación no queda ninguna pieza en sala. Probá con otro talle, sacá un sello o cambiá de tipología.';
       $('#sh-clear').textContent = st.q && !hayF ? 'QUITAR LA BÚSQUEDA' : 'LIMPIAR FILTROS';
     }
     $('#sh-fin-n').textContent = n;

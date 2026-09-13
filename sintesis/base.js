@@ -604,10 +604,10 @@
   var LEGAL = {
     /* sin cifras que la casa no aprobó (plazos de despacho o de cambio): se informan al confirmar el pedido. El botón de arrepentimiento sí es ley */
     envios: { t: 'Envíos', ja: '配送', p: ['<b>A todo el país</b> por correo, con seguimiento por link. El plazo de despacho se informa al confirmar el pedido.', 'También podés <b>retirar sin cargo en Honduras 4940</b>, Palermo Soho, de lunes a sábado de 11 a 19. Te avisamos cuando la pieza está lista.'] },
-    cambios: { t: 'Cambios y devoluciones', ja: '交換', p: ['Las condiciones y el plazo de cambio se informan al confirmar el pedido. Las piezas salen de a una, de a pocas — nunca en serie: escribinos por Instagram <b>@pannimargot</b> o pasá por la boutique y lo resolvemos con vos.', 'Para poder cambiarla tiene que volver en el mismo estado en que salió.'] },
+    cambios: { t: 'Cambios y devoluciones', ja: '交換', p: ['Las condiciones y el plazo de cambio se informan al confirmar el pedido. Las piezas salen de a una, de a pocas — nunca en serie: escribinos por WhatsApp o por Instagram <b>@pannimargot</b>, o pasá por la boutique y lo resolvemos con vos.', 'Para poder cambiarla tiene que volver en el mismo estado en que salió.'] },
     arrepentimiento: { t: 'Botón de arrepentimiento', ja: '撤回', p: ['Si compraste online, podés <b>revocar la compra dentro de los 10 días corridos de recibida la pieza</b>, sin dar motivos y sin costo. Te devolvemos el importe por el mismo medio de pago.', 'Completá el formulario y te respondemos por email con las instrucciones para la devolución.'], ley: 'LEY 24.240 · ART. 34 · RES. 424/2020', form: true },
     terminos: { t: 'Términos y condiciones', ja: '規約', p: ['Los precios están publicados en <b>pesos argentinos</b>. Cada pieza publicada está disponible en los talles que ves; salen de a una, de a pocas — nunca en serie.', 'Pagás con Mercado Pago o Nave; la financiación depende del medio de pago que elijas. Las fotos son de la pieza real; el color puede variar según la pantalla.'] },
-    talles: { t: 'Guía de talles y cuidados', ja: '寸法', p: ['La mayoría de las fichas trae las <b>medidas reales de esa pieza</b> (hombros, pecho, largo); si falta, pedilas por Instagram o en la boutique. Compará con una prenda tuya que te quede bien.', 'Cuidados: van en la <b>etiqueta interna</b> de cada pieza. Cualquier duda, te la respondemos por Instagram <b>@pannimargot</b>.'] }
+    talles: { t: 'Guía de talles y cuidados', ja: '寸法', p: ['La mayoría de las fichas trae las <b>medidas reales de esa pieza</b> (hombros, pecho, largo); si falta, pedilas por WhatsApp, por Instagram o en la boutique. Compará con una prenda tuya que te quede bien.', 'Cuidados: van en la <b>etiqueta interna</b> de cada pieza. Cualquier duda, te la respondemos por WhatsApp o por Instagram <b>@pannimargot</b>.'] }
   };
   function legalHTML() {
     return '<div id="pm-legal" class="pm-legal" role="dialog" aria-modal="true" aria-labelledby="pm-legal-t" hidden><div class="in">' +
@@ -657,7 +657,7 @@
       '<div class="pm-hd-r">' +
       '<form class="pm-buscar" role="search" action="./shop.html" method="get">' +
       '<button type="button" class="pm-buscar-tg" aria-expanded="false" aria-controls="pm-q">BUSCAR</button>' +
-      '<label for="pm-q">BUSCAR</label><input id="pm-q" type="search" name="q" autocomplete="off" placeholder="PIEZA, CATEGORÍA…" aria-label="Buscar piezas"></form>' +
+      '<label for="pm-q">BUSCAR</label><input id="pm-q" type="search" name="q" autocomplete="off" placeholder="PIEZA, TIPOLOGÍA…" aria-label="Buscar piezas"></form>' +
       /* teléfono: [ ≡ ] abre la nav como panel a pantalla (base.css §17); en desktop no se pinta */
       '<button type="button" class="pm-menu-tg" aria-expanded="false" aria-controls="pm-nav" aria-label="Abrir el menú"><span class="abrir" aria-hidden="true">[ &#8801; ]</span><span class="cerrar" aria-hidden="true">[ &times; ]</span></button>' +
       '<button type="button" class="pm-carrito" data-n="0" aria-haspopup="dialog" aria-controls="pm-cart" aria-label="Carrito: 0 piezas"><span class="txt">CARRITO</span><span class="n" aria-hidden="true">0</span></button>' +
@@ -678,7 +678,7 @@
   }
   function termHTML() {
     return '<div class="term" id="pm-term" aria-label="Estado de la casa">' +
-      '<span class="term-hola" id="pm-term-hola" hidden>BIENVENIDO DE VUELTA ::</span>' +
+      '<span class="term-hola" id="pm-term-hola" hidden>HOLA DE NUEVO ::</span>' +
       '<span class="term-dial" aria-hidden="true" id="pm-term-dial"></span>' +
       '<span id="pm-term-pas"></span>' +
       '<span class="term-vistas"><b id="pm-term-vistas">0</b> <span id="pm-term-vistas-t">PIEZAS VISTAS</span></span>' +
@@ -934,7 +934,7 @@
     reloj($('#pm-term-reloj')); reloj($('#pm-ft-reloj'));
     pintarTerminal();
     scramble($('#pm-term-dial'), 'BUENOS AIRES//デザイナー ..DESIGNER >>HONDURAS4940##');
-    /* «BIENVENIDO DE VUELTA» solo en la primera página de una sesión nueva, y solo si ya había pasaporte de una visita anterior
+    /* «HOLA DE NUEVO» solo en la primera página de una sesión nueva, y solo si ya había pasaporte de una visita anterior
        (se evalúa antes de sellar esta página; dentro de la misma pestaña no se repite) */
     try {
       if (!sessionStorage.getItem('pm_ses')) {
