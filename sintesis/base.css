@@ -121,13 +121,6 @@ input::placeholder,textarea::placeholder{color:var(--fg-2);opacity:1}
 /* ALTERNATIVA DE TÍTULOS MÁS CHICOS (weekly 08/09: Sofía los sintió grandes; Emiliano prometió la comparación).
    Se activa con el conmutador de revisión; la marca decide cuál queda. */
 html[data-titulos="chicos"]{--t-7:clamp(20px,2.2vw,30px);--t-8:clamp(28px,4.2vw,60px);--t-9:clamp(38px,7vw,108px)}
-.pm-rev{position:fixed;left:var(--s-4);bottom:var(--s-4);z-index:80;display:flex;align-items:stretch;border:1px solid var(--cromo-line);background:var(--cromo-bg);font-family:var(--f-mono);font-size:var(--t-0);letter-spacing:.16em;color:var(--cromo-fg)}
-.pm-rev .k{display:flex;align-items:center;padding:0 var(--s-3);color:var(--cromo-fg-2,var(--cromo-fg));border-right:1px solid var(--cromo-line)}
-.pm-rev button{min-height:32px;padding:0 var(--s-3);border:0;background:none;color:var(--cromo-fg);font:inherit;letter-spacing:inherit;cursor:pointer}
-.pm-rev button[aria-pressed="true"]{background:var(--cromo-fg);color:var(--cromo-bg)}
-@media (hover:none),(pointer:coarse){.pm-rev button{min-height:44px}}
-@media (max-width:767px){body:has(.cta) .pm-rev{bottom:88px}}
-@media print{.pm-rev{display:none}}
 .mono{font-family:var(--f-mono);font-weight:400}
 .ey{font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.18em;text-transform:uppercase;color:var(--fg-2);line-height:1.6}
 .ey b{color:var(--fg);font-weight:400}
@@ -186,7 +179,8 @@ html[data-pasaporte="completo"] #grain{animation-play-state:paused;opacity:.03}
   padding-inline:var(--gut);max-width:var(--max);margin-inline:auto;
 }
 .pm-lk{display:inline-flex;align-items:center;height:44px;justify-self:start}
-.pm-lk svg{height:20px;width:auto;aspect-ratio:640/103;fill:currentColor;color:var(--cromo-fg)}
+/* el isologotipo manda en la barra: la marca lo pidió más presente (weekly 17/09) */
+.pm-lk svg{height:30px;width:auto;aspect-ratio:640/103;fill:currentColor;color:var(--cromo-fg)}
 .pm-lockup-hd{}
 
 .pm-nav{display:flex;align-items:center;gap:clamp(16px,2vw,32px);justify-self:center}
@@ -593,7 +587,7 @@ body{animation:pm-entrada .22s cubic-bezier(.4,0,.2,1) both}
   .pm-hd-row{height:auto;grid-template-rows:var(--hd) 48px}
   .pm-hd-r{grid-column:2;grid-row:1}
   .pm-lk{grid-column:1;grid-row:1}
-  .pm-lk svg{height:18px}
+  .pm-lk svg{height:24px}
   .pm-buscar{position:relative}
   .pm-buscar label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
   .pm-buscar input{position:absolute;right:0;top:var(--hd);width:min(320px,calc(100vw - var(--gut) * 2));height:48px;padding:0 var(--s-4);background:var(--cromo-bg);border:1px solid var(--cromo-line);display:none}
@@ -608,7 +602,7 @@ body{animation:pm-entrada .22s cubic-bezier(.4,0,.2,1) both}
   :root{--hd:60px;--gut:16px;--drawer:100vw}
   /* ── teléfono: UNA barra (lockup · [ ≡ ] · carrito); la nav es un panel a pantalla y el buscador vive adentro ── */
   .pm-hd-row{height:var(--hd);grid-template-rows:var(--hd);grid-template-columns:auto 1fr;gap:var(--s-3)}
-  .pm-lk svg{height:16px}
+  .pm-lk svg{height:20px}
   .pm-hd-r{gap:var(--s-1)}
   .pm-carrito{padding-left:0;min-width:44px;justify-content:center}
   .pm-carrito .txt{display:none}

@@ -9,8 +9,9 @@
   'use strict';
   var d = document, w = window, H = d.documentElement;
   H.classList.add('js');
-  /* revisión de títulos (weekly 08/09): la elección de la marca se recuerda entre páginas */
-  try { if (w.localStorage.getItem('pm_titulos') === 'chicos') H.setAttribute('data-titulos', 'chicos'); } catch (e) {}
+  /* títulos: la marca eligió GRANDES (weekly 17/09). El conmutador de revisión salió;
+     queda la escala chica en base.css §6 por si alguna vez se necesita. */
+  try { w.localStorage.removeItem('pm_titulos'); } catch (e) {}
 
   /* ─── utilidades ──────────────────────────────────────────────────── */
   var RM = false, FINE = false;
@@ -810,22 +811,7 @@
     d.body.appendChild(el(legalHTML()));
     d.body.appendChild(el('<div id="grain" aria-hidden="true"></div>'));
     d.body.appendChild(el('<div id="cur" aria-hidden="true"></div>'));
-    /* conmutador de revisión: títulos grandes (identidad, defendidos por Javier) o chicos (la alternativa que pidió Sofía).
-       No es parte del sitio final: se saca cuando la marca decide. */
-    (function () {
-      var chicos = H.getAttribute('data-titulos') === 'chicos';
-      var r = el('<div class="pm-rev" role="group" aria-label="Revisión: tamaño de los títulos"><span class="k">TÍTULOS</span>' +
-        '<button type="button" data-t="grandes" aria-pressed="' + (!chicos) + '">GRANDES</button>' +
-        '<button type="button" data-t="chicos" aria-pressed="' + chicos + '">CHICOS</button></div>');
-      r.addEventListener('click', function (e) {
-        var b = e.target.closest('button[data-t]'); if (!b) return;
-        var c = b.getAttribute('data-t') === 'chicos';
-        if (c) H.setAttribute('data-titulos', 'chicos'); else H.removeAttribute('data-titulos');
-        try { w.localStorage.setItem('pm_titulos', c ? 'chicos' : 'grandes'); } catch (e2) {}
-        $$('button[data-t]', r).forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
-      });
-      d.body.appendChild(r);
-    })();
+    /* el conmutador de títulos salió el 17/09: la marca eligió GRANDES (Panni y Sofía, weekly) */
     d.body.appendChild(el('<div id="cur-ring" aria-hidden="true"></div>'));
 
     // eventos del cromo
