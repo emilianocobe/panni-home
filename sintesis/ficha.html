@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://acdn-us.mitiendanube.com">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./base.css">
 <style>
 /* ═══ FICHA · patrón Demobaza sobre blanco: la foto manda, la data se corre al costado ═══ */
@@ -403,6 +403,7 @@ html.pmgate-ok #pmgate{display:none!important}
   </div>
 </main>
 <script src="./catalogo.js"></script>
+<script src="./joyeria.js"></script>
 <script src="./base.js"></script>
 <script>
 (function () {
@@ -493,6 +494,8 @@ html.pmgate-ok #pmgate{display:none!important}
   /* solas: la última toma a ≥768 si N es impar; solasM: lo mismo en teléfono, donde la hero ocupa fila propia */
   var solas = [], solasM = [];
   if (N > 1) { if (N % 2 === 1) solas[N - 1] = true; if ((N - 1) % 2 === 1) solasM[N - 1] = true; }
+  /* una sola toma (hoy, las joyas de la vista previa): centrada, no media galería vacía */
+  else if (N === 1) solas[0] = true;
   /* el pie de cada toma: numero sobre el total, SKU y sello. Anclado a la foto, no al puntero. */
   var _u = PM.esUnica(p), _ul = PM.esUltima(p), _tv = PM.vars(p), _dis = !!PM.dis(p);
   var _sello = _u ? '<span class="ja" lang="ja">一点物</span>'
@@ -525,7 +528,7 @@ html.pmgate-ok #pmgate{display:none!important}
   var tls = PM.vars(p), multi = tls.length > 1, unica = PM.esUnica(p), ultima = PM.esUltima(p), unico = !esDis && tls.length === 1 && tls[0] === 'U';
   /* línea VERAZ: «PIEZA ÚNICA · 1/1» · «QUEDA UNA · TALLE n» · «TALLES 1 · 2 · 3» — nunca una cifra de edición (el stock no es una tirada) */
   var tlsTxt = unico ? 'TALLE ÚNICO' : esDis ? tls.length + ' DISEÑOS · ' + tls.join(' · ').toUpperCase() : (multi ? 'TALLES ' : 'TALLE ') + tls.map(PM.talleTxt).join(' · ');
-  var edLinea = unica ? '<b>PIEZA ÚNICA</b> · 1/1' : ultima ? '<b>QUEDA UNA</b> · ' + esc(tlsTxt) : '<b>' + esc(tlsTxt) + '</b>';  var ens = $('ensayo'); ens.innerHTML = h;
+  var edLinea = p.aPedido ? '<b>A PEDIDO</b> · ' + esc(p.plazo || '') : unica ? '<b>PIEZA ÚNICA</b> · 1/1' : ultima ? '<b>QUEDA UNA</b> · ' + esc(tlsTxt) : '<b>' + esc(tlsTxt) + '</b>';  var ens = $('ensayo'); ens.innerHTML = h;
   /* las tomas que sobran entran con un solo gesto, al pie del ensayo */
   if (ocultas.length) {
     var mas = PM.el('<div class="ens-mas"><button type="button" class="lnk" id="ens-mas">VER LAS ' + todas.length + ' TOMAS ::</button></div>');
@@ -556,7 +559,9 @@ html.pmgate-ok #pmgate{display:none!important}
 
   /* cabecera */
   $('d-cat').innerHTML = '<a href="' + TERR(p.cat) + '"><b>' + esc(CATNM(p.cat)) + '</b></a>' + (p.kj ? '<span lang="ja" aria-hidden="true">' + esc(p.kj) + '</span>' : '') +
-    (p.sellos && p.sellos.indexOf('手描き') > -1 ? '<span class="pint">PINTADA A MANO EN EL TALLER</span>' : '');
+    (p.sellos && p.sellos.indexOf('手描き') > -1 ? '<span class="pint">PINTADA A MANO EN EL TALLER</span>' : '') +
+    (p.marca === 'saga' ? '<span class="d-marca"><img src="./fotos/saga/iso-positivo.webp" alt="" width="140" height="400">SAGA JWLS</span>' : '');
+  if (p.marca === 'saga') d.documentElement.setAttribute('data-marca', 'saga');
   $('d-nm').textContent = p.nm;
   $('d-sellos').innerHTML = PM.sellosHTML(p.sellos);
   /* «PIEZA ÚNICA · 1/1» solo si la casa la declara; «QUEDA UNA · TALLE n» si queda una; si no, los talles con stock (ver arriba) */
@@ -575,15 +580,17 @@ html.pmgate-ok #pmgate{display:none!important}
   var agot = (p.tlsAgotados || []).map(String).filter(function (t) { return !/^xs$/i.test(t); });
   var talleSel = multi ? (PM.cart.talleDe(p.id) || null) : tls[0];   /* si ya está en el carrito, arranca con ese talle */
   var talleHTML;
-  if (unico) talleHTML = '<p class="talle"><b>ÚNICO</b><span>UN SOLO TALLE</span><button type="button" class="lnk" data-legal="talles">GUÍA DE TALLES</button></p>';
+  var GUIA_T = p.aPedido ? 'talles-anillos' : 'talles';
+  if (p.aPedido && unico) talleHTML = '<p class="talle"><b>SIN TALLE</b><span>SE HACE A PEDIDO</span></p>';
+  else if (unico) talleHTML = '<p class="talle"><b>ÚNICO</b><span>UN SOLO TALLE</span><button type="button" class="lnk" data-legal="talles">GUÍA DE TALLES</button></p>';
   /* una pieza única no «es el único talle que queda»: es su talle (sin contradecir el 1/1 de arriba) */
   else if (!multi) talleHTML = '<p class="talle"><b>' + esc(tls[0]) + '</b><span>' + (unica ? 'SU TALLE' : agot.length ? 'EL ÚNICO TALLE QUE QUEDA' : 'UN SOLO TALLE') + '</span><button type="button" class="lnk" data-legal="talles">GUÍA DE TALLES</button></p>';
-  else talleHTML = '<fieldset class="tl-sel" id="tl-sel"' + (esDis ? '' : ' aria-describedby="tl-nota"') + '><legend>' + (esDis ? 'Elegí tu diseño' : 'Elegí tu talle') + '</legend>' +
-    tls.map(function (t) { return '<label><input type="radio" name="talle" value="' + esc(t) + '"' + (talleSel === t ? ' checked' : '') + '><span>' + esc(t) + '</span></label>'; }).join('') +
+  else talleHTML = '<fieldset class="tl-sel' + (p.usa ? ' anillo' : '') + '" id="tl-sel"' + (esDis ? '' : ' aria-describedby="tl-nota"') + '><legend>' + (esDis ? 'Elegí tu diseño' : 'Elegí tu talle') + '</legend>' +
+    tls.map(function (t) { return '<label><input type="radio" name="talle" value="' + esc(t) + '"' + (talleSel === t ? ' checked' : '') + '><span>' + esc(t) + (p.usa && p.usa[t] ? '<small aria-hidden="true">USA ' + esc(p.usa[t]) + '</small><span class="sr"> (USA ' + esc(p.usa[t]) + ')</span>' : '') + '</span></label>'; }).join('') +
     (esDis ? '' : agot.map(function (t) { return '<span class="ag" aria-hidden="true">' + esc(t) + '</span><span class="sr">Talle ' + esc(t) + ' agotado</span>'; }).join('')) +
-    '<button type="button" class="lnk" data-legal="talles">GUÍA DE TALLES</button></fieldset>';
+    '<button type="button" class="lnk" data-legal="' + GUIA_T + '">GUÍA DE TALLES</button></fieldset>';
   /* una sola línea: «elegí el talle antes de agregar» ya lo dice el CTA (pm:talle) cuando hace falta */
-  var talleNota = esDis ? 'Talle único, cozysize. El diseño que elegís es el que sale del taller.' : unico ? '' : 'Compará las medidas con una prenda tuya que te quede bien.';
+  var talleNota = p.aPedido ? (unico ? '' : 'Se hace a pedido en el talle que elijas. Elegís en talle argentino; debajo de cada uno, su equivalente USA.') : esDis ? 'Talle único, cozysize. El diseño que elegís es el que sale del taller.' : unico ? '' : 'Compará las medidas con una prenda tuya que te quede bien.';
 
   /* materiales */
   var matHTML = (p.mat && p.mat.length)
@@ -592,10 +599,11 @@ html.pmgate-ok #pmgate{display:none!important}
 
   /* medidas: las de ESTA pieza; si la casa las publica por talle, la tabla sigue al talle elegido */
   function medTabla(tl) {
+    if (p.aPedido && p.medPorTalle && !(tl && p.medPorTalle[tl])) return '<p class="nota">Elegí tu talle y acá ves su diámetro interno, el desarrollo y el equivalente USA.</p>';
     var med = (tl && p.medPorTalle && p.medPorTalle[tl]) || p.med, mt = (tl && p.medPorTalle && p.medPorTalle[tl]) ? tl : p.medTalle;
     if (!med || !med.length) return '<p class="nota">Las medidas de esta pieza todavía no están cargadas. Pedilas por WhatsApp (abajo, en «¿Dudas con esta pieza?»), por Instagram <b>@pannimargot</b> o en Honduras 4940.</p>';
     /* sin talle elegido, la tabla no finge selección: es la referencia del talle publicado */
-    return '<table class="med">' + (mt ? '<caption' + (multi ? '' : ' class="sr"') + '>Talle ' + esc(mt) + (multi && !tl ? ' · referencia' : '') + ' · en plano</caption>' : '<caption class="sr">Tomadas sobre esta pieza, en plano</caption>') + '<tbody>' +
+    return '<table class="med">' + (mt ? '<caption' + (multi ? '' : ' class="sr"') + '>Talle ' + esc(mt) + (multi && !tl ? ' · referencia' : '') + (p.aPedido ? '' : ' · en plano') + '</caption>' : '<caption class="sr">Tomadas sobre esta pieza, en plano</caption>') + '<tbody>' +
       med.map(function (r) { return '<tr><th scope="row">' + esc(r[0]) + '</th><td>' + esc(r[1]) + '</td></tr>'; }).join('') + '</tbody></table>';
   }
   var medHTML = '<div id="med-box">' + medTabla(talleSel) + '</div>';
@@ -603,7 +611,7 @@ html.pmgate-ok #pmgate{display:none!important}
   /* cuidados: SOLO si la descripción real de la pieza los trae (cui sin cuiEstimado). Si no —hoy, ninguna—, la ficha no responde
      «¿se lava?» por su cuenta: remite a la etiqueta interna y a Instagram. Nada inventado por regla de material. */
   var cuiReal = p.cui && p.cuiEstimado === false ? String(p.cui) : '';
-  var cuiHTML = cuiReal
+  var cuiHTML = p.aPedido ? '<p>Cualquier duda sobre cómo cuidarla, te la respondemos por WhatsApp o por Instagram <b>@pannimargot</b>.</p>' : cuiReal
     ? '<p class="lava"><b>' + esc(cuiReal) + '</b></p>'
     : '<p>Los cuidados de esta pieza van en su etiqueta interna. Cualquier duda, te la respondemos por WhatsApp o por Instagram <b>@pannimargot</b>.</p>';
   if (p.sellos && p.sellos.indexOf('手描き') > -1) cuiHTML += '<p class="nota">Pieza pintada a mano: el trazo no se repite en otra.</p>';
@@ -611,7 +619,7 @@ html.pmgate-ok #pmgate{display:none!important}
   $('filas').innerHTML =
     '<section class="fila"><span class="no" aria-hidden="true">01</span><h2>' + (esDis ? 'DISEÑO DE ESTA PIEZA' : multi ? 'TU TALLE' : 'TALLE DE ESTA PIEZA') + '</h2><div class="cu">' + talleHTML + (talleNota ? '<p class="nota" id="tl-nota">' + talleNota + '</p>' : '') + '</div></section>' +
     '<section class="fila"><span class="no" aria-hidden="true">02</span><h2>MATERIALES</h2><div class="cu">' + matHTML + '</div></section>' +
-    '<section class="fila"><span class="no" aria-hidden="true">03</span><h2>MEDIDAS DE ESTA PIEZA</h2><div class="cu">' + medHTML + '</div></section>' +
+    '<section class="fila"><span class="no" aria-hidden="true">03</span><h2>' + (p.aPedido && p.medPorTalle ? 'MEDIDA DE TU TALLE' : 'MEDIDAS DE ESTA PIEZA') + '</h2><div class="cu">' + medHTML + '</div></section>' +
     '<section class="fila"><span class="no" aria-hidden="true">04</span><h2>CUIDADOS</h2><div class="cu">' + cuiHTML + '</div></section>';
 
   /* colchón del CTA fijo (≤1023): se mide para que la barra no tape el pie del footer al aparecer el estado */

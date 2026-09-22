@@ -706,3 +706,45 @@ body{animation:pm-entrada .22s cubic-bezier(.4,0,.2,1) both}
   #grain,#cur,#cur-ring,.pm-hd,.pm-ft,#pm-velo,.pm-cart,.marq{display:none!important}
   body{background:#fff;color:#000}
 }
+
+/* ─── 22 · SAGA JWLS · la joyería de Sofía dentro de la casa (T09) ──────
+   Una sola excepción de identidad, acotada: cambia la tipografía (Jost, la libre más cercana a la Futura del manual,
+   autorizada por Sofía 21/09) y aparece el logotipo con su degradé metálico. Retícula, grilla, cursor, fotos en
+   blanco y negro y componentes siguen siendo los de Panni. El logo positivo va en multiply sobre claro (regla del manual). */
+html{--f-saga:'Jost','Futura','Century Gothic','Avenir Next',system-ui,sans-serif}
+.sh-saga{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr) minmax(0,.7fr);gap:var(--s-8) clamp(24px,4vw,64px);align-items:end;
+  padding-block:var(--s-6) var(--s-12);margin-bottom:var(--s-8);border-bottom:1px solid var(--line)}
+.sg-logo img{display:block;width:100%;max-width:360px;height:auto;mix-blend-mode:multiply}
+.sg-txt{font-family:var(--f-saga);color:var(--fg)}
+.sg-ey{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s-2) var(--s-3);font-size:var(--t-2);letter-spacing:.42em;text-transform:uppercase;color:var(--fg-2)}
+.sg-ey .prev{border:1px solid currentColor;padding:2px 6px;letter-spacing:.2em;font-family:var(--f-mono)}
+.sg-rel{margin-top:var(--s-4);max-width:26ch;font-size:clamp(20px,2.1vw,30px);font-weight:300;line-height:1.28;letter-spacing:.01em}
+.sg-dat{list-style:none;margin:var(--s-6) 0 0;padding:0;display:grid;gap:var(--s-3)}
+.sg-dat li{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px var(--s-3);padding-top:var(--s-3);border-top:1px solid var(--line);font-size:var(--t-2);letter-spacing:.26em;text-transform:uppercase}
+.sg-dat b{font-weight:500}
+.sg-dat span{color:var(--fg-2)}
+.sg-dat .lnk{letter-spacing:.2em;font:inherit;color:var(--fg)}
+.sg-foto{margin:0;position:relative;aspect-ratio:9/14;overflow:hidden;background:var(--surface)}
+.sg-foto .pm-img{position:absolute;inset:0;object-position:50% 40%}
+@media (hover:hover){.sg-foto:hover .pm-img{filter:grayscale(0) contrast(1)}}
+.sg-foto:active .pm-img{filter:grayscale(0)}
+@media (max-width:1023px){
+  .sh-saga{grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);align-items:start}
+  .sg-logo{grid-column:1}.sg-txt{grid-column:1}.sg-foto{grid-column:2;grid-row:1 / span 2}
+  .sg-logo img{max-width:260px}
+}
+@media (max-width:599px){
+  .sh-saga{grid-template-columns:1fr;gap:var(--s-6)}
+  .sg-foto{display:none}
+  .sg-logo img{max-width:200px}
+}
+/* ficha de una joya: la línea de marca y el nombre en la tipografía de Saga */
+.d-marca{display:inline-flex;align-items:center;gap:var(--s-2);margin-left:var(--s-3);font-family:var(--f-saga);font-size:var(--t-2);letter-spacing:.42em;text-transform:uppercase;color:var(--fg-2)}
+.d-marca img{height:22px;width:auto;mix-blend-mode:multiply}
+html[data-marca="saga"] #d-nm{font-family:var(--f-saga);font-weight:300;letter-spacing:.04em;text-transform:none}
+.tl-sel.anillo label span{display:inline-flex;flex-direction:column;align-items:center;line-height:1.05}
+.tl-sel.anillo label small{font-size:var(--t-0);letter-spacing:.06em;color:var(--fg-2);margin-top:2px}
+/* guía de talles de anillos (diálogo legal) */
+.pm-guia{width:100%;border-collapse:collapse;margin-top:var(--s-4);font-family:var(--f-mono);font-size:var(--t-1);letter-spacing:.08em}
+.pm-guia th,.pm-guia td{padding:6px 8px;border-bottom:1px solid var(--cromo-line);text-align:left;font-weight:400}
+.pm-guia thead th{color:var(--cromo-fg-2)}

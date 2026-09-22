@@ -266,6 +266,8 @@
   function esUltima(p) { return !!(p && !esUnica(p) && (p.ultima === true || (p.ultima == null && p.stock === 1))); }
   /* línea veraz de la pieza: «PIEZA ÚNICA · 1/1» (declarada) · «QUEDA UNA · TALLE n» · «TALLES 1 · 2 · 3» (sin cifra de edición) */
   function lineaTxt(p) {
+    /* joyería (Saga Jwls): no hay stock ni tirada, se hace a pedido en el talle que se elige */
+    if (p && p.aPedido) return 'A PEDIDO · ' + (p.plazo || '10 A 15 DÍAS HÁBILES');
     var d = disDe(p);
     if (d) return d.length + ' DISEÑOS · ' + d.join(' · ').toUpperCase();
     var t = tallesDe(p), tt = t.length > 1 ? 'TALLES ' + t.map(talleTxt).join(' · ') : 'TALLE ' + talleTxt(t[0]);
@@ -426,7 +428,7 @@
               '<div class="der"><span class="pr">' + fmt(p.pr) + '</span>' +
               '<button type="button" class="quitar" data-quitar="' + esc(claveDe(p.id, PEND)) + '" aria-label="Quitar ' + esc(p.nm) + ' del carrito">QUITAR</button></div></li>';
           }
-          var linea = unica ? 'RESERVADA — ES ÚNICA' + (e.tl !== 'U' ? ' · ' + varLabel(p) + ' ' + esc(e.tl) : '') : (esUltima(p) ? 'RESERVADA — QUEDA UNA' : 'EN TU CARRITO') + ' · ' + varLabel(p) + ' ' + esc(varTxt(p, e.tl));
+          var linea = p.aPedido ? 'A PEDIDO · ' + esc(p.plazo || '') + (e.tl !== 'U' ? ' · TALLE ' + esc(e.tl) + (p.usa && p.usa[e.tl] ? ' (USA ' + esc(p.usa[e.tl]) + ')' : '') : '') : unica ? 'RESERVADA — ES ÚNICA' + (e.tl !== 'U' ? ' · ' + varLabel(p) + ' ' + esc(e.tl) : '') : (esUltima(p) ? 'RESERVADA — QUEDA UNA' : 'EN TU CARRITO') + ' · ' + varLabel(p) + ' ' + esc(varTxt(p, e.tl));
           return '<li class="pm-ci" data-id="' + esc(p.id) + '" data-tl="' + esc(e.tl) + '">' +
             '<a class="ph" href="./ficha.html?id=' + encodeURIComponent(p.id) + '" tabindex="-1" aria-hidden="true">' + pic(p, 0, { alt: '', cls: '' }) + '</a>' +
             '<div><a class="nm" href="./ficha.html?id=' + encodeURIComponent(p.id) + '">' + esc(p.nm) + '</a>' +
@@ -608,6 +610,7 @@
     cambios: { t: 'Cambios y devoluciones', ja: '交換', p: ['Las condiciones y el plazo de cambio se informan al confirmar el pedido. Las piezas salen de a una, de a pocas — nunca en serie: escribinos por WhatsApp o por Instagram <b>@pannimargot</b>, o pasá por la boutique y lo resolvemos con vos.', 'Para poder cambiarla tiene que volver en el mismo estado en que salió.'] },
     arrepentimiento: { t: 'Botón de arrepentimiento', ja: '撤回', p: ['Si compraste online, podés <b>revocar la compra dentro de los 10 días corridos de recibida la pieza</b>, sin dar motivos y sin costo. Te devolvemos el importe por el mismo medio de pago.', 'Completá el formulario y te respondemos por email con las instrucciones para la devolución.'], ley: 'LEY 24.240 · ART. 34 · RES. 424/2020', form: true },
     terminos: { t: 'Términos y condiciones', ja: '規約', p: ['Los precios están publicados en <b>pesos argentinos</b>. Cada pieza publicada está disponible en los talles que ves; salen de a una, de a pocas — nunca en serie.', 'Pagás con Mercado Pago o Nave; la financiación depende del medio de pago que elijas. Las fotos son de la pieza real; el color puede variar según la pantalla.'] },
+    'talles-anillos': { t: 'Guía de talles · anillos', ja: '寸法', p: ['Los anillos de <b>Saga Jwls</b> se hacen a pedido en el talle que elijas. Elegís en <b>talle argentino</b>; al lado tenés el equivalente USA y los milímetros.', '<b>Cómo medir:</b> apoyá sobre una regla un anillo que te quede cómodo y medí solo el <b>diámetro interno</b>, de borde interno a borde interno. Si no tenés uno, medí el contorno de tu dedo con un hilo y comparalo con la columna «desarrollo».'], guia: true },
     talles: { t: 'Guía de talles y cuidados', ja: '寸法', p: ['La mayoría de las fichas trae las <b>medidas reales de esa pieza</b> (hombros, pecho, largo); si falta, pedilas por WhatsApp, por Instagram o en la boutique. Compará con una prenda tuya que te quede bien.', 'Cuidados: van en la <b>etiqueta interna</b> de cada pieza. Cualquier duda, te la respondemos por WhatsApp o por Instagram <b>@pannimargot</b>.'] }
   };
   function legalHTML() {
@@ -619,6 +622,8 @@
     var L = LEGAL[tema]; if (!L) return;
     $('#pm-legal-t').innerHTML = esc(L.t) + (L.ja ? ' <span lang="ja" aria-hidden="true">' + L.ja + '</span>' : '');
     var h = L.p.map(function (x) { return '<p>' + x + '</p>'; }).join('');
+    if (L.guia && w.CATALOGO && w.CATALOGO.saga) h += '<table class="pm-guia"><thead><tr><th scope="col">TALLE</th><th scope="col">DIÁMETRO INTERNO</th><th scope="col">DESARROLLO</th><th scope="col">USA</th></tr></thead><tbody>' +
+      w.CATALOGO.saga.guia.map(function (g) { return '<tr><th scope="row">' + esc(g[0]) + '</th><td>' + esc(g[1]) + ' mm</td><td>' + esc(g[2]) + ' mm</td><td>' + esc(g[3]) + '</td></tr>'; }).join('') + '</tbody></table>';
     if (L.ley) h += '<p class="ley">' + esc(L.ley) + '</p>';
     if (L.form) h += '<form id="pm-arrep" novalidate><label class="pm-campo"><span>NÚMERO DE PEDIDO</span><input type="text" name="pedido" required placeholder="PM-…"></label>' +
       '<label class="pm-campo"><span>EMAIL DE LA COMPRA</span><input type="email" name="email" required autocomplete="email"></label>' +
