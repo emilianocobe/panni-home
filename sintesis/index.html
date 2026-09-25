@@ -352,8 +352,8 @@ html.pmgate-ok #pmgate{display:none!important}
     <div class="hero-txt">
       <div>
         <p class="ey hero-dial" id="hero-dial" aria-hidden="true">BUENOS AIRES//<span lang="ja">デザイナー</span> ..DESIGNER &gt;&gt;HONDURAS4940##</p>
-        <h1 id="h1"><span>He visto</span><span>personas</span><span class="ja" lang="ja" aria-hidden="true">ジェンダーレス</span></h1>
-        <p class="lead rv rv-d1">Un futuro donde la lucha por la igualdad ya terminó. Piezas de a una, de a pocas — nunca en serie —, sin género, hechas en Buenos Aires.</p>
+        <h1 id="h1"><span>Genderless</span><span>fashion</span><span class="ja" lang="ja" aria-hidden="true">ジェンダーレス・ファッション</span></h1>
+        <p class="lead rv rv-d1">La misión es vestir personas, personas que buscan ser parte de este universo el cual complementa su identidad. Buscamos crear un universo distintivo en el que cada persona sienta que resalta su individualidad.</p>
         <div class="hero-cta rv rv-d2">
           <a class="btn fill lg" href="./shop.html">ENTRAR AL SHOP <span lang="ja" aria-hidden="true">店</span></a>
           <a class="lnk" href="./casa.html">EL MANIFIESTO <span lang="ja" aria-hidden="true">家</span></a>
@@ -371,9 +371,9 @@ html.pmgate-ok #pmgate{display:none!important}
   <section class="sec" aria-labelledby="t-secs">
     <div class="wrap">
       <div class="sec-h">
-        <h2 id="t-secs" class="rv">Tipologías <span lang="ja" aria-hidden="true">種類</span></h2>
+        <h2 id="t-secs" class="rv">Shop <span lang="ja" aria-hidden="true">店</span></h2>
         <div class="der rv rv-d1">
-          <p class="ey">SEIS TIPOLOGÍAS <span lang="ja" aria-hidden="true">店</span></p>
+          <p class="ey">SEIS TIPOLOGÍAS <span lang="ja" aria-hidden="true">種類</span></p>
           <a class="lnk" href="./shop.html">VER TODO EL SHOP</a>
           <a class="lnk" href="./shop.html?cat=ACCESORIOS">ACCESORIOS <span lang="ja" aria-hidden="true">小物</span></a>
           <a class="lnk" href="./shop.html?cat=JOYERIA">JOYERÍA <span lang="ja" aria-hidden="true">宝飾</span></a>
@@ -403,9 +403,9 @@ html.pmgate-ok #pmgate{display:none!important}
     <div class="in">
       <div class="mundo-txt">
         <p class="ey">MANIFIESTO <span lang="ja" aria-hidden="true">家</span></p>
-        <h2 id="t-mundo" class="mundo-q rv">Somos todos <em>carbono, hidrógeno, oxígeno, nitrógeno.</em></h2>
-        <div class="mundo-atoms rv rv-d1" aria-hidden="true"><span><b>C</b>6</span><span><b>H</b>1</span><span><b>O</b>8</span><span><b>N</b>7</span></div>
-        <p class="txt rv rv-d2" style="color:var(--fg-2)">Se corta, se cose, se pinta y sale. Lo pintado a mano lo pinta el pintor de la casa, trazo por trazo.</p>
+        <h2 id="t-mundo" class="mundo-q rv">Somos todos <em>Carbono, Hidrógeno, Oxígeno, Nitrógeno, Phósforo y Azufre.</em></h2>
+        <div class="mundo-atoms rv rv-d1" aria-hidden="true"><span><b>C</b>6</span><span><b>H</b>1</span><span><b>O</b>8</span><span><b>N</b>7</span><span><b>P</b>15</span><span><b>S</b>16</span></div>
+        <p class="txt rv rv-d2" style="color:var(--fg-2)">Todos venimos y terminamos en el mismo lugar. Nacemos, nos desarrollamos y morimos. Somos todos lo mismo.</p>
         <div class="rv rv-d3"><a class="btn" href="./casa.html">LA CASA <span lang="ja" aria-hidden="true">家</span> <span class="arr">&gt;&gt;</span></a></div>
       </div>
       <a class="mundo-ph rv rv-scale" id="mundo-ph" href="./shop.html" aria-label="Ver el shop"></a>
@@ -694,6 +694,27 @@ html.pmgate-ok #pmgate{display:none!important}
     if(ev.shiftKey && document.activeElement===pri){ ev.preventDefault(); ult.focus(); }
     else if(!ev.shiftKey && document.activeElement===ult){ ev.preventDefault(); pri.focus(); }
   });
+})();
+</script>
+<script>
+/* el titular del hero entra siempre en su columna: si la palabra más larga no cabe (GENDERLESS, o lo que la casa
+   escriba desde el panel), el tamaño baja de a poco hasta que entra. Si cabe, no se toca: manda el CSS. */
+(function () {
+  function ajustar() {
+    var h = document.getElementById('h1'); if (!h) return;
+    h.style.fontSize = '';
+    var lineas = [].slice.call(h.querySelectorAll('span:not(.ja)'));
+    var fs = parseFloat(getComputedStyle(h).fontSize), ancho = h.clientWidth;
+    for (var i = 0; i < 40; i++) {
+      var max = Math.max.apply(null, lineas.map(function (s) { return s.scrollWidth; }));
+      if (max <= ancho) break;
+      fs *= 0.96; h.style.fontSize = fs + 'px';
+    }
+  }
+  ajustar();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajustar);
+  var t; addEventListener('resize', function () { clearTimeout(t); t = setTimeout(ajustar, 120); });
+  window.PM_ajustarTitular = ajustar;
 })();
 </script>
 </body>
