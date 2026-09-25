@@ -585,12 +585,12 @@ html.pmgate-ok #pmgate{display:none!important}
   else if (unico) talleHTML = '<p class="talle"><b>ÚNICO</b><span>UN SOLO TALLE</span><button type="button" class="lnk" data-legal="talles">GUÍA DE TALLES</button></p>';
   /* una pieza única no «es el único talle que queda»: es su talle (sin contradecir el 1/1 de arriba) */
   else if (!multi) talleHTML = '<p class="talle"><b>' + esc(tls[0]) + '</b><span>' + (unica ? 'SU TALLE' : agot.length ? 'EL ÚNICO TALLE QUE QUEDA' : 'UN SOLO TALLE') + '</span><button type="button" class="lnk" data-legal="talles">GUÍA DE TALLES</button></p>';
-  else talleHTML = '<fieldset class="tl-sel' + (p.usa ? ' anillo' : '') + '" id="tl-sel"' + (esDis ? '' : ' aria-describedby="tl-nota"') + '><legend>' + (esDis ? 'Elegí tu diseño' : 'Elegí tu talle') + '</legend>' +
-    tls.map(function (t) { return '<label><input type="radio" name="talle" value="' + esc(t) + '"' + (talleSel === t ? ' checked' : '') + '><span>' + esc(t) + (p.usa && p.usa[t] ? '<small aria-hidden="true">USA ' + esc(p.usa[t]) + '</small><span class="sr"> (USA ' + esc(p.usa[t]) + ')</span>' : '') + '</span></label>'; }).join('') +
+  else talleHTML = '<fieldset class="tl-sel' + (p.mm ? ' anillo' : '') + '" id="tl-sel"' + (esDis ? '' : ' aria-describedby="tl-nota"') + '><legend>' + (esDis ? 'Elegí tu diseño' : 'Elegí tu talle') + '</legend>' +
+    tls.map(function (t) { return '<label><input type="radio" name="talle" value="' + esc(t) + '"' + (talleSel === t ? ' checked' : '') + '><span>' + esc(t) + (p.mm && p.mm[t] ? '<small aria-hidden="true">' + esc(p.mm[t]) + '</small><span class="sr"> (diámetro interno ' + esc(p.mm[t]) + ' mm)</span>' : '') + '</span></label>'; }).join('') +
     (esDis ? '' : agot.map(function (t) { return '<span class="ag" aria-hidden="true">' + esc(t) + '</span><span class="sr">Talle ' + esc(t) + ' agotado</span>'; }).join('')) +
     '<button type="button" class="lnk" data-legal="' + GUIA_T + '">GUÍA DE TALLES</button></fieldset>';
   /* una sola línea: «elegí el talle antes de agregar» ya lo dice el CTA (pm:talle) cuando hace falta */
-  var talleNota = p.aPedido ? (unico ? '' : 'Se hace a pedido en el talle que elijas. Elegís en talle argentino; debajo de cada uno, su equivalente USA.') : esDis ? 'Talle único, cozysize. El diseño que elegís es el que sale del taller.' : unico ? '' : 'Compará las medidas con una prenda tuya que te quede bien.';
+  var talleNota = p.aPedido ? (unico ? '' : 'Se hace a pedido: cualquier diseño se adapta a cualquier talle. Los talles son USA y debajo de cada uno va su diámetro interno en milímetros. ¿No sabés el tuyo? Medí el diámetro interno de un anillo que uses.') : esDis ? 'Talle único, cozysize. El diseño que elegís es el que sale del taller.' : unico ? '' : 'Compará las medidas con una prenda tuya que te quede bien.';
 
   /* materiales */
   var matHTML = (p.mat && p.mat.length)
